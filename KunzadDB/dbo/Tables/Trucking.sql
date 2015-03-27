@@ -1,0 +1,21 @@
+﻿CREATE TABLE [dbo].[Trucking]
+(
+	[Id] INT NOT NULL PRIMARY KEY, 
+    [DocumentNo] INT NOT NULL, 
+    [TruckId] INT NOT NULL, 
+	[DriverId] INT NOT NULL,
+    [OriginServiceableAreaId] INT NOT NULL, 
+    [DestinationServiceableAreaId] INT NOT NULL, 
+    [TruckerCost] MONEY NOT NULL DEFAULT 0, 
+    [TruckingStatusId] BIT NOT NULL DEFAULT 0, 
+    [TruckCallDate] DATETIME NULL, 
+    [TruckCallTime] TIME NULL, 
+    [DispatchDate] DATE NULL, 
+    [DispatchTime] TIME NULL,
+    [CompletedDate] DATE NULL, 
+    [CompletedTime] TIME NULL,
+	[CreatedDate] DATETIME NULL, 
+    [LastUpdatedDate] DATETIME NULL, 
+    [CreatedByUserId] INT NULL, 
+    [LastUpdatedByUserId] INT NULL, 
+)
