@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[SeaFreight]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
-	[BLNumber] VARCHAR(50) NOT NULL,
+	[BLNumber] VARCHAR(20) NOT NULL,
 	[BLDate] DATETIME NOT NULL,
 	[VesselVoyageId] INT NOT NULL,
     [OriginBusinessUnitId] INT NOT NULL, 

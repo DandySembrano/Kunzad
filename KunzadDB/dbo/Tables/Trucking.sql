@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Trucking]
 (
 	[Id] INT NOT NULL PRIMARY KEY, 
-    [DocumentNo] INT NOT NULL, 
+    [DocumentNo] VARCHAR(20) NOT NULL, 
     [TruckId] INT NOT NULL, 
 	[DriverId] INT NOT NULL,
     [OriginServiceableAreaId] INT NOT NULL, 
@@ -18,4 +18,6 @@
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
+    CONSTRAINT [FK_Trucking_Truck] FOREIGN KEY ([TruckId]) REFERENCES [Truck]([Id]), 
+    CONSTRAINT [FK_Trucking_Driver] FOREIGN KEY ([DriverId]) REFERENCES [Driver]([Id]), 
 )

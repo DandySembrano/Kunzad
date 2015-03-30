@@ -2,7 +2,7 @@
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
     [AirLineId] INT NOT NULL, 
-	[AirWaybillNumber] VARCHAR(50) NULL,
+	[AirWaybillNumber] VARCHAR(20) NULL,
 	[AirWaybillDate] DATETIME NULL,
 	[EstimatedDepartureDate] DATETIME NOT NULL, 
     [EstimatedDepartureTime] TIME NOT NULL, 

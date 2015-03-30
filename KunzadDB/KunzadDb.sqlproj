@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{d9c7effa-ea2f-461a-8d62-b25225b6bbad}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql100DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -57,6 +57,51 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Tables" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Address.sql" />
+    <Build Include="dbo\Tables\AirFreight.sql" />
+    <Build Include="dbo\Tables\AirFreightShipment.sql" />
+    <Build Include="dbo\Tables\AirLine.sql" />
+    <Build Include="dbo\Tables\BusinessUnit.sql" />
+    <Build Include="dbo\Tables\BusinessUnitContact.sql" />
+    <Build Include="dbo\Tables\BusinessUnitType.sql" />
+    <Build Include="dbo\Tables\CityMunicipality.sql" />
+    <Build Include="dbo\Tables\Contact.sql" />
+    <Build Include="dbo\Tables\ContactPhone.sql" />
+    <Build Include="dbo\Tables\ContactNumberType.sql" />
+    <Build Include="dbo\Tables\Country.sql" />
+    <Build Include="dbo\Tables\Customer.sql" />
+    <Build Include="dbo\Tables\CustomerAddress.sql" />
+    <Build Include="dbo\Tables\CustomerContact.sql" />
+    <Build Include="dbo\Tables\CustomerGroup.sql" />
+    <Build Include="dbo\Tables\Driver.sql" />
+    <Build Include="dbo\Tables\Industry.sql" />
+    <Build Include="dbo\Tables\SeaFreight.sql" />
+    <Build Include="dbo\Tables\SeaFreightShipment.sql" />
+    <Build Include="dbo\Tables\ServiceableArea.sql" />
+    <Build Include="dbo\Tables\Shipment.sql" />
+    <Build Include="dbo\Tables\ShippingLine.sql" />
+    <Build Include="dbo\Tables\StateProvince.sql" />
+    <Build Include="dbo\Tables\Service.sql" />
+    <Build Include="dbo\Tables\Truck.sql" />
+    <Build Include="dbo\Tables\Trucker.sql" />
+    <Build Include="dbo\Tables\Trucking.sql" />
+    <Build Include="dbo\Tables\TruckType.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\Vessel.sql" />
+    <Build Include="dbo\Tables\VesselVoyage.sql" />
+    <Build Include="dbo\Tables\ShipmentType.sql" />
+    <Build Include="dbo\Tables\TruckingDelivery.sql" />
+    <Build Include="dbo\Tables\CourierService.sql" />
+    <Build Include="dbo\Tables\ShipmentDimension.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="KunzadDb.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KunzadDb.publish.xml" />
   </ItemGroup>
 </Project>
