@@ -1,7 +1,7 @@
-﻿CREATE TABLE [dbo].[ShipmentType]
+﻿CREATE TABLE [dbo].[ServiceCategory]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Name] VARCHAR(150) NOT NULL,
+    [Name] VARCHAR(100) NOT NULL,
 	[CreatedDate] DATETIME NULL, 
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 

@@ -11,5 +11,6 @@
 	[CreatedDate] DATETIME NULL, 
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 
-    [LastUpdatedByUserId] INT NULL 
+    [LastUpdatedByUserId] INT NULL, 
+    CONSTRAINT [FK_BusinessUnit_BusinessUnitType] FOREIGN KEY ([BusinessUnitTypeId]) REFERENCES [BusinessUnitType]([Id]) 
 )

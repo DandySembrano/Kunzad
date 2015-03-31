@@ -18,5 +18,7 @@
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
-    CONSTRAINT [FK_AirFreight_AirLine] FOREIGN KEY ([AirLineId]) REFERENCES [AirLine]([Id])
+    CONSTRAINT [FK_AirFreight_AirLine] FOREIGN KEY ([AirLineId]) REFERENCES [AirLine]([Id]), 
+    CONSTRAINT [FK_AirFreight_OriginBusinessUnit] FOREIGN KEY ([OriginBusinessUnitId]) REFERENCES [BusinessUnit]([Id]),
+	CONSTRAINT [FK_AirFreight_DestinationBusinessUnit] FOREIGN KEY ([DestinationBusinessUnitId]) REFERENCES [BusinessUnit]([Id])
 )

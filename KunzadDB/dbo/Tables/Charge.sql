@@ -1,6 +1,6 @@
-﻿CREATE TABLE [dbo].[ShipmentType]
+﻿CREATE TABLE [dbo].[Charge]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+	[Id] INT NOT NULL PRIMARY KEY, 
     [Name] VARCHAR(150) NOT NULL,
 	[CreatedDate] DATETIME NULL, 
     [LastUpdatedDate] DATETIME NULL, 

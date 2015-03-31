@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[TruckType]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Type] VARCHAR(50) NULL, 
     [WeightCapacity] DECIMAL(18, 4) NULL, 
     [VolumeCapacity] DECIMAL(18, 4) NULL,

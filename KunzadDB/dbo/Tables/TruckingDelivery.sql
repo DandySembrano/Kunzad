@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[TruckingDelivery]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
 	[TruckingId] INT NOT NULL,
     [ShipmentId] INT NOT NULL, 
 	[CustomerId] INT NOT NULL,

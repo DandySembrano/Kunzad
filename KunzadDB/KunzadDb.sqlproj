@@ -95,13 +95,20 @@
     <Build Include="dbo\Tables\VesselVoyage.sql" />
     <Build Include="dbo\Tables\ShipmentType.sql" />
     <Build Include="dbo\Tables\TruckingDelivery.sql" />
-    <Build Include="dbo\Tables\CourierService.sql" />
+    <Build Include="dbo\Tables\CourierTransaction.sql" />
     <Build Include="dbo\Tables\ShipmentDimension.sql" />
+    <Build Include="dbo\Tables\Courier.sql" />
+    <Build Include="dbo\Tables\CourierTransactionDetails.sql" />
+    <Build Include="dbo\Tables\ShipmentCharges.sql" />
+    <Build Include="dbo\Tables\ServiceCharge.sql" />
+    <Build Include="dbo\Tables\ServiceCategory.sql" />
+    <Build Include="dbo\Tables\Charge.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="KunzadDb.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <None Include="KunzadDb.publish.xml" />
+    <None Include="Table Definitions.txt" />
   </ItemGroup>
 </Project>

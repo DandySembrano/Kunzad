@@ -16,5 +16,6 @@
     [CreatedDate] DATETIME NULL, 
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 
-    [LastUpdatedByUserId] INT NULL
+    [LastUpdatedByUserId] INT NULL, 
+    CONSTRAINT [FK_VesselVoyage_Vessel] FOREIGN KEY ([VesselId]) REFERENCES [Vessel]([Id])
 )
