@@ -9,5 +9,5 @@
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL 
     CONSTRAINT [FK_AirFreightShipment_AirFreight] FOREIGN KEY ([AirFreightId]) REFERENCES [AirFreight]([Id]),
-	CONSTRAINT [FK_AirFreightShipment_Shipment] FOREIGN KEY ([ShipmentId]) REFERENCES [Shipment]([Id])
+	CONSTRAINT [FK_AirFreightShipment_Shipment] FOREIGN KEY ([ShipmentId]) REFERENCES [Shipment]([Id]),
 )

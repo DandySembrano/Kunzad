@@ -42,8 +42,16 @@
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -326,6 +334,8 @@
     <Content Include="assets\js\utility\waypoints\jquery.waypoints.min.js" />
     <Content Include="assets\skin\default_skin\css\theme.css" />
     <Content Include="assets\skin\default_skin\css\updates.css" />
+    <Content Include="Content\fonts.css" />
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
@@ -350,6 +360,9 @@
     <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\customergroup-ctrl.js" />
+    <Content Include="Scripts\app\datatable.js" />
     <Content Include="Scripts\app\ui_init.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
@@ -1094,6 +1107,7 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <Content Include="Scripts\ng-context-menu.js" />
     <Content Include="vendor\editors\ckeditor\adapters\jquery.js" />
     <Content Include="vendor\editors\ckeditor\build-config.js" />
     <Content Include="vendor\editors\ckeditor\ckeditor.js" />
@@ -2314,14 +2328,157 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\CustomerGroupsController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Address.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AirFreight.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AirFreightShipment.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AirLine.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AppMenuModel.cs" />
+    <Compile Include="Models\BusinessUnit.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BusinessUnitContact.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BusinessUnitType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Charge.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CityMunicipality.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Contact.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ContactNumberType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ContactPhone.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Country.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Courier.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CourierTransaction.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CourierTransactionDetail.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Customer.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CustomerAddress.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CustomerContact.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CustomerGroup.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Driver.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Industry.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelKunzadDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelKunzadDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelKunzadDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelKunzadDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SeaFreight.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SeaFreightShipment.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Service.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceableArea.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceCategory.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ServiceCharge.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Shipment.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShipmentCharge.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShipmentDimension.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShipmentType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ShippingLine.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StateProvince.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Truck.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Trucker.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Trucking.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TruckingDelivery.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TruckType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\User.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Vessel.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VesselVoyage.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2724,13 +2881,36 @@
     <Content Include="vendor\plugins\slick\fonts\slick.woff" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_ThemePreview.cshtml" />
     <Content Include="Views\Shared\_SideBar.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Views\Shared\_TopBar.cshtml" />
     <Content Include="Views\Shared\_SideBarRight.cshtml" />
     <Content Include="Views\Shared\_SideBarMenu.cshtml" />
+    <Content Include="Views\References\_Airlines.cshtml" />
+    <EntityDeploy Include="Models\ModelKunzadDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\ModelKunzadDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <LastGenOutput>ModelKunzadDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.edmx.diagram">
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
+    </Content>
+    <Content Include="Views\References\_CustomerGroups.cshtml" />
+    <Content Include="Views\References\_DataTables.cshtml" />
+    <Content Include="Views\Home\Testing.cshtml" />
+    <Content Include="Views\Shared\_DataTableLayout.cshtml" />
+    <Content Include="Views\Home\DataTables.cshtml" />
+    <Content Include="Views\Home\DataTables - Copy.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2741,6 +2921,10 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="vendor\plugins\datatables\extensions\Editor\examples\simple\echo\" />
+    <Folder Include="Views\Templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

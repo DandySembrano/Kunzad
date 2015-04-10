@@ -8,5 +8,5 @@
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
     CONSTRAINT [FK_BusinessUnitContact_BusiessUnit] FOREIGN KEY ([BusinessUnitId]) REFERENCES [BusinessUnit]([Id]), 
-    CONSTRAINT [FK_BusinessUnitContact_Contact] FOREIGN KEY ([ContactId]) REFERENCES [Contact]([Id]) 
+    CONSTRAINT [FK_BusinessUnitContact_Contact] FOREIGN KEY ([ContactId]) REFERENCES [Contact]([Id]),	 
 )

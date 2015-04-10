@@ -13,5 +13,10 @@ namespace ctms.Controllers
         {
             return View();
         }
+
+        public ActionResult DataTables()
+        {
+            return View();
+        }
     }
 }

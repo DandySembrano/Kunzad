@@ -11,5 +11,5 @@
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
-    CONSTRAINT [FK_Address_CityMunicipality] FOREIGN KEY ([CityMunicipalityId]) REFERENCES [CityMunicipality]([Id])
+    CONSTRAINT [FK_Address_CityMunicipality] FOREIGN KEY ([CityMunicipalityId]) REFERENCES [CityMunicipality]([Id]),
 )
