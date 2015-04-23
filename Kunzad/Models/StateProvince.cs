@@ -27,7 +27,7 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
-        public virtual ICollection<CityMunicipality> CityMunicipalities { get; set; }
-        public virtual Country Country { get; set; }
+        public ICollection<CityMunicipality> CityMunicipalities { get; set; }
+        public Country Country { get; set; }
     }
 }

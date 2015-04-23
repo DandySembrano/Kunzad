@@ -28,7 +28,7 @@
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
     CONSTRAINT [FK_Shipment_BusinessUnit] FOREIGN KEY ([BusinessUnitId]) REFERENCES [BusinessUnit]([Id]), 
-	CONSTRAINT [FK_Shipment_Service] FOREIGN KEY ([ServiceId]) REFERENCES [Service]([id]),
+	CONSTRAINT [FK_Shipment_Service] FOREIGN KEY ([ServiceId]) REFERENCES [Service]([Id]),
     CONSTRAINT [FK_Shipment_ShipmentType] FOREIGN KEY ([ShipmentTypeId]) REFERENCES [ShipmentType]([Id]), 
     CONSTRAINT [FK_Shipment_Customer] FOREIGN KEY ([CustomerId]) REFERENCES [Customer]([Id]) 
 )

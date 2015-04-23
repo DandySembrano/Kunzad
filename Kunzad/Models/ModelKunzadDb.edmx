@@ -15,7 +15,6 @@
           <Property Name="LIne3" Type="varchar" MaxLength="150" />
           <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
           <Property Name="PostalCode" Type="varchar" MaxLength="20" />
-          <Property Name="OtherAddressDetails" Type="varchar" MaxLength="200" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastUpdatedDate" Type="datetime" />
           <Property Name="CreatedByUserId" Type="int" />
@@ -1520,7 +1519,6 @@
           <Property Name="LIne3" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
           <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="OtherAddressDetails" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedByUserId" Type="Int32" />
@@ -2839,7 +2837,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="false">
           <EntitySet Name="Addresses" EntityType="Self.Address" />
           <EntitySet Name="AirFreights" EntityType="Self.AirFreight" />
           <EntitySet Name="AirFreightShipments" EntityType="Self.AirFreightShipment" />
@@ -3130,7 +3128,6 @@
                 <ScalarProperty Name="LIne3" ColumnName="LIne3" />
                 <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
                 <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-                <ScalarProperty Name="OtherAddressDetails" ColumnName="OtherAddressDetails" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />

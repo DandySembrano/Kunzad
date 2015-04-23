@@ -54,12 +54,12 @@
     <![endif]-->
 </head>
 
-<body ng-app="kunzadApp" class="datatables-page" data-spy="scroll" data-target="#nav-spy" data-offset="300">
+<body ng-app="kunzadApp" ng-controller="RootController">
 
-    @* @RenderPage("_ThemePreview.cshtml") *@
+    @RenderPage("_ThemePreview.cshtml")
 
     <!-- Start: Main -->
-    <div id="main">
+    <div id="main" class="container-fluid">
 
         @RenderPage("_Header.cshtml")
         @RenderPage("_SideBar.cshtml")
@@ -70,9 +70,10 @@
             @RenderBody()
         </section>
         <!-- End: Content-Wrapper -->
-        @* @@RenderPage("_SideBarRight.cshtml") *@
+        @* @RenderPage("_SideBarRight.cshtml") *@
 
     </div>
+    <div id="spinnerTarget"></div>
     <!-- End: Main -->
     <!-- BEGIN: PAGE SCRIPTS -->
     <!-- jQuery -->
@@ -82,34 +83,20 @@
     <!-- Bootstrap -->
     <script type="text/javascript" src="/assets/js/bootstrap/bootstrap.min.js"></script>
 
-    <!-- Datatables -->
-    <script type="text/javascript" src="/vendor/plugins/datatables/media/js/jquery.dataTables.js"></script>
-
-    <!-- Datatables Tabletools addon -->
-    <script type="text/javascript" src="/vendor/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
-
-    <!-- Datatables Editor addon - READ LICENSING NOT MIT  -->
-    <script type="text/javascript" src="/vendor/plugins/datatables/extensions/Editor/js/dataTables.editor.js"></script>
-
-    <!-- Page Plugins -->
-    <script type="text/javascript" src="/vendor/plugins/magnific/jquery.magnific-popup.js"></script>
-
-    <!-- Datatables Bootstrap Modifications  -->
-    <script type="text/javascript" src="/vendor/plugins/datatables/media/js/dataTables.bootstrap.js"></script>
-    <script type="text/javascript" src="/vendor/plugins/datatables/extensions/Editor/js/editor.bootstrap.js"></script>
-
-    <!-- Theme Javascript -->
-    <script type="text/javascript" src="/assets/js/utility/utility.js"></script>
-    <script type="text/javascript" src="/assets/js/main.js"></script>
-    <script type="text/javascript" src="/assets/js/demo.js"></script>
+    <!-- Admin UI -->
+    @Scripts.Render("~/bundles/admin-ui")
 
     <!-- Angular -->
     @Scripts.Render("~/bundles/angular")
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+    <!--
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script> -->
 
     <!-- App scripts -->
     @Scripts.Render("~/bundles/app")
+
+    <!-- Utility / 3rd party -->
+    @Scripts.Render("~/bundles/utils")
 
     <script type="text/javascript">
         jQuery(document).ready(function () {

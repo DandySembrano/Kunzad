@@ -19,15 +19,6 @@ namespace Kunzad.Models
             menuGroup.Name = "TMS";
             menuGroup.MenuGroupItems = new List<MenuGroupItem>();
 
-            // Yahoo
-            m = new MenuGroupItem();
-            m.Name = "Testing";
-            m.Icon = "glyphicons glyphicons-yahoo";
-            m.IsSubMenu = false;
-            m.Link = "/Home/Testing";
-            m.MenuItems = new List<MenuItem>();
-            menuGroup.MenuGroupItems.Add(m);
-
             // Shipment
             m = new MenuGroupItem();
             m.Name = "Shipment";
@@ -78,8 +69,8 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Customer", "glyphicons glyphicons-file", "Customer"));
-            m.MenuItems.Add(new MenuItem("Customer Group", "glyphicons glyphicons-file", "CustomerGroups"));
+            m.MenuItems.Add(new MenuItem("Customer", "glyphicons glyphicons-file", "#/customers"));
+            m.MenuItems.Add(new MenuItem("Customer Group", "glyphicons glyphicons-file", "#/customergroups"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Network

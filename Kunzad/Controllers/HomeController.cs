@@ -14,7 +14,7 @@ namespace ctms.Controllers
             return View();
         }
 
-        public ActionResult DataTables()
+        public ActionResult Main()
         {
             return View();
         }

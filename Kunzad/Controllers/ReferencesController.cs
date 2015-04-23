@@ -14,18 +14,17 @@ namespace Kunzad.Controllers
             return View();
         }
 
-        public ActionResult _CustomerGroups()
-        {
-            ViewBag.PanelTitle = "Customer Group";
-            return View();
-        }
-
-        public ActionResult _Airlines()
+        public ActionResult Customers()
         {
             return View();
         }
 
-        public ActionResult _DataTables()
+        public ActionResult CustomerGroups()
+        {
+            return View();
+        }
+
+        public ActionResult Airlines()
         {
             return View();
         }

@@ -6,7 +6,6 @@
     [LIne3] VARCHAR(150) NULL, 
     [CityMunicipalityId] INT NOT NULL, 
 	[PostalCode] VARCHAR(20) NULL,
-    [OtherAddressDetails] VARCHAR(200) NULL,
 	[CreatedDate] DATETIME NULL, 
     [LastUpdatedDate] DATETIME NULL, 
     [CreatedByUserId] INT NULL, 

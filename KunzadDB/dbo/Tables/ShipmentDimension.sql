@@ -18,4 +18,4 @@
 
 GO
 
-CREATE INDEX [IX_ShipmentDimension_ShipmentId] ON [dbo].[ShipmentDimension] ([ShipmentID])
+CREATE INDEX [IX_ShipmentDimension_ShipmentId] ON [dbo].[ShipmentDimension] ([ShipmentId])

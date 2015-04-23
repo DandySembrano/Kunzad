@@ -26,7 +26,6 @@ namespace Kunzad.Models
         public string LIne3 { get; set; }
         public int CityMunicipalityId { get; set; }
         public string PostalCode { get; set; }
-        public string OtherAddressDetails { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }

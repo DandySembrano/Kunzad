@@ -1,45 +1,76 @@
-﻿//-----------------------------------------------------------------------------//
-// Filename: customergroup.js
+﻿//---------------------------------------------------------------------------------//
+// Filename: customergroup-ctrl.js
 // Description: Controller for CustomerGroup
 // Author: Dandy Sembrano
-//-----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------//
 
 kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
 
     $scope.modelName = "Customer Group";
-    $scope.customerGroups = [];
-    $scope.customerGroup;
+    $scope.data = [];
+    $scope.dataItem;
+
+    //------------------------------------------------------------------------------//
+    // Required controller properties. should be present in all dataTable controller
     $scope.isPrevPage = false;
-    $scope.isNextPage = false;
+    $scope.isNextPage = true;
     $scope.actionMode = "Create";
     $scope.selected = null;
     $scope.currentPage = 1;
     $scope.viewOnly = true;
+    $scope.isError = false;
+    $scope.errorMessage = "";
+    $scope.submitButtonText = "Submit";
+    var pageSize = 20;
+    //------------------------------------------------------------------------------//
 
     // Get Customer Group List
-    $http.get("/api/CustomerGroups")
-        .success(function (data, status) {
-            $scope.customerGroups = data;
-        })
-        .error(function (data, status) {
-        })
+    $scope.loadData = function (page) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
+        $http.get("/api/CustomerGroups?page=" + page)
+            .success(function (data, status) {
+                $scope.data = data;
+                $scope.currentPage = page;
+                if (page <= 1) {
+                    $scope.isPrevPage = false;
+                } else {
+                    $scope.isPrevPage = true;
+                }
+                var rows = data.length;
+                if (rows < pageSize) {
+                    $scope.isNextPage = false;
+                } else {
+                    $scope.isNextPage = true;
+                }
+                spinner.stop();
+            })
+            .error(function (data, status) {
+                spinner.stop();
+            })        
+    }
 
     // Create/Insert New
     $scope.apiCreate = function () {
-        $http.post("/api/CustomerGroups", $scope.customerGroup)
+        $http.post("/api/CustomerGroups", $scope.dataItem)
             .success(function (data, status) {
-                $scope.customerGroups.push($scope.customerGroup);
+                $scope.dataItem = angular.copy(data);
+                $scope.data.push($scope.dataItem);
+                $scope.closeModalForm();
             })
             .error(function (data, status) {
+                $scope.showFormError("");
             })
     }
 
     // Update
     $scope.apiUpdate = function (id) {
-        $http.put("/api/CustomerGroups/" + id, $scope.customerGroup)
+        $http.put("/api/CustomerGroups/" + id, $scope.dataItem)
             .success(function (data, status) {
+                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
+                $scope.closeModalForm();
             })
             .error(function (data, status) {
+                $scope.showFormError("");
             })
     }
 
@@ -47,9 +78,11 @@ kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/CustomerGroups/" + id)
             .success(function (data, status) {
-                $scope.customerGroups.splice($scope.selected, 1);
+                $scope.data.splice($scope.selected, 1);
+                $scope.closeModalForm();
             })
             .error(function (data, status) {
+                $scope.showFormError(status);
             })
     }
 
@@ -61,59 +94,84 @@ kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
         $scope.actionMode = action;
         switch ($scope.actionMode) {
             case "Create":
-                $scope.customerGroup = {
+                $scope.dataItem = {
                     "Name": "",
                     "Remarks": ""
                 }
                 $scope.viewOnly = false;
+                $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.customerGroup = $scope.customerGroups[$scope.selected]
+                $scope.dataItem = angular.copy($scope.data[$scope.selected])
                 $scope.viewOnly = false;
+                $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.customerGroup = $scope.customerGroups[$scope.selected]
+                $scope.dataItem = angular.copy($scope.data[$scope.selected])
                 $scope.viewOnly = true;
+                $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.customerGroup = $scope.customerGroups[$scope.selected]
+                $scope.dataItem = angular.copy($scope.data[$scope.selected])
                 $scope.viewOnly = true;
+                $scope.submitButtonText = "Close";
                 $scope.openModalForm();
                 break;
         }
     }
 
     $scope.openModalForm = function () {
-        //Open Modal Form/Panel
-        jQuery.magnificPopup.open({
-            removalDelay: 500, //delay removal by X to allow out-animation,
-            items: { src: "#modal-panel" },
-            callbacks: {
-                beforeOpen: function (e) {
-                    var Animation = "mfp-flipInY";
-                    this.st.mainClass = Animation;
-                }
-            },
-            midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
-        })
+        $scope.isError = false;
+        openModalPanel("#modal-panel");
+    }
+
+    $scope.closeModalForm = function () {
+        jQuery.magnificPopup.close();
+    }
+
+    $scope.showFormError = function(message) {
+        $scope.isError = true;
+        $scope.errorMessage = message;
     }
 
     $scope.submit = function () {
         switch ($scope.actionMode) {
             case "Create":
-                $scope.apiCreate();
+                if (validateEntry()) {
+                    $scope.apiCreate();
+                }
                 break;
             case "Edit":
-                $scope.apiUpdate($scope.customerGroup.Id);
+                if (validateEntry()) {
+                    $scope.apiUpdate($scope.dataItem.Id);
+                }
                 break;
             case "Delete":
-                $scope.apiDelete($scope.customerGroup.Id);
+                $scope.apiDelete($scope.dataItem.Id);
+                break;
+            case "View":
+                $scope.closeModalForm();
                 break;
         }
-        jQuery.magnificPopup.close()
     }
+
+    // Validate Form Data Entry
+    var validateEntry = function () {
+        if ($scope.dataItem.Name == null || $scope.dataItem.Name == "") {
+            $scope.showFormError("Invalid customer group name.");
+            return false;
+        }
+        return true;
+    }
+
+    var init = function () {
+        // Call function to load data during content load
+        $scope.loadData($scope.currentPage);
+    }
+
+    init();
 
 });
