@@ -166,6 +166,7 @@
     <Content Include="assets\img\avatars\4.jpg" />
     <Content Include="assets\img\avatars\5.jpg" />
     <Content Include="assets\img\avatars\6.jpg" />
+    <Content Include="assets\img\avatars\dts.jpg" />
     <Content Include="assets\img\avatars\license.txt" />
     <Content Include="assets\img\avatars\placeholder.png" />
     <Content Include="assets\img\avatars\profile_avatar.jpg" />
@@ -361,9 +362,8 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\customer-ctrl.js" />
     <Content Include="Scripts\app\customergroup-ctrl.js" />
-    <Content Include="Scripts\app\datatable.js" />
-    <Content Include="Scripts\app\ui_init.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1108,6 +1108,9 @@
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
     <Content Include="Scripts\ng-context-menu.js" />
+    <Content Include="Scripts\spin.js" />
+    <Content Include="Scripts\spin.min.js" />
+    <Content Include="Scripts\ui-bootstrap-tpls-0.12.1.min.js" />
     <Content Include="vendor\editors\ckeditor\adapters\jquery.js" />
     <Content Include="vendor\editors\ckeditor\build-config.js" />
     <Content Include="vendor\editors\ckeditor\ckeditor.js" />
@@ -2329,9 +2332,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiControllers\CustomerGroupsController.cs" />
+    <Compile Include="ApiControllers\CustomersController.cs" />
+    <Compile Include="ApiControllers\IndustriesController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="ApiControllers\CityMunicipalitiesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -2887,7 +2893,6 @@
     <Content Include="Views\Shared\_TopBar.cshtml" />
     <Content Include="Views\Shared\_SideBarRight.cshtml" />
     <Content Include="Views\Shared\_SideBarMenu.cshtml" />
-    <Content Include="Views\References\_Airlines.cshtml" />
     <EntityDeploy Include="Models\ModelKunzadDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
@@ -2905,12 +2910,13 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\References\_CustomerGroups.cshtml" />
-    <Content Include="Views\References\_DataTables.cshtml" />
-    <Content Include="Views\Home\Testing.cshtml" />
-    <Content Include="Views\Shared\_DataTableLayout.cshtml" />
-    <Content Include="Views\Home\DataTables.cshtml" />
-    <Content Include="Views\Home\DataTables - Copy.cshtml" />
+    <Content Include="Views\References\CustomerGroups.cshtml" />
+    <Content Include="Views\Shared\_DataTableLayout1.cshtml" />
+    <Content Include="Views\Home\Main.cshtml" />
+    <Content Include="Views\References\Customers.cshtml" />
+    <Content Include="Views\Shared\_DataTableLayout2.cshtml" />
+    <Content Include="Views\Shared\_DataTableLayout3.cshtml" />
+    <Content Include="Views\Shared\_ContextMenu1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2921,7 +2927,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="vendor\plugins\datatables\extensions\Editor\examples\simple\echo\" />
-    <Folder Include="Views\Templates\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
