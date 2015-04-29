@@ -32,22 +32,30 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 $scope.activeViewPath = $location.path();
             });
 
-            $rootScope.cityMunicipalities = [];
+            // Temporary - support one country only (Philippines)
+            $rootScope.country = {
+                "Id": 1,
+                "Name": "Philippines",
+            }
+            
+            var cityMunicipalities = [];
+            $rootScope.getCityMunicipalities = function () {
+                return cityMunicipalities;
+            }
 
             // Get List of CityMunicipalities
-            var getCityMunicipalities = function () {
+            var getCityMunicipalitiesFromApi = function () {
                 //alert("get");
-                $http.get("/api/CityMunicipalities")
+                $http.get("/api/CityMunicipalities?countryId=" + $rootScope.country.Id)
                     .success(function (data, status) {
-                        //alert("success");
-                        $rootScope.cityMunicipalities = data;
+                        cityMunicipalities = data;
                     })
                     .error(function (data, status) {
                     });
             }
 
             function init() {
-                getCityMunicipalities();
+                getCityMunicipalitiesFromApi();
             }
 
             init();

@@ -20,19 +20,36 @@ namespace Kunzad.Controllers
         public IQueryable<CityMunicipality> GetCityMunicipalities()
         {
             return db.CityMunicipalities;
-               //.Include(c => c.StateProvince)  ;
+        }
+
+        // GET: api/CityMunicipalities?countryId=1
+        public IHttpActionResult GetCityMunicipalities(int countryId)
+        {
+            var q = (from c in db.CityMunicipalities
+                     join p in db.StateProvinces on c.StateProvinceId equals p.Id
+                     join co in db.Countries on p.CountryId equals co.Id
+                     where c.StateProvince.CountryId == countryId
+                     select new
+                     {
+                         c.Id,
+                         c.Name,
+                         c.StateProvinceId,
+                         StateProvinceName = p.Name,
+                         CountryId = co.Id,
+                         CountryName = co.Name
+                     });
+            return Json(q);
         }
 
         // GET: api/CityMunicipalities/5
         [ResponseType(typeof(CityMunicipality))]
         public IHttpActionResult GetCityMunicipality(int id)
         {
-            CityMunicipality cityMunicipality = db.CityMunicipalities.Find(id);
+            CityMunicipality cityMunicipality = db.CityMunicipalities.Include(c => c.StateProvince).Where(c => c.Id == id).SingleOrDefault();
             if (cityMunicipality == null)
             {
                 return NotFound();
             }
-
             return Ok(cityMunicipality);
         }
 
@@ -131,4 +148,5 @@ namespace Kunzad.Controllers
             return db.CityMunicipalities.Count(e => e.Id == id) > 0;
         }
     }
+
 }
