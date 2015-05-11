@@ -16,7 +16,10 @@ namespace Kunzad.Models
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
-        public int AddressId { get; set; }
+        public string Line1 { get; set; }
+        public string Line2 { get; set; }
+        public int CityMunicipalityId { get; set; }
+        public string PostalCode { get; set; }
         public bool IsBillingAddress { get; set; }
         public bool IsDeliveryAddress { get; set; }
         public bool IsPickupAddress { get; set; }
@@ -25,7 +28,7 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
-        public virtual Address Address { get; set; }
+        public virtual CityMunicipality CityMunicipality { get; set; }
         public virtual Customer Customer { get; set; }
     }
 }

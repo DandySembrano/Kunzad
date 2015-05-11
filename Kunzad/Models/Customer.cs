@@ -16,10 +16,10 @@ namespace Kunzad.Models
     {
         public Customer()
         {
-            this.CustomerAddresses = new HashSet<CustomerAddress>();
             this.CustomerContacts = new HashSet<CustomerContact>();
             this.Shipments = new HashSet<Shipment>();
             this.TruckingDeliveries = new HashSet<TruckingDelivery>();
+            this.CustomerAddresses = new HashSet<CustomerAddress>();
         }
     
         public int Id { get; set; }
@@ -35,9 +35,9 @@ namespace Kunzad.Models
     
         public virtual CustomerGroup CustomerGroup { get; set; }
         public virtual Industry Industry { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
         public virtual ICollection<CustomerContact> CustomerContacts { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
         public virtual ICollection<TruckingDelivery> TruckingDeliveries { get; set; }
+        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
     }
 }

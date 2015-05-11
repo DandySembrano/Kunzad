@@ -43,7 +43,6 @@ namespace Kunzad.Models
         public virtual DbSet<CourierTransaction> CourierTransactions { get; set; }
         public virtual DbSet<CourierTransactionDetail> CourierTransactionDetails { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public virtual DbSet<CustomerContact> CustomerContacts { get; set; }
         public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
@@ -68,5 +67,6 @@ namespace Kunzad.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Vessel> Vessels { get; set; }
         public virtual DbSet<VesselVoyage> VesselVoyages { get; set; }
+        public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
     }
 }

@@ -47,6 +47,9 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult GetCustomer(int id)
         {
             Customer customer = db.Customers.Find(id);
+            customer.CustomerAddresses = db.CustomerAddresses
+                .Include(a => a.CityMunicipality.StateProvince).Where(a => a.CustomerId == customer.Id).ToArray();
+
             if (customer == null)
             {
                 return NotFound();
@@ -70,6 +73,7 @@ namespace Kunzad.ApiControllers
                 return BadRequest();
             }
 
+            customer.LastUpdatedDate = DateTime.Now;
             db.Entry(customer).State = EntityState.Modified;
 
             try
@@ -102,12 +106,7 @@ namespace Kunzad.ApiControllers
             }
             */
 
-            // Set navigation properties to null so it will not be inserted as new record //
-            customer.CustomerGroup = null;
-            customer.Industry = null;
-
             customer.CreatedDate = DateTime.Now;
-
             db.Customers.Add(customer);
             db.SaveChanges();
 

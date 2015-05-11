@@ -22,7 +22,6 @@
         <EntityTypeShape EntityType="KunzadDbModel.CourierTransaction" Width="1.5" PointX="8.25" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.CourierTransactionDetail" Width="1.5" PointX="13.5" PointY="15.875" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.Customer" Width="1.5" PointX="9" PointY="5.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="KunzadDbModel.CustomerAddress" Width="1.5" PointX="14.25" PointY="26" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.CustomerContact" Width="1.5" PointX="17.25" PointY="7.625" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.CustomerGroup" Width="1.5" PointX="6.75" PointY="4.875" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.Driver" Width="1.5" PointX="12" PointY="36.25" IsExpanded="true" />
@@ -48,7 +47,6 @@
         <EntityTypeShape EntityType="KunzadDbModel.Vessel" Width="1.5" PointX="3.75" PointY="32.375" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.VesselVoyage" Width="1.5" PointX="6" PointY="31.375" IsExpanded="true" />
         <AssociationConnector Association="KunzadDbModel.FK_Address_CityMunicipality" ManuallyRouted="false" />
-        <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_Address" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_Trucker_Address" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_AirFreight_AirLine" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_AirFreight_DestinationBusinessUnit" ManuallyRouted="false" />
@@ -74,7 +72,6 @@
         <AssociationConnector Association="KunzadDbModel.FK_CourierTransactionDetails_Shipment" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_Customer_CustomerGroup" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_Customer_Industry" ManuallyRouted="false" />
-        <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_Customer" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_CustomerContact_Customer" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_Shipment_Customer" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_TruckingDelivery_Customer" ManuallyRouted="false" />
@@ -99,7 +96,10 @@
         <AssociationConnector Association="KunzadDbModel.FK_VesselVoyage_Vessel" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_User_User_Created" />
         <AssociationConnector Association="KunzadDbModel.FK_User_User_Updated" />
-      </Diagram>
+        <EntityTypeShape EntityType="KunzadDbModel.CustomerAddress" Width="1.5" PointX="14.25" PointY="26.625" />
+        <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_CityMunicipality" />
+        <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_Customer" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

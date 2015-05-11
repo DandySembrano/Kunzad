@@ -31,10 +31,7 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     $scope.CustomerGroups = [];
     $scope.Industries = [];
     $scope.showForm = false;
-
-    $scope.country = $rootScope.country;
-    $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
-    
+   
     $scope.initDataItem = function () {
         $scope.dataItem = {
             "Id": null,
@@ -49,40 +46,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             "CustomerContacts": [],
             "Shipments": [],
             "TruckingDeliveries": []
-        }
-    }
-
-    $scope.initAddress = function () {
-        $scope.customerAddress = {
-            "Id": null,
-            "CustomerId": null,
-            "AddressId": null,
-            "IsBillingAddress" : true,
-            "IsDeliveryAddress" : true,
-            "IsPickupAddress": true,
-            "Address": null
-        }
-        $scope.address = {
-            "Id": null,
-            "Line1": null,
-            "Line2": null,
-            "Line3": null,
-            "CityMunicipalityId": null,
-            "PostalCode": null,
-            "CityMunicipality": {
-                "Id": null,
-                "Name": null,
-                "StateProvinceId": null,
-                "StateProvince": {
-                    "Id": null,
-                    "Name": null,
-                    "CountryId": null,
-                    "Country": {
-                        "Id": null,
-                        "Name": null
-                    }
-                }
-            }
         }
     }
 
@@ -114,9 +77,15 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     // Create/Insert New
     $scope.apiCreate = function () {
 
-        $http.post("/api/Customers", $scope.dataItem)
+        // Set navigation properties to null so it will not be inserted as new record //
+        var dataModel = angular.copy($scope.dataItem);
+        dataModel.CustomerAddresses = null;
+        dataModel.Contacts = null;
+        dataModel.CustomerGroup = null;
+        dataModel.Industry = null;
+
+        $http.post("/api/Customers", dataModel)
             .success(function (data, status) {
-                //$scope.dataItem = angular.copy(data);
                 $scope.dataItem.Id = angular.copy(data.Id);
                 $scope.data.push($scope.dataItem);
                 $scope.closeForm();
@@ -126,9 +95,28 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             })
     }
 
+    // Get/Retrieve
+    $scope.apiGet = function (id) {
+        $http.get("/api/Customers/" + id)
+            .success(function (data, status) {
+                $scope.dataItem = data;
+            })
+            .error(function (data, status) {
+                $scope.showFormError("Error: " + status);
+            })
+    }
+
     // Update
     $scope.apiUpdate = function (id) {
-        $http.put("/api/Customers/" + id, $scope.dataItem)
+
+        // Set navigation properties to null so it will not be inserted as new record //
+        var dataModel = angular.copy($scope.dataItem);
+        dataModel.CustomerAddresses = null;
+        dataModel.Contacts = null;
+        dataModel.CustomerGroup = null;
+        dataModel.Industry = null;
+
+        $http.put("/api/Customers/" + id, dataModel)
             .success(function (data, status) {
                 $scope.data[$scope.selected] = angular.copy($scope.dataItem);
                 $scope.closeForm();
@@ -165,18 +153,21 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
                 break;
             case "Edit":
                 $scope.dataItem = angular.copy($scope.data[$scope.selected]);
+                $scope.apiGet($scope.data[$scope.selected].Id);
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
                 break;
             case "Delete":
                 $scope.dataItem = angular.copy($scope.data[$scope.selected]);
+                $scope.apiGet($scope.data[$scope.selected].Id);
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.showForm = true;
                 break;
             case "View":
                 $scope.dataItem = angular.copy($scope.data[$scope.selected]);
+                $scope.apiGet($scope.data[$scope.selected].Id);
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.showForm = true;
@@ -195,7 +186,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     }
 
     $scope.closeForm = function () {
-        //jQuery.magnificPopup.close();
         $scope.isError = false;
         $scope.showForm = false;
     }
@@ -279,25 +269,140 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         $scope.selectedTab = tab;
     }
 
+
+    //---------------------------------------------------------------------------------//
+    // This section has codes for Customer Address Routines
+    // This can be copied with slight modification to other modules with address routine
+
+    $scope.country = $rootScope.country;
+    $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
+    $scope.customerAddressAction = null;
+    $scope.selectedCustomerAddressIndex = null;
+
+    $scope.initAddress = function () {
+        $scope.customerAddress = {
+            "Id": null,
+            "CustomerId": null,
+            "Line1": null,
+            "Line2": null,
+            "CityMunicipalityId": null,
+            "PostalCode": null,
+            "IsBillingAddress": true,
+            "IsDeliveryAddress": true,
+            "IsPickupAddress": true,
+            "CityMunicipality": {
+                "Id": null,
+                "Name": null,
+                "StateProvinceId": null,
+                "StateProvince": {
+                    "Id": null,
+                    "Name": null,
+                    "CountryId": null,
+                    "Country": {
+                        "Id": null,
+                        "Name": null
+                    }
+                }
+            }
+        }
+    }
+
+    // Create/Insert New Customer Address
+    $scope.apiCreateCustomerAddresses = function () {
+        var dataModel = angular.copy($scope.customerAddress);
+        dataModel.CityMunicipality = null;
+        dataModel.Customer = null;
+        $http.post("/api/CustomerAddresses", dataModel)
+            .success(function (data, status) {
+                $scope.customerAddress.Id = angular.copy(data.Id);
+                $scope.dataItem.CustomerAddresses.push($scope.customerAddress);
+                $scope.closeModalForm();
+            })
+            .error(function (data, status) {
+                $scope.showFormError("Error: " + status);
+            })
+    }
+    
+    // Update
+    $scope.apiUpdateCustomerAddresses = function () {
+        var dataModel = angular.copy($scope.customerAddress);
+        dataModel.CityMunicipality = null;
+        dataModel.Customer = null;
+        $http.put("/api/CustomerAddresses/" + dataModel.Id, dataModel)
+            .success(function (data, status) {
+                $scope.dataItem.CustomerAddresses[$scope.selectedCustomerAddressIndex] = angular.copy($scope.customerAddress);
+                $scope.closeModalForm();
+            })
+            .error(function (data, status) {
+                $scope.showFormError("Error: " + status);
+            })
+    }
+
+    // Delete
+    $scope.apiDeleteCustomerAddresses = function () {
+        $http.delete("/api/CustomerAddresses/" + $scope.customerAddress.Id)
+            .success(function (data, status) {
+                $scope.dataItem.CustomerAddresses.splice($scope.selectedCustomerAddressIndex, 1);
+                $scope.closeModalForm();
+            })
+            .error(function (data, status) {
+                $scope.showFormError("Error: " + status);
+            })
+    }
+
+    $scope.openCustomerAddressForm = function (action, i) {
+        $scope.customerAddressAction = action;
+        $scope.selectedCustomerAddressIndex = i;
+        switch ($scope.customerAddressAction) {
+            case "Create":
+                $scope.initAddress();
+                $scope.openModalForm('#modal-panel-address')
+                break;
+            case "Edit":
+                $scope.customerAddress = angular.copy($scope.dataItem.CustomerAddresses[i]);
+                $scope.openModalForm('#modal-panel-address')
+                break;
+            case "Delete":
+                $scope.customerAddress = $scope.dataItem.CustomerAddresses[i];
+                $scope.openModalForm('#modal-panel-address')
+                break;
+        }
+    }
+
+    $scope.saveCustomerAddress = function (action) {
+        switch (action) {
+            case "Create" :
+                $scope.customerAddress.CustomerId = $scope.dataItem.Id;
+                $scope.apiCreateCustomerAddresses();
+                break;
+            case "Edit":
+                $scope.apiUpdateCustomerAddresses();
+                break;
+            case "Delete":
+                $scope.apiDeleteCustomerAddresses();
+                break;
+        }
+    }
+
     $scope.onSelectCity = function ($item, $model, $label) {
-        $scope.address.CityMunicipality.StateProvince.Id = $item.StateProvinceId;
-        $scope.address.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
-        $scope.address.CityMunicipality.StateProvince.Country.Id = $scope.Country.Id;
-        $scope.address.CityMunicipality.StateProvince.Country.Name = $scope.Country.Name;
+        $scope.customerAddress.CityMunicipalityId = $item.Id;
+        $scope.customerAddress.CityMunicipality.Id = $item.Id;
+        $scope.customerAddress.CityMunicipality.Name = $item.Name;
+        $scope.customerAddress.CityMunicipality.StateProvince.Id = $item.StateProvinceId;
+        $scope.customerAddress.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+        $scope.customerAddress.CityMunicipality.StateProvince.Country.Id = $scope.Country.Id;
+        $scope.customerAddress.CityMunicipality.StateProvince.Country.Name = $scope.Country.Name;
     }
 
-    $scope.addCustomerAddress = function () {
-        $scope.customerAddress.Address = $scope.address;
-        $scope.dataItem.CustomerAddresses.push($scope.customerAddress);
-    }
 
+    //---------------------------------------------------------------------------------//
+    // Initialization routines
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
         getCustomerGroups();
         getIndustries();
     }
-
     init();
 
 });

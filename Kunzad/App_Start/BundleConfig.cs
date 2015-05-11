@@ -7,7 +7,7 @@ namespace Kunzad
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-
+            
             bundles.Add(new ScriptBundle("~/bundles/admin-ui").Include(
                         "~/assets/js/utility/utility.js",
                         "~/assets/js/main.js",

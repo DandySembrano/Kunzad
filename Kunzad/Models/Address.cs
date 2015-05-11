@@ -16,7 +16,6 @@ namespace Kunzad.Models
     {
         public Address()
         {
-            this.CustomerAddresses = new HashSet<CustomerAddress>();
             this.Truckers = new HashSet<Trucker>();
         }
     
@@ -32,7 +31,6 @@ namespace Kunzad.Models
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
         public virtual CityMunicipality CityMunicipality { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
         public virtual ICollection<Trucker> Truckers { get; set; }
     }
 }

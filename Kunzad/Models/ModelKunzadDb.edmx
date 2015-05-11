@@ -244,7 +244,10 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
-          <Property Name="AddressId" Type="int" Nullable="false" />
+          <Property Name="Line1" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Line2" Type="varchar" MaxLength="150" />
+          <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
+          <Property Name="PostalCode" Type="varchar" MaxLength="20" />
           <Property Name="IsBillingAddress" Type="bit" Nullable="false" />
           <Property Name="IsDeliveryAddress" Type="bit" Nullable="false" />
           <Property Name="IsPickupAddress" Type="bit" Nullable="false" />
@@ -845,15 +848,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_CustomerAddress_Address">
-          <End Role="Address" Type="Self.Address" Multiplicity="1" />
+        <Association Name="FK_CustomerAddress_CityMunicipality">
+          <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
           <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Address">
+            <Principal Role="CityMunicipality">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="CustomerAddress">
-              <PropertyRef Name="AddressId" />
+              <PropertyRef Name="CityMunicipalityId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1368,8 +1371,8 @@
             <End Role="Industry" EntitySet="Industry" />
             <End Role="Customer" EntitySet="Customer" />
           </AssociationSet>
-          <AssociationSet Name="FK_CustomerAddress_Address" Association="Self.FK_CustomerAddress_Address">
-            <End Role="Address" EntitySet="Address" />
+          <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="Self.FK_CustomerAddress_CityMunicipality">
+            <End Role="CityMunicipality" EntitySet="CityMunicipality" />
             <End Role="CustomerAddress" EntitySet="CustomerAddress" />
           </AssociationSet>
           <AssociationSet Name="FK_CustomerAddress_Customer" Association="Self.FK_CustomerAddress_Customer">
@@ -1524,7 +1527,6 @@
           <Property Name="CreatedByUserId" Type="Int32" />
           <Property Name="LastUpdatedByUserId" Type="Int32" />
           <NavigationProperty Name="CityMunicipality" Relationship="Self.FK_Address_CityMunicipality" FromRole="Address" ToRole="CityMunicipality" />
-          <NavigationProperty Name="CustomerAddresses" Relationship="Self.FK_CustomerAddress_Address" FromRole="Address" ToRole="CustomerAddress" />
           <NavigationProperty Name="Truckers" Relationship="Self.FK_Trucker_Address" FromRole="Address" ToRole="Trucker" />
         </EntityType>
         <EntityType Name="AirFreight">
@@ -1658,6 +1660,7 @@
           <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_CityMunicipality" FromRole="CityMunicipality" ToRole="Address" />
           <NavigationProperty Name="StateProvince" Relationship="Self.FK_CityTown_StateProvince" FromRole="CityMunicipality" ToRole="StateProvince" />
           <NavigationProperty Name="ServiceableAreas" Relationship="Self.FK_ServiceableArea_CityMunicipality" FromRole="CityMunicipality" ToRole="ServiceableArea" />
+          <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CityMunicipality" ToRole="CustomerAddress" />
         </EntityType>
         <EntityType Name="Contact">
           <Key>
@@ -1781,27 +1784,10 @@
           <Property Name="LastUpdatedByUserId" Type="Int32" />
           <NavigationProperty Name="CustomerGroup" Relationship="Self.FK_Customer_CustomerGroup" FromRole="Customer" ToRole="CustomerGroup" />
           <NavigationProperty Name="Industry" Relationship="Self.FK_Customer_Industry" FromRole="Customer" ToRole="Industry" />
-          <NavigationProperty Name="CustomerAddresses" Relationship="Self.FK_CustomerAddress_Customer" FromRole="Customer" ToRole="CustomerAddress" />
           <NavigationProperty Name="CustomerContacts" Relationship="Self.FK_CustomerContact_Customer" FromRole="Customer" ToRole="CustomerContact" />
           <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipment_Customer" FromRole="Customer" ToRole="Shipment" />
           <NavigationProperty Name="TruckingDeliveries" Relationship="Self.FK_TruckingDelivery_Customer" FromRole="Customer" ToRole="TruckingDelivery" />
-        </EntityType>
-        <EntityType Name="CustomerAddress">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerId" Type="Int32" Nullable="false" />
-          <Property Name="AddressId" Type="Int32" Nullable="false" />
-          <Property Name="IsBillingAddress" Type="Boolean" Nullable="false" />
-          <Property Name="IsDeliveryAddress" Type="Boolean" Nullable="false" />
-          <Property Name="IsPickupAddress" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedByUserId" Type="Int32" />
-          <Property Name="LastUpdatedByUserId" Type="Int32" />
-          <NavigationProperty Name="Address" Relationship="Self.FK_CustomerAddress_Address" FromRole="CustomerAddress" ToRole="Address" />
-          <NavigationProperty Name="Customer" Relationship="Self.FK_CustomerAddress_Customer" FromRole="CustomerAddress" ToRole="Customer" />
+          <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="Customer" ToRole="CustomerAddress" />
         </EntityType>
         <EntityType Name="CustomerContact">
           <Key>
@@ -2249,18 +2235,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_CustomerAddress_Address">
-          <End Role="Address" Type="Self.Address" Multiplicity="1" />
-          <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Address">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CustomerAddress">
-              <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Trucker_Address">
           <End Role="Address" Type="Self.Address" Multiplicity="1" />
           <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
@@ -2561,18 +2535,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_CustomerAddress_Customer">
-          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
-          <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Customer">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CustomerAddress">
-              <PropertyRef Name="CustomerId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_CustomerContact_Customer">
           <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
           <End Role="CustomerContact" Type="Self.CustomerContact" Multiplicity="*" />
@@ -2855,7 +2817,6 @@
           <EntitySet Name="CourierTransactions" EntityType="Self.CourierTransaction" />
           <EntitySet Name="CourierTransactionDetails" EntityType="Self.CourierTransactionDetail" />
           <EntitySet Name="Customers" EntityType="Self.Customer" />
-          <EntitySet Name="CustomerAddresses" EntityType="Self.CustomerAddress" />
           <EntitySet Name="CustomerContacts" EntityType="Self.CustomerContact" />
           <EntitySet Name="CustomerGroups" EntityType="Self.CustomerGroup" />
           <EntitySet Name="Drivers" EntityType="Self.Driver" />
@@ -2883,10 +2844,6 @@
           <AssociationSet Name="FK_Address_CityMunicipality" Association="Self.FK_Address_CityMunicipality">
             <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
             <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CustomerAddress_Address" Association="Self.FK_CustomerAddress_Address">
-            <End Role="Address" EntitySet="Addresses" />
-            <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
           </AssociationSet>
           <AssociationSet Name="FK_Trucker_Address" Association="Self.FK_Trucker_Address">
             <End Role="Address" EntitySet="Addresses" />
@@ -2988,10 +2945,6 @@
             <End Role="Industry" EntitySet="Industries" />
             <End Role="Customer" EntitySet="Customers" />
           </AssociationSet>
-          <AssociationSet Name="FK_CustomerAddress_Customer" Association="Self.FK_CustomerAddress_Customer">
-            <End Role="Customer" EntitySet="Customers" />
-            <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
-          </AssociationSet>
           <AssociationSet Name="FK_CustomerContact_Customer" Association="Self.FK_CustomerContact_Customer">
             <End Role="Customer" EntitySet="Customers" />
             <End Role="CustomerContact" EntitySet="CustomerContacts" />
@@ -3088,7 +3041,16 @@
             <End Role="User" EntitySet="Users" />
             <End Role="User1" EntitySet="Users" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="CustomerAddresses" EntityType="KunzadDbModel.CustomerAddress" />
+          <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="KunzadDbModel.FK_CustomerAddress_CityMunicipality">
+            <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+            <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerAddress_Customer" Association="KunzadDbModel.FK_CustomerAddress_Customer">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
+          </AssociationSet>
+          </EntityContainer>
         <Association Name="FK_User_User_Created">
           <End Type="KunzadDbModel.User" Role="User" Multiplicity="1" />
           <End Type="KunzadDbModel.User" Role="User1" Multiplicity="*" />
@@ -3113,7 +3075,51 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="CustomerAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsBillingAddress" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeliveryAddress" Type="Boolean" Nullable="false" />
+          <Property Name="IsPickupAddress" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedByUserId" Type="Int32" />
+          <Property Name="LastUpdatedByUserId" Type="Int32" />
+          <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CustomerAddress" ToRole="CityMunicipality" />
+          <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="CustomerAddress" ToRole="Customer" />
+        </EntityType>
+        <Association Name="FK_CustomerAddress_CityMunicipality">
+          <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+          <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CityMunicipality">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerAddress">
+              <PropertyRef Name="CityMunicipalityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerAddress_Customer">
+          <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerAddress">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -3362,22 +3368,6 @@
                 <ScalarProperty Name="CustomerGroupId" ColumnName="CustomerGroupId" />
                 <ScalarProperty Name="TIN" ColumnName="TIN" />
                 <ScalarProperty Name="IndustryId" ColumnName="IndustryId" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
-                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
-                <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CustomerAddresses">
-            <EntityTypeMapping TypeName="KunzadDbModel.CustomerAddress">
-              <MappingFragment StoreEntitySet="CustomerAddress">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
-                <ScalarProperty Name="IsBillingAddress" ColumnName="IsBillingAddress" />
-                <ScalarProperty Name="IsDeliveryAddress" ColumnName="IsDeliveryAddress" />
-                <ScalarProperty Name="IsPickupAddress" ColumnName="IsPickupAddress" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
@@ -3782,6 +3772,25 @@
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
                 <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerAddresses">
+            <EntityTypeMapping TypeName="KunzadDbModel.CustomerAddress">
+              <MappingFragment StoreEntitySet="CustomerAddress">
+                <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsPickupAddress" ColumnName="IsPickupAddress" />
+                <ScalarProperty Name="IsDeliveryAddress" ColumnName="IsDeliveryAddress" />
+                <ScalarProperty Name="IsBillingAddress" ColumnName="IsBillingAddress" />
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+                <ScalarProperty Name="Line2" ColumnName="Line2" />
+                <ScalarProperty Name="Line1" ColumnName="Line1" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

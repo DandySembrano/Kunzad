@@ -18,6 +18,7 @@ namespace Kunzad.Models
         {
             this.Addresses = new HashSet<Address>();
             this.ServiceableAreas = new HashSet<ServiceableArea>();
+            this.CustomerAddresses = new HashSet<CustomerAddress>();
         }
     
         public int Id { get; set; }
@@ -31,5 +32,6 @@ namespace Kunzad.Models
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual StateProvince StateProvince { get; set; }
         public virtual ICollection<ServiceableArea> ServiceableAreas { get; set; }
+        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
     }
 }
