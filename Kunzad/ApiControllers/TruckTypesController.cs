@@ -12,66 +12,65 @@ using Kunzad.Models;
 
 namespace Kunzad.ApiControllers
 {
-    public class IndustriesController : ApiController
+    public class TruckTypesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
-
-        // GET: api/Industries
-        public IQueryable<Industry> GetIndustries()
+        // GET: api/TruckTypes
+        public IQueryable<TruckType> GetTruckTypes()
         {
-            return db.Industries;
+            return db.TruckTypes;
         }
-
-        // GET: api/Industries?page=1
-        public IQueryable<Industry> GetIndustries(int page)
+        // GET: api/TruckTypes?page=1
+        public IQueryable<TruckType> GetTruckTypes(int page)
         {
             if (page > 1)
             {
-                return db.Industries.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.TruckTypes.OrderBy(c => c.Type).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
-                return db.Industries.OrderBy(c => c.Name).Take(pageSize);
+                return db.TruckTypes.OrderBy(c => c.Type).Take(pageSize);
             }
         }
-        // GET: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult GetIndustry(int id)
+
+        // GET: api/TruckTypes/5
+        [ResponseType(typeof(TruckType))]
+        public IHttpActionResult GetTruckType(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            TruckType truckType = db.TruckTypes.Find(id);
+            if (truckType == null)
             {
                 return NotFound();
             }
 
-            return Ok(industry);
+            return Ok(truckType);
         }
 
-        // PUT: api/Industries/5
+        // PUT: api/TruckTypes/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutIndustry(int id, Industry industry)
+        public IHttpActionResult PutTruckType(int id, TruckType truckType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != industry.Id)
+            if (id != truckType.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(industry).State = EntityState.Modified;
+            db.Entry(truckType).State = EntityState.Modified;
 
             try
             {
-                industry.LastUpdatedDate = DateTime.Now;
+                truckType.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IndustryExists(id))
+                if (!TruckTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -84,35 +83,36 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Industries
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult PostIndustry(Industry industry)
+        // POST: api/TruckTypes
+        [ResponseType(typeof(TruckType))]
+        public IHttpActionResult PostTruckType(TruckType truckType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            industry.CreatedDate = DateTime.Now;
-            db.Industries.Add(industry);
+
+            truckType.CreatedDate = DateTime.Now;
+            db.TruckTypes.Add(truckType);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = industry.Id }, industry);
+            return CreatedAtRoute("DefaultApi", new { id = truckType.Id }, truckType);
         }
 
-        // DELETE: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult DeleteIndustry(int id)
+        // DELETE: api/TruckTypes/5
+        [ResponseType(typeof(TruckType))]
+        public IHttpActionResult DeleteTruckType(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            TruckType truckType = db.TruckTypes.Find(id);
+            if (truckType == null)
             {
                 return NotFound();
             }
 
-            db.Industries.Remove(industry);
+            db.TruckTypes.Remove(truckType);
             db.SaveChanges();
 
-            return Ok(industry);
+            return Ok(truckType);
         }
 
         protected override void Dispose(bool disposing)
@@ -124,9 +124,9 @@ namespace Kunzad.ApiControllers
             base.Dispose(disposing);
         }
 
-        private bool IndustryExists(int id)
+        private bool TruckTypeExists(int id)
         {
-            return db.Industries.Count(e => e.Id == id) > 0;
+            return db.TruckTypes.Count(e => e.Id == id) > 0;
         }
     }
 }

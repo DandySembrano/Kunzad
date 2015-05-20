@@ -1,0 +1,102 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout1.cshtml";
+}
+<!-- Courier List/DataTable -->
+@section tableContent{
+    <table class="table table-hover">
+        <thead class="text-dark">
+            <tr>
+                <th class="col-md-3 small"><strong>Name</strong></th>
+                <th class="col-md-2 small"><strong>TIN</strong></th>
+                <th class="col-md-5 small"><strong>Address</strong></th>
+                <th class="col-md-2 small"><strong>Postal Code</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="c in data" ng-click="setSelected($index)"
+                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
+                <td class="small">{{c.Name}}</td>
+                <td class="small">{{c.TIN}}</td>
+                <td class="small">{{c.Line1 + ", " + c.Line2 + ", " + c.CityMunicipality.Name}}</td>
+                <td class="small">{{c.PostalCode}}</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+<!-- This is the template use for City/Municpality Typeahead -->
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+        <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
+    </a>
+</script>
+
+@section formContent{
+    <form class="form-horizontal" role="form">
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-md-3 control-label small">Name</label>
+            <div class="col-md-8">
+                <input type="text" id="name" class="form-control small" placeholder=""
+                       ng-model="dataItem.Name" ng-disabled="viewOnly">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-md-3 control-label small">TIN</label>
+            <div class="col-md-8">
+                <input type="text" id="name" class="form-control small" placeholder=""
+                       ng-model="dataItem.TIN" ng-disabled="viewOnly">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Street Address</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder="Street address line 1"
+                       ng-model="dataItem.Line1" ng-disabled="viewOnly">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small"></label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder="Street address line 2"
+                       ng-model="dataItem.Line2" ng-disabled="viewOnly">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">City/Municipality</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder="" ng-disabled="viewOnly"
+                       ng-model="dataItem.CityMunicipality.Name" typeahead-editable="false"
+                       typeahead-on-select="onSelectCity($item, $model, $label)"
+                       typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
+                       typeahead-template-url="customTemplate.html">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Province/State</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder=""
+                       ng-model="dataItem.CityMunicipality.StateProvince.Name" ng-disabled="true">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Postal Code</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder=""
+                       ng-model="dataItem.PostalCode" ng-disabled="viewOnly">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Country</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" placeholder=""
+                       ng-model="country.Name" ng-disabled="true">
+            </div>
+        </div>
+    </form>
+}

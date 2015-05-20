@@ -12,66 +12,66 @@ using Kunzad.Models;
 
 namespace Kunzad.ApiControllers
 {
-    public class IndustriesController : ApiController
+    public class DriversController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
 
-        // GET: api/Industries
-        public IQueryable<Industry> GetIndustries()
+        // GET: api/Drivers
+        public IQueryable<Driver> GetDrivers()
         {
-            return db.Industries;
+            return db.Drivers;
         }
 
-        // GET: api/Industries?page=1
-        public IQueryable<Industry> GetIndustries(int page)
+        // GET: api/Drivers?page=1
+        public IQueryable<Driver> GetDrivers(int page)
         {
             if (page > 1)
             {
-                return db.Industries.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.Drivers.OrderBy(c => c.FirstName).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
-                return db.Industries.OrderBy(c => c.Name).Take(pageSize);
+                return db.Drivers.OrderBy(c => c.FirstName).Take(pageSize);
             }
         }
-        // GET: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult GetIndustry(int id)
+
+        // GET: api/Drivers/5
+        [ResponseType(typeof(Driver))]
+        public IHttpActionResult GetDriver(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            Driver driver = db.Drivers.Find(id);
+            if (driver == null)
             {
                 return NotFound();
             }
 
-            return Ok(industry);
+            return Ok(driver);
         }
 
-        // PUT: api/Industries/5
+        // PUT: api/Drivers/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutIndustry(int id, Industry industry)
+        public IHttpActionResult PutDriver(int id, Driver driver)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != industry.Id)
+            if (id != driver.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(industry).State = EntityState.Modified;
+            db.Entry(driver).State = EntityState.Modified;
 
             try
             {
-                industry.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IndustryExists(id))
+                if (!DriverExists(id))
                 {
                     return NotFound();
                 }
@@ -84,35 +84,35 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Industries
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult PostIndustry(Industry industry)
+        // POST: api/Drivers
+        [ResponseType(typeof(Driver))]
+        public IHttpActionResult PostDriver(Driver driver)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            industry.CreatedDate = DateTime.Now;
-            db.Industries.Add(industry);
+
+            db.Drivers.Add(driver);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = industry.Id }, industry);
+            return CreatedAtRoute("DefaultApi", new { id = driver.Id }, driver);
         }
 
-        // DELETE: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult DeleteIndustry(int id)
+        // DELETE: api/Drivers/5
+        [ResponseType(typeof(Driver))]
+        public IHttpActionResult DeleteDriver(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            Driver driver = db.Drivers.Find(id);
+            if (driver == null)
             {
                 return NotFound();
             }
 
-            db.Industries.Remove(industry);
+            db.Drivers.Remove(driver);
             db.SaveChanges();
 
-            return Ok(industry);
+            return Ok(driver);
         }
 
         protected override void Dispose(bool disposing)
@@ -124,9 +124,9 @@ namespace Kunzad.ApiControllers
             base.Dispose(disposing);
         }
 
-        private bool IndustryExists(int id)
+        private bool DriverExists(int id)
         {
-            return db.Industries.Count(e => e.Id == id) > 0;
+            return db.Drivers.Count(e => e.Id == id) > 0;
         }
     }
 }

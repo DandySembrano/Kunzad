@@ -12,66 +12,67 @@ using Kunzad.Models;
 
 namespace Kunzad.ApiControllers
 {
-    public class IndustriesController : ApiController
+    public class AirLinesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
 
-        // GET: api/Industries
-        public IQueryable<Industry> GetIndustries()
+        // GET: api/AirLines
+        public IQueryable<AirLine> GetAirLines()
         {
-            return db.Industries;
+            return db.AirLines;
         }
 
-        // GET: api/Industries?page=1
-        public IQueryable<Industry> GetIndustries(int page)
+        // GET: api/AirLines?page=1
+        public IQueryable<AirLine> GetAirLines(int page)
         {
             if (page > 1)
             {
-                return db.Industries.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.AirLines.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
-                return db.Industries.OrderBy(c => c.Name).Take(pageSize);
+                return db.AirLines.OrderBy(c => c.Name).Take(pageSize);
             }
         }
-        // GET: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult GetIndustry(int id)
+
+        // GET: api/AirLines/5
+        [ResponseType(typeof(AirLine))]
+        public IHttpActionResult GetAirLine(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            AirLine airLine = db.AirLines.Find(id);
+            if (airLine == null)
             {
                 return NotFound();
             }
 
-            return Ok(industry);
+            return Ok(airLine);
         }
 
-        // PUT: api/Industries/5
+        // PUT: api/AirLines/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutIndustry(int id, Industry industry)
+        public IHttpActionResult PutAirLine(int id, AirLine airLine)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != industry.Id)
+            if (id != airLine.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(industry).State = EntityState.Modified;
+            db.Entry(airLine).State = EntityState.Modified;
 
             try
             {
-                industry.LastUpdatedDate = DateTime.Now;
+                airLine.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IndustryExists(id))
+                if (!AirLineExists(id))
                 {
                     return NotFound();
                 }
@@ -84,35 +85,35 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Industries
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult PostIndustry(Industry industry)
+        // POST: api/AirLines
+        [ResponseType(typeof(AirLine))]
+        public IHttpActionResult PostAirLine(AirLine airLine)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            industry.CreatedDate = DateTime.Now;
-            db.Industries.Add(industry);
+            airLine.CreatedDate =  DateTime.Now;
+            db.AirLines.Add(airLine);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = industry.Id }, industry);
+            return CreatedAtRoute("DefaultApi", new { id = airLine.Id }, airLine);
         }
 
-        // DELETE: api/Industries/5
-        [ResponseType(typeof(Industry))]
-        public IHttpActionResult DeleteIndustry(int id)
+        // DELETE: api/AirLines/5
+        [ResponseType(typeof(AirLine))]
+        public IHttpActionResult DeleteAirLine(int id)
         {
-            Industry industry = db.Industries.Find(id);
-            if (industry == null)
+            AirLine airLine = db.AirLines.Find(id);
+            if (airLine == null)
             {
                 return NotFound();
             }
 
-            db.Industries.Remove(industry);
+            db.AirLines.Remove(airLine);
             db.SaveChanges();
 
-            return Ok(industry);
+            return Ok(airLine);
         }
 
         protected override void Dispose(bool disposing)
@@ -124,9 +125,9 @@ namespace Kunzad.ApiControllers
             base.Dispose(disposing);
         }
 
-        private bool IndustryExists(int id)
+        private bool AirLineExists(int id)
         {
-            return db.Industries.Count(e => e.Id == id) > 0;
+            return db.AirLines.Count(e => e.Id == id) > 0;
         }
     }
 }

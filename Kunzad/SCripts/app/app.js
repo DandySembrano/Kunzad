@@ -20,6 +20,56 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 controller: 'CustomerGroupController'
             })
 
+            .when('/airlines', {
+                templateUrl: '/References/Airlines',
+                controller: 'AirlineController'
+            })
+
+            .when('/courier', {
+                templateUrl: '/References/Courier',
+                controller: 'CourierController'
+            })
+
+            .when('/truckers', {
+                templateUrl: '/References/Truckers',
+                controller: 'TruckerController'
+            })
+
+            .when('/trucktype', {
+                templateUrl: '/References/TruckType',
+                controller: 'TruckTypeController'
+            })
+
+            .when('/industry', {
+                templateUrl: '/References/Industry',
+                controller: 'IndustryController'
+            })
+
+            .when('/businessunittype', {
+                templateUrl: '/References/BusinessUnitType',
+                controller: 'BusinessUnitTypeController'
+            })
+
+            .when('/shipmenttype', {
+                templateUrl: '/References/ShipmentType',
+                controller: 'ShipmentTypeController'
+            })
+    
+            .when('/servicecategory', {
+                templateUrl: '/References/ServiceCategory',
+                controller: 'ServiceCategoryController'
+            })
+
+            .when('/contactnotype', {
+                templateUrl: '/References/ContactnoType',
+                controller: 'ContactnoTypeController'
+            })
+
+            .when('/driver', {
+                templateUrl: '/References/Driver',
+                controller: 'DriverController'
+            })
+
             .otherwise({
                 redirectTo: '/home'
             });

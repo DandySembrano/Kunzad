@@ -29,6 +29,43 @@ namespace Kunzad.Controllers
             return View();
         }
 
+        public ActionResult Truckers()
+        {
+            return View();
+        }
 
+        public ActionResult TruckType()
+        {
+            return View();
+        }
+        public ActionResult Courier()
+        {
+            return View();
+        }
+        public ActionResult Industry()
+        {
+            return View();
+        }
+        public ActionResult BusinessUnitType()
+        {
+            return View();
+        }
+        public ActionResult ShipmentType()
+        {
+            return View();
+        }
+        public ActionResult ServiceCategory()
+        {
+            return View();
+        }
+        public ActionResult ContactnoType()
+        {
+            return View();
+        }
+        public ActionResult Driver()
+        {
+            return View();
+        }
+        
     }
 }

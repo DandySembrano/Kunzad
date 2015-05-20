@@ -22,12 +22,16 @@ namespace Kunzad.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string TIN { get; set; }
-        public int AddressId { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
+        public string Line1 { get; set; }
+        public string Line2 { get; set; }
+        public int CityMunicipalityId { get; set; }
+        public string PostalCode { get; set; }
     
         public virtual ICollection<CourierTransaction> CourierTransactions { get; set; }
+        public virtual CityMunicipality CityMunicipality { get; set; }
     }
 }

@@ -7,12 +7,15 @@ namespace Kunzad
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            
             bundles.Add(new ScriptBundle("~/bundles/admin-ui").Include(
                         "~/assets/js/utility/utility.js",
                         "~/assets/js/main.js",
                         "~/assets/js/demo.js",
-                        "~/vendor/plugins/magnific/jquery.magnific-popup.js"
+                        "~/vendor/plugins/magnific/jquery.magnific-popup.js",
+                        //for datetime picker---------------------------------------------
+                        "~/vendor/plugins/moment/moment.js",
+                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"
+                        //----------------------------------------------------------------
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
@@ -31,7 +34,17 @@ namespace Kunzad
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                         "~/Scripts/app/app.js",
                         "~/Scripts/app/customer-ctrl.js",
-                        "~/Scripts/app/customergroup-ctrl.js"
+                        "~/Scripts/app/customergroup-ctrl.js",
+                        "~/Scripts/app/airline-ctrl.js",
+                        "~/Scripts/app/trucker-ctrl.js",
+                        "~/Scripts/app/trucktype-ctrl.js",
+                        "~/Scripts/app/courier-ctrl.js",
+                        "~/Scripts/app/industry-ctrl.js",
+                        "~/Scripts/app/businessunittype-ctrl.js",
+                        "~/Scripts/app/shipmenttype-ctrl.js",
+                        "~/Scripts/app/servicecategory-ctrl.js",
+                        "~/Scripts/app/contactnotype-ctrl.js",
+                        "~/Scripts/app/driver-ctrl.js"
                         ));
         }
     }

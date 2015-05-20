@@ -91,9 +91,9 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Trucker", "glyphicons glyphicons-truck", "#"));
+            m.MenuItems.Add(new MenuItem("Airlines", "glyphicons glyphicons-airplane", "#/airlines"));
+            m.MenuItems.Add(new MenuItem("Trucker", "glyphicons glyphicons-truck", "#/truckers"));
             m.MenuItems.Add(new MenuItem("Shipping Lines", "glyphicons glyphicons-boat", "#"));
-            m.MenuItems.Add(new MenuItem("Airlines", "glyphicons glyphicons-airplane", "#"));
             menuGroup.MenuGroupItems.Add(m);
 
             MenuGroups.Add(menuGroup);
@@ -110,7 +110,14 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Business Unit Type", "glyphicons glyphicons-file", "#"));
+            m.MenuItems.Add(new MenuItem("Business Unit Type", "glyphicons glyphicons-file", "#/businessunittype"));
+            m.MenuItems.Add(new MenuItem("Contact Number Type", "glyphicons glyphicons-file", "#/contactnotype"));
+            m.MenuItems.Add(new MenuItem("Courier", "glyphicons glyphicons-file", "#/courier"));
+            m.MenuItems.Add(new MenuItem("Driver", "glyphicons glyphicons-file", "#/driver"));
+            m.MenuItems.Add(new MenuItem("Industry", "glyphicons glyphicons-file", "#/industry"));
+            m.MenuItems.Add(new MenuItem("Service Category", "glyphicons glyphicons-file", "#/servicecategory"));
+            m.MenuItems.Add(new MenuItem("Shipment Type", "glyphicons glyphicons-file", "#/shipmenttype"));
+            m.MenuItems.Add(new MenuItem("Truck Type", "glyphicons glyphicons-file", "#/trucktype"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Security

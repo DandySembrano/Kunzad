@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout1.cshtml";
+}
+<!-- Contact No Type List/DataTable -->
+@section tableContent{
+    <table class="table table-hover">
+        <thead class="text-dark">
+            <tr>
+                <th class="col-md-4 small"><strong>Name</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="ct in data" ng-click="setSelected($index)"
+                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
+                <td class="small">{{ct.Type}}</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@section formContent{
+    <form class="form-horizontal" role="form">
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-md-3 control-label small">Type</label>
+            <div class="col-md-8">
+                <input type="text" id="name" class="form-control small" placeholder=""
+                       ng-model="dataItem.Type" ng-disabled="viewOnly">
+            </div>
+        </div>
+    </form>
+}

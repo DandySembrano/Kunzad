@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[CityMunicipality]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] VARCHAR(150) NOT NULL, 
     [StateProvinceId] INT NOT NULL, 
 	[CreatedDate] DATETIME NULL, 
