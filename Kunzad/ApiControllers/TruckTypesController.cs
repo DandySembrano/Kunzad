@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
         // GET: api/TruckTypes
         public IQueryable<TruckType> GetTruckTypes()
         {
@@ -48,17 +49,20 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/TruckTypes/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(TruckType))]
         public IHttpActionResult PutTruckType(int id, TruckType truckType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != truckType.Id)
             {
-                return BadRequest();
+                response.message = "Truck Type doesn't exist.";
+                return Ok(response);
             }
 
             db.Entry(truckType).State = EntityState.Modified;
@@ -67,52 +71,69 @@ namespace Kunzad.ApiControllers
             {
                 truckType.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = truckType;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!TruckTypeExists(id))
                 {
-                    return NotFound();
+                    response.message = "Truck Type doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/TruckTypes
         [ResponseType(typeof(TruckType))]
         public IHttpActionResult PostTruckType(TruckType truckType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            truckType.CreatedDate = DateTime.Now;
-            db.TruckTypes.Add(truckType);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = truckType.Id }, truckType);
+            try
+            {
+                truckType.CreatedDate = DateTime.Now;
+                db.TruckTypes.Add(truckType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = truckType;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/TruckTypes/5
         [ResponseType(typeof(TruckType))]
         public IHttpActionResult DeleteTruckType(int id)
         {
+            response.status = "FAILURE";
             TruckType truckType = db.TruckTypes.Find(id);
             if (truckType == null)
             {
-                return NotFound();
+                response.message = "Truck Type doesn't exist.";
+                return Ok(response);
             }
-
-            db.TruckTypes.Remove(truckType);
-            db.SaveChanges();
-
-            return Ok(truckType);
+            try {
+                db.TruckTypes.Remove(truckType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

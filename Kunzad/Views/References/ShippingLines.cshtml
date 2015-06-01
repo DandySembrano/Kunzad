@@ -1,0 +1,592 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout3.cshtml";
+}
+
+<!-- Shipping Line List/DataTable -->
+@section tableContent{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark">
+                        <div class="myTableCell cell-seqno small text-center">
+                            <strong>No.</strong>
+                        </div>
+                        <div class="myTableCell cell-10 small" ng-click="processSLOrderBy('Name')">
+                            <strong>Name</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="orderBySLNameDesc"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="orderBySLNameAsc"></span>
+                        </div>
+                    </div>
+                    <!--Detail-->
+                    <div class="myTableRow"
+                         ng-repeat="s in shippingLineList | orderBy:slCriteria"
+                         ng-click="setSelected($index, s.Id)"
+                         context-menu="setSelected($index, s.Id)"
+                         data-target="DataTableMenu">
+                        <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
+                        <div class="myTableCell cell-10 small">{{s.Name}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- Shipping Line/General Form -->
+@section tab1Content{
+    <div class="row" ng-show="selectedTab === tabPages[0]">
+        <div class="alert alert-danger alert-sm" ng-show="isError">
+            <i class="fa fa-remove pr10"></i>
+            <strong>ERROR!</strong>    {{errorMessage}}
+        </div>
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shippingLineItem.Name"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}"
+                               ng-change="initializeTabName()">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<!-- Vessel Form-->
+@section tab2Content{
+<div class="row" ng-show="selectedTab === tabPages[1] ">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="padding-right-30">
+                <button class="btn btn-sm pull-right" ng-click="openVesselForm('Create')">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </div>
+            <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                {{shippingLineItem.Name}}
+            </div>
+        </div><br />
+        <div class="myTableContainter">
+            <div class="myTableContent">
+                <!--Header-->
+                <div class="myTableRow-header text-dark" ng-show="vesselList.length > 0">
+                    <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                    <div class="myTableCell cell-8 small" ng-click="processVesselOrderBy('Name')">
+                        <strong>Name</strong>
+                        <span class="glyphicon glyphicon-chevron-down"
+                              ng-show="orderByVesselNameDesc"></span>
+                        <span class="glyphicon glyphicon-chevron-up"
+                              ng-show="orderByVesselNameAsc"></span>
+                    </div>
+                    <div class="myTableCell cell-2 text-right small"><strong>Show/Edit/Delete</strong></div>
+                </div>
+                <!--Vessel List-->
+                <div class="myTableRow"
+                     ng-repeat="item in paginatedVessels | orderBy:vesselCriteria">
+                    <div class="myTableCell cell-seqno small text-center">{{vesselCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((vesselCurrentPage - 1) * vesselPageSize))}}</div>
+                    <div class="myTableCell cell-8 small">{{item.Name}}</div>
+                    <div class="myTableCell cell-2 small text-right">
+                        <button class="btn btn-xs btn-success light" type="button"
+                                title="Add/Edit Voyage"
+                                ng-click="openVesselForm('showVoyage', item.Id, item.Name)">
+                            <span class="glyphicon glyphicon-eye-open "></span>
+                        </button>
+                        <button title="Edit Vessel" class="btn btn-xs btn-primary light" type="button" ng-click="openVesselForm('Edit', item.Id)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button title="Delete Vessel" class="btn btn-xs btn-danger light" type="button" ng-click="openVesselForm('Delete', item.Id)">
+                            <span class="glyphicons glyphicons-bin"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div><br />
+        <!--Pagination Buttons-->
+        <div class="myTableContainter" ng-show="paginatedVessels.length > 0">
+            <div class="myTableContent">
+                <div class="myTableRow-no-border text-right">
+                    <div class="btn-group btn-group-sm">
+                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <button class="btn btn-primary btn-sm"
+                                    type="button"
+                                    ng-click="processVesselPagination(vesselCurrentPage = 1, '')"
+                                    ng-disabled="!firstPageVessels">
+                                First
+                            </button>
+                        </div>
+                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <button class="btn btn-primary btn-sm"
+                                    type="button"
+                                    ng-click="processVesselPagination(vesselCurrentPage = (vesselCurrentPage - 1), '')"
+                                    ng-disabled="!previousPageVessels">
+                                Previous
+                            </button>
+                        </div>
+                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <button class="btn btn-default btn-sm"
+                                    type="button"
+                                    ng-disabled="true">
+                                {{ vesselCurrentPage }}
+                            </button>
+                        </div>
+                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <button class="btn btn-primary btn-sm"
+                                    type="button"
+                                    ng-click="processVesselPagination(vesselCurrentPage = (vesselCurrentPage + 1), '')"
+                                    ng-disabled="!nextPageVessels">
+                                Next
+                            </button>
+                        </div>
+                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <button class="btn btn-primary btn-sm"
+                                    type="button"
+                                    ng-click="processVesselPagination(vesselCurrentPage = vesselMaxPage, '')"
+                                    ng-disabled="!lastPageVessels">
+                                Last
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Voyage Form-->
+@section tab3Content{
+    <div class="row" ng-show="selectedTab === tabPages[2]">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="padding-right-30">
+                    <button class="btn btn-sm pull-right" ng-click="openVoyageForm('Create')">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                    {{vesselNameHolder}}
+                </div>
+            </div><br />
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark" ng-show="showVoyageHeader">
+                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                        <div class="myTableCell cell-2 small" ng-click="processVoyageOrderBy('VoyageNo')">
+                            <strong>Voyage No</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'VoyageNo' || voyageCriteria === '-VoyageNo' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'VoyageNo' || voyageCriteria === '-VoyageNo' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-4 small" ng-click="processVoyageOrderBy('BusinessUnitNameOrigin')">
+                            <strong>Business Unit-Origin</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'BusinessUnitNameOrigin[0].Name' || voyageCriteria === '-BusinessUnitNameOrigin[0].Name' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'BusinessUnitNameOrigin[0].Name' || voyageCriteria === '-BusinessUnitNameOrigin[0].Name' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-4 small" ng-click="processVoyageOrderBy('BusinessUnitNameDestination')">
+                            <strong>Business Unit-Destination</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'BusinessUnitNameDestination[0].Name' || voyageCriteria === '-BusinessUnitNameDestination[0].Name' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'BusinessUnitNameDestination[0].Name' || voyageCriteria === '-BusinessUnitNameDestination[0].Name' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-3 small" ng-click="processVoyageOrderBy('EstimatedDepartureDate')">
+                            <strong>Estimated Departure</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'EstimatedDepartureDate || EstimatedDepartureTime' || voyageCriteria === '-EstimatedDepartureDate || -EstimatedDepartureTime' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'EstimatedDepartureDate || EstimatedDepartureTime' || voyageCriteria === '-EstimatedDepartureDate || -EstimatedDepartureTime' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-3 small" ng-click="processVoyageOrderBy('EstimatedArrivalDate')">
+                            <strong>Estimated Arrival</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'EstimatedArrivalDate || EstimatedArrivalTime' || voyageCriteria === '-EstimatedArrivalDate || -EstimatedArrivalTime' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'EstimatedArrivalDate || EstimatedArrivalTime' || voyageCriteria === '-EstimatedArrivalDate || -EstimatedArrivalTime' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-3 small" ng-click="processVoyageOrderBy('DepartureDate')">
+                            <strong>Departure</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'DepartureDate || DepartureTime' || voyageCriteria === '-DepartureDate || -DepartureTime' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'DepartureDate || DepartureTime' || voyageCriteria === '-DepartureDate || -DepartureTime' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-3 small" ng-click="processVoyageOrderBy('ArrivalDate')">
+                            <strong>Arrival</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="voyageCriteria === 'ArrivalDate || ArrivalTime' || voyageCriteria === '-ArrivalDate || -ArrivalTime' ? voyageOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="voyageCriteria === 'ArrivalDate || ArrivalTime' || voyageCriteria === '-ArrivalDate || -ArrivalTime' ? voyageOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-3 text-center small">
+                            <strong>Action</strong>
+                        </div>
+                    </div>
+                    <!--Details-->
+                    @*<input type="hidden" ng-model="vesselIdHolder">*@
+                    <div class="myTableRow"
+                         ng-repeat="item in paginatedVoyage | orderBy:voyageCriteria">@*| filter: {VesselId:vesselIdHolder}:true*@
+                        <div class="myTableCell cell-seqno small text-center">{{voyageCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((voyageCurrentPage - 1) * voyagePageSize))}}</div>
+                        <div class="myTableCell cell-2 small">
+                            {{item.VoyageNo}}
+                        </div>
+                        <div class="myTableCell cell-3 small">
+                            {{item.BusinessUnitNameOrigin.length ==  0 ? "" : item.BusinessUnitNameOrigin[0].Name}}
+                        </div>
+                        <div class="myTableCell cell-3 small">
+                            {{item.BusinessUnitNameDestination.length ==  0 ? "" : item.BusinessUnitNameDestination[0].Name}}
+                        </div>
+                        <div class="myTableCell cell-4 small">
+                            {{item.EstimatedDepartureDate + " " +  item.EstimatedDepartureTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                        </div>
+                        <div class="myTableCell cell-4 small">
+                            {{item.EstimatedArrivalDate + " " + item.EstimatedArrivalTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                        </div>
+                        <div class="myTableCell cell-3 small">
+                            {{item.DepartureDate + " " + item.DepartureTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                        </div>
+                        <div class="myTableCell cell-3 small">
+                            {{item.ArrivalDate  + " " + item.ArrivalTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                        </div>
+                        <div class="myTableCell cell-3 small text-center">
+                            <button title="Edit Voyage" class="btn btn-xs btn-primary light" type="button" ng-click="openVoyageForm('Edit', item.Id)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button title="Edit Voyage" class="btn btn-xs btn-danger light" type="button" ng-click="openVoyageForm('Delete', item.Id)">
+                                <span class="glyphicons glyphicons-bin"></span>
+                            </button>
+                        </div>
+                    </div><br />
+                    <!--Pagination Buttons-->
+                    <div class="myTableContainter" ng-show="paginatedVoyages.length > 0">
+                        <div class="myTableContent">
+                            <div class="myTableRow-no-border text-right">
+                                <div class="btn-group btn-group-sm">
+                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                ng-click="processVoyagePagination(voyageCurrentPage = 1, '')"
+                                                ng-disabled="!firstPageVoyages">
+                                            First
+                                        </button>
+                                    </div>
+                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage - 1), '')"
+                                                ng-disabled="!previousPageVoyages">
+                                            Previous
+                                        </button>
+                                    </div>
+                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                        <button class="btn btn-default btn-sm"
+                                                type="button"
+                                                ng-disabled="true">
+                                            {{ voyageCurrentPage }}
+                                        </button>
+                                    </div>
+                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage + 1), '')"
+                                                ng-disabled="!nextPageVoyages">
+                                            Next
+                                        </button>
+                                    </div>
+                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                ng-click="processVoyagePagination(voyageCurrentPage = voyageMaxPage, '')"
+                                                ng-disabled="!lastPageVoyages">
+                                            Last
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><br />
+            <!--Pagination Buttons-->
+            <div class="myTableContainter" ng-show="paginatedVoyage.length > 0">
+                <div class="myTableContent">
+                    <div class="myTableRow-no-border text-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processVoyagePagination(voyageCurrentPage = 1, '')"
+                                        ng-disabled="!firstPageVoyage">
+                                    First
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage - 1), '')"
+                                        ng-disabled="!previousPageVoyage">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-default btn-sm"
+                                        type="button"
+                                        ng-disabled="true">
+                                    {{ voyageCurrentPage }}
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage + 1), '')"
+                                        ng-disabled="!nextPageVoyage">
+                                    Next
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processVoyagePagination(voyageCurrentPage = voyageMaxPage, '')"
+                                        ng-disabled="!lastPageVoyage">
+                                    Last
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+<!-- Modal for Vessel -->
+<div id="modal-panel-vessel" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{vesselAction}} Vessel</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorVessel">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageVessel}}
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                       ng-model="vesselItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveVessel(vesselAction)">
+                {{vesselAction === 'Delete' ? 'Delete' : vesselAction === 'Create' ? 'Create' : 'Edit'}}
+            </button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+<!-- Modal for Voyage -->
+<div id="modal-panel-voyage" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width: 700px">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{voyageAction}} Voyage</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorVoyage">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageVoyage}}
+            </div>
+            <div class="container">
+                <form class="form-horizontal" role="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Number</label>
+                                <div class="col-md-8 text-left">
+                                    <input type="text" class="form-control"
+                                           ng-model="voyageItem.VoyageNo"
+                                           pattern=".{0,20}"
+                                           ng-disabled="viewOnly">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small text-left">Business Unit</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Origin</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" placeholder="" ng-disabled="viewOnly"
+                                            ng-change="selectBusinessUnit(voyageItem.OriginBusinessUnitId, 'origin')"
+                                            ng-model="voyageItem.OriginBusinessUnitId" ng-options="item.Id as item.Name for item in businesUnits"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Destination</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" placeholder="" ng-disabled="viewOnly"
+                                            ng-change="selectBusinessUnit(voyageItem.DestinationBusinessUnitId, 'destination')"
+                                            ng-model="voyageItem.DestinationBusinessUnitId" ng-options="item.Id as item.Name for item in businesUnits"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-4 control-label small text-left">Estimated Departure</label>
+                            <label class="col-md-4 control-label small text-left">Estimated Arrival</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Date/Time</label>
+                                <div class="col-md-8">
+                                    <input id="edd" type="text" class="form-control"
+                                           ng-model="edd"
+                                           ng-disabled=" viewonly">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Date/Time</label>
+                                <div class="col-md-8">
+                                    <input id="ead" type="text" class="form-control"
+                                           ng-model="ead"
+                                           ng-disabled=" viewonly">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-4 control-label small text-left">Departure</label>
+                            <label class="col-md-4 control-label small text-left">Arrival</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Date/Time</label>
+                                <div class="col-md-8">
+                                    <input id="dd" type="text" class="form-control"
+                                           ng-model="dd"
+                                           ng-disabled=" viewonly">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Date/Time</label>
+                                <div class="col-md-8">
+                                    <input id="ad" type="text" class="form-control"
+                                           ng-model="ad"
+                                           ng-disabled=" viewonly">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#edd').datetimepicker({
+                                format: 'MM-DD-YYYY HH:mm:ss',
+                                sideBySide: true,
+                                minDate: moment()
+                            })
+                            $('#ead').datetimepicker({
+                                format: 'MM-DD-YYYY HH:mm:ss',
+                                sideBySide: true,
+                                minDate: moment()
+                            })
+                            $('#dd').datetimepicker({
+                                format: 'MM-DD-YYYY HH:mm:ss',
+                                sideBySide: true,
+                                minDate: moment()
+                            })
+                            $('#ad').datetimepicker({
+                                format: 'MM-DD-YYYY HH:mm:ss',
+                                sideBySide: true,
+                                minDate: moment()
+                            })
+                            //time format
+                            //$('#edt').datetimepicker({
+                            //    pickDate: false,
+                            //});
+                        });
+                    </script>
+                </form>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveVoyage(voyageAction)">
+                {{voyageAction === 'Delete' ? 'Delete' : voyageAction === 'Create' ? 'Create' : 'Edit'}}
+            </button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+<!--Deletion Confirmation modal-->
+<div id="modal-panel-confirmation" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Shipping Line {{dataItem.Name}}</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-12 control-label text-dark">
+                            Are you sure you want to delete this record
+                            together with its ({{vesselList.length}}) vessels and its corresponding vessel voyages?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit" ng-click="apiDelete(shippingLineItem.Id); closeModalForm()">Delete</button>
+            <button class="btn" type="submit" ng-click="closeModalForm()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--end of modal-->

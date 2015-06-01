@@ -70,6 +70,26 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 controller: 'DriverController'
             })
 
+            .when('/country', {
+                templateUrl: '/References/Country',
+                controller: 'CountryController'
+            })
+
+            .when('/shippinglines', {
+                templateUrl: '/References/ShippingLines',
+                controller: 'ShippingLinesController'
+            })
+
+            .when('/businessunit', {
+                templateUrl: '/References/BusinessUnit',
+                controller: 'BusinessUnitController'
+            })
+
+            .when('/serviceablearea', {
+                templateUrl: '/References/ServiceableArea',
+                controller: 'ServiceableAreaController'
+            })
+
             .otherwise({
                 redirectTo: '/home'
             });

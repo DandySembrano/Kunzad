@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/Couriers
         public IQueryable<Courier> GetCouriers()
@@ -30,12 +31,14 @@ namespace Kunzad.ApiControllers
             {
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
+                    .Include(c => c.CityMunicipality.StateProvince)
                     .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
+                    .Include(c => c.CityMunicipality.StateProvince)
                     .OrderBy(c => c.Name).Take(pageSize);
             }
         }
@@ -54,69 +57,95 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/Couriers/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(Courier))]
         public IHttpActionResult PutCourier(int id, Courier courier)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != courier.Id)
             {
-                return BadRequest();
+                response.message = "Courier doesn't Exist.";
+                return Ok(response);
             }
 
             db.Entry(courier).State = EntityState.Modified;
 
             try
             {
+                courier.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = courier;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!CourierExists(id))
                 {
-                    return NotFound();
+                    response.message = "Courier doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/Couriers
         [ResponseType(typeof(Courier))]
         public IHttpActionResult PostCourier(Courier courier)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-            courier.CreatedDate = DateTime.Now;
-            db.Couriers.Add(courier);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = courier.Id }, courier);
+            try
+            {
+                courier.CreatedDate = DateTime.Now;
+                db.Couriers.Add(courier);
+                db.SaveChanges();
+                var savedCourier = db.Couriers.Find(courier.Id);
+                savedCourier.CityMunicipality = db.CityMunicipalities.Find(savedCourier.CityMunicipalityId);
+                savedCourier.CityMunicipality.StateProvince = db.StateProvinces.Find(savedCourier.CityMunicipality.StateProvinceId);
+                response.status = "SUCCESS";
+                response.objParam1 = savedCourier;
+            }
+            catch (Exception e) 
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/Couriers/5
         [ResponseType(typeof(Courier))]
         public IHttpActionResult DeleteCourier(int id)
         {
+            response.status = "FAILURE";
             Courier courier = db.Couriers.Find(id);
             if (courier == null)
             {
-                return NotFound();
+                response.message = "Courier doesn't exist.";
+                return Ok(response);
             }
-
-            db.Couriers.Remove(courier);
-            db.SaveChanges();
-
-            return Ok(courier);
+            try
+            {
+                db.Couriers.Remove(courier);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e) 
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

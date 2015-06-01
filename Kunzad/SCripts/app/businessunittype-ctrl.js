@@ -23,6 +23,31 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.submitButtonText = "Submit";
     var pageSize = 20;
     //------------------------------------------------------------------------------//
+    $scope.butIdHolder = 0;
+    $scope.butCriteria = "Name";
+    $scope.orderByBUTNameDesc = true;
+    $scope.orderByBUTNameAsc = false;
+
+    //process sorting of BUT list
+    $scope.processBUTOrderBy = function (criteria) {
+        switch (criteria) {
+            case 'Name':
+                //Ascending
+                if ($scope.orderByBUTNameDesc == true) {
+                    $scope.orderByBUTNameAsc = true;
+                    $scope.orderByBUTNameDesc = false;
+                    criteria = 'Name';
+                }
+                    //Descending
+                else {
+                    $scope.orderByBUTNameAsc = false;
+                    $scope.orderByBUTNameDesc = true;
+                    criteria = '-Name';
+                }
+                break;
+        }
+        $scope.butCriteria = criteria;
+    };
 
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -52,12 +77,17 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.apiCreate = function () {
         $http.post("/api/BusinessUnitTypes", $scope.dataItem)
             .success(function (data, status) {
-                $scope.dataItem = angular.copy(data);
-                $scope.data.push($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.dataItem = angular.copy(data.objParam1);
+                    $scope.data.push($scope.dataItem);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -65,11 +95,16 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/BusinessUnitTypes/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data[$scope.selectedBUTIndex] = angular.copy(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -77,20 +112,40 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/BusinessUnitTypes/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selected, 1);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.splice($scope.selectedBUTIndex, 1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
                 $scope.showFormError(status);
             })
     };
 
-    $scope.setSelected = function (i) {
+    $scope.setSelected = function (i, id) {
         $scope.selected = i;
+        $scope.butIdHolder = id;
     };
+
+    //search BUT
+    $scope.searchBUT = function (id) {
+        var i = 0;
+        for (i = 0; i < $scope.data.length; i++) {
+            if (id == $scope.data[i].Id) {
+                return i;
+            }
+        }
+        return i;
+    };
+
+    $scope.selectedBUTIndex = null;
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
+        $scope.selectedBUTIndex = $scope.searchBUT($scope.butIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.dataItem = {
@@ -101,19 +156,19 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedBUTIndex])
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedBUTIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedBUTIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.openModalForm();
@@ -168,6 +223,7 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.processBUTOrderBy('Name');
     };
 
     init();

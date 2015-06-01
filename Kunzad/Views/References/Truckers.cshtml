@@ -6,25 +6,58 @@
 @section tableContent{
     <div class="row">
         <div class="col-lg-12">
-            <table class="table table-hover">
-                <thead class="text-dark">
-                    <tr>
-                        <th class="col-md-3 small"><strong>Name</strong></th>
-                        <th class="col-md-2 small"><strong>TIN</strong></th>
-                        <th class="col-md-5 small"><strong>Address</strong></th>
-                        <th class="col-md-2 small"><strong>Postal Code</strong></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="t in data" ng-click="setSelected($index)"
-                        context-menu="setSelected($index)" data-target="DataTableMenu">
-                        <td class="small">{{t.Name}}</td>
-                        <td class="small">{{t.TIN}}</td>
-                        <td class="small">{{t.Line1 + ", " + t.Line2 + ", " + t.CityMunicipality.Name}}</td>
-                        <td class="small">{{t.PostalCode}}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark">
+                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                        <div class="myTableCell cell-3 small"
+                             ng-click="processTruckerOrderBy('Name')">
+                            <strong>Name</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckerCriteria === 'Name' || truckerCriteria === '-Name' ? truckerOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckerCriteria === 'Name' || truckerCriteria === '-Name' ? truckerOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-2 small"
+                             ng-click="processTruckerOrderBy('TIN')">
+                            <strong>TIN</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckerCriteria === 'TIN' || truckerCriteria === '-TIN' ? truckerOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckerCriteria === 'TIN' || truckerCriteria === '-TIN' ? truckerOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-5 small"
+                             ng-click="processTruckerOrderBy('Line1')">
+                            <strong>Address</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckerCriteria === 'Line1' || truckerCriteria === '-Line1' ? truckerOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckerCriteria === 'Line1' || truckerCriteria === '-Line1' ? truckerOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-2 small"
+                             ng-click="processTruckerOrderBy('PostalCode')">
+                            <strong>Postal Code</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckerCriteria === 'PostalCode' || truckerCriteria === '-PostalCode' ? truckerOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckerCriteria === 'PostalCode' || truckerCriteria === '-PostalCode' ? truckerOrderByAsc: false"></span>
+                        </div>
+                    </div>
+                    <!--Details-->
+                    <div class="myTableRow"
+                         ng-repeat="t in data | orderBy: truckerCriteria | filter: filterTrucker"
+                         ng-click="setSelected($index, t.Id)"
+                         context-menu="setSelected($index, t.Id)"
+                         data-target="DataTableMenu">
+                        <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
+                        <div class="myTableCell cell-3 small">{{t.Name}}</div>
+                        <div class="myTableCell cell-3 small">{{t.TIN}}</div>
+                        <div class="myTableCell cell-3 small">{{t.Line1 + ", " + (t.Line2 == "" || t.Line2 == null ? "" : (t.Line2 + ", ")) + t.CityMunicipality.Name}}</div>
+                        <div class="myTableCell cell-3 small">{{t.PostalCode}}</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 }
@@ -37,44 +70,68 @@
             <strong>ERROR!</strong>    {{errorMessage}}
         </div>
         <div class="col-lg-6">
-            <form class="form-horizontal" role="form">
+            <form class="form-horizontal"
+                  role="form">
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Name</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder=""
-                               ng-model="dataItem.Name" ng-disabled="viewOnly">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="dataItem.Name"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}"
+                               >
+                        @*ng-change="initializeTabName()"*@
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">TIN</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder=""
-                               ng-model="dataItem.TIN" ng-disabled="viewOnly">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="dataItem.TIN"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,50}"
+                               ng-change="formatTIN()"
+                               maxlength="11">
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Street Address</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Street address line 1"
-                               ng-model="dataItem.Line1" ng-disabled="viewOnly">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Street address line 1"
+                               ng-model="dataItem.Line1"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}">
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small"></label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Street address line 2"
-                               ng-model="dataItem.Line2" ng-disabled="viewOnly">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Street address line 2"
+                               ng-model="dataItem.Line2"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}">
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">City/Municipality</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="" ng-disabled="viewOnly"
-                               ng-model="dataItem.CityMunicipality.Name" typeahead-editable="false"
+                        <input type="text" class="form-control" p
+                               laceholder=""
+                               ng-disabled="viewOnly"
+                               ng-model="dataItem.CityMunicipality.Name"
+                               typeahead-editable="false"
                                typeahead-on-select="onSelectCity($item, $model, $label)"
                                typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
                                typeahead-template-url="customTemplate.html">
@@ -84,24 +141,34 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Province/State</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder=""
-                               ng-model="dataItem.CityMunicipality.StateProvince.Name" ng-disabled="true">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="dataItem.CityMunicipality.StateProvince.Name"
+                               ng-disabled="true">
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Postal Code</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder=""
-                               ng-model="dataItem.PostalCode" ng-disabled="viewOnly">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="dataItem.PostalCode"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,20}">
                     </div>
                 </div>
 
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Country</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder=""
-                               ng-model="country.Name" ng-disabled="true">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="country.Name"
+                               ng-disabled="true">
                     </div>
                 </div>
 
@@ -112,41 +179,134 @@
 
 <!-- Truck Form-->
 @section tab2Content{
-    <div class="row" ng-show="selectedTab === tabPages[1] ">
-    <div class="col-lg-12">
-        <button class="btn btn-sm pull-right" ng-click="openTruckForm('Create')">
-            <span class="glyphicon glyphicon-plus"></span>
-        </button>
-        <table class="table">
-            <thead class="text-dark" ng-show="truckList.length > 0">
-                <tr>
-                    <th class="col-md-2 small"><strong>Plate No</strong></th>
-                    <th class="col-md-5 small"><strong>Type</strong></th>
-                    <th class="col-md-2 small"><strong>Weight</strong></th>
-                    <th class="col-md-2 small"><strong>Volume</strong></th>
-                    <th class="col-md-1 small text-right"><strong>Edit/Delete</strong></th>
-                </tr>
-            </thead>
-            <!-- Truck List, use truck scope and properties as model-->
-            <tbody>
-                <tr ng-repeat="item in truckList">
-                    <td class="small">{{item.PlateNo}}</td>
-                    <td class="small">{{item.TruckType.Type}}</td>
-                    <td class="small">{{item.TruckType.WeightCapacity}}</td>
-                    <td class="small">{{item.TruckType.VolumeCapacity}}</td>
-                    <td class="small text-right">
-                        <button class="btn btn-xs btn-primary light" type="button" ng-click="openTruckForm('Edit', $index)">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button class="btn btn-xs btn-danger light" type="button" ng-click="openTruckForm('Delete', $index)">
-                            <span class="glyphicons glyphicons-bin"></span>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="row" ng-show="selectedTab === tabPages[1]">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="padding-right-30">
+                    <button class="btn btn-sm pull-right"
+                            ng-click="openTruckForm('Create')">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                    {{dataItem.Name}}
+                </div>
+            </div><br />
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark"
+                         ng-show="paginatedTrucks.length > 0">
+                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                        <div class="myTableCell cell-2 small"
+                             ng-click="processTruckOrderBy('PlateNo')">
+                            <strong>Plate No</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckCriteria === 'PlateNo' || truckCriteria === '-PlateNo' ? truckOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckCriteria === 'PlateNo' || truckCriteria === '-PlateNo' ? truckOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-5 small"
+                             ng-click="processTruckOrderBy('Type')">
+                            <strong>Type</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckCriteria === 'TruckType.Type' || truckCriteria === '-TruckType.Type' ? truckOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckCriteria === 'TruckType.Type' || truckCriteria === '-TruckType.Type' ? truckOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-2 small"
+                             ng-click="processTruckOrderBy('Weight')">
+                            <strong>Weight</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckCriteria === 'TruckType.WeightCapacity' || truckCriteria === '-TruckType.WeightCapacity' ? truckOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckCriteria === 'TruckType.WeightCapacity' || truckCriteria === '-TruckType.WeightCapacity' ? truckOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-2 small"
+                             ng-click="processTruckOrderBy('Volume')">
+                            <strong>Volume</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="truckCriteria === 'TruckType.VolumeCapacity' || truckCriteria === '-TruckType.VolumeCapacity' ? truckOrderByDesc: false"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="truckCriteria === 'TruckType.VolumeCapacity' || truckCriteria === '-TruckType.VolumeCapacity' ? truckOrderByAsc: false"></span>
+                        </div>
+                        <div class="myTableCell cell-1 small text-center">
+                            <strong>Action</strong>
+                        </div>
+                    </div>
+                    <!--Details-->
+                    <div class="myTableRow"
+                         ng-repeat="item in paginatedTrucks | orderBy:truckCriteria">
+                        <div class="myTableCell cell-seqno small text-center">{{truckCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((truckCurrentPage - 1) * truckPageSize))}}</div>
+                        <div class="myTableCell cell-2 small">{{item.PlateNo | uppercase}}</div>
+                        <div class="myTableCell cell-5 small">{{item.TruckType.Type}}</div>
+                        <div class="myTableCell cell-2 small">{{item.TruckType.WeightCapacity}}</div>
+                        <div class="myTableCell cell-2 small">{{item.TruckType.VolumeCapacity}}</div>
+                        <div class="myTableCell cell-1 small text-center">
+                            <button class="btn btn-xs btn-primary light"
+                                    type="button"
+                                    ng-click="openTruckForm('Edit', item.Id)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button class="btn btn-xs btn-danger light"
+                                    type="button"
+                                    ng-click="openTruckForm('Delete', item.Id)">
+                                <span class="glyphicons glyphicons-bin"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><br />
+            <!--Pagination Buttons-->
+            <div class="myTableContainter" ng-show="paginatedTrucks.length > 0">
+                <div class="myTableContent">
+                    <div class="myTableRow-no-border text-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = 1, '')"
+                                        ng-disabled="!firstPageTrucks">
+                                    First
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage - 1), '')"
+                                        ng-disabled="!previousPageTrucks">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-default btn-sm"
+                                        type="button"
+                                        ng-disabled="true">
+                                    {{ truckCurrentPage }}
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage + 1), '')"
+                                        ng-disabled="!nextPageTrucks">
+                                    Next
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = truckMaxPage, '')"
+                                        ng-disabled="!lastPageTrucks">
+                                    Last
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 }
 
 <!-- This is the template use for City/Municpality Typeahead -->
@@ -167,28 +327,36 @@
         <!-- end .panel-heading section -->
         <!-- Panel Body -->
         <div class="panel-body">
-            <div class="alert alert-danger alert-sm" ng-show="isError">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorTruck">
                 <i class="fa fa-remove pr10"></i>
-                <strong>ERROR!</strong>    {{errorMessage}}
+                <strong>ERROR!</strong>    {{errorMessageTruck}}
             </div>
 
             <div class="row">
                 <div class="col-lg-12">
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal"
+                          role="form">
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Plate No</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control"
-                                       ng-model="Truck.PlateNo" ng-disabled="viewOnly">
+                                <input type="text"
+                                       class="form-control"
+                                       ng-model="Truck.PlateNo"
+                                       ng-disabled="viewOnly"
+                                       pattern=".{0,50}"
+                                       style="text-transform:uppercase">
                             </div>
                         </div>
 
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Truck Type</label>
                             <div class="col-md-8">
-                                <select class="form-control" placeholder="" ng-disabled="viewOnly"
+                                <select class="form-control"
+                                        placeholder=""
+                                        ng-disabled="viewOnly"
                                         ng-change="selectTruckType(Truck.TruckTypeId)"
-                                        ng-model="Truck.TruckTypeId" ng-options="item.Id as item.Type for item in TruckTypes"></select>
+                                        ng-model="Truck.TruckTypeId"
+                                        ng-options="item.Id as item.Type for item in TruckTypes"></select>
                             </div>
                         </div>
 
@@ -199,15 +367,21 @@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Weight</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" placeholder=""
-                                       ng-model="Truck.TruckType.WeightCapacity" ng-disabled="true">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="Truck.TruckType.WeightCapacity"
+                                       ng-disabled="true">
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Volume</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" placeholder=""
-                                       ng-model="Truck.TruckType.VolumeCapacity" ng-disabled="true">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="Truck.TruckType.VolumeCapacity"
+                                       ng-disabled="true">
                             </div>
                         </div>
                     </form>
@@ -225,3 +399,29 @@
     <!-- end: .panel -->
 </div>
 <!-- end: .admin-form -->
+
+<!--Deletion Confirmation modal-->
+<div id="modal-panel-confirmation" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Trucker {{dataItem.Name}}</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-12 control-label text-dark">Are you sure you want to delete this record together with its ({{truckList.length}}) trucks?</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit" ng-click="apiDelete(dataItem.Id); closeModalForm()">Delete</button>
+            <button class="btn" type="submit" ng-click="closeModalForm()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--end of modal-->

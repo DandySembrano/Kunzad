@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/Drivers
         public IQueryable<Driver> GetDrivers()
@@ -50,9 +51,10 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/Drivers/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(Driver))]
         public IHttpActionResult PutDriver(int id, Driver driver)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -60,59 +62,82 @@ namespace Kunzad.ApiControllers
 
             if (id != driver.Id)
             {
-                return BadRequest();
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             db.Entry(driver).State = EntityState.Modified;
 
             try
             {
+                driver.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = driver;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!DriverExists(id))
                 {
-                    return NotFound();
+                    response.message = "Driver doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/Drivers
         [ResponseType(typeof(Driver))]
         public IHttpActionResult PostDriver(Driver driver)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request";
+                return Ok(response);
+            }
+            try
+            {
+                driver.CreatedDate = DateTime.Now;
+                db.Drivers.Add(driver);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = driver;
+            }
+            catch (Exception e) 
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Drivers.Add(driver);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = driver.Id }, driver);
+            return Ok(response);
         }
 
         // DELETE: api/Drivers/5
         [ResponseType(typeof(Driver))]
         public IHttpActionResult DeleteDriver(int id)
         {
+            response.status = "FAILURE";
             Driver driver = db.Drivers.Find(id);
             if (driver == null)
             {
-                return NotFound();
+                response.message = "Driver doesn't exist.";
+                return Ok(response);
+            }
+            try
+            {
+                db.Drivers.Remove(driver);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch(Exception e){
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Drivers.Remove(driver);
-            db.SaveChanges();
-
-            return Ok(driver);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

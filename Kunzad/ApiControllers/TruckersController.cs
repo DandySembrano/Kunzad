@@ -30,6 +30,7 @@ namespace Kunzad.ApiControllers
                 {
                     return db.Truckers
                         .Include(t => t.CityMunicipality)
+                        .Include(t => t.CityMunicipality.StateProvince)
                         .Include(t => t.Trucks)
                         .OrderBy(t => t.Name).Skip((page - 1) * pageSize).Take(pageSize);
                 }
@@ -37,6 +38,7 @@ namespace Kunzad.ApiControllers
                 {
                     return db.Truckers
                         .Include(t => t.CityMunicipality)
+                        .Include(t => t.CityMunicipality.StateProvince)
                         .Include(t => t.Trucks)
                         .OrderBy(t => t.Name).Take(pageSize);
                 }
@@ -47,36 +49,30 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult GetTrucker(int id)
         {
             Trucker trucker = db.Truckers.Find(id);
-            trucker.Trucks = db.Trucks.Include(tt => tt.TruckType ).Where(a => a.TruckerId == trucker.Id) .ToArray();
+            trucker.Trucks = db.Trucks.Include(tt => tt.TruckType).Where(a => a.TruckerId == trucker.Id).OrderBy(tr => tr.Id).ToArray();
             if (trucker == null)
             {
-                response.status = "FAILED";
-                response.message = "Trucker not found";
+                return NotFound();
             }
-            else
-            {
-                response.status = "SUCCESS";
-                response.objParam1 = trucker;
-            }
-
-            return Ok(response);
+            return Ok(trucker);
         }
 
         // PUT: api/Truckers/5
         [ResponseType(typeof(Trucker))]
         public IHttpActionResult PutTrucker(int id, Trucker trucker)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                response.status = "FAILED";
-                response.message = BadRequest(ModelState).ToString();
+                response.message = "Bad request.";
+                return Ok(response);
 
             }
 
             if (id != trucker.Id)
             {
-                response.status = "FAILED";
-                response.message = BadRequest().ToString();
+                response.message = "Truckers doesn't exist.";
+                return Ok(response); 
             }
             try
             {
@@ -111,10 +107,10 @@ namespace Kunzad.ApiControllers
                             flag = true;
 
                             //Set changes for truck info for edit
-                            var holder = db.Trucks.Find(t.Id);
+                            var truckHolder = db.Trucks.Find(t.Id);
                             t.LastUpdatedDate = DateTime.Now;
-                            db.Entry(holder).CurrentValues.SetValues(t);
-                            db.Entry(holder).State = EntityState.Modified;
+                            db.Entry(truckHolder).CurrentValues.SetValues(t);
+                            db.Entry(truckHolder).State = EntityState.Modified;
                             break;
                         }
                     }
@@ -133,11 +129,10 @@ namespace Kunzad.ApiControllers
                 db.Entry(truckerHolder).State = EntityState.Modified;
 
                 db.SaveChanges();
-
                 Trucker modifiedTrucker = db.Truckers.Find(trucker.Id);
                 modifiedTrucker.CityMunicipality = db.CityMunicipalities.Find(trucker.CityMunicipalityId);
+                modifiedTrucker.CityMunicipality.StateProvince = db.StateProvinces.Find(modifiedTrucker.CityMunicipality.StateProvinceId);
                 modifiedTrucker.Trucks = db.Trucks.Include(tt => tt.TruckType).Where(a => a.TruckerId == trucker.Id).ToArray();
-
                 response.status = "SUCCESS";
                 response.objParam1 = modifiedTrucker;
             }
@@ -145,16 +140,13 @@ namespace Kunzad.ApiControllers
             {
                 if (!TruckerExists(id))
                 {
-                    response.status = "FAILED";
-                    response.message = NotFound().ToString();
+                    response.message = "Trucker doesn't exist.";
                 }
                 else
                 {
-                    response.status = "FAILED";
-                    response.message = e.ToString();
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
             return Ok(response);
         }
 
@@ -162,32 +154,61 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(Trucker))]
         public IHttpActionResult PostTrucker(Trucker trucker)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-            foreach (Truck t in trucker.Trucks)
-                db.Trucks.Add(t);
-            trucker.CreatedDate = DateTime.Now;
-            db.Truckers.Add(trucker);
-            db.SaveChanges();
-            return CreatedAtRoute("DefaultApi", new { id = trucker.Id }, trucker);
+            try
+            {
+                foreach (Truck t in trucker.Trucks)
+                {
+                    t.CreatedDate = DateTime.Now;
+                    db.Trucks.Add(t);
+                }
+                trucker.CreatedDate = DateTime.Now;
+                db.Truckers.Add(trucker);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                Trucker savedTrucker = db.Truckers.Find(trucker.Id);
+                savedTrucker.CityMunicipality = db.CityMunicipalities.Find(trucker.CityMunicipalityId);
+                savedTrucker.CityMunicipality.StateProvince = db.StateProvinces.Find(savedTrucker.CityMunicipality.StateProvinceId);
+                savedTrucker.Trucks = db.Trucks.Include(tt => tt.TruckType).Where(a => a.TruckerId == trucker.Id).ToArray();
+                response.objParam1 = savedTrucker;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/Truckers/5
         [ResponseType(typeof(Trucker))]
         public IHttpActionResult DeleteTrucker(int id)
         {
+            response.status = "FAILURE";
             Trucker trucker = db.Truckers.Find(id);
             if (trucker == null)
             {
-                return NotFound();
+                response.message = "Bad request.";
+                return Ok(response);
+            }
+            try
+            {
+                var deleteTrucks = db.Trucks.Where(t => t.TruckerId == id);
+                db.Trucks.RemoveRange(deleteTrucks);
+                db.Truckers.Remove(trucker);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e) 
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Truckers.Remove(trucker);
-            db.SaveChanges();
-
-            return Ok(trucker);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

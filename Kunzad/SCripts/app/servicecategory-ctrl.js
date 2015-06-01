@@ -23,6 +23,32 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
     $scope.submitButtonText = "Submit";
     var pageSize = 20;
     //------------------------------------------------------------------------------//
+    $scope.selectSCIndex = null;
+    $scope.scIdHolder = 0;
+    $scope.scCriteria = "Name";
+    $scope.orderBySCNameDesc = true;
+    $scope.orderBySCNameAsc = false;
+
+    //process sorting of SC list
+    $scope.processSCOrderBy = function (criteria) {
+        switch (criteria) {
+            case 'Name':
+                //Ascending
+                if ($scope.orderBySCNameDesc == true) {
+                    $scope.orderBySCNameAsc = true;
+                    $scope.orderBySCNameDesc = false;
+                    criteria = 'Name';
+                }
+                    //Descending
+                else {
+                    $scope.orderBySCNameAsc = false;
+                    $scope.orderBySCNameDesc = true;
+                    criteria = '-Name';
+                }
+                break;
+        }
+        $scope.scCriteria = criteria;
+    };
 
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -52,12 +78,16 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
     $scope.apiCreate = function () {
         $http.post("/api/ServiceCategories", $scope.dataItem)
             .success(function (data, status) {
-                $scope.dataItem = angular.copy(data);
-                $scope.data.push($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.push(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -65,11 +95,17 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/ServiceCategories/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data[$scope.selectSCIndex] = angular.copy(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else
+                {
+                    $scope.showFormError(status);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -77,20 +113,39 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/ServiceCategories/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selected, 1);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.splice($scope.selectSCIndex, 1);
+                    $scope.closeModalForm();
+                }
+                else
+                {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
                 $scope.showFormError(status);
             })
     };
 
-    $scope.setSelected = function (i) {
+    $scope.setSelected = function (i, id) {
         $scope.selected = i;
+        $scope.scIdHolder = id;
+    };
+
+    //search SC
+    $scope.searchSC = function (id) {
+        var i = 0;
+        for (i = 0; i < $scope.data.length; i++) {
+            if (id == $scope.data[i].Id) {
+                return i;
+            }
+        }
+        return i;
     };
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
+        $scope.selectSCIndex = $scope.searchSC($scope.scIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.dataItem = {
@@ -101,19 +156,19 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectSCIndex])
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectSCIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectSCIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.openModalForm();
@@ -168,6 +223,7 @@ kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.processSCOrderBy($scope.scCriteria);
     };
 
     init();

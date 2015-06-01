@@ -3,19 +3,33 @@
 }
 <!-- Industry List/DataTable -->
 @section tableContent{
-    <table class="table table-hover">
-        <thead class="text-dark">
-            <tr>
-                <th class="col-md-4 small"><strong>Name</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="i in data" ng-click="setSelected($index)"
-                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
-                <td class="small">{{i.Name}}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="myTableContainter">
+    <div class="myTableContent">
+        <!--Header-->
+        <div class="myTableRow-header text-dark small">
+            <div class="myTableCell cell-seqno small text-center"><strong>No</strong></div>
+            <div class="myTableCell cell-9 small text-left" ng-click="processIndustryOrderBy('Name')">
+                <strong>Name</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="orderByIndustryNameDesc"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="orderByIndustryNameAsc"></span>
+            </div>
+        </div>
+        <!--Details-->
+        <div class="myTableRow"
+             ng-repeat="i in data | orderBy:industryCriteria"
+             ng-click="setSelected($index, i.Id)"
+             ng-dblclick="actionForm('Update')"
+             context-menu="setSelected($index, i.Id)"
+             data-target="DataTableMenu">
+            <div class="myTableCell cell-seqno small text-center">
+                {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
+            </div>
+            <div class="myTableCell cell-9 small text-left">{{i.Name}}</div>
+        </div>
+    </div>
+</div>
 }
 
 @section formContent{
@@ -24,7 +38,7 @@
             <label for="name" class="col-md-3 control-label small">Name</label>
             <div class="col-md-8">
                 <input type="text" id="name" class="form-control small" placeholder=""
-                       ng-model="dataItem.Name" ng-disabled="viewOnly">
+                       ng-model="dataItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
             </div>
         </div>
     </form>

@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/ServiceCategories
         public IQueryable<ServiceCategory> GetServiceCategories()
@@ -50,69 +51,92 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/ServiceCategories/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(ServiceCategory))]
         public IHttpActionResult PutServiceCategory(int id, ServiceCategory serviceCategory)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != serviceCategory.Id)
             {
-                return BadRequest();
+                response.message = "Service category not found.";
+                return Ok(response);
             }
 
             db.Entry(serviceCategory).State = EntityState.Modified;
 
             try
             {
+                serviceCategory.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = serviceCategory;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!ServiceCategoryExists(id))
                 {
-                    return NotFound();
+                    response.message = "Service category doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/ServiceCategories
         [ResponseType(typeof(ServiceCategory))]
         public IHttpActionResult PostServiceCategory(ServiceCategory serviceCategory)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            db.ServiceCategories.Add(serviceCategory);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = serviceCategory.Id }, serviceCategory);
+            try
+            {
+                serviceCategory.CreatedDate = DateTime.Now;
+                db.ServiceCategories.Add(serviceCategory);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = serviceCategory;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/ServiceCategories/5
         [ResponseType(typeof(ServiceCategory))]
         public IHttpActionResult DeleteServiceCategory(int id)
         {
+            response.status = "FAILURE";
             ServiceCategory serviceCategory = db.ServiceCategories.Find(id);
             if (serviceCategory == null)
             {
-                return NotFound();
+                response.message = "Service Category doesn't exist.";
+            }
+            try
+            {
+                db.ServiceCategories.Remove(serviceCategory);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.ServiceCategories.Remove(serviceCategory);
-            db.SaveChanges();
-
-            return Ok(serviceCategory);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

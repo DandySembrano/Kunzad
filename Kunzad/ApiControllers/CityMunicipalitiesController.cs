@@ -37,7 +37,7 @@ namespace Kunzad.Controllers
                          StateProvinceName = p.Name,
                          CountryId = co.Id,
                          CountryName = co.Name
-                     });
+                     }).OrderBy(c => c.Id);
             return Json(q);
         }
 

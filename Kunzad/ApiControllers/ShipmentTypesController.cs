@@ -16,7 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
-
+        Response response = new Response();
         // GET: api/ShipmentTypes
         public IQueryable<ShipmentType> GetShipmentTypes()
         {
@@ -50,17 +50,20 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/ShipmentTypes/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(ShipmentType))]
         public IHttpActionResult PutShipmentType(int id, ShipmentType shipmentType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != shipmentType.Id)
             {
-                return BadRequest();
+                response.message = "Shipment Type doesn't exist.";
+                return Ok(response);
             }
 
             db.Entry(shipmentType).State = EntityState.Modified;
@@ -69,52 +72,71 @@ namespace Kunzad.ApiControllers
             {
                 shipmentType.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = shipmentType;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!ShipmentTypeExists(id))
                 {
-                    return NotFound();
+                    response.message = "Shipment Type doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/ShipmentTypes
         [ResponseType(typeof(ShipmentType))]
         public IHttpActionResult PostShipmentType(ShipmentType shipmentType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
+            try
+            {
+                shipmentType.CreatedDate = DateTime.Now;
+                db.ShipmentTypes.Add(shipmentType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = shipmentType;
 
-            shipmentType.CreatedDate = DateTime.Now;
-            db.ShipmentTypes.Add(shipmentType);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = shipmentType.Id }, shipmentType);
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/ShipmentTypes/5
         [ResponseType(typeof(ShipmentType))]
         public IHttpActionResult DeleteShipmentType(int id)
         {
+            response.status = "FAILURE";
             ShipmentType shipmentType = db.ShipmentTypes.Find(id);
             if (shipmentType == null)
             {
-                return NotFound();
+                response.message = "Shipment Type doesn't exist.";
+                return Ok(response);
             }
-
-            db.ShipmentTypes.Remove(shipmentType);
-            db.SaveChanges();
-
-            return Ok(shipmentType);
+            try
+            {
+                db.ShipmentTypes.Remove(shipmentType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

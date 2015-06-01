@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/BusinessUnitTypes
         public IQueryable<BusinessUnitType> GetBusinessUnitTypes()
@@ -50,69 +51,90 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/BusinessUnitTypes/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(BusinessUnitType))]
         public IHttpActionResult PutBusinessUnitType(int id, BusinessUnitType businessUnitType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad Request";
+                return Ok(response);
             }
 
             if (id != businessUnitType.Id)
             {
-                return BadRequest();
+                response.message = "Business unit doesn't exist";
+                return Ok(response);
             }
 
             db.Entry(businessUnitType).State = EntityState.Modified;
 
             try
             {
+                businessUnitType.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = businessUnitType;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!BusinessUnitTypeExists(id))
                 {
-                    return NotFound();
+                    response.message = "Business Unit Type doesn't Exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/BusinessUnitTypes
         [ResponseType(typeof(BusinessUnitType))]
         public IHttpActionResult PostBusinessUnitType(BusinessUnitType businessUnitType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad Request.";
+                return Ok(response);
             }
-
-            db.BusinessUnitTypes.Add(businessUnitType);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = businessUnitType.Id }, businessUnitType);
+            try {
+                businessUnitType.CreatedDate = DateTime.Now;
+                db.BusinessUnitTypes.Add(businessUnitType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = businessUnitType;
+            }
+            catch(Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/BusinessUnitTypes/5
         [ResponseType(typeof(BusinessUnitType))]
         public IHttpActionResult DeleteBusinessUnitType(int id)
         {
+            response.status = "FAILURE";
             BusinessUnitType businessUnitType = db.BusinessUnitTypes.Find(id);
             if (businessUnitType == null)
             {
-                return NotFound();
+                response.message = "Business Unit Type not found.";
+                return Ok(response);
+            }
+            try {
+                db.BusinessUnitTypes.Remove(businessUnitType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch(Exception e){
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.BusinessUnitTypes.Remove(businessUnitType);
-            db.SaveChanges();
-
-            return Ok(businessUnitType);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

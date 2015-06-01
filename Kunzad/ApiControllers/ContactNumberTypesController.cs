@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/ContactNumberTypes
         public IQueryable<ContactNumberType> GetContactNumberTypes()
@@ -50,17 +51,20 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/ContactNumberTypes/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(ContactNumberType))]
         public IHttpActionResult PutContactNumberType(int id, ContactNumberType contactNumberType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != contactNumberType.Id)
             {
-                return BadRequest();
+                response.message = "Contact number type doesn't exist.";
+                return Ok(response);
             }
 
             db.Entry(contactNumberType).State = EntityState.Modified;
@@ -69,52 +73,69 @@ namespace Kunzad.ApiControllers
             {
                 contactNumberType.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = contactNumberType;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!ContactNumberTypeExists(id))
                 {
-                    return NotFound();
+                    response.message = "Contact number type doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/ContactNumberTypes
         [ResponseType(typeof(ContactNumberType))]
         public IHttpActionResult PostContactNumberType(ContactNumberType contactNumberType)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            contactNumberType.CreatedDate = DateTime.Now;
-            db.ContactNumberTypes.Add(contactNumberType);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = contactNumberType.Id }, contactNumberType);
+            try
+            {
+                contactNumberType.CreatedDate = DateTime.Now;
+                db.ContactNumberTypes.Add(contactNumberType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = contactNumberType;
+            }
+            catch (Exception e) {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         // DELETE: api/ContactNumberTypes/5
         [ResponseType(typeof(ContactNumberType))]
         public IHttpActionResult DeleteContactNumberType(int id)
         {
+            response.status = "FAILURE";
             ContactNumberType contactNumberType = db.ContactNumberTypes.Find(id);
             if (contactNumberType == null)
             {
-                return NotFound();
+                response.message = "Contact number type doesn't exist.";
+                return Ok(response);
             }
-
-            db.ContactNumberTypes.Remove(contactNumberType);
-            db.SaveChanges();
-
-            return Ok(contactNumberType);
+            try
+            {
+                db.ContactNumberTypes.Remove(contactNumberType);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e) {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

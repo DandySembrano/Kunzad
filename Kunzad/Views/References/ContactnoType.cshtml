@@ -3,19 +3,33 @@
 }
 <!-- Contact No Type List/DataTable -->
 @section tableContent{
-    <table class="table table-hover">
-        <thead class="text-dark">
-            <tr>
-                <th class="col-md-4 small"><strong>Name</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="ct in data" ng-click="setSelected($index)"
-                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
-                <td class="small">{{ct.Type}}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="myTableContainter">
+    <div class="myTableContent">
+        <!--Header-->
+        <div class="myTableRow-header text-dark small">
+            <div class="myTableCell cell-seqno small text-center"><strong>No</strong></div>
+            <div class="myTableCell cell-9 small text-left" ng-click="processCTOrderBy('Type')">
+                <strong>Type</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="orderByctTypeDesc"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="orderByctTypeAsc"></span>
+            </div>
+        </div>
+        <!--Details-->
+        <div class="myTableRow" 
+             ng-repeat="ct in data | orderBy:ctCriteria"
+             ng-click="setSelected($index, ct.Id)"
+             ng-dblclick="actionForm('Update')"
+             context-menu="setSelected($index, ct.Id)"
+             data-target="DataTableMenu">
+            <div class="myTableCell cell-seqno small text-center">
+                {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
+            </div>
+            <div class="myTableCell cell-9 small text-left">{{ct.Type}}</div>
+        </div>
+    </div>
+</div>
 }
 
 @section formContent{
@@ -24,7 +38,7 @@
             <label for="name" class="col-md-3 control-label small">Type</label>
             <div class="col-md-8">
                 <input type="text" id="name" class="form-control small" placeholder=""
-                       ng-model="dataItem.Type" ng-disabled="viewOnly">
+                       ng-model="dataItem.Type" ng-disabled="viewOnly" pattern = ".{0,50}">
             </div>
         </div>
     </form>

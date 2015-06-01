@@ -1,30 +1,49 @@
 ﻿@{
     Layout = "~/Views/Shared/_DataTableLayout1.cshtml";
 }
-<script>
-    $(function () {
-        $("#datepicker").datepicker();
-    });
-</script>
 <!-- Driver List/DataTable -->
 @section tableContent{
-    <table class="table table-hover">
-        <thead class="text-dark">
-            <tr>
-                <th class="col-md-6 small"><strong>Name</strong></th>
-                <th class="col-md-3 small"><strong>License Number</strong></th>
-                <th class="col-md-3 small"><strong>License Expiry</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="d in data" ng-click="setSelected($index)"
-                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
-                <td class="small">{{d.LastName + ", " + d.FirstName + " " + d.MiddleName}}</td>
-                <td class="small">{{d.LicenseNo}}</td>
-                <td class="small">{{d.LicenseExpiry | date : "yyyy-MM-dd"}}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="myTableContainter">
+    <div class="myTableContent">
+        <!--Header-->
+        <div class="myTableRow-header text-dark small">
+            <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+            <div class="myTableCell cell-6 small" ng-click="processDriverSorting('Name')">
+                <strong>Name</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LastName' || driverCriteria === '-LastName' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LastName' || driverCriteria === '-LastName' ? driverOrderByAsc: false"></span>
+            </div>
+            <div class="myTableCell cell-3 small" ng-click="processDriverSorting('LicenseNo')">
+                <strong>License Number</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LicenseNo' || driverCriteria === '-LicenseNo' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LicenseNo' || driverCriteria === '-LicenseNo' ? driverOrderByAsc: false"></span>
+            </div>
+            <div class="myTableCell cell-3 small" ng-click="processDriverSorting('LicenseExpiry')">
+                <strong>License Expiry</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LicenseExpiry' || driverCriteria === '-LicenseExpiry' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LicenseExpiry' || driverCriteria === '-LicenseExpiry' ? driverOrderByAsc: false"></span>
+            </div>
+        </div>
+        <!--Details-->
+        <div class="myTableRow"
+             ng-repeat="d in data | orderBy:driverCriteria"
+             ng-click="setSelected($index, d.Id)"
+             ng-dblclick="actionForm('Update')"
+             context-menu="setSelected($index, d.Id)"
+             data-target="DataTableMenu">
+            <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
+            <div class="myTableCell cell-6 small">{{d.LastName + ", " + d.FirstName + " " + d.MiddleName}}</div>
+            <div class="myTableCell cell-3 small">{{d.LicenseNo}}</div>
+            <div class="myTableCell cell-3 small">{{d.LicenseExpiry | date : "MM-dd-yyyy"}}</div>
+        </div>
+    </div>
+</div>
 }
 
 @section formContent{
@@ -33,7 +52,7 @@
             <label class="col-md-3 control-label small">First Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.FirstName" ng-disabled="viewOnly">
+                       ng-model="dataItem.FirstName" ng-disabled="viewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -41,7 +60,7 @@
             <label class="col-md-3 control-label small">Middle Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.MiddleName" ng-disabled="viewOnly">
+                       ng-model="dataItem.MiddleName" ng-disabled="viewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -49,7 +68,7 @@
             <label class="col-md-3 control-label small">Last Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.LastName" ng-disabled="viewOnly">
+                       ng-model="dataItem.LastName" ng-disabled="viewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -57,23 +76,28 @@
             <label class="col-md-3 control-label small">License No.</label>
             <div class="col-md-5">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.LicenseNo" ng-disabled="viewOnly">
+                       ng-model="dataItem.LicenseNo" ng-disabled="viewOnly" pattern=".{0,50}">
             </div>
         </div>
 
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">License Expiry</label>
-            <div class="col-md-5" >
-                <input id="datetimepicker1" type="text" class="form-control small"
-                       ng-model="dataItem.LicenseExpiry | date :  'yyyy-MM-dd'" ng-disabled="viewOnly">
+            <div class="col-md-5">
+                <div class='input-group date' >
+                    <input type='text' id='led' class="form-control" ng-model="dataItem.LicenseExpiry" />
+                    <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                    </span>
+                </div>
             </div>
-        </div>
+            </div>
         <script type="text/javascript">
             $(function () {
-                $('#datetimepicker1').datetimepicker({
-                    clearBtn: true,
-                    format: 'YYYY-MM-DD',
-                });
+                $('#led').datetimepicker({
+                    format: 'MM-DD-YYYY',
+                    minDate: moment(),
+                    autoClose: true
+                })
             });
         </script>
     </form>

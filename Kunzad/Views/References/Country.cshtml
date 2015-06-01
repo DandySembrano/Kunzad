@@ -1,0 +1,380 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout3.cshtml";
+}
+<!-- Country List/DataTable -->
+@section tableContent{
+    <div class="myTableContainter">
+        <div class="myTableContent">
+            <!--Header-->
+            <div class="myTableRow-header text-dark small">
+                <div class="myTableCell cell-seqno small text-center"><strong>No</strong></div>
+                <div class="myTableCell cell-fixed-10 small text-left" ng-click="processCountrySorting('Code')">
+                    <strong>Code</strong>
+                    <span class="glyphicon glyphicon-chevron-down"
+                          ng-show="countryCriteria === 'Code' || countryCriteria === '-Code' ? orderByCountryDesc: false"></span>
+                    <span class="glyphicon glyphicon-chevron-up"
+                          ng-show="countryCriteria === 'Code' || countryCriteria === '-Code' ? orderByCountryAsc: false"></span>
+                </div>
+                <div class="myTableCell cell-9 small text-left" ng-click="processCountrySorting('Name')">
+                    <strong>Name</strong>
+                    <span class="glyphicon glyphicon-chevron-down"
+                          ng-show="countryCriteria === 'Name' || countryCriteria === '-Name' ? orderByCountryDesc: false"></span>
+                    <span class="glyphicon glyphicon-chevron-up"
+                          ng-show="countryCriteria === 'Name' || countryCriteria === '-Name' ? orderByCountryAsc: false"></span>
+                </div>
+            </div>
+            <!--Details-->
+            <div class="myTableRow" 
+                 ng-repeat="c in country | orderBy:countryCriteria"
+                 ng-click="setSelected($index, c.Id)"
+                 context-menu="setSelected($index, c.Id)"
+                 data-target="DataTableMenu">
+                <div class="myTableCell cell-seqno small text-center">
+                    {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
+                </div>
+                <div class="myTableCell cell-fixed-10 small text-left">{{c.Code}}</div>
+                <div class="myTableCell cell-9 small text-left">{{c.Name}}</div>
+            </div>
+        </div>
+    </div>
+}
+<!-- Country/General Form -->
+@section tab1Content{
+    <div class="row" ng-show="selectedTab === tabPages[0]">
+        <div class="alert alert-danger alert-sm" ng-show="isError">
+            <i class="fa fa-remove pr10"></i>
+            <strong>ERROR!</strong>    {{errorMessage}}
+        </div>
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Code</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder=""
+                               ng-model="countryItem.Code" ng-disabled="viewOnly" pattern=".{0,10}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="countryItem.Name"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}"
+                               ng-change="initializeTabName()">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<!-- State/Province Form-->
+@section tab2Content{
+    <div class="row" ng-show="selectedTab === tabPages[1] ">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="padding-right-30">
+                    <button class="btn btn-sm pull-right" ng-click="openStateProvinceForm('Create')">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                    {{countryItem.Name}}
+                </div>
+            </div><br />
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark small" ng-show="stateProvince.length > 0">
+                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                        <div class="myTableCell cell-8 small" ng-click="processSPSorting('Name')">
+                            <strong>Name</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="orderBySPNameDesc"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="orderBySPNameAsc"></span>
+                        </div>
+                        <div class="myTableCell cell-2 text-right small"><strong>Show/Edit/Delete</strong></div>
+                    </div>
+                    <!--Details-->
+                    <div class="myTableRow"
+                         ng-repeat="item in paginatedStateProvince | orderBy:spCriteria">
+                        <div class="myTableCell cell-seqno small text-center">{{stateProvinceCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((stateProvinceCurrentPage - 1) * stateProvincePageSize))}}</div>
+                        <div class="myTableCell cell-8 small">{{item.Name}}</div>
+                        <div class="myTableCell cell-2 small text-right">
+                            <button class="btn btn-xs btn-success light" type="button"
+                                    title="Add/Edit City/Municipalities"
+                                    ng-click="openStateProvinceForm('showCityMunicipality', item.Id, item.Name)">
+                                <span class="glyphicon glyphicon-eye-open "></span>
+                            </button>
+                            <button title="Edit State/Province" class="btn btn-xs btn-primary light" type="button" ng-click="openStateProvinceForm('Edit', item.Id)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button title="Delete State/Province" class="btn btn-xs btn-danger light" type="button" ng-click="openStateProvinceForm('Delete', item.Id)">
+                                <span class="glyphicons glyphicons-bin"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><br />
+            <!--Pagination Buttons-->
+            <div class="myTableContainter" ng-show="paginatedStateProvince.length > 0">
+                <div class="myTableContent">
+                    <div class="myTableRow-no-border text-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = 1, '')"
+                                        ng-disabled="!firstPageStateProvince">
+                                    First
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage - 1), '')"
+                                        ng-disabled="!previousPageStateProvince">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-default btn-sm"
+                                        type="button"
+                                        ng-disabled="true">
+                                    {{ stateProvinceCurrentPage }}
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage + 1), '')"
+                                        ng-disabled="!nextPageStateProvince">
+                                    Next
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = stateProvinceMaxPage, '')"
+                                        ng-disabled="!lastPageStateProvince">
+                                    Last
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- City/Municipality Form-->
+@section tab3Content{
+    <div class="row" ng-show="selectedTab === tabPages[2]">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="padding-right-30">
+                    <button class="btn btn-sm pull-right" ng-click="openCityMunicipalityForm('Create')">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                    {{spNameHolder}}
+                </div>
+            </div><br />
+            <div class="myTableContainter">
+                <div class="myTableContent">
+                    <!--Header-->
+                    <div class="myTableRow-header text-dark small" ng-show="showCityMunicipalityHeader">
+                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+                        <div class="myTableCell cell-5 small" ng-click="processCMSorting('Name')">
+                            <strong>Name</strong>
+                            <span class="glyphicon glyphicon-chevron-down"
+                                  ng-show="orderByCMNameDesc"></span>
+                            <span class="glyphicon glyphicon-chevron-up"
+                                  ng-show="orderByCMNameAsc"></span>
+                        </div>
+                        <div class="myTableCell cell-4 text-right small"><strong>Action</strong></div>
+                    </div>
+                    <!--Detail-->
+                    @*<input type="hidden" ng-model="stateProvinceIdHolder">*@
+                    <div class="myTableRow"
+                         ng-repeat="item in paginatedCityMunicipality | orderBy:cmCriteria">@*| filter:{StateProvinceId:stateProvinceIdHolder}:true*@
+                        <div class="myTableCell cell-seqno small text-center">{{cityMunicipalityCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((cityMunicipalityCurrentPage - 1) * cityMunicipalityPageSize))}}</div>
+                        <div class="myTableCell cell-5 small">{{item.Name}}</div>
+                        <div class="myTableCell cell-4 small text-right">
+                            <button title="Edit City/Municipality" class="btn btn-xs btn-primary light" type="button" ng-click="openCityMunicipalityForm('Edit', item.Id)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button title="Delete City/Municipality" class="btn btn-xs btn-danger light" type="button" ng-click="openCityMunicipalityForm('Delete', item.Id)">
+                                <span class="glyphicons glyphicons-bin"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><br />
+            <!--Pagination Buttons-->
+            <div class="myTableContainter" ng-show="paginatedCityMunicipality.length > 0">
+                <div class="myTableContent">
+                    <div class="myTableRow-no-border text-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = 1, '')"
+                                        ng-disabled="!firstPageCityMunicipality">
+                                    First
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage - 1), '')"
+                                        ng-disabled="!previousPageCityMunicipality">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-default btn-sm"
+                                        type="button"
+                                        ng-disabled="true">
+                                    {{ cityMunicipalityCurrentPage }}
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage + 1), '')"
+                                        ng-disabled="!nextPageCityMunicipality">
+                                    Next
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = cityMunicipalityMaxPage, '')"
+                                        ng-disabled="!lastPageCityMunicipality">
+                                    Last
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal for State/Province -->
+<div id="modal-panel-stateProvince" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{stateProvinceAction}} State/Province</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorStateProvince">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageStateProvince}}
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                       ng-model="stateProvinceItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveStateProvince(stateProvinceAction)">
+                {{stateProvinceAction === 'Delete' ? 'Delete' : stateProvinceAction === 'Create' ? 'Create' : 'Edit'}}
+            </button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+<!-- Modal for City/Municipality -->
+<div id="modal-panel-cityMunicipality" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{cityMunicipalityAction}} City/Municipality</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorCityMunicipality">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageCityMunicipality}}
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                       ng-model="cityMunicipalityItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveCityMunicipality(cityMunicipalityAction)">
+                {{cityMunicipalityAction === 'Delete' ? 'Delete' : cityMunicipalityAction === 'Create' ? 'Create' : 'Edit'}}
+            </button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+<!--Deletion Confirmation modal-->
+<div id="modal-panel-confirmation" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Country {{dataItem.Name}}</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-12 control-label text-dark">
+                            Are you sure you want to delete this record
+                            together with its ({{stateProvince.length}}) states/provinces and its corresponding city/municipalities?
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit" ng-click="apiDelete(countryItem.Id);; closeModalForm()">Delete</button>
+            <button class="btn" type="submit" ng-click="closeModalForm()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--end of modal-->

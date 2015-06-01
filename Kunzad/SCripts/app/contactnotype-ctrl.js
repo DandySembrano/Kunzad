@@ -23,6 +23,31 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     $scope.submitButtonText = "Submit";
     var pageSize = 20;
     //------------------------------------------------------------------------------//
+    $scope.ctIdHolder = 0;
+    $scope.ctCriteria = "Type";
+    $scope.orderByctTypeDesc = true;
+    $scope.orderByctTypeAsc = false;
+
+    //process sorting of airline list
+    $scope.processCTOrderBy = function (criteria) {
+        switch (criteria) {
+            case 'Type':
+                //Ascending
+                if ($scope.orderByctTypeDesc == true) {
+                    $scope.orderByctTypeAsc = true;
+                    $scope.orderByctTypeDesc = false;
+                    criteria = 'Type';
+                }
+                    //Descending
+                else {
+                    $scope.orderByctTypeAsc = false;
+                    $scope.orderByctTypeDesc = true;
+                    criteria = '-Type';
+                }
+                break;
+        }
+        $scope.ctCriteria = criteria;
+    };
 
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -52,12 +77,17 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     $scope.apiCreate = function () {
         $http.post("/api/ContactNumberTypes", $scope.dataItem)
             .success(function (data, status) {
-                $scope.dataItem = angular.copy(data);
-                $scope.data.push($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.dataItem = angular.copy(data.objParam1);
+                    $scope.data.push($scope.dataItem);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -65,11 +95,16 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/ContactNumberTypes/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data[$scope.selectedCTIndex] = angular.copy(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -77,20 +112,40 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/ContactNumberTypes/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selected, 1);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.splice($scope.selectedCTIndex, 1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
                 $scope.showFormError(status);
             })
     };
 
-    $scope.setSelected = function (i) {
+    $scope.setSelected = function (i, id) {
         $scope.selected = i;
+        $scope.ctIdHolder = id;
     };
+
+    //search trucker
+    $scope.searchCT = function (id) {
+        var i = 0;
+        for (i = 0; i < $scope.data.length; i++) {
+            if (id == $scope.data[i].Id) {
+                return i;
+            }
+        }
+        return i;
+    };
+
+    $scope.selectedCTIndex = null;
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
+        $scope.selectedCTIndex = $scope.searchCT($scope.ctIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.dataItem = {
@@ -101,19 +156,19 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedCTIndex])
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedCTIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedCTIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.openModalForm();
@@ -168,6 +223,7 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.processCTOrderBy('Type');
     };
 
     init();

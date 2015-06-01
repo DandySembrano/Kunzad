@@ -23,6 +23,32 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
     $scope.submitButtonText = "Submit";
     var pageSize = 20;
     //------------------------------------------------------------------------------//
+    $scope.selectIndustryIndex = null;
+    $scope.industryIdHolder = 0;
+    $scope.industryCriteria = "Name";
+    $scope.orderByIndustryNameDesc = true;
+    $scope.orderByIndustryNameAsc = false;
+
+    //process sorting of Industry list
+    $scope.processIndustryOrderBy = function (criteria) {
+        switch (criteria) {
+            case 'Name':
+                //Ascending
+                if ($scope.orderByIndustryNameDesc == true) {
+                    $scope.orderByIndustryNameAsc = true;
+                    $scope.orderByIndustryNameDesc = false;
+                    criteria = 'Name';
+                }
+                    //Descending
+                else {
+                    $scope.orderByIndustryNameAsc = false;
+                    $scope.orderByIndustryNameDesc = true;
+                    criteria = '-Name';
+                }
+                break;
+        }
+        $scope.industryCriteria = criteria;
+    };
 
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -52,12 +78,16 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
     $scope.apiCreate = function () {
         $http.post("/api/Industries", $scope.dataItem)
             .success(function (data, status) {
-                $scope.dataItem = angular.copy(data);
-                $scope.data.push($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.push(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -65,11 +95,16 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/Industries/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data[$scope.selectIndustryIndex] = angular.copy(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -77,20 +112,38 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/Industries/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selected, 1);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.splice($scope.selectIndustryIndex, 1);
+                    $scope.closeModalForm();
+                }
+                else {
+                    $scope.showFormError(data.message);
+                }
             })
             .error(function (data, status) {
                 $scope.showFormError(status);
             })
     };
 
-    $scope.setSelected = function (i) {
+    $scope.setSelected = function (i, id) {
         $scope.selected = i;
+        $scope.industryIdHolder = id;
+    };
+
+    //search Industry
+    $scope.searchIndustry = function (id) {
+        var i = 0;
+        for (i = 0; i < $scope.data.length; i++) {
+            if (id == $scope.data[i].Id) {
+                return i;
+            }
+        }
+        return i;
     };
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
+        $scope.selectIndustryIndex = $scope.searchIndustry($scope.industryIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.dataItem = {
@@ -101,19 +154,19 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectIndustryIndex])
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectIndustryIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectIndustryIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.openModalForm();
@@ -168,6 +221,7 @@ kunzadApp.controller("IndustryController", function ($scope, $http) {
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.processIndustryOrderBy($scope.industryCriteria);
     };
 
     init();

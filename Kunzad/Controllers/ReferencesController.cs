@@ -66,6 +66,22 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult Country()
+        {
+            return View();
+        }
+        public ActionResult ShippingLines()
+        {
+            return View();
+        }
+        public ActionResult BusinessUnit()
+        {
+            return View();
+        }
+        public ActionResult ServiceableArea()
+        {
+            return View();
+        }
         
     }
 }

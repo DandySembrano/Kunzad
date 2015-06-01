@@ -35,16 +35,20 @@ namespace Kunzad
                         "~/Scripts/app/app.js",
                         "~/Scripts/app/customer-ctrl.js",
                         "~/Scripts/app/customergroup-ctrl.js",
+                        "~/Scripts/app/courier-ctrl.js",
                         "~/Scripts/app/airline-ctrl.js",
                         "~/Scripts/app/trucker-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js",
-                        "~/Scripts/app/courier-ctrl.js",
                         "~/Scripts/app/industry-ctrl.js",
                         "~/Scripts/app/businessunittype-ctrl.js",
                         "~/Scripts/app/shipmenttype-ctrl.js",
                         "~/Scripts/app/servicecategory-ctrl.js",
                         "~/Scripts/app/contactnotype-ctrl.js",
-                        "~/Scripts/app/driver-ctrl.js"
+                        "~/Scripts/app/driver-ctrl.js",
+                        "~/Scripts/app/country-ctrl.js",
+                        "~/Scripts/app/shippinglines-ctrl.js",
+                        "~/Scripts/app/businessunit-ctrl.js",
+                        "~/Scripts/app/serviceablearea-ctrl.js"
                         ));
         }
     }

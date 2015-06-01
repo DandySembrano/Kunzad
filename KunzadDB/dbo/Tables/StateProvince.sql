@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[StateProvince]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] VARCHAR(150) NOT NULL, 
     [CountryId] INT NOT NULL,
 	[CreatedDate] DATETIME NULL, 

@@ -23,6 +23,31 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.submitButtonText = "Submit";
     var pageSize = 20;
     //------------------------------------------------------------------------------//
+    $scope.airlineIdHolder = 0;
+    $scope.airlineCriteria = "Name";
+    $scope.orderByAirlineNameDesc = true;
+    $scope.orderByAirlineNameAsc = false;
+
+    //process sorting of airline list
+    $scope.processAirlineOrderBy = function (criteria) {
+        switch (criteria) {
+            case 'Name':
+                //Ascending
+                if ($scope.orderByAirlineNameDesc == true) {
+                    $scope.orderByAirlineNameAsc = true;
+                    $scope.orderByAirlineNameDesc = false;
+                    criteria = 'Name';
+                }
+                    //Descending
+                else {
+                    $scope.orderByAirlineNameAsc = false;
+                    $scope.orderByAirlineNameDesc = true;
+                    criteria = '-Name';
+                }
+                break;
+        }
+        $scope.airlineCriteria = criteria;
+    };
 
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -65,7 +90,7 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/AirLines/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selected] = angular.copy($scope.dataItem);
+                $scope.data[$scope.selectedAirlineIndex] = angular.copy($scope.dataItem);
                 $scope.closeModalForm();
             })
             .error(function (data, status) {
@@ -77,7 +102,7 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/AirLines/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selected, 1);
+                $scope.data.splice($scope.selectedAirlineIndex, 1);
                 $scope.closeModalForm();
             })
             .error(function (data, status) {
@@ -85,12 +110,27 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
             })
     };
 
-    $scope.setSelected = function (i) {
+    $scope.setSelected = function (i, id) {
         $scope.selected = i;
+        $scope.airlineIdHolder = id;
     };
+
+    //search Airline
+    $scope.searchAirline = function (id) {
+        var i = 0;
+        for (i = 0; i < $scope.data.length; i++) {
+            if (id == $scope.data[i].Id) {
+                return i;
+            }
+        }
+        return i;
+    };
+
+    $scope.selectedAirlineIndex = null;
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
+        $scope.selectedAirlineIndex = $scope.searchAirline($scope.airlineIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.dataItem = {
@@ -101,19 +141,19 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
                 $scope.openModalForm();
                 break;
             case "Edit":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.selectedAirlineIndex])
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.openModalForm();
                 break;
             case "Delete":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.$scope.selectedAirlineIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.openModalForm();
                 break;
             case "View":
-                $scope.dataItem = angular.copy($scope.data[$scope.selected])
+                $scope.dataItem = angular.copy($scope.data[$scope.$scope.selectedAirlineIndex])
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.openModalForm();
@@ -168,6 +208,7 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.processAirlineOrderBy('Name');
     };
 
     init();
