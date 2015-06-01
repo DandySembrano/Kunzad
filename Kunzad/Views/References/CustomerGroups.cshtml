@@ -6,6 +6,7 @@
     <table class="table table-hover">
         <thead class="text-dark">
             <tr>
+                <th class="col-md-1 small" align="center"><strong>No</strong></th>
                 <th class="col-md-4 small"><strong>Name</strong></th>
                 <th class="col-md-8 small"><strong>Remarks</strong></th>
             </tr>
@@ -13,6 +14,7 @@
         <tbody>
             <tr ng-repeat="c in data" ng-click="setSelected($index)"
                 ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
+                <td class="small">{{currentPage == 1?($index + 1) : (($index + 1) + ((currentPage -1) * pageSize) )}}</td>
                 <td class="small">{{c.Name}}</td>
                 <td class="small">{{c.Remarks}}</td>
             </tr>

@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_DataTableLayout3.cshtml";
+    Layout = "~/Views/Shared/_DataTableLayout4.cshtml";
 }
 
 <!-- Customer List/DataTable -->
@@ -9,6 +9,7 @@
             <table class="table table-hover">
                 <thead class="text-dark">
                     <tr>
+                        <th class="col-md-1 small"><strong>No</strong></th>
                         <th class="col-md-1 small"><strong>Code</strong></th>
                         <th class="col-md-3 small"><strong>Name</strong></th>
                         <th class="col-md-3 small"><strong>Industry</strong></th>
@@ -18,9 +19,10 @@
                 <tbody>
                     <tr ng-repeat="c in data" ng-click="setSelected($index)"
                         context-menu="setSelected($index)" data-target="DataTableMenu">
+                        <td class="small">{{currentPage == 1?($index + 1) : (($index + 1) + ((currentPage -1) * pageSize) )}}</td>
                         <td class="small">{{c.Code}}</td>
                         <td class="small">{{c.Name}}</td>
-                        <td class="small">{{c.Industry.Name}}</td>
+                        <td class="small" ng-repeat="indust in Industries | filter:{Id : c.IndustryId}">{{indust.Name}}</td>
                         <td class="small">{{c.TIN}}</td>
                     </tr>
                 </tbody>
@@ -33,6 +35,10 @@
 @section tab1Content{
     <div class="row" ng-show="selectedTab === tabPages[0]">
         <div class="col-lg-6">
+            <div class="alert alert-danger alert-sm" ng-show="isError">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessage}}
+            </div>
             <form class="form-horizontal" role="form">
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Code</label>
@@ -85,10 +91,14 @@
 @section tab2Content{
     <div class="row" ng-show="selectedTab === tabPages[1]">
         <div class="col-lg-12">
+
+            <h2 class="mt25 lh35 mtn text-left">
+                <b>{{dataItem.Name}}</b>
+            </h2>
             <button class="btn btn-sm pull-right" ng-click="openCustomerAddressForm('Create')">
                 <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <div class="row" ng-repeat="item in dataItem.CustomerAddresses">
+            <div class="row" ng-repeat="item in customerAddressList">
                 <div class=""></div>
                 <div class="col-lg-8">
                     <div class="well">
@@ -130,14 +140,167 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-sm pull-right" ng-click="initAddress(); openModalForm('#modal-panel-address');" 
-                    ng-show="dataItem.CustomerAddresses.length > 1">
-                <span class="glyphicon glyphicon-plus"></span>
-            </button>
+            <button class="btn btn-sm pull-right" ng-click="initAddress(); openModalForm('#modal-panel-address');"
+                    ng-show="dataItem.CustomerAddresses.length > 1"></button>
         </div>
     </div>
 }
 
+<!-- Contacts -->
+@section tab3Content{
+    <div class="row" ng-show="selectedTab === tabPages[2]">
+        <!--contact list-->
+        <div class="row" ng-show="!showSubForm">
+            <div class="col-md-12">
+                <div class="panel mb25 mt5">
+                    <div class="panel-body pn">
+                        <div class="col-lg-12">
+                            <table class="table table-hover">
+                                <thead class="text-dark">
+                                    <tr>
+                                        <th class="col-md-1 small"><strong>Name</strong></th>
+                                        <th class="col-md-3 small"><strong>Title</strong></th>
+                                        <th class="col-md-3 small"><strong>Email</strong></th>
+                                        <th class="col-md-2 small"><strong>Alternate Email</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr ng-repeat="c in customerContactList" ng-click="setSubSelected($index)"
+                                        context-menu="setSubSelected($index)" data-target="DataTableMenu2">
+                                        <td class="small">{{c.Contact.Name}}</td>
+                                        <td class="small">{{c.Contact.Title}}</td>
+                                        <td class="small">{{c.Contact.Email}}</td>
+                                        <td class="small">{{c.Contact.AlternateEmail}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-6" align="left">
+                                <button class="btn btn-sm btn-primary" type="button" ng-click="actionSubForm('Create')">Create</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--General,Contacts,PHones-->
+        <div class="row" ng-show="showSubForm">
+            <div class="col-md-12">
+                <div class="">
+                    <div class="alert alert-danger alert-sm" ng-show="isError">
+                        <i class="fa fa-remove pr10"></i>
+                        <strong>ERROR!</strong>    {{errorMessage}}
+                    </div>
+                    <!-- contact -->
+                    <div class="row" ng-show="selectedSubTab === subTabPages[0]">
+                        <h2 class="header-lg">
+                            <b>{{dataItem.Name}}</b>
+                        </h2>
+
+                        <div class="col-lg-6">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group form-group-sm">
+
+                                    <label class="col-md-3 control-label small">Name</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" placeholder=""
+                                               ng-model="contact.Name" ng-disabled="viewOnly">
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label small">Title</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" placeholder=""
+                                               ng-model="contact.Title" ng-disabled="viewOnly">
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label small">Email</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" placeholder=""
+                                               ng-model="contact.Email" ng-disabled="viewOnly">
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-sm">
+                                    <label class="col-md-3 control-label small">Alternate Email</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" placeholder=""
+                                               ng-model="contact.AlternateEmail" ng-disabled="viewOnly">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- contact phone-->
+
+                        <div class="col-lg-12">
+                            <button class="btn btn-sm pull-right" ng-click="openCustomerContactPhoneForm('Create')">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            </br>
+                            </br>
+                            <div class="panel-heading">
+                                <span class="panel-title">
+                                    <span class="glyphicons glyphicons-table"></span>
+                                    Contact Phone
+                                </span>
+                            </div>
+                            <div class="panel-body pn">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-2 small"><strong>Contact Number</strong></th>
+                                            <th class="col-md-2 small"><strong>Type</strong></th>
+                                            <th class="small text-right"><strong>Edit/Delete</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="c in customerContactPhoneList"
+                                            context-menu="setSelected($index)"  data-target="DataTableMenu2">
+                                            <td class="small">{{c.ContactNumber}}</td>
+                                                <td class="small" ng-repeat="cc in CustomerContactTypes | filter:{Id : c.ContactNumberTypeId} ">{{cc.Type}}</td>
+                                            
+                                                <td class="small text-right">
+                                                    <button class="btn btn-xs btn-primary light" type="button" ng-click="openCustomerContactPhoneForm('Edit', $index)">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                    </button>
+                                                    <button class="btn btn-xs btn-danger light" type="button" ng-click="openCustomerContactPhoneForm('Delete', $index)">
+                                                        <span class="glyphicons glyphicons-bin"></span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <div ng-show="showSubFooter">
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-6" align="left">
+                        <button class="btn btn-sm btn-primary" type="submit" ng-click="closeSubForm()">Back</button>
+                    </div>
+                    <div class="col-md-6" align="right">
+                        <button class="btn btn-sm btn-primary" type="submit" ng-click="submitSubForm()"
+                                ng-show="actionMode != 'View'">
+                            {{saveContactText}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 <!-- This is the template use for City/Municpality Typeahead -->
 <script type="text/ng-template" id="customTemplate.html">
@@ -150,13 +313,10 @@
 
 <!-- Admin Form Popup for Customer Address -->
 <div id="modal-panel-address" class="popup-basic bg-none mfp-with-anim mfp-hide">
-    <!-- begin: .panel -->
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{customerAddressAction}} Customer Address</span>
         </div>
-        <!-- end .panel-heading section -->
-        <!-- Panel Body -->
         <div class="panel-body">
             <div class="alert alert-danger alert-sm" ng-show="isError">
                 <i class="fa fa-remove pr10"></i>
@@ -239,12 +399,83 @@
 
             </div>
         </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveCustomerAddress(customerAddressAction)">
+                {{customerAddressAction === 'Create' ? 'Add' : customerAddressAction}}
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<!--panel for contact phone-->
+<div id="modal-panel-contactphone" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{ContatPhoneAction}} Contact Phone</span>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isError">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessage}}
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Contact No</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                       ng-model="customerContactPhone.ContactNumber" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Type Id</label>
+                            <div class="col-md-8">
+                                <select class="form-control" placeholder="" ng-disabled="viewOnly"
+                                        ng-change="selectContactType(dataItem.CustomerContactTypeId)"
+                                        ng-model="customerContactPhone.ContactNumberTypeId" ng-options="cCon.Id as cCon.Type for cCon in CustomerContactTypes"></select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveCustomerContactPHone(ContatPhoneAction)">
+                {{ContatPhoneAction === 'Create' ? 'Add' : ContatPhoneAction}}
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<!-- Admin Form Popup -->
+<div id="modal-panel" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{actionMode + " " + modelName}}</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isError">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessage}}
+            </div>
+        </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn btn-primary" type="submit" 
-                    ng-click="saveCustomerAddress(customerAddressAction)">{{customerAddressAction === 'Delete' ? 'Delete' : 'Save'}}</button>
+            <button class="btn btn-primary" type="submit" ng-click="submit()">{{submitButtonText}}</button>
         </div>
     </div>
     <!-- end: .panel -->
 </div>
 <!-- end: .admin-form -->
+
