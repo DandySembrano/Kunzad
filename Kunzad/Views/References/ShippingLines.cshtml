@@ -53,7 +53,7 @@
                                ng-model="shippingLineItem.Name"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}"
-                               ng-change="initializeTabName()">
+                               ng-change="initializeHeaderName()">
                     </div>
                 </div>
             </form>
@@ -70,9 +70,6 @@
                 <button class="btn btn-sm pull-right" ng-click="openVesselForm('Create')">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
-            </div>
-            <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                {{shippingLineItem.Name}}
             </div>
         </div><br />
         <div class="myTableContainter">
@@ -98,7 +95,7 @@
                         <button class="btn btn-xs btn-success light" type="button"
                                 title="Add/Edit Voyage"
                                 ng-click="openVesselForm('showVoyage', item.Id, item.Name)">
-                            <span class="glyphicon glyphicon-eye-open "></span>
+                            Voyages
                         </button>
                         <button title="Edit Vessel" class="btn btn-xs btn-primary light" type="button" ng-click="openVesselForm('Edit', item.Id)">
                             <span class="glyphicon glyphicon-pencil"></span>
@@ -115,15 +112,15 @@
             <div class="myTableContent">
                 <div class="myTableRow-no-border text-right">
                     <div class="btn-group btn-group-sm">
-                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                        @*<div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
                                     ng-click="processVesselPagination(vesselCurrentPage = 1, '')"
                                     ng-disabled="!firstPageVessels">
                                 First
                             </button>
-                        </div>
-                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                        </div>*@
+                        <div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
                                     ng-click="processVesselPagination(vesselCurrentPage = (vesselCurrentPage - 1), '')"
@@ -131,14 +128,14 @@
                                 Previous
                             </button>
                         </div>
-                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                        <div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-default btn-sm"
                                     type="button"
                                     ng-disabled="true">
                                 {{ vesselCurrentPage }}
                             </button>
                         </div>
-                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                        <div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
                                     ng-click="processVesselPagination(vesselCurrentPage = (vesselCurrentPage + 1), '')"
@@ -146,14 +143,14 @@
                                 Next
                             </button>
                         </div>
-                        <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                        @*<div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
                                     ng-click="processVesselPagination(vesselCurrentPage = vesselMaxPage, '')"
                                     ng-disabled="!lastPageVessels">
                                 Last
                             </button>
-                        </div>
+                        </div>*@
                     </div>
                 </div>
             </div>
@@ -171,9 +168,6 @@
                     <button class="btn btn-sm pull-right" ng-click="openVoyageForm('Create')">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
-                </div>
-                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                    {{vesselNameHolder}}
                 </div>
             </div><br />
             <div class="myTableContainter">
@@ -249,16 +243,16 @@
                             {{item.BusinessUnitNameDestination.length ==  0 ? "" : item.BusinessUnitNameDestination[0].Name}}
                         </div>
                         <div class="myTableCell cell-4 small">
-                            {{item.EstimatedDepartureDate + " " +  item.EstimatedDepartureTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                            {{item.EstimatedDepartureDate + " " +  item.EstimatedDepartureTime | date: "MM/dd/yyyy HH:mm:ss"}}
                         </div>
                         <div class="myTableCell cell-4 small">
-                            {{item.EstimatedArrivalDate + " " + item.EstimatedArrivalTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                            {{item.EstimatedArrivalDate + " " + item.EstimatedArrivalTime | date: "MM/dd/yyyy HH:mm:ss"}}
                         </div>
                         <div class="myTableCell cell-3 small">
-                            {{item.DepartureDate + " " + item.DepartureTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                            {{item.DepartureDate + " " + item.DepartureTime | date: "MM/dd/yyyy HH:mm:ss"}}
                         </div>
                         <div class="myTableCell cell-3 small">
-                            {{item.ArrivalDate  + " " + item.ArrivalTime | date: "MM-dd-yyyy HH:mm:ss"}}
+                            {{item.ArrivalDate  + " " + item.ArrivalTime | date: "MM/dd/yyyy HH:mm:ss"}}
                         </div>
                         <div class="myTableCell cell-3 small text-center">
                             <button title="Edit Voyage" class="btn btn-xs btn-primary light" type="button" ng-click="openVoyageForm('Edit', item.Id)">
@@ -274,15 +268,15 @@
                         <div class="myTableContent">
                             <div class="myTableRow-no-border text-right">
                                 <div class="btn-group btn-group-sm">
-                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                        <button class="btn btn-primary btn-sm"
+                                    <div class="myTableCell-no-padding text-right small">
+                                        @*<button class="btn btn-primary btn-sm"
                                                 type="button"
                                                 ng-click="processVoyagePagination(voyageCurrentPage = 1, '')"
                                                 ng-disabled="!firstPageVoyages">
                                             First
-                                        </button>
+                                        </button>*@
                                     </div>
-                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                    <div class="myTableCell-no-padding text-right small">
                                         <button class="btn btn-primary btn-sm"
                                                 type="button"
                                                 ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage - 1), '')"
@@ -290,14 +284,14 @@
                                             Previous
                                         </button>
                                     </div>
-                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                    <div class="myTableCell-no-padding text-right small">
                                         <button class="btn btn-default btn-sm"
                                                 type="button"
                                                 ng-disabled="true">
                                             {{ voyageCurrentPage }}
                                         </button>
                                     </div>
-                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                                    <div class="myTableCell-no-padding text-right small">
                                         <button class="btn btn-primary btn-sm"
                                                 type="button"
                                                 ng-click="processVoyagePagination(voyageCurrentPage = (voyageCurrentPage + 1), '')"
@@ -305,13 +299,13 @@
                                             Next
                                         </button>
                                     </div>
-                                    <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                        <button class="btn btn-primary btn-sm"
+                                    <div class="myTableCell-no-padding text-right small">
+                                        @*<button class="btn btn-primary btn-sm"
                                                 type="button"
                                                 ng-click="processVoyagePagination(voyageCurrentPage = voyageMaxPage, '')"
                                                 ng-disabled="!lastPageVoyages">
                                             Last
-                                        </button>
+                                        </button>*@
                                     </div>
                                 </div>
                             </div>
@@ -325,12 +319,12 @@
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
                             <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                <button class="btn btn-primary btn-sm"
+                                @*<button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processVoyagePagination(voyageCurrentPage = 1, '')"
                                         ng-disabled="!firstPageVoyage">
                                     First
-                                </button>
+                                </button>*@
                             </div>
                             <div class="myTableCell-no-padding cell-fixed-10 text-right small">
                                 <button class="btn btn-primary btn-sm"
@@ -356,12 +350,12 @@
                                 </button>
                             </div>
                             <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                <button class="btn btn-primary btn-sm"
+                                @*<button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processVoyagePagination(voyageCurrentPage = voyageMaxPage, '')"
                                         ng-disabled="!lastPageVoyage">
                                     Last
-                                </button>
+                                </button>*@
                             </div>
                         </div>
                     </div>
@@ -475,9 +469,12 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small text-right">Date/Time</label>
                                 <div class="col-md-8">
-                                    <input id="edd" type="text" class="form-control"
-                                           ng-model="edd"
-                                           ng-disabled=" viewonly">
+                                    <div class='input-group date'>
+                                        <input type='text' id='edd' class="form-control" ng-model="edd" ng-disabled=" viewonly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -485,9 +482,12 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small text-right">Date/Time</label>
                                 <div class="col-md-8">
-                                    <input id="ead" type="text" class="form-control"
-                                           ng-model="ead"
-                                           ng-disabled=" viewonly">
+                                    <div class='input-group date'>
+                                        <input type='text' id='ead' class="form-control" ng-model="ead" ng-disabled=" viewonly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
                                 </div>
 
                             </div>
@@ -502,9 +502,12 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small text-right">Date/Time</label>
                                 <div class="col-md-8">
-                                    <input id="dd" type="text" class="form-control"
-                                           ng-model="dd"
-                                           ng-disabled=" viewonly">
+                                    <div class='input-group date'>
+                                        <input type='text' id='dd' class="form-control" ng-model="dd" ng-disabled=" viewonly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -512,11 +515,13 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small text-right">Date/Time</label>
                                 <div class="col-md-8">
-                                    <input id="ad" type="text" class="form-control"
-                                           ng-model="ad"
-                                           ng-disabled=" viewonly">
+                                    <div class='input-group date'>
+                                        <input type='text' id='ad' class="form-control" ng-model="ad" ng-disabled=" viewonly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

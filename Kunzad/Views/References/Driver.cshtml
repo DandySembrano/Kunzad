@@ -40,7 +40,7 @@
             <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
             <div class="myTableCell cell-6 small">{{d.LastName + ", " + d.FirstName + " " + d.MiddleName}}</div>
             <div class="myTableCell cell-3 small">{{d.LicenseNo}}</div>
-            <div class="myTableCell cell-3 small">{{d.LicenseExpiry | date : "MM-dd-yyyy"}}</div>
+            <div class="myTableCell cell-3 small">{{d.LicenseExpiry | date : "MM/dd/yyyy"}}</div>
         </div>
     </div>
 </div>
@@ -84,7 +84,7 @@
             <label class="col-md-3 control-label small">License Expiry</label>
             <div class="col-md-5">
                 <div class='input-group date' >
-                    <input type='text' id='led' class="form-control" ng-model="dataItem.LicenseExpiry" />
+                    <input type='text' id='led' class="form-control" ng-model="dataItem.LicenseExpiry" ng-disabled=" viewonly" />
                     <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
                         <span class=" glyphicon glyphicon-remove-circle"></span>
                     </span>
@@ -94,7 +94,7 @@
         <script type="text/javascript">
             $(function () {
                 $('#led').datetimepicker({
-                    format: 'MM-DD-YYYY',
+                    format: 'MM/DD/YYYY',
                     minDate: moment(),
                     autoClose: true
                 })

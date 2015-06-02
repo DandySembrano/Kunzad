@@ -208,7 +208,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //------------------------------------------------------------------
     //--------------------------Vessel Pagination-----------------------
     $scope.vesselCurrentPage = 1;
-    $scope.vesselPageSize = 5;
+    $scope.vesselPageSize = 20;
     $scope.vesselMaxPage = 0;
     $scope.paginatedVessels = [];
     $scope.processVesselPagination = function (vesselCurrentPage, action) {
@@ -288,7 +288,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //--------------------------End of Vessel Pagination-----------------
     //--------------------------Voyage Pagination-----------------------
     $scope.voyageCurrentPage = 1;
-    $scope.voyagePageSize = 5;
+    $scope.voyagePageSize = 20;
     $scope.voyageMaxPage = 0;
     $scope.paginatedVoyage = [];
     $scope.processVoyagePagination = function (voyageCurrentPage, action) {
@@ -374,18 +374,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //--------------------------End of Voyage Pagination-----------------
 
     //Initialize tab 1 and tab 2 name
-    $scope.initializeTabName = function () {
-        if ($scope.shippingLineItem.Name == null || $scope.shippingLineItem.Name == "") {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = "General";
-            $scope.selectedTab = $scope.tabPages[0];
-        }
-        else {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = $scope.shippingLineItem.Name;
-            $scope.tabPages[1] = "Vessels";
-            $scope.selectedTab = $scope.shippingLineItem.Name;
-        }
+    $scope.initializeHeaderName = function () {
+        $scope.modelName = "Shipping Line-" + $scope.shippingLineItem.Name;
     }
 
     //initialize shippingLineItem
@@ -504,10 +494,10 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             //format date fields
             for (i = 0; i < $scope.voyageList.length; i++)
             {
-                $scope.voyageList[i].EstimatedDepartureDate = $filter('date')($scope.voyageList[i].EstimatedDepartureDate, "MM-dd-yyyy");
-                $scope.voyageList[i].EstimatedArrivalDate = $filter('date')($scope.voyageList[i].EstimatedArrivalDate, "MM-dd-yyyy");
-                $scope.voyageList[i].DepartureDate = $filter('date')($scope.voyageList[i].DepartureDate, "MM-dd-yyyy");
-                $scope.voyageList[i].ArrivalDate = $filter('date')($scope.voyageList[i].ArrivalDate, "MM-dd-yyyy");
+                $scope.voyageList[i].EstimatedDepartureDate = $filter('date')($scope.voyageList[i].EstimatedDepartureDate, "MM/dd/yyyy");
+                $scope.voyageList[i].EstimatedArrivalDate = $filter('date')($scope.voyageList[i].EstimatedArrivalDate, "MM/dd/yyyy");
+                $scope.voyageList[i].DepartureDate = $filter('date')($scope.voyageList[i].DepartureDate, "MM/dd/yyyy");
+                $scope.voyageList[i].ArrivalDate = $filter('date')($scope.voyageList[i].ArrivalDate, "MM/dd/yyyy");
             }
             //set voyageIdDummy to prevent conflict of Voyage Ids
             if ($scope.voyageList.length >= 1)
@@ -680,6 +670,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $scope.actionMode = action;
         $scope.selectedSLIndex = $scope.searchSL($scope.slIDholder);
         $scope.selectedTab = $scope.tabPages[0];
+        $scope.tabPages = ["Shipping Line", "Vessels"];
         switch ($scope.actionMode) {
             case "Create":
                 $scope.vesselIdDummy = 0;
@@ -687,7 +678,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.vesselList = [];
                 $scope.voyageList = [];
                 $scope.initializeShippingLineItem();
-                //$scope.initializeTabName();
+                //$scope.initializeHeaderName();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
@@ -699,7 +690,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
                 $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 //set vesselIdDummy to prevent conflict of Vessel Ids
                 if ($scope.shippingLineItem.Vessels.length >= 1)
                     $scope.vesselIdDummy = $scope.shippingLineItem.Vessels[$scope.shippingLineItem.Vessels.length - 1].Id;
@@ -713,7 +704,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
                 $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.showForm = true;
@@ -724,7 +715,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
                 $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.showForm = true;

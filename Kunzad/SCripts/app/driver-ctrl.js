@@ -84,7 +84,7 @@ kunzadApp.controller("DriverController", function ($scope, $http, $filter) {
             .success(function (data, status) {
                 $scope.data = data;
                 for (i = 0; i < $scope.data.length; i++) {
-                    $scope.data[i].LicenseExpiry = $filter('date')($scope.data[i].LicenseExpiry, "MM-dd-yyyy");
+                    $scope.data[i].LicenseExpiry = $filter('date')($scope.data[i].LicenseExpiry, "MM/dd/yyyy");
                 }
                 $scope.currentPage = page;
                 if (page <= 1) {
