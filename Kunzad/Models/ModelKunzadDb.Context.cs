@@ -26,7 +26,6 @@ namespace Kunzad.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<AirFreight> AirFreights { get; set; }
         public virtual DbSet<AirFreightShipment> AirFreightShipments { get; set; }
         public virtual DbSet<AirLine> AirLines { get; set; }

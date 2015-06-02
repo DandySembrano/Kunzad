@@ -5,7 +5,6 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="1a12c0d20bc74fd6853e02928c48a309" Name="Diagram1">
-        <EntityTypeShape EntityType="KunzadDbModel.Address" Width="1.5" PointX="7.5" PointY="40.125" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.AirFreight" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.AirFreightShipment" Width="1.5" PointX="16.5" PointY="17.25" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.AirLine" Width="1.5" PointX="3" PointY="12.625" IsExpanded="true" />
@@ -13,7 +12,7 @@
         <EntityTypeShape EntityType="KunzadDbModel.BusinessUnitContact" Width="1.5" PointX="8.25" PointY="17.375" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.BusinessUnitType" Width="1.5" PointX="0.75" PointY="17.625" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.Charge" Width="1.5" PointX="12" PointY="10.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="KunzadDbModel.CityMunicipality" Width="1.5" PointX="5.25" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="KunzadDbModel.CityMunicipality" Width="2.25" PointX="5.25" PointY="40.5" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.Contact" Width="1.5" PointX="6" PointY="23.125" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.ContactNumberType" Width="1.5" PointX="9" PointY="35.625" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.ContactPhone" Width="1.5" PointX="11.25" PointY="24.25" IsExpanded="true" />
@@ -46,8 +45,6 @@
         <EntityTypeShape EntityType="KunzadDbModel.User" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.Vessel" Width="1.5" PointX="3.75" PointY="32.375" IsExpanded="true" />
         <EntityTypeShape EntityType="KunzadDbModel.VesselVoyage" Width="1.5" PointX="6" PointY="31.375" IsExpanded="true" />
-        <AssociationConnector Association="KunzadDbModel.FK_Address_CityMunicipality" ManuallyRouted="false" />
-        <AssociationConnector Association="KunzadDbModel.FK_Trucker_Address" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_AirFreight_AirLine" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_AirFreight_DestinationBusinessUnit" ManuallyRouted="false" />
         <AssociationConnector Association="KunzadDbModel.FK_AirFreight_OriginBusinessUnit" ManuallyRouted="false" />
@@ -99,6 +96,10 @@
         <EntityTypeShape EntityType="KunzadDbModel.CustomerAddress" Width="1.5" PointX="14.25" PointY="26.625" />
         <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_CityMunicipality" />
         <AssociationConnector Association="KunzadDbModel.FK_CustomerAddress_Customer" />
+        <AssociationConnector Association="KunzadDbModel.FK_CityMunicipality_Trucker" />
+        <AssociationConnector Association="KunzadDbModel.FK_Courier_CityMunicipality" />
+        <AssociationConnector Association="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId" />
+        <AssociationConnector Association="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

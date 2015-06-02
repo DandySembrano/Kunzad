@@ -5,21 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="KunzadDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Address">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Line1" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="LIne2" Type="varchar" MaxLength="150" />
-          <Property Name="LIne3" Type="varchar" MaxLength="150" />
-          <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
-          <Property Name="PostalCode" Type="varchar" MaxLength="20" />
-          <Property Name="CreatedDate" Type="datetime" />
-          <Property Name="LastUpdatedDate" Type="datetime" />
-          <Property Name="CreatedByUserId" Type="int" />
-          <Property Name="LastUpdatedByUserId" Type="int" />
-        </EntityType>
         <EntityType Name="AirFreight">
           <Key>
             <PropertyRef Name="Id" />
@@ -122,7 +107,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="StateProvinceId" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" />
@@ -172,7 +157,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" />
@@ -187,7 +172,10 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="TIN" Type="varchar" MaxLength="50" />
-          <Property Name="AddressId" Type="int" Nullable="false" />
+          <Property Name="Line1" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Line2" Type="varchar" MaxLength="150" />
+          <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
+          <Property Name="PostalCode" Type="varchar" MaxLength="20" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastUpdatedDate" Type="datetime" />
           <Property Name="CreatedByUserId" Type="int" />
@@ -488,7 +476,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="CountryId" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" />
@@ -518,7 +506,10 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="TIN" Type="varchar" MaxLength="50" />
-          <Property Name="AddressId" Type="int" Nullable="false" />
+          <Property Name="Line1" Type="varchar" MaxLength="150" />
+          <Property Name="Line2" Type="varchar" MaxLength="150" />
+          <Property Name="CityMunicipalityId" Type="int" />
+          <Property Name="PostalCode" Type="varchar" MaxLength="20" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="LastUpdatedDate" Type="datetime" />
           <Property Name="CreatedByUserId" Type="int" />
@@ -632,18 +623,6 @@
           <Property Name="CreatedByUserId" Type="int" />
           <Property Name="LastUpdatedByUserId" Type="int" />
         </EntityType>
-        <Association Name="FK_Address_CityMunicipality">
-          <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CityMunicipality">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Address">
-              <PropertyRef Name="CityMunicipalityId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_AirFreight_AirLine">
           <End Role="AirLine" Type="Self.AirLine" Multiplicity="1" />
           <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="*" />
@@ -740,6 +719,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CityMunicipality_Trucker">
+          <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="0..1" />
+          <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CityMunicipality">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Trucker">
+              <PropertyRef Name="CityMunicipalityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CityTown_StateProvince">
           <End Role="StateProvince" Type="Self.StateProvince" Multiplicity="1" />
           <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="*" />
@@ -773,6 +764,18 @@
             </Principal>
             <Dependent Role="ContactPhone">
               <PropertyRef Name="ContactNumberTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Courier_CityMunicipality">
+          <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+          <End Role="Courier" Type="Self.Courier" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CityMunicipality">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Courier">
+              <PropertyRef Name="CityMunicipalityId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1124,18 +1127,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Trucker_Address">
-          <End Role="Address" Type="Self.Address" Multiplicity="1" />
-          <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Address">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Trucker">
-              <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Trucking_Driver">
           <End Role="Driver" Type="Self.Driver" Multiplicity="1" />
           <End Role="Trucking" Type="Self.Trucking" Multiplicity="*" />
@@ -1257,7 +1248,6 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="KunzadDbModelStoreContainer">
-          <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AirFreight" EntityType="Self.AirFreight" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AirFreightShipment" EntityType="Self.AirFreightShipment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AirLine" EntityType="Self.AirLine" Schema="dbo" store:Type="Tables" />
@@ -1299,10 +1289,6 @@
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vessel" EntityType="Self.Vessel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VesselVoyage" EntityType="Self.VesselVoyage" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Address_CityMunicipality" Association="Self.FK_Address_CityMunicipality">
-            <End Role="CityMunicipality" EntitySet="CityMunicipality" />
-            <End Role="Address" EntitySet="Address" />
-          </AssociationSet>
           <AssociationSet Name="FK_AirFreight_AirLine" Association="Self.FK_AirFreight_AirLine">
             <End Role="AirLine" EntitySet="AirLine" />
             <End Role="AirFreight" EntitySet="AirFreight" />
@@ -1335,6 +1321,10 @@
             <End Role="Contact" EntitySet="Contact" />
             <End Role="BusinessUnitContact" EntitySet="BusinessUnitContact" />
           </AssociationSet>
+          <AssociationSet Name="FK_CityMunicipality_Trucker" Association="Self.FK_CityMunicipality_Trucker">
+            <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+            <End Role="Trucker" EntitySet="Trucker" />
+          </AssociationSet>
           <AssociationSet Name="FK_CityTown_StateProvince" Association="Self.FK_CityTown_StateProvince">
             <End Role="StateProvince" EntitySet="StateProvince" />
             <End Role="CityMunicipality" EntitySet="CityMunicipality" />
@@ -1346,6 +1336,10 @@
           <AssociationSet Name="FK_ContactPhone_ContactNumberType" Association="Self.FK_ContactPhone_ContactNumberType">
             <End Role="ContactNumberType" EntitySet="ContactNumberType" />
             <End Role="ContactPhone" EntitySet="ContactPhone" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Courier_CityMunicipality" Association="Self.FK_Courier_CityMunicipality">
+            <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+            <End Role="Courier" EntitySet="Courier" />
           </AssociationSet>
           <AssociationSet Name="FK_CourierService_BusinessUnit" Association="Self.FK_CourierService_BusinessUnit">
             <End Role="BusinessUnit" EntitySet="BusinessUnit" />
@@ -1463,10 +1457,6 @@
             <End Role="TruckType" EntitySet="TruckType" />
             <End Role="Truck" EntitySet="Truck" />
           </AssociationSet>
-          <AssociationSet Name="FK_Trucker_Address" Association="Self.FK_Trucker_Address">
-            <End Role="Address" EntitySet="Address" />
-            <End Role="Trucker" EntitySet="Trucker" />
-          </AssociationSet>
           <AssociationSet Name="FK_Trucking_Driver" Association="Self.FK_Trucking_Driver">
             <End Role="Driver" EntitySet="Driver" />
             <End Role="Trucking" EntitySet="Trucking" />
@@ -1512,23 +1502,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="KunzadDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Address">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LIne2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="LIne3" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
-          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedByUserId" Type="Int32" />
-          <Property Name="LastUpdatedByUserId" Type="Int32" />
-          <NavigationProperty Name="CityMunicipality" Relationship="Self.FK_Address_CityMunicipality" FromRole="Address" ToRole="CityMunicipality" />
-          <NavigationProperty Name="Truckers" Relationship="Self.FK_Trucker_Address" FromRole="Address" ToRole="Trucker" />
-        </EntityType>
         <EntityType Name="AirFreight">
           <Key>
             <PropertyRef Name="Id" />
@@ -1607,6 +1580,8 @@
           <NavigationProperty Name="SeaFreights" Relationship="Self.FK_SeaFreight_DestinationBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
           <NavigationProperty Name="SeaFreights1" Relationship="Self.FK_SeaFreight_OriginBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
           <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipment_BusinessUnit" FromRole="BusinessUnit" ToRole="Shipment" />
+          <NavigationProperty Name="VesselVoyages" Relationship="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId" FromRole="BusinessUnit" ToRole="VesselVoyage" />
+          <NavigationProperty Name="VesselVoyages1" Relationship="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId" FromRole="BusinessUnit" ToRole="VesselVoyage" />
         </EntityType>
         <EntityType Name="BusinessUnitContact">
           <Key>
@@ -1657,10 +1632,11 @@
           <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedByUserId" Type="Int32" />
           <Property Name="LastUpdatedByUserId" Type="Int32" />
-          <NavigationProperty Name="Addresses" Relationship="Self.FK_Address_CityMunicipality" FromRole="CityMunicipality" ToRole="Address" />
           <NavigationProperty Name="StateProvince" Relationship="Self.FK_CityTown_StateProvince" FromRole="CityMunicipality" ToRole="StateProvince" />
           <NavigationProperty Name="ServiceableAreas" Relationship="Self.FK_ServiceableArea_CityMunicipality" FromRole="CityMunicipality" ToRole="ServiceableArea" />
           <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CityMunicipality" ToRole="CustomerAddress" />
+          <NavigationProperty Name="Truckers" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="CityMunicipality" ToRole="Trucker" />
+          <NavigationProperty Name="Couriers" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="CityMunicipality" ToRole="Courier" />
         </EntityType>
         <EntityType Name="Contact">
           <Key>
@@ -1726,12 +1702,16 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AddressId" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedByUserId" Type="Int32" />
           <Property Name="LastUpdatedByUserId" Type="Int32" />
           <NavigationProperty Name="CourierTransactions" Relationship="Self.FK_CourierService_Courier" FromRole="Courier" ToRole="CourierTransaction" />
+          <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="Courier" ToRole="CityMunicipality" />
         </EntityType>
         <EntityType Name="CourierTransaction">
           <Key>
@@ -2090,14 +2070,17 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AddressId" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Precision="3" />
           <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedByUserId" Type="Int32" />
           <Property Name="LastUpdatedByUserId" Type="Int32" />
-          <NavigationProperty Name="Address" Relationship="Self.FK_Trucker_Address" FromRole="Trucker" ToRole="Address" />
           <NavigationProperty Name="Trucks" Relationship="Self.FK_Truck_Trucker" FromRole="Trucker" ToRole="Truck" />
           <NavigationProperty Name="Truckings" Relationship="Self.FK_Trucking_Trucker" FromRole="Trucker" ToRole="Trucking" />
+          <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="CityMunicipalityId" Type="Int32" />
+          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="Trucker" ToRole="CityMunicipality" />
         </EntityType>
         <EntityType Name="Trucking">
           <Key>
@@ -2222,31 +2205,9 @@
           <Property Name="LastUpdatedByUserId" Type="Int32" />
           <NavigationProperty Name="SeaFreights" Relationship="Self.FK_SeaFreight_VesselVoyage" FromRole="VesselVoyage" ToRole="SeaFreight" />
           <NavigationProperty Name="Vessel" Relationship="Self.FK_VesselVoyage_Vessel" FromRole="VesselVoyage" ToRole="Vessel" />
+          <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId" FromRole="VesselVoyage" ToRole="BusinessUnit" />
+          <NavigationProperty Name="BusinessUnit1" Relationship="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId" FromRole="VesselVoyage" ToRole="BusinessUnit" />
         </EntityType>
-        <Association Name="FK_Address_CityMunicipality">
-          <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
-          <End Role="Address" Type="Self.Address" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CityMunicipality">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Address">
-              <PropertyRef Name="CityMunicipalityId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Trucker_Address">
-          <End Role="Address" Type="Self.Address" Multiplicity="1" />
-          <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Address">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Trucker">
-              <PropertyRef Name="AddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_AirFreight_AirLine">
           <End Role="AirLine" Type="Self.AirLine" Multiplicity="1" />
           <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="*" />
@@ -2800,7 +2761,6 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="false">
-          <EntitySet Name="Addresses" EntityType="Self.Address" />
           <EntitySet Name="AirFreights" EntityType="Self.AirFreight" />
           <EntitySet Name="AirFreightShipments" EntityType="Self.AirFreightShipment" />
           <EntitySet Name="AirLines" EntityType="Self.AirLine" />
@@ -2841,14 +2801,6 @@
           <EntitySet Name="Users" EntityType="Self.User" />
           <EntitySet Name="Vessels" EntityType="Self.Vessel" />
           <EntitySet Name="VesselVoyages" EntityType="Self.VesselVoyage" />
-          <AssociationSet Name="FK_Address_CityMunicipality" Association="Self.FK_Address_CityMunicipality">
-            <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
-            <End Role="Address" EntitySet="Addresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Trucker_Address" Association="Self.FK_Trucker_Address">
-            <End Role="Address" EntitySet="Addresses" />
-            <End Role="Trucker" EntitySet="Truckers" />
-          </AssociationSet>
           <AssociationSet Name="FK_AirFreight_AirLine" Association="Self.FK_AirFreight_AirLine">
             <End Role="AirLine" EntitySet="AirLines" />
             <End Role="AirFreight" EntitySet="AirFreights" />
@@ -3050,6 +3002,22 @@
             <End Role="Customer" EntitySet="Customers" />
             <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
           </AssociationSet>
+          <AssociationSet Name="FK_CityMunicipality_Trucker" Association="KunzadDbModel.FK_CityMunicipality_Trucker">
+            <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+            <End Role="Trucker" EntitySet="Truckers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Courier_CityMunicipality" Association="KunzadDbModel.FK_Courier_CityMunicipality">
+            <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+            <End Role="Courier" EntitySet="Couriers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VesselVoyage_DestinationBusinessUnitId" Association="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId">
+            <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+            <End Role="VesselVoyage" EntitySet="VesselVoyages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VesselVoyage_OriginBusinessUnitId" Association="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId">
+            <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+            <End Role="VesselVoyage" EntitySet="VesselVoyages" />
+          </AssociationSet>
           </EntityContainer>
         <Association Name="FK_User_User_Created">
           <End Type="KunzadDbModel.User" Role="User" Multiplicity="1" />
@@ -3119,28 +3087,60 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CityMunicipality_Trucker">
+          <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="0..1" />
+          <End Type="KunzadDbModel.Trucker" Role="Trucker" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CityMunicipality">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Trucker">
+              <PropertyRef Name="CityMunicipalityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Courier_CityMunicipality">
+          <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+          <End Type="KunzadDbModel.Courier" Role="Courier" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CityMunicipality">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Courier">
+              <PropertyRef Name="CityMunicipalityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VesselVoyage_DestinationBusinessUnitId">
+          <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+          <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VesselVoyage">
+              <PropertyRef Name="DestinationBusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VesselVoyage_OriginBusinessUnitId">
+          <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+          <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnit">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VesselVoyage">
+              <PropertyRef Name="OriginBusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="KunzadDbModelStoreContainer" CdmEntityContainer="KunzadDbEntities">
-          <EntitySetMapping Name="Addresses">
-            <EntityTypeMapping TypeName="KunzadDbModel.Address">
-              <MappingFragment StoreEntitySet="Address">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Line1" ColumnName="Line1" />
-                <ScalarProperty Name="LIne2" ColumnName="LIne2" />
-                <ScalarProperty Name="LIne3" ColumnName="LIne3" />
-                <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
-                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
-                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
-                <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="AirFreights">
             <EntityTypeMapping TypeName="KunzadDbModel.AirFreight">
               <MappingFragment StoreEntitySet="AirFreight">
@@ -3316,10 +3316,13 @@
           <EntitySetMapping Name="Couriers">
             <EntityTypeMapping TypeName="KunzadDbModel.Courier">
               <MappingFragment StoreEntitySet="Courier">
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+                <ScalarProperty Name="Line2" ColumnName="Line2" />
+                <ScalarProperty Name="Line1" ColumnName="Line1" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="TIN" ColumnName="TIN" />
-                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
@@ -3650,10 +3653,13 @@
           <EntitySetMapping Name="Truckers">
             <EntityTypeMapping TypeName="KunzadDbModel.Trucker">
               <MappingFragment StoreEntitySet="Trucker">
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+                <ScalarProperty Name="Line2" ColumnName="Line2" />
+                <ScalarProperty Name="Line1" ColumnName="Line1" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="TIN" ColumnName="TIN" />
-                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
                 <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />

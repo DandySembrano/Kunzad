@@ -335,9 +335,23 @@
     <Content Include="assets\js\utility\waypoints\jquery.waypoints.min.js" />
     <Content Include="assets\skin\default_skin\css\theme.css" />
     <Content Include="assets\skin\default_skin\css\updates.css" />
+    <Content Include="Content\customize-table.css" />
     <Content Include="Content\fonts.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Models\ModelKunzadDb.Context.tt">
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ModelKunzadDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.edmx.diagram">
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.tt">
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\angular-animate.js" />
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-aria.js" />
@@ -361,9 +375,23 @@
     <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\airline-ctrl.js" />
     <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\businessunit-ctrl.js" />
+    <Content Include="Scripts\app\businessunittype-ctrl.js" />
+    <Content Include="Scripts\app\contactnotype-ctrl.js" />
+    <Content Include="Scripts\app\country-ctrl.js" />
+    <Content Include="Scripts\app\courier-ctrl.js" />
     <Content Include="Scripts\app\customer-ctrl.js" />
     <Content Include="Scripts\app\customergroup-ctrl.js" />
+    <Content Include="Scripts\app\driver-ctrl.js" />
+    <Content Include="Scripts\app\industry-ctrl.js" />
+    <Content Include="Scripts\app\serviceablearea-ctrl.js" />
+    <Content Include="Scripts\app\servicecategory-ctrl.js" />
+    <Content Include="Scripts\app\shipmenttype-ctrl.js" />
+    <Content Include="Scripts\app\shippinglines-ctrl.js" />
+    <Content Include="Scripts\app\trucker-ctrl.js" />
+    <Content Include="Scripts\app\trucktype-ctrl.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1936,6 +1964,7 @@
     <Content Include="vendor\plugins\datatables\media\js\dataTables.bootstrap.js" />
     <Content Include="vendor\plugins\datatables\media\js\jquery.dataTables.js" />
     <Content Include="vendor\plugins\datepicker\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="vendor\plugins\datepicker\js\bootstrap-datetimepicker.js" />
     <Content Include="vendor\plugins\datepicker\js\bootstrap-datetimepicker.min.js" />
     <Content Include="vendor\plugins\daterange\daterangepicker.css" />
     <Content Include="vendor\plugins\daterange\daterangepicker.js" />
@@ -2331,9 +2360,26 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControllers\AirLinesController.cs" />
+    <Compile Include="ApiControllers\BusinessUnitsController.cs" />
+    <Compile Include="ApiControllers\BusinessUnitTypesController.cs" />
+    <Compile Include="ApiControllers\ContactNumberTypesController.cs" />
+    <Compile Include="ApiControllers\CountriesController.cs" />
+    <Compile Include="ApiControllers\CouriersController.cs" />
+    <Compile Include="ApiControllers\CustomerAddressesController.cs" />
     <Compile Include="ApiControllers\CustomerGroupsController.cs" />
     <Compile Include="ApiControllers\CustomersController.cs" />
+    <Compile Include="ApiControllers\DriversController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
+    <Compile Include="ApiControllers\ServiceableAreasController.cs" />
+    <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
+    <Compile Include="ApiControllers\ShipmentTypesController.cs" />
+    <Compile Include="ApiControllers\ShippingLinesController.cs" />
+    <Compile Include="ApiControllers\StateProvincesController.cs" />
+    <Compile Include="ApiControllers\TruckersController.cs" />
+    <Compile Include="ApiControllers\TrucksController.cs" />
+    <Compile Include="ApiControllers\TruckTypesController.cs" />
+    <Compile Include="ApiControllers\VesselVoyagesController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -2342,9 +2388,6 @@
     <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Address.cs">
-      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AirFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
@@ -2411,20 +2454,22 @@
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelKunzadDb.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>ModelKunzadDb.Context.tt</DependentUpon>
+      <SubType>Code</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="Models\ModelKunzadDb.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="Models\ModelKunzadDb.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="Models\Response.cs" />
     <Compile Include="Models\SeaFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2893,23 +2938,6 @@
     <Content Include="Views\Shared\_TopBar.cshtml" />
     <Content Include="Views\Shared\_SideBarRight.cshtml" />
     <Content Include="Views\Shared\_SideBarMenu.cshtml" />
-    <EntityDeploy Include="Models\ModelKunzadDb.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\ModelKunzadDb.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-      <LastGenOutput>ModelKunzadDb.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ModelKunzadDb.edmx.diagram">
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\ModelKunzadDb.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-      <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
-    </Content>
     <Content Include="Views\References\CustomerGroups.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout1.cshtml" />
     <Content Include="Views\Home\Main.cshtml" />
@@ -2917,6 +2945,20 @@
     <Content Include="Views\Shared\_DataTableLayout2.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout3.cshtml" />
     <Content Include="Views\Shared\_ContextMenu1.cshtml" />
+    <Content Include="Views\References\Airlines.cshtml" />
+    <Content Include="Views\References\Truckers.cshtml" />
+    <Content Include="Views\References\TruckType.cshtml" />
+    <Content Include="Views\References\Courier.cshtml" />
+    <Content Include="Views\References\Industry.cshtml" />
+    <Content Include="Views\References\BusinessUnitType.cshtml" />
+    <Content Include="Views\References\ShipmentType.cshtml" />
+    <Content Include="Views\References\ServiceCategory.cshtml" />
+    <Content Include="Views\References\ContactnoType.cshtml" />
+    <Content Include="Views\References\Driver.cshtml" />
+    <Content Include="Views\References\Country.cshtml" />
+    <Content Include="Views\References\ShippingLines.cshtml" />
+    <Content Include="Views\References\BusinessUnit.cshtml" />
+    <Content Include="Views\References\ServiceableArea.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2930,6 +2972,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Models\ModelKunzadDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
