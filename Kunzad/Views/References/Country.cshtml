@@ -64,7 +64,7 @@
                                ng-model="countryItem.Name"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}"
-                               ng-change="initializeTabName()">
+                               ng-change="initializeHeaderName()">
                     </div>
                 </div>
             </form>
@@ -81,9 +81,6 @@
                     <button class="btn btn-sm pull-right" ng-click="openStateProvinceForm('Create')">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
-                </div>
-                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                    {{countryItem.Name}}
                 </div>
             </div><br />
             <div class="myTableContainter">
@@ -109,7 +106,7 @@
                             <button class="btn btn-xs btn-success light" type="button"
                                     title="Add/Edit City/Municipalities"
                                     ng-click="openStateProvinceForm('showCityMunicipality', item.Id, item.Name)">
-                                <span class="glyphicon glyphicon-eye-open "></span>
+                               Cities/Municipalities
                             </button>
                             <button title="Edit State/Province" class="btn btn-xs btn-primary light" type="button" ng-click="openStateProvinceForm('Edit', item.Id)">
                                 <span class="glyphicon glyphicon-pencil"></span>
@@ -126,15 +123,15 @@
                 <div class="myTableContent">
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            @*<div class="myTableCell-no-padding cell-fixed-10 text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processStateProvincePagination(stateProvinceCurrentPage = 1, '')"
                                         ng-disabled="!firstPageStateProvince">
                                     First
                                 </button>
-                            </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            </div>*@
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage - 1), '')"
@@ -142,14 +139,14 @@
                                     Previous
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-default btn-sm"
                                         type="button"
                                         ng-disabled="true">
                                     {{ stateProvinceCurrentPage }}
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage + 1), '')"
@@ -157,14 +154,14 @@
                                     Next
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            @*<div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processStateProvincePagination(stateProvinceCurrentPage = stateProvinceMaxPage, '')"
                                         ng-disabled="!lastPageStateProvince">
                                     Last
                                 </button>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 </div>
@@ -181,9 +178,6 @@
                     <button class="btn btn-sm pull-right" ng-click="openCityMunicipalityForm('Create')">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
-                </div>
-                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                    {{spNameHolder}}
                 </div>
             </div><br />
             <div class="myTableContainter">
@@ -222,15 +216,15 @@
                 <div class="myTableContent">
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            @*<div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = 1, '')"
                                         ng-disabled="!firstPageCityMunicipality">
                                     First
                                 </button>
-                            </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            </div>*@
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage - 1), '')"
@@ -238,14 +232,14 @@
                                     Previous
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-default btn-sm"
                                         type="button"
                                         ng-disabled="true">
                                     {{ cityMunicipalityCurrentPage }}
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage + 1), '')"
@@ -253,14 +247,14 @@
                                     Next
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            @*<div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = cityMunicipalityMaxPage, '')"
                                         ng-disabled="!lastPageCityMunicipality">
                                     Last
                                 </button>
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 </div>

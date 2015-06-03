@@ -176,18 +176,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             $scope.dataItem.TIN = $scope.dataItem.TIN + "-";
     };
 
-    $scope.initializeTabName = function () {
-        if ($scope.dataItem.Name == null || $scope.dataItem.Name == "") {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = "Truckers";
-            $scope.selectedTab = $scope.tabPages[0];
-        }
-        else {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = $scope.dataItem.Name;
-            $scope.tabPages[1] = "Trucks";
-            $scope.selectedTab = $scope.dataItem.Name;
-        }
+    $scope.initializeHeaderName = function () {
+        $scope.modelName = "Trucker-" + $scope.dataItem.Name;
     };
 
     // Get Truck Type
@@ -493,14 +483,14 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.country = $rootScope.country;
         $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
         //-----------------------------------------------
-        $scope.selectedTab = "Trucker";
+        $scope.tabPages = ["Trucker", "Truck"];
+        $scope.selectedTab = $scope.tabPages[0];
         $scope.actionMode = action;
         $scope.selectedTruckerIndex = $scope.searchTrucker($scope.truckerIdHolder);
         switch ($scope.actionMode) {
             case "Create":
                 $scope.truckList = [];
                 $scope.initDataItem();
-                //$scope.initializeTabName();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
@@ -509,7 +499,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             case "Edit":
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 //set truckIdDummy to prevent conflict of Truck Ids
                 if ($scope.truckList.length >= 1)
                     $scope.truckIdDummy = $scope.truckList[$scope.truckList.length - 1].Id;
@@ -520,7 +510,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             case "Delete":
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.showForm = true;
@@ -528,7 +518,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             case "View":
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.showForm = true;
@@ -550,6 +540,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.closeForm = function () {
         $scope.isError = false;
         $scope.showForm = false;
+        $scope.modelName = "Trucker";
     }
 
     $scope.showFormError = function (message) {
@@ -561,6 +552,11 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     function validateEntry() {
         if ($scope.dataItem.Name == null || $scope.dataItem.Name == "") {
             $scope.showFormError("Trucker name is required.");
+            $scope.selectedTab = $scope.tabPages[0];
+            return false;
+        }
+        else if ($scope.dataItem.CityMunicipalityId == null || $scope.dataItem.CityMunicipalityId == "") {
+            $scope.showFormError("City/Municipality is required.");
             $scope.selectedTab = $scope.tabPages[0];
             return false;
         }
@@ -655,6 +651,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.Truck.Id = $scope.truckIdDummy;
         $scope.Truck.TruckerId = $scope.dataItem.Id;
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
+        $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
+        $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
         $scope.truckList.push($scope.Truck);
         $scope.processTruckPagination($scope.truckCurrentPage, 'LASTPAGE');
         $scope.closeModalForm();

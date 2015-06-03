@@ -132,7 +132,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
 
     //--------------------------State/Province Pagination-----------------------
     $scope.stateProvinceCurrentPage = 1;
-    $scope.stateProvincePageSize = 5;
+    $scope.stateProvincePageSize = 20;
     $scope.stateProvinceMaxPage = 0;
     $scope.paginatedStateProvince = [];
     $scope.processStateProvincePagination = function (stateProvinceCurrentPage, action) {
@@ -213,7 +213,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
 
     //--------------------------City/Municipality Pagination-----------------------
     $scope.cityMunicipalityCurrentPage = 1;
-    $scope.cityMunicipalityPageSize = 5;
+    $scope.cityMunicipalityPageSize = 20;
     $scope.cityMunicipalityMaxPage = 0;
     $scope.paginatedCityMunicipality = [];
     $scope.processCityMunicipalityPagination = function (cityMunicipalityCurrentPage, action) {
@@ -298,20 +298,11 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     };
     //--------------------------End of City/Municipality Pagination-----------------
 
-    //Initialize tab 1 and tab 2 name
-    $scope.initializeTabName = function () {
-        if ($scope.countryItem.Name == null || $scope.countryItem.Name == "") {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = "General";
-            $scope.selectedTab = $scope.tabPages[0];
-        }
-        else {
-            $scope.tabPages = [];
-            $scope.tabPages[0] = $scope.countryItem.Name;
-            $scope.tabPages[1] = "States/Provinces";
-            $scope.selectedTab = $scope.countryItem.Name;
-        }
+    //Initialize header name
+    $scope.initializeHeaderName = function () {
+        $scope.modelName = "Country-" + $scope.countryItem.Name;
     }
+
     //initialize countryItem
     $scope.initCountryItem = function () {
         $scope.countryItem = {
@@ -418,6 +409,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     $scope.closeForm = function () {
         $scope.isError = false;
         $scope.showForm = false;
+        $scope.modelName = "Country";
     };
 
     //close modal
@@ -614,6 +606,8 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
         $scope.selectedCountryIndex = $scope.searchCountry($scope.countryIdHolder);
+        $scope.tabPages = ["Country", "States/Provinces"];
+        $scope.selectedTab = $scope.tabPages[0];
         switch ($scope.actionMode) {
             case "Create":
                 $scope.stateProvinceDummy = 0;
@@ -621,7 +615,6 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.stateProvince = [];
                 $scope.cityMunicipality = [];
                 $scope.initCountryItem();
-                //$scope.initializeTabName();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
@@ -633,7 +626,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.stateProvince = angular.copy($scope.country[$scope.selectedCountryIndex].StateProvinces);
                 $scope.processStateProvincePagination($scope.stateProvinceCurrentPage, '');
                 $scope.apiGet($scope.country[$scope.selectedCountryIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 //set $scope.stateProvinceDummy to prevent conflict of StateProvince dummy Id
                 if ($scope.countryItem.StateProvinces.length >= 1)
                     $scope.stateProvinceDummy = $scope.countryItem.StateProvinces[$scope.countryItem.StateProvinces.length - 1].Id;
@@ -647,7 +640,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.stateProvince = angular.copy($scope.country[$scope.selectedCountryIndex].StateProvinces);
                 $scope.processStateProvincePagination($scope.stateProvinceCurrentPage, '');
                 $scope.apiGet($scope.country[$scope.selectedCountryIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.showForm = true;
@@ -658,7 +651,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.stateProvince = angular.copy($scope.country[$scope.selectedCountryIndex].StateProvinces);
                 $scope.processStateProvincePagination($scope.stateProvinceCurrentPage, '');
                 $scope.apiGet($scope.country[$scope.selectedCountryIndex].Id);
-                //$scope.initializeTabName();
+                $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 $scope.showForm = true;

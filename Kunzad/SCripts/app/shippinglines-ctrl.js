@@ -468,6 +468,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.closeForm = function () {
         $scope.isError = false;
         $scope.showForm = false;
+        $scope.modelName = "Shipping Lines";
     };
 
     //close modal
@@ -669,8 +670,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
         $scope.selectedSLIndex = $scope.searchSL($scope.slIDholder);
-        $scope.selectedTab = $scope.tabPages[0];
         $scope.tabPages = ["Shipping Line", "Vessels"];
+        $scope.selectedTab = $scope.tabPages[0];
         switch ($scope.actionMode) {
             case "Create":
                 $scope.vesselIdDummy = 0;

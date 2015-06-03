@@ -53,7 +53,7 @@
                         <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
                         <div class="myTableCell cell-3 small">{{t.Name}}</div>
                         <div class="myTableCell cell-3 small">{{t.TIN}}</div>
-                        <div class="myTableCell cell-3 small">{{t.Line1 + ", " + (t.Line2 == "" || t.Line2 == null ? "" : (t.Line2 + ", ")) + t.CityMunicipality.Name}}</div>
+                        <div class="myTableCell cell-3 small">{{(t.Line1 == "" || t.Line1 == null ? "" : (t.Line1 + ", ")) + (t.Line2 == "" || t.Line2 == null ? "" : (t.Line2 + ", ")) + t.CityMunicipality.Name}}</div>
                         <div class="myTableCell cell-3 small">{{t.PostalCode}}</div>
                     </div>
                 </div>
@@ -81,8 +81,7 @@
                                ng-model="dataItem.Name"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}"
-                               >
-                        @*ng-change="initializeTabName()"*@
+                               ng-change="initializeHeaderName()">
                     </div>
                 </div>
 
@@ -187,9 +186,6 @@
                             ng-click="openTruckForm('Create')">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
-                </div>
-                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                    {{dataItem.Name}}
                 </div>
             </div><br />
             <div class="myTableContainter">
@@ -370,8 +366,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="Truck.TruckType.WeightCapacity"
-                                       ng-disabled="true">
+                                       ng-model="Truck.TruckType.WeightCapacity">
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
@@ -380,8 +375,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="Truck.TruckType.VolumeCapacity"
-                                       ng-disabled="true">
+                                       ng-model="Truck.TruckType.VolumeCapacity">
                             </div>
                         </div>
                     </form>
