@@ -340,6 +340,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.dataItem.Trucks = angular.copy(data.Trucks);
                 $scope.truckList = [];
                 $scope.truckList = angular.copy($scope.dataItem.Trucks);
+                //set truckIdDummy to prevent conflict of Truck Ids
+                if ($scope.truckList.length >= 1)
+                    $scope.truckIdDummy = $scope.truckList[$scope.truckList.length - 1].Id;
                 //process trucks pagination
                 $scope.processTruckPagination($scope.truckCurrentPage);
                 spinner.stop();
@@ -421,6 +424,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             .success(function (data, status) {
                     //initialize trucker info
                 if (data.status == "SUCCESS") {
+                    $scope.data[$scope.selected] = [];
                     $scope.data[$scope.selected] = angular.copy(data.objParam1);
                     //initialize TruckId
                     //for (i = 0; i < $scope.truckList.length; i++) {
@@ -493,17 +497,16 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.truckIdDummy = 0;
                 break;
             case "Edit":
+                $scope.dataItem = [];
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
-                //set truckIdDummy to prevent conflict of Truck Ids
-                if ($scope.truckList.length >= 1)
-                    $scope.truckIdDummy = $scope.truckList[$scope.truckList.length - 1].Id;
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
                 break;
             case "Delete":
+                $scope.dataItem = [];
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
@@ -512,6 +515,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.showForm = true;
                 break;
             case "View":
+                $scope.dataItem = [];
                 $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
                 $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
@@ -690,6 +694,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //Manage opening of modal
     $scope.openTruckForm = function (action) {
         $scope.TruckAction = action;
+        $scope.viewOnly = false;
         switch ($scope.TruckAction) {
             case "Create":
                 $scope.initTruck();
@@ -701,6 +706,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 break;
             case "Delete":
                 $scope.Truck = $scope.truckList[$scope.selectedTruckIndex];
+                $scope.viewOnly = false;
                 $scope.openModalForm('#modal-panel-truck')
                 break;
             case "View":
@@ -725,6 +731,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             case "Delete":
                 if (validateTruck())
                     $scope.apiDeleteTruck();
+                break;
+            case "View":
+                $scope.closeModalForm();
                 break;
         }
     };

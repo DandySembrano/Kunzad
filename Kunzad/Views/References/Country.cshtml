@@ -95,26 +95,14 @@
                             <span class="glyphicon glyphicon-chevron-up"
                                   ng-show="orderBySPNameAsc"></span>
                         </div>
-                        <div class="myTableCell cell-2 text-right small"><strong>Show/Edit/Delete</strong></div>
                     </div>
                     <!--Details-->
                     <div class="myTableRow"
-                         ng-repeat="item in paginatedStateProvince | orderBy:spCriteria">
+                         ng-repeat="item in paginatedStateProvince | orderBy:spCriteria"
+                         context-menu="setSelectedStateProvince(item.Id, item.Name)"
+                         data-target="DataTableStateProvince">
                         <div class="myTableCell cell-seqno small text-center">{{stateProvinceCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((stateProvinceCurrentPage - 1) * stateProvincePageSize))}}</div>
                         <div class="myTableCell cell-8 small">{{item.Name}}</div>
-                        <div class="myTableCell cell-2 small text-right">
-                            <button class="btn btn-xs btn-success light" type="button"
-                                    title="Add/Edit City/Municipalities"
-                                    ng-click="openStateProvinceForm('showCityMunicipality', item.Id, item.Name)">
-                               Cities/Municipalities
-                            </button>
-                            <button title="Edit State/Province" class="btn btn-xs btn-primary light" type="button" ng-click="openStateProvinceForm('Edit', item.Id)">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button title="Delete State/Province" class="btn btn-xs btn-danger light" type="button" ng-click="openStateProvinceForm('Delete', item.Id)">
-                                <span class="glyphicons glyphicons-bin"></span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div><br />
@@ -123,14 +111,6 @@
                 <div class="myTableContent">
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
-                            @*<div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = 1, '')"
-                                        ng-disabled="!firstPageStateProvince">
-                                    First
-                                </button>
-                            </div>*@
                             <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
@@ -154,14 +134,6 @@
                                     Next
                                 </button>
                             </div>
-                            @*<div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = stateProvinceMaxPage, '')"
-                                        ng-disabled="!lastPageStateProvince">
-                                    Last
-                                </button>
-                            </div>*@
                         </div>
                     </div>
                 </div>
@@ -179,6 +151,10 @@
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
                 </div>
+                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
+                    {{spNameHolder}}
+                </div>
+
             </div><br />
             <div class="myTableContainter">
                 <div class="myTableContent">
@@ -192,22 +168,14 @@
                             <span class="glyphicon glyphicon-chevron-up"
                                   ng-show="orderByCMNameAsc"></span>
                         </div>
-                        <div class="myTableCell cell-4 text-right small"><strong>Action</strong></div>
                     </div>
                     <!--Detail-->
-                    @*<input type="hidden" ng-model="stateProvinceIdHolder">*@
                     <div class="myTableRow"
-                         ng-repeat="item in paginatedCityMunicipality | orderBy:cmCriteria">@*| filter:{StateProvinceId:stateProvinceIdHolder}:true*@
+                         ng-repeat="item in paginatedCityMunicipality | orderBy:cmCriteria"
+                         context-menu="setSelectedCityMunicipality(item.Id)"
+                         data-target="DataTableCityMunicipality">
                         <div class="myTableCell cell-seqno small text-center">{{cityMunicipalityCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((cityMunicipalityCurrentPage - 1) * cityMunicipalityPageSize))}}</div>
                         <div class="myTableCell cell-5 small">{{item.Name}}</div>
-                        <div class="myTableCell cell-4 small text-right">
-                            <button title="Edit City/Municipality" class="btn btn-xs btn-primary light" type="button" ng-click="openCityMunicipalityForm('Edit', item.Id)">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button title="Delete City/Municipality" class="btn btn-xs btn-danger light" type="button" ng-click="openCityMunicipalityForm('Delete', item.Id)">
-                                <span class="glyphicons glyphicons-bin"></span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div><br />
@@ -216,14 +184,6 @@
                 <div class="myTableContent">
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
-                            @*<div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = 1, '')"
-                                        ng-disabled="!firstPageCityMunicipality">
-                                    First
-                                </button>
-                            </div>*@
                             <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
@@ -247,14 +207,6 @@
                                     Next
                                 </button>
                             </div>
-                            @*<div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = cityMunicipalityMaxPage, '')"
-                                        ng-disabled="!lastPageCityMunicipality">
-                                    Last
-                                </button>
-                            </div>*@
                         </div>
                     </div>
                 </div>
@@ -262,6 +214,9 @@
         </div>
     </div>
 }
+
+@RenderPage("~/Views/Shared/_ContextMenuStateProvince.cshtml")
+@RenderPage("~/Views/Shared/_ContextMenuCityMunicipality.cshtml")
 
 <!-- Modal for State/Province -->
 <div id="modal-panel-stateProvince" class="popup-basic bg-none mfp-with-anim mfp-hide">
@@ -296,7 +251,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
                     ng-click="saveStateProvince(stateProvinceAction)">
-                {{stateProvinceAction === 'Delete' ? 'Delete' : stateProvinceAction === 'Create' ? 'Create' : 'Edit'}}
+                {{stateProvinceAction === 'Delete' ? 'Delete' : stateProvinceAction === 'Create' ? 'Create' : stateProvinceAction === 'Edit' ? 'Edit' : 'Close'}}
             </button>
         </div>
     </div>
@@ -337,7 +292,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
                     ng-click="saveCityMunicipality(cityMunicipalityAction)">
-                {{cityMunicipalityAction === 'Delete' ? 'Delete' : cityMunicipalityAction === 'Create' ? 'Create' : 'Edit'}}
+                {{cityMunicipalityAction === 'Delete' ? 'Delete' : cityMunicipalityAction === 'Create' ? 'Create' : cityMunicipalityAction === 'Edit' ? 'Edit' : 'Close'}}
             </button>
         </div>
     </div>

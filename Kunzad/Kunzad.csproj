@@ -2962,6 +2962,10 @@
     <Content Include="Views\Shared\_ContextMenu2.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout4.cshtml" />
     <Content Include="Views\Shared\_ContextMenuTruck.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuVessel.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuVoyage.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuStateProvince.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuCityMunicipality.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

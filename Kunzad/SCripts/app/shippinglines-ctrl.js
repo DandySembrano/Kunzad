@@ -393,7 +393,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     }
 
     //Retrieve shipping lines
-    $scope.loadShippingLines = function (page) {
+    $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
         $http.get("/api/ShippingLines?page=" + page)
@@ -626,6 +626,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
                     //initialize Shipping Line info
+                    $scope.shippingLineList[$scope.selectedSLIndex] = [];
                     $scope.shippingLineList[$scope.selectedSLIndex] = angular.copy(data.objParam1);
                     $scope.closeForm();
                     spinner.stop();
@@ -685,6 +686,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.showForm = true;
                 break;
             case "Edit":
+                $scope.shippingLineItem = [];
                 $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
                 //Store vessel of a shipping line
                 $scope.vesselList = [];
@@ -700,6 +702,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.showForm = true;
                 break;
             case "Delete":
+                $scope.shippingLineItem = [];
                 $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
                 $scope.vesselList = [];
                 $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
@@ -711,6 +714,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.showForm = true;
                 break;
             case "View":
+                $scope.shippingLineItem = [];
                 $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
                 $scope.vesselList = [];
                 $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
@@ -750,6 +754,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     function validateEntry() {
         if ($scope.shippingLineItem.Name == null || $scope.shippingLineItem.Name == "") {
             $scope.showFormError("Name is required.");
+            $scope.selectedTab = $scope.tabPages[0];
             return false;
         }
         return true;
@@ -810,16 +815,23 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         }
         return i;
     };
-    //Manage in opening of vessel modal
-    $scope.openVesselForm = function (action, id, vesselName) {
-        $scope.vesselAction = action;
+
+    $scope.setSelectedVessel = function (id, vesselName) {
         $scope.selectedVesselActionIndex = $scope.searchInVessel(id);
+        $scope.vesselNameHolder = vesselName;
+    };
+
+    //Manage in opening of vessel modal
+    $scope.openVesselForm = function (action) {
+        $scope.vesselAction = action;
+        $scope.viewOnly = false;
         switch ($scope.vesselAction) {
             case "Create":
                 $scope.initVessel();
                 $scope.openModalForm('#modal-panel-vessel')
                 break;
             case "Edit":
+                $scope.vesselItem = [];
                 $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
                 $scope.openModalForm('#modal-panel-vessel')
                 break;
@@ -828,8 +840,16 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                     $scope.showVoyageHeader = true;
                 else
                     $scope.showVoyageHeader = false;
+                $scope.vesselItem = [];
+                $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
+                $scope.viewOnly = false;
+                $scope.openModalForm('#modal-panel-vessel')
+                break;
+            case "View":
+                $scope.vesselItem = [];
                 $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
                 $scope.openModalForm('#modal-panel-vessel')
+                $scope.viewOnly = true;
                 break;
             case "showVoyage":
                 //Initialize tab 3 name
@@ -840,13 +860,12 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 else
                     $scope.showVoyageHeader = false;
                 $scope.selectedTab = $scope.tabPages[2];
-                $scope.vesselNameHolder = vesselName;
                 $scope.processVoyagePagination($scope.voyageCurrentPage, '');
                 break;
         }
     };
 
-    //vessel entry validation
+    //Vessel entry validation
     function validateVessel() {
         //validate here
         if ($scope.vesselItem.Name == null || $scope.vesselItem.Name == "") {
@@ -895,6 +914,9 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             case "Delete":
                 if (validateVessel())
                     $scope.apiDeleteVessel();
+                break;
+            case "View":
+                $scope.closeModalForm();
                 break;
         }
     };
@@ -982,25 +1004,40 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         }
     };
 
-    //Manage opening of Voyage modal
-    $scope.openVoyageForm = function (action, id) {
-        $scope.voyageAction = action;
+    $scope.setSelectedVoyage = function(id)
+    {
         $scope.selectedVoyageActionIndex = searchVoyage(id);
+    };
+    //Manage opening of Voyage modal
+    $scope.openVoyageForm = function (action) {
+        $scope.voyageAction = action;
+        $scope.viewOnly = false;
         switch ($scope.voyageAction) {
             case "Create":
                 $scope.initVoyage();
                 $scope.openModalForm('#modal-panel-voyage')
                 break;
             case "Edit":
+                $scope.voyageItem = [];
                 $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
                 //initialize holders
                 $scope.initializeHolders();
                 $scope.openModalForm('#modal-panel-voyage')
                 break;
             case "Delete":
+                $scope.voyageItem = [];
                 $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
                 //initialize holders
                 $scope.initializeHolders();
+                $scope.viewOnly = false;
+                $scope.openModalForm('#modal-panel-voyage')
+                break;
+            case "View":
+                $scope.voyageItem = [];
+                $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
+                //initialize holders
+                $scope.initializeHolders();
+                $scope.viewOnly = true;
                 $scope.openModalForm('#modal-panel-voyage')
                 break;
         }
@@ -1093,6 +1130,9 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 if (validateVoyage())
                     $scope.apiDeleteVoyage();
                 break;
+            case "View":
+                $scope.closeModalForm();
+                break;
         }
     };
 
@@ -1101,7 +1141,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
-        $scope.loadShippingLines($scope.currentPage);
+        $scope.loadData($scope.currentPage);
         //Retrieve Business Units
         $scope.getBusinessUnits();
         $scope.processSLOrderBy($scope.slCriteria);

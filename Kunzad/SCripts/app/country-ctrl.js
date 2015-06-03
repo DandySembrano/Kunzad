@@ -347,7 +347,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     };
 
     //Get Countries
-    $scope.loadCountry = function (page) {
+    $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
         $http.get("/api/Countries?page=" + page)
@@ -389,6 +389,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         }
         return i;
     };
+
     //initialized when user changes tab
     $scope.setSelectedTab = function (tab) {
         if (tab == $scope.tabPages[2])
@@ -554,22 +555,20 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
                     //initialize Country info
+                    $scope.country[$scope.selectedCountryIndex] = [];
                     $scope.country[$scope.selectedCountryIndex] = angular.copy(data.objParam1);
                     $scope.closeForm();
-
                     spinner.stop();
                 }
                 else {
                     $scope.showFormError(data.message);
                     $scope.selectedTab = $scope.tabPages[0];
-
                     spinner.stop();
                 }
             })
             .error(function (data, status) {
                 $scope.showFormError(status);
                 $scope.selectedTab = $scope.tabPages[0];
-
                 spinner.stop();
             })
     };
@@ -593,10 +592,11 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
             })
     };
 
-    // Validate Form Data Entry
+    // Validate Form  Data Entry
     function validateEntry() {
         if ($scope.countryItem.Name == null || $scope.countryItem.Name == "") {
             $scope.showFormError("Name is required.");
+            $scope.selectedTab = $scope.tabPages[0];
             return false;
         }
         return true;
@@ -615,11 +615,13 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.stateProvince = [];
                 $scope.cityMunicipality = [];
                 $scope.initCountryItem();
+                $scope.processStateProvincePagination($scope.stateProvinceCurrentPage, '');
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
                 break;
             case "Edit":
+                $scope.countryItem = [];
                 $scope.countryItem = angular.copy($scope.country[$scope.selectedCountryIndex]);
                 //Store state/province of a country
                 $scope.stateProvince = [];
@@ -635,6 +637,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.showForm = true;
                 break;
             case "Delete":
+                $scope.countryItem = [];
                 $scope.countryItem = angular.copy($scope.country[$scope.selectedCountryIndex]);
                 $scope.stateProvince = [];
                 $scope.stateProvince = angular.copy($scope.country[$scope.selectedCountryIndex].StateProvinces);
@@ -646,6 +649,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.showForm = true;
                 break;
             case "View":
+                $scope.countryItem = [];
                 $scope.countryItem = angular.copy($scope.country[$scope.selectedCountryIndex]);
                 $scope.stateProvince = [];
                 $scope.stateProvince = angular.copy($scope.country[$scope.selectedCountryIndex].StateProvinces);
@@ -692,7 +696,6 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         $scope.errorMessageStateProvince = message;
     };
 
-
     //search state/province in city/municipality
     $scope.searchStateProvince = function (id)
     {
@@ -729,23 +732,35 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         }
     };
 
-    //Manage opening of State/Province modal
-    $scope.openStateProvinceForm = function (action, id, spName) {
-        $scope.stateProvinceAction = action;
+    $scope.setSelectedStateProvince = function (id, stateProvinceName) {
         $scope.selectedstateProvinceActionIndex = $scope.searchInStateProvince(id);
+        $scope.spNameHolder = stateProvinceName;
+    };
+
+    //Manage opening of State/Province modal
+    $scope.openStateProvinceForm = function (action) {
+        $scope.stateProvinceAction = action;
+        $scope.viewOnly = false;
         switch ($scope.stateProvinceAction) {
             case "Create":
-                //$scope.isWarningStateProvince = false;
                 $scope.initStateProvinceItem();
                 $scope.openModalForm('#modal-panel-stateProvince')
                 break;
             case "Edit":
-                //$scope.isWarningStateProvince = false;
+                $scope.stateProvinceItem = [];
                 $scope.stateProvinceItem = angular.copy($scope.stateProvince[$scope.selectedstateProvinceActionIndex]);
                 $scope.openModalForm('#modal-panel-stateProvince')
                 break;
             case "Delete":
+                $scope.stateProvinceItem = [];
                 $scope.stateProvinceItem = angular.copy($scope.stateProvince[$scope.selectedstateProvinceActionIndex]);
+                $scope.viewOnly = true;
+                $scope.openModalForm('#modal-panel-stateProvince')
+                break;
+            case "View":
+                $scope.stateProvinceItem = [];
+                $scope.stateProvinceItem = angular.copy($scope.stateProvince[$scope.selectedstateProvinceActionIndex]);
+                $scope.viewOnly = true;
                 $scope.openModalForm('#modal-panel-stateProvince')
                 break;
             case "showCityMunicipality":
@@ -757,7 +772,6 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 else
                     $scope.showCityMunicipalityHeader = false;
                 $scope.selectedTab = $scope.tabPages[2];
-                $scope.spNameHolder = spName;
                 $scope.processCityMunicipalityPagination($scope.cityMunicipalityCurrentPage, '');
                 break;
         }
@@ -813,6 +827,9 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 if (validateStateProvince())
                     $scope.apiDeleteStateProvince();
                 break;
+            case "View":
+                $scope.closeModalForm();
+                break;
         }
     };
     //-----------------------------------End of State/Province------------------------------------
@@ -829,21 +846,34 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         }
     };
 
-    //Manage opening of City/Municipality modal
-    $scope.openCityMunicipalityForm = function (action, id) {
-        $scope.cityMunicipalityAction = action;
+    $scope.setSelectedCityMunicipality = function (id) {
         $scope.selectedcityMunicipalityActionIndex = searchCityMunicipality(id);
+    };
+
+    //Manage opening of City/Municipality modal
+    $scope.openCityMunicipalityForm = function (action) {
+        $scope.cityMunicipalityAction = action;
+        $scope.viewOnly = false;
         switch ($scope.cityMunicipalityAction) {
             case "Create":
                 $scope.initCityMunicipality();
                 $scope.openModalForm('#modal-panel-cityMunicipality')
                 break;
             case "Edit":
-                $scope.cityMunicipalityItem = angular.copy($scope.cityMunicipality[selectedcityMunicipalityActionIndex]);
+                $scope.cityMunicipalityItem = [];
+                $scope.cityMunicipalityItem = angular.copy($scope.cityMunicipality[$scope.selectedcityMunicipalityActionIndex]);
                 $scope.openModalForm('#modal-panel-cityMunicipality')
                 break;
             case "Delete":
-                $scope.cityMunicipalityItem = angular.copy($scope.cityMunicipality[selectedcityMunicipalityActionIndex]);
+                $scope.cityMunicipalityItem = [];
+                $scope.cityMunicipalityItem = angular.copy($scope.cityMunicipality[$scope.selectedcityMunicipalityActionIndex]);
+                $scope.viewOnly = true;
+                $scope.openModalForm('#modal-panel-cityMunicipality')
+                break;
+            case "View":
+                $scope.cityMunicipalityItem = [];
+                $scope.cityMunicipalityItem = angular.copy($scope.cityMunicipality[$scope.selectedcityMunicipalityActionIndex]);
+                $scope.viewOnly = true;
                 $scope.openModalForm('#modal-panel-cityMunicipality')
                 break;
         }
@@ -905,6 +935,9 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 if (validateCityMunicipality())
                     $scope.apiDeleteCityMunicipality();
                 break;
+            case "View":
+                $scope.closeModalForm();
+                break;
         }
     };
     //--------------------------------------End of City/Municipality-----------------------------------------
@@ -912,7 +945,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
-        $scope.loadCountry($scope.currentPage);
+        $scope.loadData($scope.currentPage);
         $scope.processCountrySorting($scope.countryCriteria);
         $scope.processSPSorting($scope.spCriteria);
         $scope.processCMSorting($scope.cmCriteria);
