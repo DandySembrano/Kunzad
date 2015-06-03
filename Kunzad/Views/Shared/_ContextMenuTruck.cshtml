@@ -1,0 +1,26 @@
+﻿
+<div class="dropdown position-fixed" id="TruckTableMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="loadData(currentPage)">Reload </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="openTruckForm('Create', item.Id)">Create </a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="2" ng-click="openTruckForm('Edit', item.Id)">Edit </a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="3" ng-click="openTruckForm('Delete', item.Id)">Delete</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="4" ng-click="openTruckForm('View', item.Id)">View </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="5" ng-click="openTruckForm('Export')">Export </a>
+        </li>
+    </ul>
+</div>
+

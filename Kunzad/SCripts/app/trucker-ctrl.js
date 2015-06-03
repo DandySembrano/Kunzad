@@ -29,12 +29,88 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.tabPages = ["Trucker", "Truck"];
     $scope.selectedTab = "Trukcer";
     $scope.showForm = false;
-    $scope.truckCurrentPage = 1;
-    $scope.truckPageSize = 5;
-    $scope.truckMaxPage = 0;
-    $scope.paginatedTrucks = [];
     $scope.truckIdDummy = 0;
     $scope.truckerIdHolder = 0;
+    //------------------------------ process truck pagination------------------------
+    $scope.truckCurrentPage = 1;
+    $scope.truckPageSize = 20;
+    $scope.truckMaxPage = 0;
+    $scope.paginatedTrucks = [];
+    $scope.processTruckPagination = function (truckCurrentPage, action) {
+        $scope.firstPageTrucks = false;
+        $scope.lastPageTrucks = false;
+        $scope.previousPageTrucks = false;
+        $scope.nextPageTrucks = false;
+        $scope.paginatedTrucks = [];
+
+        //Initialize truckMaxPage
+        if ($scope.truckList.length >= $scope.truckPageSize) {
+            if (($scope.truckList.length % $scope.truckPageSize) == 0)
+                $scope.truckMaxPage = $scope.truckList.length / $scope.truckPageSize;
+            else
+                $scope.truckMaxPage = Math.ceil($scope.truckList.length / $scope.truckPageSize);
+        }
+        else
+            $scope.truckMaxPage = 1;
+
+        var begin = 0
+        var end = 0;
+        //First Page
+        if (truckCurrentPage == 1 && !(action == 'LASTPAGE')) {
+            if ($scope.truckMaxPage > 1) {
+                $scope.nextPageTrucks = true;
+                $scope.lastPageTrucks = true;
+            }
+            else {
+                $scope.nextPageTrucks = false;
+                $scope.lastPageTrucks = false;
+            }
+            $scope.firstPageTrucks = false;
+            $scope.previousPageTrucks = false;
+            if ($scope.truckList.length >= $scope.truckPageSize)
+                end = $scope.truckPageSize;
+            else
+                end = $scope.truckList.length;
+
+            for (i = begin ; i < end; i++) {
+                $scope.paginatedTrucks.push($scope.truckList[i]);
+            }
+        }
+            //Last Page
+        else if (truckCurrentPage == $scope.truckMaxPage || action == 'LASTPAGE') {
+            $scope.truckCurrentPage = $scope.truckMaxPage;
+            truckCurrentPage = $scope.truckCurrentPage;
+
+            if ($scope.truckMaxPage == 1) {
+                $scope.firstPageTrucks = false;
+                $scope.previousPageTrucks = false;
+            }
+            else {
+                $scope.firstPageTrucks = true;
+                $scope.previousPageTrucks = true;
+            }
+            $scope.lastPageTrucks = false;
+            $scope.nextPageTrucks = false;
+            begin = (truckCurrentPage - 1) * $scope.truckPageSize;
+            end = $scope.truckList.length;
+            for (i = begin ; i < end; i++) {
+                $scope.paginatedTrucks.push($scope.truckList[i]);
+            }
+        }
+            //Previous and Next
+        else {
+            $scope.firstPageTrucks = true;
+            $scope.lastPageTrucks = true;
+            $scope.previousPageTrucks = true;
+            $scope.nextPageTrucks = true;
+            begin = (truckCurrentPage - 1) * $scope.truckPageSize;
+            end = begin + $scope.truckPageSize;
+            for (i = begin ; i < end; i++) {
+                $scope.paginatedTrucks.push($scope.truckList[i]);
+            }
+        }
+    };
+    //-------------------------------------------------------------------------------
     //-----------Scopes for displaying arrow up and arrow down glyphicon for truckers
     $scope.truckerCriteria = 'Name';
     $scope.truckerOrderByDesc = true;
@@ -398,86 +474,6 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
 
     $scope.selectedTruckerIndex = null;
 
-    //function that process pagination
-    $scope.processTruckPagination = function (truckCurrentPage, action) {
-        $scope.firstPageTrucks = false;
-        $scope.lastPageTrucks = false;
-        $scope.previousPageTrucks = false;
-        $scope.nextPageTrucks = false;
-        $scope.paginatedTrucks = [];
-
-        //Initialize truckMaxPage
-        if ($scope.truckList.length >= $scope.truckPageSize)
-        {
-            if (($scope.truckList.length % $scope.truckPageSize) == 0)
-                $scope.truckMaxPage = $scope.truckList.length / $scope.truckPageSize;
-            else
-                $scope.truckMaxPage = Math.ceil($scope.truckList.length / $scope.truckPageSize);
-        }
-        else
-            $scope.truckMaxPage = 1;
-
-        var begin = 0
-        var end = 0;
-        //First Page
-        if (truckCurrentPage == 1 && !(action == 'LASTPAGE'))
-        {
-            if ($scope.truckMaxPage > 1) {
-                $scope.nextPageTrucks = true;
-                $scope.lastPageTrucks = true;
-            }
-            else {
-                $scope.nextPageTrucks = false;
-                $scope.lastPageTrucks = false;
-            }
-            $scope.firstPageTrucks = false;
-            $scope.previousPageTrucks = false;
-            if ($scope.truckList.length >= $scope.truckPageSize)
-                end = $scope.truckPageSize;
-            else
-                end = $scope.truckList.length;
-
-            for (i = begin ; i < end; i++)
-            {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
-            }
-        }
-        //Last Page
-        else if (truckCurrentPage == $scope.truckMaxPage || action == 'LASTPAGE') {
-            $scope.truckCurrentPage = $scope.truckMaxPage;
-            truckCurrentPage = $scope.truckCurrentPage;
-            
-            if ($scope.truckMaxPage == 1) {
-                $scope.firstPageTrucks = false;
-                $scope.previousPageTrucks = false;
-            }
-            else {
-                $scope.firstPageTrucks = true;
-                $scope.previousPageTrucks = true;
-            }
-            $scope.lastPageTrucks = false;
-            $scope.nextPageTrucks = false;
-            begin = (truckCurrentPage - 1) * $scope.truckPageSize;
-            end = $scope.truckList.length;
-            for (i = begin ; i < end; i++) {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
-            }
-        }
-        //Previous and Next
-        else
-        {
-            $scope.firstPageTrucks = true;
-            $scope.lastPageTrucks = true;
-            $scope.previousPageTrucks = true;
-            $scope.nextPageTrucks = true;
-            begin = (truckCurrentPage - 1) * $scope.truckPageSize;
-            end = begin + $scope.truckPageSize;
-            for (i = begin ; i < end; i++) {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
-            }
-        }
-    };
-
     $scope.actionForm = function (action) {
         //required if module include municipalities------
         $scope.country = $rootScope.country;
@@ -661,6 +657,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //Update Truck
     $scope.apiUpdateTruck = function () {
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
+        $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
+        $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
         $scope.truckList[$scope.selectedTruckIndex] = angular.copy($scope.Truck);
         $scope.processTruckPagination($scope.truckCurrentPage, '');
         $scope.closeModalForm();
@@ -685,10 +683,13 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         return i;
     };
 
-    //Manage opening of modal
-    $scope.openTruckForm = function (action, id) {
-        $scope.TruckAction = action;
+    $scope.setSelectedTruck = function (id) {
         $scope.selectedTruckIndex = $scope.searchTruck(id);
+    };
+
+    //Manage opening of modal
+    $scope.openTruckForm = function (action) {
+        $scope.TruckAction = action;
         switch ($scope.TruckAction) {
             case "Create":
                 $scope.initTruck();
@@ -700,6 +701,11 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 break;
             case "Delete":
                 $scope.Truck = $scope.truckList[$scope.selectedTruckIndex];
+                $scope.openModalForm('#modal-panel-truck')
+                break;
+            case "View":
+                $scope.Truck = $scope.truckList[$scope.selectedTruckIndex];
+                $scope.viewOnly = true;
                 $scope.openModalForm('#modal-panel-truck')
                 break;
         }

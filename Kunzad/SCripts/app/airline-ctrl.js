@@ -77,12 +77,15 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.apiCreate = function () {
         $http.post("/api/AirLines", $scope.dataItem)
             .success(function (data, status) {
-                $scope.dataItem = angular.copy(data);
-                $scope.data.push($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS"){
+                    $scope.data.push(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else
+                    $scope.showFormError(data.message);
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -90,11 +93,16 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.apiUpdate = function (id) {
         $http.put("/api/AirLines/" + id, $scope.dataItem)
             .success(function (data, status) {
-                $scope.data[$scope.selectedAirlineIndex] = angular.copy($scope.dataItem);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS")
+                {
+                    $scope.data[$scope.selectedAirlineIndex] = angular.copy(data.objParam1);
+                    $scope.closeModalForm();
+                }
+                else
+                    $scope.showFormError(data.message);
             })
             .error(function (data, status) {
-                $scope.showFormError("");
+                $scope.showFormError(status);
             })
     };
 
@@ -102,8 +110,12 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
     $scope.apiDelete = function (id) {
         $http.delete("/api/AirLines/" + id)
             .success(function (data, status) {
-                $scope.data.splice($scope.selectedAirlineIndex, 1);
-                $scope.closeModalForm();
+                if (data.status == "SUCCESS") {
+                    $scope.data.splice($scope.selectedAirlineIndex, 1);
+                    $scope.closeModalForm();
+                }
+                else
+                    $scope.showFormError(data.message);
             })
             .error(function (data, status) {
                 $scope.showFormError(status);

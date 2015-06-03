@@ -226,30 +226,17 @@
                             <span class="glyphicon glyphicon-chevron-up"
                                   ng-show="truckCriteria === 'TruckType.VolumeCapacity' || truckCriteria === '-TruckType.VolumeCapacity' ? truckOrderByAsc: false"></span>
                         </div>
-                        <div class="myTableCell cell-1 small text-center">
-                            <strong>Action</strong>
-                        </div>
                     </div>
                     <!--Details-->
                     <div class="myTableRow"
-                         ng-repeat="item in paginatedTrucks | orderBy:truckCriteria">
+                         ng-repeat="item in paginatedTrucks | orderBy:truckCriteria"
+                         context-menu="setSelectedTruck(item.Id)"
+                         data-target="TruckTableMenu">
                         <div class="myTableCell cell-seqno small text-center">{{truckCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((truckCurrentPage - 1) * truckPageSize))}}</div>
                         <div class="myTableCell cell-2 small">{{item.PlateNo | uppercase}}</div>
                         <div class="myTableCell cell-5 small">{{item.TruckType.Type}}</div>
                         <div class="myTableCell cell-2 small">{{item.TruckType.WeightCapacity}}</div>
                         <div class="myTableCell cell-2 small">{{item.TruckType.VolumeCapacity}}</div>
-                        <div class="myTableCell cell-1 small text-center">
-                            <button class="btn btn-xs btn-primary light"
-                                    type="button"
-                                    ng-click="openTruckForm('Edit', item.Id)">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button class="btn btn-xs btn-danger light"
-                                    type="button"
-                                    ng-click="openTruckForm('Delete', item.Id)">
-                                <span class="glyphicons glyphicons-bin"></span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div><br />
@@ -258,15 +245,7 @@
                 <div class="myTableContent">
                     <div class="myTableRow-no-border text-right">
                         <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processTruckPagination(truckCurrentPage = 1, '')"
-                                        ng-disabled="!firstPageTrucks">
-                                    First
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage - 1), '')"
@@ -274,27 +253,19 @@
                                     Previous
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-default btn-sm"
                                         type="button"
                                         ng-disabled="true">
                                     {{ truckCurrentPage }}
                                 </button>
                             </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
+                            <div class="myTableCell-no-padding text-right small">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
                                         ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage + 1), '')"
                                         ng-disabled="!nextPageTrucks">
                                     Next
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding cell-fixed-10 text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processTruckPagination(truckCurrentPage = truckMaxPage, '')"
-                                        ng-disabled="!lastPageTrucks">
-                                    Last
                                 </button>
                             </div>
                         </div>
@@ -304,6 +275,9 @@
         </div>
     </div>
 }
+
+<!-- Truck Context Menu Content -->
+@RenderPage("~/Views/Shared/_ContextMenuTruck.cshtml")
 
 <!-- This is the template use for City/Municpality Typeahead -->
 <script type="text/ng-template" id="customTemplate.html">
@@ -366,6 +340,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
+                                       ng-disabled="viewOnly"
                                        ng-model="Truck.TruckType.WeightCapacity">
                             </div>
                         </div>
@@ -375,6 +350,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
+                                       ng-disabled="viewOnly"
                                        ng-model="Truck.TruckType.VolumeCapacity">
                             </div>
                         </div>
@@ -386,7 +362,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
                     ng-click="saveTruck(TruckAction)">
-                {{TruckAction === 'Delete' ? 'Delete' : TruckAction === 'Create' ? 'Create' : 'Edit'}}
+                {{TruckAction === 'Delete' ? 'Delete' : TruckAction === 'Create' ? 'Create' : TruckAction === 'Edit' ? 'Edit' : 'Close'}}
             </button>
         </div>
     </div>

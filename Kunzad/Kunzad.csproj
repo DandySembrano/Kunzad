@@ -2961,6 +2961,7 @@
     <Content Include="Views\References\ServiceableArea.cshtml" />
     <Content Include="Views\Shared\_ContextMenu2.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout4.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTruck.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

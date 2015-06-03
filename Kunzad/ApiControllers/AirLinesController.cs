@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
+        Response response = new Response();
 
         // GET: api/AirLines
         public IQueryable<AirLine> GetAirLines()
@@ -53,14 +54,17 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutAirLine(int id, AirLine airLine)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != airLine.Id)
             {
-                return BadRequest();
+                response.message = "Airline doesn't exist.";
+                return Ok(response);
             }
 
             db.Entry(airLine).State = EntityState.Modified;
@@ -69,51 +73,70 @@ namespace Kunzad.ApiControllers
             {
                 airLine.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = airLine;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!AirLineExists(id))
                 {
-                    return NotFound();
+                    response.message = "Airline doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/AirLines
         [ResponseType(typeof(AirLine))]
         public IHttpActionResult PostAirLine(AirLine airLine)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+               return Ok(response);
             }
-            airLine.CreatedDate =  DateTime.Now;
-            db.AirLines.Add(airLine);
-            db.SaveChanges();
+            try
+            {
+                airLine.CreatedDate = DateTime.Now;
+                db.AirLines.Add(airLine);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = airLine;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
 
-            return CreatedAtRoute("DefaultApi", new { id = airLine.Id }, airLine);
+            return Ok(response);
         }
 
         // DELETE: api/AirLines/5
         [ResponseType(typeof(AirLine))]
         public IHttpActionResult DeleteAirLine(int id)
         {
+            response.status = "FAILURE";
             AirLine airLine = db.AirLines.Find(id);
             if (airLine == null)
             {
-                return NotFound();
+                response.message = "Airline doesn't exist.";
+                return Ok(response);
             }
-
-            db.AirLines.Remove(airLine);
-            db.SaveChanges();
-
-            return Ok(airLine);
+            try
+            {
+                db.AirLines.Remove(airLine);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e) {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)
