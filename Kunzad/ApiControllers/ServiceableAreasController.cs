@@ -25,37 +25,52 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/ServiceableAreas?page=1
-        public IHttpActionResult GetServiceableAreas(int page)
+        public IQueryable<ServiceableArea> GetServiceableAreas(int page)
         {
-            var q = (from sa in db.ServiceableAreas
-                     join cm in db.CityMunicipalities on sa.CityMunicipalityId equals cm.Id
-                     join sp in db.StateProvinces on cm.StateProvinceId equals sp.Id
-                     select new
-                     {
-                         sa.Id,
-                         sa.Name,
-                         sa.CityMunicipalityId,
-                         sa.PostalCode,
-                         sa.IsServiceable,
-                         sa.BusinessUnitId,
-                         sa.CreatedDate,
-                         sa.LastUpdatedDate,
-                         sa.CreatedByUserId,
-                         sa.LastUpdatedByUserId,
-                         CityMunicipalityName = cm.Name,
-                         StateProvinceName = sp.Name,
-                         BusinessUnitName = (from bu in db.BusinessUnits where bu.Id == sa.BusinessUnitId select new { bu.Name })
-                     });
             if (page > 1)
             {
-                q.Skip((page - 1) * pageSize).Take(pageSize);
+                return db.ServiceableAreas
+                .OrderBy(sa => sa.Id)
+                .Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
-                q.Take(pageSize);
+                return db.ServiceableAreas
+                .OrderBy(sa => sa.Id)
+                .Take(pageSize);
             }
-            return Json(q);
         }
+        //public IHttpActionResult GetServiceableAreas(int page)
+        //{
+        //    var q = (from sa in db.ServiceableAreas
+        //             join cm in db.CityMunicipalities on sa.CityMunicipalityId equals cm.Id
+        //             join sp in db.StateProvinces on cm.StateProvinceId equals sp.Id
+        //             select new
+        //             {
+        //                 sa.Id,
+        //                 sa.Name,
+        //                 sa.CityMunicipalityId,
+        //                 sa.PostalCode,
+        //                 sa.IsServiceable,
+        //                 sa.BusinessUnitId,
+        //                 sa.CreatedDate,
+        //                 sa.LastUpdatedDate,
+        //                 sa.CreatedByUserId,
+        //                 sa.LastUpdatedByUserId,
+        //                 CityMunicipalityName = cm.Name,
+        //                 StateProvinceName = sp.Name,
+        //                 BusinessUnitName = (from bu in db.BusinessUnits where bu.Id == sa.BusinessUnitId select new { bu.Name })
+        //             });
+        //    if (page > 1)
+        //    {
+        //        q.Skip((page - 1) * pageSize).Take(pageSize);
+        //    }
+        //    else
+        //    {
+        //        q.Take(5);
+        //    }
+        //    return Json(q);
+        //}
         // GET: api/ServiceableAreas/5
         [ResponseType(typeof(ServiceableArea))]
         public IHttpActionResult GetServiceableArea(int id)

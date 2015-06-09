@@ -45,12 +45,14 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
                 delete $scope.dataDefinition.DataItem.Id;
                 delete $scope.dataDefinition.DataItem.CityMunicipality;
                 return true;
+            case 'PostSave':
+                //add newly saved business unit to the array holder
+                $scope.businessUnitList.push($scope.dataDefinition.DataItem);
+                return true;
             case 'PostLoadAction':
                 getBusinessUnitTypes();
                 getBusinessUnits();
                 $scope.initializeCheckBox();
-                return true;
-            case 'PreAction':
                 return true;
             default:
                 return true;
@@ -72,7 +74,6 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
             "CreatedByUserId": null,
             "LastUpdatedByUserId": null,
             "BusinessUnitTypeName": null,
-            //"ParentBusinessUnitName": [{ "Name": null }],
             "ParentBusinessUnitName": null
         }
     };
@@ -114,6 +115,8 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
         .success(function (data, status) {
             $scope.businessUnitTypeList = [];
             $scope.businessUnitTypeList = angular.copy(data);
+
+            //Initialize Business Unit Type Name
             for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
                 //search business unit type
                 for (var j = 0; j < $scope.businessUnitTypeList.length; j++) {
@@ -137,6 +140,7 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
             for (x in data) {
                 $scope.businessUnitList.push(data[x]);
             }
+            //Initialize Parent Business Unit
             for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
                 //search business unit type
                 for (var j = 0; j < $scope.businessUnitList.length; j++) {

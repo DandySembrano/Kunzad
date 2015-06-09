@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class BusinessUnitsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 5;
+        private int pageSize = 20;
         Response response = new Response();
         // GET: api/BusinessUnits
         public IQueryable<BusinessUnit> GetBusinessUnits()

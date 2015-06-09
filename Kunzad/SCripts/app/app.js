@@ -61,7 +61,7 @@ kunzadApp.directive('dirDataGrid1', function () {
         templateUrl: '/Directives/DataGrid1',
         controller: function ($scope, $http, $interval, $filter, $parse, $compile) {
             $scope.currentPage = 1;
-            $scope.pageSize = 5;
+            $scope.pageSize = 20;
             $scope.isPrevPage = false;
             $scope.isNextPage = true;
             $scope.sortByDesc = true;

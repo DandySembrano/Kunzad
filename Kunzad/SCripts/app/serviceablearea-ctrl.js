@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------//
 
 kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, $http) {
-    $scope.modelName = "Serviceable Area";
+    $scope.modelName = "Delivery Area";
     $scope.modelhref = "#/serviceablearea";
 
     //-------------------------dirDataGrid1 Paramaters-------------------------
@@ -17,7 +17,7 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
     $scope.actionMode = "Create";//default to Create
     $scope.dataDefinition = {
         "Header": ['Name', 'Business Unit', 'City/Municipality', 'Province/State', 'Postal Code', 'Country', 'Is Serviceable?', 'No.'],
-        "Keys": ['Name', 'BusinessUnit', 'CityMunicipalityName', 'StateProvinceName', 'PostalCode', 'CountryName', 'IsServiceable'],
+        "Keys": ['Name', 'BusinessUnitName', 'CityMunicipalityName', 'StateProvinceName', 'PostalCode', 'CountryName', 'IsServiceable'],
         "Type": ['String', 'String', 'String', 'String', 'String', 'String','Boolean'],
         "DataList": [],
         "APIUrl": ['/api/ServiceableAreas?page=',//get
@@ -42,18 +42,26 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
                 $scope.initializeCheckBox();
                 delete $scope.dataDefinition.DataItem.Id;
                 return true;
-            case 'PreLoad':
-                $scope.country = $rootScope.country;
-                return true;
-            case 'PreAction':
-                $scope.country = $rootScope.country;
-                $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
-                getBusinessUnits();
-                return true;
             case 'PostLoadAction':
+                //retrieve business units and initialize Business Unit Name
+                getBusinessUnits();
+                $scope.country = $rootScope.country;
+                //Initialize Country Name
                 for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
                     $scope.dataDefinition.DataList[i].CountryName = $scope.country.Name;
-                    $scope.dataDefinition.DataList[i].BusinessUnit = $scope.dataDefinition.DataList[i].BusinessUnitName[0].Name;
+                }
+                $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
+                //Initialize City/Municipality and State/Province
+                for (var i = 0; i < $scope.dataDefinition.DataList.length; i++)
+                {
+                    for (var j = 0; j < $scope.cityMunicipalities.length; j++)
+                    {
+                        if ($scope.dataDefinition.DataList[i].CityMunicipalityId == $scope.cityMunicipalities[j].Id) {
+                            $scope.dataDefinition.DataList[i].CityMunicipalityName = $scope.cityMunicipalities[j].Name;
+                            $scope.dataDefinition.DataList[i].StateProvinceName = $scope.cityMunicipalities[j].StateProvinceName;
+                            break;
+                        }
+                    }
                 }
                 return true;
             default:
@@ -73,8 +81,8 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
             "LastUpdatedDate": null,
             "CreatedByUserId": null,
             "LastUpdatedByUserId": null,
-            "BusinessUnitName": [{ "Name": null }],
-            "BusinessUnit": null,
+            //"BusinessUnitName": [{ "Name": null }],
+            "BusinessUnitName": null,
             "CityMunicipalityName": null,
             "StateProvinceName": null,
             "CountryName": null
@@ -124,6 +132,16 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
         .success(function (data, status) {
             $scope.businessUnitList = [];
             $scope.businessUnitList = angular.copy(data);
+            //Initialize Business Unit
+            for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
+                //search business unit type
+                for (var j = 0; j < $scope.businessUnitList.length; j++) {
+                    if ($scope.dataDefinition.DataList[i].BusinessUnitId == $scope.businessUnitList[j].Id) {
+                        $scope.dataDefinition.DataList[i].BusinessUnitName = $scope.businessUnitList[j].Name;
+                        break;
+                    }
+                }
+            }
         })
         .error(function (error, status) {
             $scope.showFormError(status);
