@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class AirLinesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
+        private int pageSize = 5;
         Response response = new Response();
 
         // GET: api/AirLines
@@ -24,7 +24,7 @@ namespace Kunzad.ApiControllers
             return db.AirLines;
         }
 
-        // GET: api/AirLines?page=1
+        // GET: api/BusinessUnitTypes?page=1
         public IQueryable<AirLine> GetAirLines(int page)
         {
             if (page > 1)

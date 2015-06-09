@@ -3,7 +3,18 @@
 }
 <!-- Driver List/DataTable -->
 @section tableContent{
-<div class="myTableContainter">
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
+@*<div class="myTableContainter">
     <div class="myTableContent">
         <!--Header-->
         <div class="myTableRow-header text-dark small">
@@ -43,7 +54,7 @@
             <div class="myTableCell cell-3 small">{{d.LicenseExpiry | date : "MM/dd/yyyy"}}</div>
         </div>
     </div>
-</div>
+</div>*@
 }
 
 @section formContent{
@@ -52,7 +63,7 @@
             <label class="col-md-3 control-label small">First Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.FirstName" ng-disabled="viewOnly" pattern=".{0,150}">
+                       ng-model="dataDefinition.DataItem.FirstName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -60,7 +71,7 @@
             <label class="col-md-3 control-label small">Middle Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.MiddleName" ng-disabled="viewOnly" pattern=".{0,150}">
+                       ng-model="dataDefinition.DataItem.MiddleName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -68,7 +79,7 @@
             <label class="col-md-3 control-label small">Last Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.LastName" ng-disabled="viewOnly" pattern=".{0,150}">
+                       ng-model="dataDefinition.DataItem.LastName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -76,7 +87,7 @@
             <label class="col-md-3 control-label small">License No.</label>
             <div class="col-md-5">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.LicenseNo" ng-disabled="viewOnly" pattern=".{0,50}">
+                       ng-model="dataDefinition.DataItem.LicenseNo" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,50}">
             </div>
         </div>
 
@@ -84,7 +95,7 @@
             <label class="col-md-3 control-label small">License Expiry</label>
             <div class="col-md-5">
                 <div class='input-group date' >
-                    <input type='text' id='led' class="form-control" ng-model="dataItem.LicenseExpiry" ng-disabled=" viewonly" />
+                    <input type='text' id='led' class="form-control" ng-model="dataDefinition.DataItem.LicenseExpiry" ng-disabled="dataDefinition.ViewOnly" />
                     <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
                         <span class=" glyphicon glyphicon-remove-circle"></span>
                     </span>

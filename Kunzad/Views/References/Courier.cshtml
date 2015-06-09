@@ -3,55 +3,17 @@
 }
 <!-- Courier List/DataTable -->
 @section tableContent{
-    <div class="myTableContainter">
-        <div class="myTableContent">
-            <!--Header-->
-            <div class="myTableRow-header text-dark small">
-                <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                <div class="myTableCell cell-3 small" ng-click="processCourierSorting('Name')">
-                    <strong>Name</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="courierCriteria === 'Name' || courierCriteria === '-Name' ? courierOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="courierCriteria === 'Name' || courierCriteria === '-Name' ? courierOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-2 small" ng-click="processCourierSorting('TIN')">
-                    <strong>TIN</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="courierCriteria === 'TIN' || courierCriteria === '-TIN' ? courierOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="courierCriteria === 'TIN' || courierCriteria === '-TIN' ? courierOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-5 small" ng-click="processCourierSorting('Line1')">
-                    <strong>Address</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="courierCriteria === 'Line1' || courierCriteria === '-Line1' ? courierOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="courierCriteria === 'Line1' || courierCriteria === '-Line1' ? courierOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-2 small" ng-click="processCourierSorting('PostalCode')">
-                    <strong>Postal Code</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="courierCriteria === 'PostalCode' || courierCriteria === '-PostalCode' ? courierOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="courierCriteria === 'PostalCode' || courierCriteria === '-PostalCode' ? courierOrderByAsc: false"></span>
-                </div>
-            </div>
-            <!--Details-->
-            <div class="myTableRow"
-                 ng-repeat="c in data | orderBy:courierCriteria"
-                 ng-click="setSelected($index, c.Id)"
-                 ng-dblclick="actionForm('Update')"
-                 context-menu="setSelected($index, c.Id)"
-                 data-target="DataTableMenu">
-                <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-                <div class="myTableCell cell-3 small">{{c.Name}}</div>
-                <div class="myTableCell cell-2 small">{{c.TIN}}</div>
-                <div class="myTableCell cell-5 small">{{c.Line1 + ", " + (c.Line2 == null || c.Line2 == "" ? "" : (c.Line2 + ", ")) + c.CityMunicipality.Name}}</div>
-                <div class="myTableCell cell-2 small">{{c.PostalCode}}</div>
-            </div>
-        </div>
-    </div>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 @section formContent{
     <!-- This is the template use for City/Municpality Typeahead -->
@@ -66,12 +28,12 @@
             <label for="name" 
                    class="col-md-3 control-label small">Name</label>
             <div class="col-md-8">
-                <input type="text" 
-                       id="name" 
-                       class="form-control small" 
+                <input type="text"
+                       id="name"
+                       class="form-control small"
                        placeholder=""
-                       ng-model="dataItem.Name" 
-                       ng-disabled="viewOnly" 
+                       ng-model="dataDefinition.DataItem.Name"
+                       ng-disabled="dataDefinition.ViewOnly"
                        pattern=".{0,150}">
             </div>
         </div>
@@ -79,23 +41,23 @@
             <label for="name" class="col-md-3 control-label small">TIN</label>
             <div class="col-md-8">
                 <input type="text"
-                       id="TIN" 
-                       class="form-control small" 
+                       id="TIN"
+                       class="form-control small"
                        placeholder=""
-                       ng-model="dataItem.TIN" 
-                       ng-disabled="viewOnly" 
-                       ng-change ="formatTIN()"
+                       ng-model="dataDefinition.DataItem.TIN"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       ng-change="formatTIN()"
                        maxlength="11">
             </div>
         </div>
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">Street Address</label>
             <div class="col-md-8">
-                <input type="text" 
-                       class="form-control" 
+                <input type="text"
+                       class="form-control"
                        placeholder="Street address line 1"
-                       ng-model="dataItem.Line1" 
-                       ng-disabled="viewOnly" 
+                       ng-model="dataDefinition.DataItem.Line1"
+                       ng-disabled="dataDefinition.ViewOnly"
                        pattern=".{0,150}">
             </div>
         </div>
@@ -103,11 +65,11 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small"></label>
             <div class="col-md-8">
-                <input type="text" 
-                       class="form-control" 
+                <input type="text"
+                       class="form-control"
                        placeholder="Street address line 2"
-                       ng-model="dataItem.Line2" 
-                       ng-disabled="viewOnly" 
+                       ng-model="dataDefinition.DataItem.Line2"
+                       ng-disabled="dataDefinition.ViewOnly"
                        pattern=".{0,150}">
             </div>
         </div>
@@ -115,11 +77,11 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">City/Municipality</label>
             <div class="col-md-8">
-                <input type="text" 
-                       class="form-control" 
-                       placeholder="" 
-                       ng-disabled="viewOnly"
-                       ng-model="dataItem.CityMunicipality.Name" 
+                <input type="text"
+                       class="form-control"
+                       placeholder=""
+                       ng-disabled="dataDefinition.ViewOnly"
+                       ng-model="dataDefinition.DataItem.CityMunicipalityName"
                        typeahead-editable="false"
                        typeahead-on-select="onSelectCity($item, $model, $label)"
                        typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
@@ -130,9 +92,9 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">Province/State</label>
             <div class="col-md-8">
-                <input type="text" 
+                <input type="text"
                        class="form-control" placeholder=""
-                       ng-model="dataItem.CityMunicipality.StateProvince.Name" 
+                       ng-model="dataDefinition.DataItem.StateProvinceName"
                        ng-disabled="true">
             </div>
         </div>
@@ -140,11 +102,11 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">Postal Code</label>
             <div class="col-md-8">
-                <input type="text" 
-                       class="form-control" 
+                <input type="text"
+                       class="form-control"
                        placeholder=""
-                       ng-model="dataItem.PostalCode" 
-                       ng-disabled="viewOnly" 
+                       ng-model="dataDefinition.DataItem.PostalCode"
+                       ng-disabled="dataDefinition.ViewOnly"
                        pattern=".{0,20}">
             </div>
         </div>
@@ -152,10 +114,10 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small">Country</label>
             <div class="col-md-8">
-                <input type="text" 
-                       class="form-control" 
+                <input type="text"
+                       class="form-control"
                        placeholder=""
-                       ng-model="country.Name" 
+                       ng-model="dataDefinition.DataItem.CountryName"
                        ng-disabled="true">
             </div>
         </div>

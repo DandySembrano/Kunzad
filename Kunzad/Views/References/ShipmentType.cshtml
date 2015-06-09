@@ -3,33 +3,17 @@
 }
 <!-- Shipment Type List/DataTable -->
 @section tableContent{
-<div class="myTableContainter">
-    <div class="myTableContent">
-        <!--Header-->
-        <div class="myTableRow-header text-dark small">
-            <div class="myTableCell cell-seqno small text-center"><strong>No</strong></div>
-            <div class="myTableCell cell-9 small text-left" ng-click="processSTOrderBy('Name')">
-                <strong>Name</strong>
-                <span class="glyphicon glyphicon-chevron-down"
-                      ng-show="orderBySTNameDesc"></span>
-                <span class="glyphicon glyphicon-chevron-up"
-                      ng-show="orderBySTNameAsc"></span>
-            </div>
-        </div>
-        <!--Details-->
-        <div class="myTableRow" 
-             ng-repeat="st in data | orderBy:stCriteria"
-             ng-click="setSelected($index, st.Id)"
-             ng-dblclick="actionForm('Update')"
-             context-menu="setSelected($index, st.Id)"
-             data-target="DataTableMenu">
-            <div class="myTableCell cell-seqno small text-center">
-                {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
-            </div>
-            <div class="myTableCell cell-9 small text-left">{{st.Name}}</div>
-        </div>
-    </div>
-</div>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 
 @section formContent{
@@ -38,7 +22,7 @@
             <label for="name" class="col-md-3 control-label small">Name</label>
             <div class="col-md-8">
                 <input type="text" id="name" class="form-control small" placeholder=""
-                       ng-model="dataItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                       ng-model="dataDefinition.DataItem.Name" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
     </form>

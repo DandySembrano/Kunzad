@@ -3,47 +3,17 @@
 }
 <!-- Truck Type List/DataTable -->
 @section tableContent{
-<div class="myTableContainter">
-    <div class="myTableContent">
-        <!--Header-->
-        <div class="myTableRow-header text-dark small">
-            <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-            <div class="myTableCell cell-4 small" ng-click="processTTSorting('Type')">
-                <strong>Type</strong>
-                <span class="glyphicon glyphicon-chevron-down"
-                      ng-show="ttCriteria === 'Type' || ttCriteria === '-Type' ? ttOrderByDesc: false"></span>
-                <span class="glyphicon glyphicon-chevron-up"
-                      ng-show="ttCriteria === 'Type' || ttCriteria === '-Type' ? ttOrderByAsc: false"></span>
-            </div>
-            <div class="myTableCell cell-4 small" ng-click="processTTSorting('WeightCapacity')">
-                <strong>Weight Capacity</strong>
-                <span class="glyphicon glyphicon-chevron-down"
-                      ng-show="ttCriteria === 'WeightCapacity' || ttCriteria === '-WeightCapacity' ? ttOrderByDesc: false"></span>
-                <span class="glyphicon glyphicon-chevron-up"
-                      ng-show="ttCriteria === 'WeightCapacity' || ttCriteria === '-WeightCapacity' ? ttOrderByAsc: false"></span>
-            </div>
-            <div class="myTableCell cell-4 small" ng-click="processTTSorting('VolumeCapacity')">
-                <strong>Volume Capacity</strong>
-                <span class="glyphicon glyphicon-chevron-down"
-                      ng-show="ttCriteria === 'VolumeCapacity' || ttCriteria === '-VolumeCapacity' ? ttOrderByDesc: false"></span>
-                <span class="glyphicon glyphicon-chevron-up"
-                      ng-show="ttCriteria === 'VolumeCapacity' || ttCriteria === '-VolumeCapacity' ? ttOrderByAsc: false"></span>
-            </div>
-        </div>
-        <!--Details-->
-        <div class="myTableRow" 
-             ng-repeat="tt in data | orderBy:ttCriteria" 
-             ng-click="setSelected($index, tt.Id)"
-             ng-dblclick="actionForm('Update')" 
-             context-menu="setSelected($index, tt.Id)" 
-             data-target="DataTableMenu">
-            <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-            <div class="myTableCell cell-4 small">{{tt.Type}}</div>
-            <div class="myTableCell cell-4 small">{{tt.WeightCapacity}}</div>
-            <div class="myTableCell cell-4 small">{{tt.VolumeCapacity}}</div>
-        </div>
-    </div>
-</div>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 
 @section formContent{
@@ -52,7 +22,7 @@
             <label for="name" class="col-md-3 control-label small">Type</label>
             <div class="col-md-8">
                 <input type="text" id="name" class="form-control small" placeholder=""
-                       ng-model="dataItem.Type" ng-disabled="viewOnly" pattern=".{0,50}">
+                       ng-model="dataDefinition.DataItem.Type" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,50}">
             </div>
         </div>
         <div class="form-group form-group-sm">
@@ -62,14 +32,14 @@
             <label for="weight" class="col-md-3 control-label small">Weight</label>
             <div class="col-md-3">
                 <input type="number" id="weight" class="form-control small" placeholder=""
-                       ng-model="dataItem.WeightCapacity" ng-disabled="viewOnly">
+                       ng-model="dataDefinition.DataItem.WeightCapacity" ng-disabled="dataDefinition.ViewOnly">
             </div>
         </div>
         <div class="form-group form-group-sm">
             <label for="volume" class="col-md-3 control-label small">Volume</label>
             <div class="col-md-3">
                 <input type="number" id="volume" class="form-control small" placeholder=""
-                       ng-model="dataItem.VolumeCapacity" ng-disabled="viewOnly">
+                       ng-model="dataDefinition.DataItem.VolumeCapacity" ng-disabled="dataDefinition.ViewOnly">
             </div>
         </div>
     </form>

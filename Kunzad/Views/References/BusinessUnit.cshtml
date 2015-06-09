@@ -3,78 +3,17 @@
 }
 <!-- Business Unit List/DataTable -->
 @section tableContent{
-    <div class="myTableContainter">
-        <div class="myTableContent">
-            <!--Header-->
-            <div class="myTableRow-header text-dark small">
-                <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                <div class="myTableCell cell-2 small" ng-click="processBUOrderBy('Code') ">
-                    <strong>Code</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'Code' || buCriteria === '-Code' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'Code' || buCriteria === '-Code' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-4 small" ng-click="processBUOrderBy('Name')">
-                    <strong>Name</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'Name' || buCriteria === '-Name' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'Name' || buCriteria === '-Name' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-4 small" ng-click="processBUOrderBy('ParentBusinessUnitName')">
-                    <strong>Main Business Unit</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'ParentBusinessUnitName' || buCriteria === '-ParentBusinessUnitName' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'ParentBusinessUnitName' || buCriteria === '-ParentBusinessUnitName' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 small" ng-click="processBUOrderBy('BusinessUnitTypeName')">
-                    <strong>Business Unit Type</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'BusinessUnitTypeName' || buCriteria === '-BusinessUnitTypeName' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'BusinessUnitTypeName' || buCriteria === '-BusinessUnitTypeName' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 text-center small" ng-click="processBUOrderBy('isOperatingSite')">
-                    <strong>Is Operating Site?</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'isOperatingSite' || buCriteria === '-isOperatingSite' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'isOperatingSite' || buCriteria === '-isOperatingSite' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 text-center small" ng-click="processBUOrderBy('hasAirPort')">
-                    <strong>Has Airport?</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'hasAirPort' || buCriteria === '-hasAirPort' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'hasAirPort' || buCriteria === '-hasAirPort' ? orderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 text-center small" ng-click="processBUOrderBy('hasSeaPort')">
-                    <strong>Has Seaport?</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="buCriteria === 'hasSeaPort' || buCriteria === '-hasSeaPort' ? orderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="buCriteria === 'hasSeaPort' || buCriteria === '-hasSeaPort' ? orderByAsc: false"></span>
-                </div>
-            </div>
-            <div class="myTableRow"
-                 ng-repeat="bu in data | orderBy:buCriteria"
-                 ng-click="setSelected($index, bu.Id)"
-                 ng-dblclick="actionForm('Update')"
-                 context-menu="setSelected($index, bu.Id)"
-                 data-target="DataTableMenu">
-                <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-                <div class="myTableCell cell-2 small">{{bu.Code}}</div>
-                <div class="myTableCell cell-4 small">{{bu.Name}}</div>
-                <div class="myTableCell cell-4 small">{{bu.ParentBusinessUnitName.length ==  0 ? "" : bu.ParentBusinessUnitName[0].Name}}</div>
-                <div class="myTableCell cell-3 small">{{bu.BusinessUnitTypeName}}</div>
-                <div class="myTableCell cell-3 small text-center">{{bu.isOperatingSite == false ? "No" : "Yes"}}</div>
-                <div class="myTableCell cell-3 small text-center">{{bu.hasAirPort == false ? "No" : "Yes"}}</div>
-                <div class="myTableCell cell-3 small text-center">{{bu.hasSeaPort == false ? "No" : "Yes"}}</div>
-            </div>
-        </div>
-    </div>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 
 @section formContent{
@@ -82,51 +21,78 @@
         <div class="form-group form-group-sm">
             <label class="col-md-4 control-label small">Code</label>
             <div class="col-md-8">
-                <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.Code" ng-disabled="viewOnly" pattern=".{0,20}">
+                <input type="text"
+                       class="form-control small"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.Code"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,20}">
             </div>
         </div>
+
         <div class="form-group form-group-sm">
             <label class="col-md-4 control-label small">Name</label>
             <div class="col-md-8">
-                <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                <input type="text"
+                       class="form-control small"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.Name"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,150}">
             </div>
         </div>
 
         <div class="form-group form-group-sm">
             <label class="col-md-4 control-label small text-right">Main Business Unit</label>
             <div class="col-md-8">
-                <select class="form-control" placeholder="" ng-disabled="viewOnly"
-                        ng-change="selectBusinessUnit(dataItem.ParentBusinessUnitId)"
-                        ng-model="dataItem.ParentBusinessUnitId" ng-options="item.Id as item.Name for item in businessUnitList"></select>
+                <select class="form-control"
+                        placeholder=""
+                        ng-disabled="dataDefinition.ViewOnly"
+                        ng-change="selectBusinessUnit(dataDefinition.DataItem.ParentBusinessUnitId)"
+                        ng-model="dataDefinition.DataItem.ParentBusinessUnitId"
+                        ng-options="item.Id as item.Name for item in businessUnitList"></select>
             </div>
         </div>
 
         <div class="form-group form-group-sm">
             <label class="col-md-4 control-label small text-right">Business Unit Type</label>
             <div class="col-md-8">
-                <select class="form-control" placeholder="" ng-disabled="viewOnly"
-                        ng-change="selectBusinessUnitType(dataItem.BusinessUnitTypeId)"
-                        ng-model="dataItem.BusinessUnitTypeId" ng-options="item.Id as item.Name for item in businessUnitTypeList"></select>
+                <select class="form-control"
+                        placeholder=""
+                        ng-disabled="dataDefinition.ViewOnly"
+                        ng-change="selectBusinessUnitType(dataDefinition.DataItem.BusinessUnitTypeId)"
+                        ng-model="dataDefinition.DataItem.BusinessUnitTypeId"
+                        ng-options="item.Id as item.Name for item in businessUnitTypeList"></select>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6">
                 <div class="checkbox-custom">
-                    <input id="isOperatingSite" type="checkbox" ng-model="dataItem.isOperatingSite">
-                    <label for="isOperatingSite" class="small">Is Operating Site</label>
+                    <input id="isOperatingSite"
+                           type="checkbox"
+                           ng-model="dataDefinition.DataItem.isOperatingSite"
+                           ng-disabled="dataDefinition.ViewOnly">
+                    <label for="isOperatingSite"
+                           class="small">Is Operating Site?</label>
                 </div>
                 <div class="checkbox-custom">
-                    <input id="hasAirPort" type="checkbox" ng-model="dataItem.hasAirPort">
-                    <label for="hasAirPort" class="small">Has Airport?</label>
+                    <input id="hasAirPort"
+                           type="checkbox"
+                           ng-model="dataDefinition.DataItem.hasAirPort"
+                           ng-disabled="dataDefinition.ViewOnly">
+                    <label for="hasAirPort"
+                           class="small">Has Airport?</label>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="checkbox-custom">
-                    <input id="hasSeaPort" type="checkbox" ng-model="dataItem.hasSeaPort">
-                    <label for="hasSeaPort" class="small">Has Seaport?</label>
+                    <input id="hasSeaPort"
+                           type="checkbox"
+                           ng-model="dataDefinition.DataItem.hasSeaPort"
+                           ng-disabled="dataDefinition.ViewOnly">
+                    <label for="hasSeaPort"
+                           class="small">Has Seaport?</label>
                 </div>
             </div>
         </div>

@@ -3,64 +3,17 @@
 }
 <!-- Serviceable Area Unit List/DataTable -->
 @section tableContent{
-    <div class="myTableContainter">
-        <div class="myTableContent">
-            <!--Header-->
-            <div class="myTableRow-header text-dark">
-                <div class="myTableCell cell-seqno small text-center">
-                    <strong>No.</strong>
-                </div>
-                <div class="myTableCell cell-4 small" ng-click="processSCOrderBy('Name')">
-                    <strong>Name</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="scCriteria === 'Name' || scCriteria === '-Name' ? scOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="scCriteria === 'Name' || scCriteria === '-Name' ? scOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-4 small" ng-click="processSCOrderBy('CityMunicipalityName')">
-                    <strong>City/Municipality</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="scCriteria === 'CityMunicipalityName' || scCriteria === '-CityMunicipalityName' ? scOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="scCriteria === 'CityMunicipalityName' || scCriteria === '-CityMunicipalityName' ? scOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-2 small" ng-click="processSCOrderBy('PostalCode')">
-                    <strong>Postal Code</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="scCriteria === 'PostalCode' || scCriteria === '-PostalCode' ? scOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="scCriteria === 'PostalCode' || scCriteria === '-PostalCode' ? scOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 small" ng-click="processSCOrderBy('BusinessUnitName')">
-                    <strong>Business Unit</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="scCriteria === 'BusinessUnitName[0].Name' || scCriteria === '-BusinessUnitName[0].Name' ? scOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="scCriteria === 'BusinessUnitName[0].Name' || scCriteria === '-BusinessUnitName[0].Name' ? scOrderByAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-3 text-center small" ng-click="processSCOrderBy('IsServiceable')">
-                    <strong>Is Serviceable?</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="scCriteria === 'IsServiceable' || scCriteria === '-IsServiceable' ? scOrderByDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="scCriteria === 'IsServiceable' || scCriteria === '-IsServiceable' ? scOrderByAsc: false"></span>
-                </div>
-            </div>
-            <div class="myTableRow"
-                 ng-repeat="sa in data | orderBy:scCriteria"
-                 ng-click="setSelected($index, sa.Id)"
-                 ng-dblclick="actionForm('Update')"
-                 context-menu="setSelected($index, sa.Id)"
-                 data-target="DataTableMenu">
-                <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-                <div class="myTableCell cell-4 small">{{sa.Name}}</div>
-                <div class="myTableCell cell-4 small">{{sa.CityMunicipalityName}}</div>
-                <div class="myTableCell cell-4 small">{{sa.PostalCode}}</div>
-                <div class="myTableCell cell-3 small">{{sa.BusinessUnitName.length ==  0 ? "" : sa.BusinessUnitName[0].Name}}</div>
-                <div class="myTableCell cell-3 small text-center">{{sa.IsServiceable == false ? "No" : "Yes"}}</div>
-            </div>
-        </div>
-    </div>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 
 @section formContent{
@@ -76,7 +29,7 @@
             <label class="col-md-3 control-label small">Name</label>
             <div class="col-md-8">
                 <input type="text" class="form-control small" placeholder=""
-                       ng-model="dataItem.Name" ng-disabled="viewOnly" pattern=".{0,150}">
+                       ng-model="dataDefinition.DataItem.Name" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
 
@@ -84,7 +37,7 @@
             <label class="col-md-3 control-label small">City/Municipality</label>
             <div class="col-md-8">
                 <input type="text" class="form-control" placeholder="" ng-disabled="viewOnly"
-                       ng-model="dataItem.CityMunicipalityName" typeahead-editable="false"
+                       ng-model="dataDefinition.DataItem.CityMunicipalityName" typeahead-editable="false"
                        typeahead-on-select="onSelectCity($item, $model, $label)"
                        typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
                        typeahead-template-url="customTemplate.html">
@@ -95,7 +48,7 @@
             <label class="col-md-3 control-label small">Province/State</label>
             <div class="col-md-8">
                 <input type="text" class="form-control" placeholder=""
-                       ng-model="dataItem.StateProvinceName" @*CityMunicipality.StateProvince.Name*@ ng-disabled="true">
+                       ng-model="dataDefinition.DataItem.StateProvinceName" ng-disabled="true">
             </div>
         </div>
 
@@ -103,7 +56,7 @@
             <label class="col-md-3 control-label small">Postal Code</label>
             <div class="col-md-8">
                 <input type="text" class="form-control" placeholder=""
-                       ng-model="dataItem.PostalCode" ng-disabled="viewOnly" pattern=".{0,20}">
+                       ng-model="dataDefinition.DataItem.PostalCode" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,20}">
             </div>
         </div>
 
@@ -118,16 +71,16 @@
         <div class="form-group form-group-sm">
             <label class="col-md-3 control-label small text-right">Business Unit</label>
             <div class="col-md-8">
-                <select class="form-control" placeholder="" ng-disabled="viewOnly"
-                        ng-change="selectBusinessUnit(dataItem.BusinessUnitId)"
-                        ng-model="dataItem.BusinessUnitId" ng-options="item.Id as item.Name for item in businessUnitList"></select>
+                <select class="form-control" placeholder="" ng-disabled="dataDefinition.ViewOnly"
+                        ng-change="selectBusinessUnit(dataDefinition.DataItem.BusinessUnitId)"
+                        ng-model="dataDefinition.DataItem.BusinessUnitId" ng-options="item.Id as item.Name for item in businessUnitList"></select>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6">
                 <div class="checkbox-custom">
-                    <input id="IsServiceable" type="checkbox" ng-model="dataItem.IsServiceable">
+                    <input id="IsServiceable" type="checkbox" ng-model="dataDefinition.DataItem.IsServiceable" ng-disabled="dataDefinition.ViewOnly">
                     <label for="IsServiceable" class="small">Is Serviceable</label>
                 </div>
             </div>

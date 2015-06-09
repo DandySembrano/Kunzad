@@ -27,7 +27,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.submitButtonText = "Submit";
     //------------------------------------------------------------------------------//
     $scope.tabPages = ["Trucker", "Truck"];
-    $scope.selectedTab = "Trukcer";
+    $scope.selectedTab = "Trucker";
     $scope.showForm = false;
     $scope.truckIdDummy = 0;
     $scope.truckerIdHolder = 0;
@@ -381,7 +381,6 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                     ////Initialize TruckerId
                     //$scope.dataItem.Id = angular.copy(data.Id);
                     $scope.data.push(data.objParam1);
-                    console.log($scope.data);
                     //initialize TruckId
                     //for (i = 0; i < $scope.truckList.length; i++)
                     //    $scope.truckList[i].Id = angular.copy(data.Trucks[i].Id);

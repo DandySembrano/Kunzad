@@ -1,0 +1,70 @@
+﻿<!--Data Table Content-->
+<div class="myTableContainter">
+    <div class="myTableContent">
+        <!--Header-->
+        <div class="myTableRow-header text-dark small">
+            <div class="myTableCell cell-seqno small text-center"><strong>{{datadefinition.Header[datadefinition.Header.length - 1]}}</strong></div>
+            <div class="myTableCell cell-10 small"
+                 ng-repeat="header in datadefinition.Header" ng-if="$index != (datadefinition.Header.length - 1)"
+                 ng-click="processSorting(datadefinition.Keys[$index])">
+                <strong>{{filterHeader(header)}}</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="criteria === datadefinition.Keys[$index] || criteria === '-' + datadefinition.Keys[$index] ? sortByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="criteria === datadefinition.Keys[$index] || criteria === '-' + datadefinition.Keys[$index] ? sortByAsc: false"></span>
+            </div>
+        </div>
+        <!--Details-->
+        <!--Iterate the Rows of datasource-->
+        <div class="myTableRow"
+             ng-repeat="data in datadefinition.DataList | orderBy: criteria"
+             ng-click="setSelected(data.Id)"
+             context-menu="setSelected(data.Id)"
+             data-target="{{datadefinition.DataTarget}}">
+            <div class="myTableCell cell-seqno small text-center">
+                {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
+            </div>
+            <div class="myTableCell cell-10 small"
+                 ng-repeat="key in datadefinition.Keys">
+                {{filterValue(data[key], $index)}}
+            </div>
+        </div>
+    </div>
+</div><br />
+<!--Pagination Buttons-->
+<div class="myTableContainter padding-left-10">
+    <div class="myTableContent">
+        <div class="myTableRow-no-border text-right">
+            <div class="btn-group btn-group-sm">
+                <div class="myTableCell-no-padding text-right small">
+                    <button class="btn btn-primary btn-sm"
+                            type="button"
+                            ng-click="loadData(currentPage = (currentPage - 1))"
+                            ng-disabled="!isPrevPage">
+                        Previous
+                    </button>
+                </div>
+                <div class="myTableCell-no-padding text-right small">
+                    <button class="btn btn-default btn-sm"
+                            type="button"
+                            ng-disabled="true">
+                        {{ currentPage }}
+                    </button>
+                </div>
+                <div class="myTableCell-no-padding text-right small">
+                    <button class="btn btn-primary btn-sm"
+                            type="button"
+                            ng-click="loadData(currentPage = (currentPage + 1))"
+                            ng-disabled="!isNextPage">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><br />
+<!--Context Menu-->
+<div class="dropdown position-fixed" id="{{datadefinition.DataTarget}}">
+    <ul class="dropdown-menu" role="menu" id="menuItem">
+    </ul>
+</div>

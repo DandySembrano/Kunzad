@@ -32,6 +32,7 @@ namespace Kunzad.ApiControllers
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
                     .Include(c => c.CityMunicipality.StateProvince)
+                    .Include(c => c.CityMunicipality.StateProvince.Country)
                     .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
@@ -39,6 +40,7 @@ namespace Kunzad.ApiControllers
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
                     .Include(c => c.CityMunicipality.StateProvince)
+                    .Include(c => c.CityMunicipality.StateProvince.Country)
                     .OrderBy(c => c.Name).Take(pageSize);
             }
         }

@@ -3,23 +3,17 @@
 }
 
 @section tableContent{
-    <table class="table table-hover">
-        <thead class="text-dark">
-            <tr>
-                <th class="col-md-1 small" align="center"><strong>No</strong></th>
-                <th class="col-md-4 small"><strong>Name</strong></th>
-                <th class="col-md-8 small"><strong>Remarks</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="c in data" ng-click="setSelected($index)"
-                ng-dblclick="actionForm('Update')" context-menu="setSelected($index)" data-target="DataTableMenu">
-                <td class="small">{{currentPage == 1?($index + 1) : (($index + 1) + ((currentPage -1) * pageSize) )}}</td>
-                <td class="small">{{c.Name}}</td>
-                <td class="small">{{c.Remarks}}</td>
-            </tr>
-        </tbody>
-    </table>
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
 }
 
 @section formContent{
@@ -28,14 +22,14 @@
             <label for="name" class="col-md-3 control-label small">Name</label>
             <div class="col-md-8">
                 <input type="text" id="name" class="form-control small" placeholder=""
-                       ng-model="dataItem.Name" ng-disabled="viewOnly">
+                       ng-model="dataDefinition.DataItem.Name" ng-disabled="dataDefinition.ViewOnly">
             </div>
         </div>
         <div class="form-group form-group-sm">
             <label for="remarks" class="col-md-3 control-label small">Remarks</label>
             <div class="col-md-8">
                 <textarea class="form-control small" id="remarks" rows="3"
-                          ng-model="dataItem.Remarks" ng-disabled="viewOnly"></textarea>
+                          ng-model="dataDefinition.DataItem.Remarks" ng-disabled="dataDefinition.ViewOnly"></textarea>
             </div>
         </div>
     </form>

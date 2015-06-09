@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class BusinessUnitsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
+        private int pageSize = 5;
         Response response = new Response();
         // GET: api/BusinessUnits
         public IQueryable<BusinessUnit> GetBusinessUnits()
@@ -24,6 +24,19 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/GetBusinessUnits?page=1
+        //public IQueryable<BusinessUnit> GetBusinessUnits(int page)
+        //{
+        //    if (page > 1)
+        //    {
+        //        return db.BusinessUnits
+        //            .OrderBy(bu => bu.Id).Skip((page - 1) * pageSize).Take(pageSize);
+        //    }
+        //    else
+        //    {
+        //        return db.BusinessUnits
+        //            .OrderBy(bu => bu.Id).Take(pageSize);
+        //    }
+        //}
         public IHttpActionResult GetBusinessUnits(int page)
         {
             var q = (from bu in db.BusinessUnits

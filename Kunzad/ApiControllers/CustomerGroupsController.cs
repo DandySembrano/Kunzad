@@ -16,7 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
-
+        Response response = new Response();
         // GET: api/CustomerGroups
         public IQueryable<CustomerGroup> GetCustomerGroups()
         {
@@ -53,68 +53,90 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCustomerGroup(int id, CustomerGroup customerGroup)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             if (id != customerGroup.Id)
             {
-                return BadRequest();
+                response.message = "Customer Group not found.";
+                return Ok(response);
             }
 
             db.Entry(customerGroup).State = EntityState.Modified;
 
             try
             {
+                customerGroup.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = customerGroup;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!CustomerGroupExists(id))
                 {
-                    return NotFound();
+                    response.message = "Customer Group not found.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/CustomerGroups
         [ResponseType(typeof(CustomerGroup))]
         public IHttpActionResult PostCustomerGroup(CustomerGroup customerGroup)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
+            }
+            try
+            {
+                customerGroup.CreatedDate = DateTime.Now;
+                db.CustomerGroups.Add(customerGroup);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = customerGroup;
+            }
+            catch (Exception e) {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.CustomerGroups.Add(customerGroup);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = customerGroup.Id }, customerGroup);
+            return Ok(response);
         }
 
         // DELETE: api/CustomerGroups/5
         [ResponseType(typeof(CustomerGroup))]
         public IHttpActionResult DeleteCustomerGroup(int id)
         {
+            response.status = "FAILURE";
             CustomerGroup customerGroup = db.CustomerGroups.Find(id);
             if (customerGroup == null)
             {
-                //var message = string.Format("Customer group with id = {0} not found", id);
-                //throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.NotFound, message));              
-                return NotFound();
+                response.message = "Customer Group not found.";
+                return Ok(response);
+            }
+            try
+            {
+                db.CustomerGroups.Remove(customerGroup);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch(Exception e) {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.CustomerGroups.Remove(customerGroup);
-            db.SaveChanges();
-
-            return Ok(customerGroup);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)
