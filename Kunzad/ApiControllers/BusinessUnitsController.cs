@@ -24,50 +24,50 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/GetBusinessUnits?page=1
-        //public IQueryable<BusinessUnit> GetBusinessUnits(int page)
-        //{
-        //    if (page > 1)
-        //    {
-        //        return db.BusinessUnits
-        //            .OrderBy(bu => bu.Id).Skip((page - 1) * pageSize).Take(pageSize);
-        //    }
-        //    else
-        //    {
-        //        return db.BusinessUnits
-        //            .OrderBy(bu => bu.Id).Take(pageSize);
-        //    }
-        //}
-        public IHttpActionResult GetBusinessUnits(int page)
+        public IQueryable<BusinessUnit> GetBusinessUnits(int page)
         {
-            var q = (from bu in db.BusinessUnits
-                     join but in db.BusinessUnitTypes on bu.BusinessUnitTypeId equals but.Id
-                     select new
-                     {
-                         bu.Id,
-                         bu.Code,
-                         bu.Name,
-                         bu.BusinessUnitTypeId,
-                         bu.ParentBusinessUnitId,
-                         bu.isOperatingSite,
-                         bu.hasAirPort,
-                         bu.hasSeaPort,
-                         bu.CreatedDate,
-                         bu.LastUpdatedDate,
-                         bu.CreatedByUserId,
-                         bu.LastUpdatedByUserId,
-                         BusinessUnitTypeName = but.Name,
-                         ParentBusinessUnitName = (from bu1 in db.BusinessUnits where bu1.Id == bu.ParentBusinessUnitId select new { bu1.Name })
-                     });
             if (page > 1)
             {
-                q.Skip((page - 1) * pageSize).Take(pageSize);
+                return db.BusinessUnits
+                    .OrderBy(bu => bu.Id).Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
-                q.Take(pageSize);
+                return db.BusinessUnits
+                    .OrderBy(bu => bu.Id).Take(pageSize);
             }
-            return Json(q);
         }
+        //public IHttpActionResult GetBusinessUnits(int page)
+        //{
+        //    var q = (from bu in db.BusinessUnits
+        //             join but in db.BusinessUnitTypes on bu.BusinessUnitTypeId equals but.Id
+        //             select new
+        //             {
+        //                 bu.Id,
+        //                 bu.Code,
+        //                 bu.Name,
+        //                 bu.BusinessUnitTypeId,
+        //                 bu.ParentBusinessUnitId,
+        //                 bu.isOperatingSite,
+        //                 bu.hasAirPort,
+        //                 bu.hasSeaPort,
+        //                 bu.CreatedDate,
+        //                 bu.LastUpdatedDate,
+        //                 bu.CreatedByUserId,
+        //                 bu.LastUpdatedByUserId,
+        //                 BusinessUnitTypeName = but.Name,
+        //                 ParentBusinessUnitName = (from bu1 in db.BusinessUnits where bu1.Id == bu.ParentBusinessUnitId select new { bu1.Name })
+        //             });
+        //    if (page > 1)
+        //    {
+        //        q.ToList().Skip((page - 1) * pageSize).Take(pageSize);
+        //    }
+        //    else
+        //    {
+        //        q.ToList().Take(pageSize);
+        //    }
+        //    return Json(q);
+        //}
 
         // GET: api/BusinessUnits/5
         [ResponseType(typeof(BusinessUnit))]

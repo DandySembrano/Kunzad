@@ -129,7 +129,7 @@ kunzadApp.directive('dirDataGrid1', function () {
 
             //Load data
             $scope.loadData = function (page) {
-                //var spinner = new Spinner(opts).spin(spinnerTarget);
+                var spinner = new Spinner(opts).spin(spinnerTarget);
                 $scope.datadefinition.DataList = [];
                 $http.get($scope.datadefinition.APIUrl[0] + page)
                     .success(function (data, status) {

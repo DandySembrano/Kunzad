@@ -17,7 +17,7 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
     $scope.actionMode = "Create";//default to Create
     $scope.dataDefinition = {
                                 "Header": ['Code', 'Name', 'Main Business Unit', 'Business Unit Type', 'Is Operating Site?', 'Has Airport?', 'Has Seaport?', 'No.'],
-                                "Keys": ['Code', 'Name', 'ParentBusinessUnit', 'BusinessUnitTypeName', 'isOperatingSite', 'hasAirPort', 'hasSeaPort'],
+                                "Keys": ['Code', 'Name', 'ParentBusinessUnitName', 'BusinessUnitTypeName', 'isOperatingSite', 'hasAirPort', 'hasSeaPort'],
                                 "Type":   ['Default', 'String', 'String', 'String', 'Boolean', 'Boolean', 'Boolean'],
                                 "DataList": [],
                                 "APIUrl": ['/api/BusinessUnits?page=',//get
@@ -46,19 +46,11 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
                 delete $scope.dataDefinition.DataItem.CityMunicipality;
                 return true;
             case 'PostLoadAction':
-                console.log($scope.dataDefinition.DataList);
-                $scope.initializeCheckBox();
-                //Initialize ParentBusinessUnit
-                for (var i = 0; i < $scope.dataDefinition.DataList.length; i++)
-                {
-                    if($scope.dataDefinition.DataList[i].ParentBusinessUnitName.length == 1)
-                        $scope.dataDefinition.DataList[i].ParentBusinessUnit = $scope.dataDefinition.DataList[i].ParentBusinessUnitName[0].Name;
-                }
-                   
-                return true;
-            case 'PreAction':
                 getBusinessUnitTypes();
                 getBusinessUnits();
+                $scope.initializeCheckBox();
+                return true;
+            case 'PreAction':
                 return true;
             default:
                 return true;
@@ -80,8 +72,8 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
             "CreatedByUserId": null,
             "LastUpdatedByUserId": null,
             "BusinessUnitTypeName": null,
-            "ParentBusinessUnitName": [{ "Name": null }],
-            "ParentBusinessUnit": null
+            //"ParentBusinessUnitName": [{ "Name": null }],
+            "ParentBusinessUnitName": null
         }
     };
     $scope.showFormError = function (message) {
@@ -122,6 +114,15 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
         .success(function (data, status) {
             $scope.businessUnitTypeList = [];
             $scope.businessUnitTypeList = angular.copy(data);
+            for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
+                //search business unit type
+                for (var j = 0; j < $scope.businessUnitTypeList.length; j++) {
+                    if ($scope.dataDefinition.DataList[i].BusinessUnitTypeId == $scope.businessUnitTypeList[j].Id) {
+                        $scope.dataDefinition.DataList[i].BusinessUnitTypeName = $scope.businessUnitTypeList[j].Name;
+                        break;
+                    }
+                }
+            }
         })
         .error(function (error, status) {
             $scope.showFormError(status);
@@ -136,7 +137,15 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
             for (x in data) {
                 $scope.businessUnitList.push(data[x]);
             }
-           // $scope.businessUnitList = angular.copy(data);
+            for (var i = 0; i < $scope.dataDefinition.DataList.length; i++) {
+                //search business unit type
+                for (var j = 0; j < $scope.businessUnitList.length; j++) {
+                    if ($scope.dataDefinition.DataList[i].ParentBusinessUnitId == $scope.businessUnitList[j].Id) {
+                        $scope.dataDefinition.DataList[i].ParentBusinessUnitName = $scope.businessUnitList[j].Name;
+                        break;
+                    }
+                }
+            }
         })
         .error(function (error, status) {
             $scope.showFormError(status);
@@ -157,7 +166,7 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
         var i;
         for (i = 0; i < $scope.businessUnitList.length; i++) {
             if (id == $scope.businessUnitList[i].Id) {
-                $scope.dataDefinition.DataItem.ParentBusinessUnit = $scope.businessUnitList[i].Name;
+                $scope.dataDefinition.DataItem.ParentBusinessUnitName = $scope.businessUnitList[i].Name;
                 return;
             }
         }
