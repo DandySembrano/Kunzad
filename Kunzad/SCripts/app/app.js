@@ -5,9 +5,8 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
 kunzadApp.directive('dirDataGrid1', function () {
     /*---------------------------------------------------------------------------------//
      Directive Name: dirDataGrid1
-     Description: Directive that will manage CRUD, sorting and pagination of data
+     Description: Directive that will manage CRUD, Context Menu, Sorting and Pagination of data
      Author: Kenneth Ybañez
-     Note: Include all context menu html file in DataGrid1.cshtml
     ---------------------------------------------------------------------------------*/
     return {
         restrict: 'E',
@@ -23,6 +22,8 @@ kunzadApp.directive('dirDataGrid1', function () {
                                             DataItem    - Contains the data of the selected item in DataGrid List
                                             DataTarget  - Contains the data target for the context-menu
                                             ViewOnly    - Determine if the fields of the selected item are editable or not
+                                            ContextMenu - Actions to be passed in each context menu item
+                                            ContextMenuLabel - Lable for each context menu item
                                         */
             submitbuttontext: '=',      //scope that holds the submit button label
             submitbuttonlistener: '=',  //scope that will serve as listener that will identify if the user submit an action  
@@ -245,7 +246,7 @@ kunzadApp.directive('dirDataGrid1', function () {
                         $scope.action(action);
                         break;
                     default:
-                        $scope.otheractions({ otheraction: action });
+                        $scope.otheractions({ action: action });
                         break;
                 }
                 $scope.otheractions({ action: 'PostAction' });
