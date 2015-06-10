@@ -130,13 +130,10 @@ kunzadApp.directive('dirDataGrid1', function () {
             //Load data
             $scope.loadData = function (page) {
                 var spinner = new Spinner(opts).spin(spinnerTarget);
-                $scope.datadefinition.DataList = [];
                 $http.get($scope.datadefinition.APIUrl[0] + page)
                     .success(function (data, status) {
-                        //push the the data values in DataList
-                        for (x in data) {
-                            $scope.datadefinition.DataList.push(data[x]);
-                        }
+                        $scope.datadefinition.DataList = [];
+                        $scope.datadefinition.DataList = data;
                         $scope.otheractions({ action: 'PostLoadAction' });
                         if ($scope.currentPage <= 1)
                             $scope.isPrevPage = false;
@@ -365,8 +362,8 @@ kunzadApp.directive('dirDataGrid1', function () {
                     if(i == 0)
                     {
                         var $content = "";
-                        $content = $('<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' +
-                            'ng-click="loadData(currentPage)">' + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>').appendTo('#menuItem');
+                        $content = $('<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
+                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>').appendTo('#menuItem');
                         $compile($content)($scope);
 
                         $content = $('<li class="divider"></li>').appendTo('#menuItem');

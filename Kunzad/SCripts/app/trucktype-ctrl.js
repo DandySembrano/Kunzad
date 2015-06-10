@@ -26,7 +26,7 @@ kunzadApp.controller("TruckTypeController", function ($scope, $http) {
         "DataItem": {},
         "DataTarget": "DataTableMenu",
         "ViewOnly": false,
-        "ContextMenu": ["'Reload'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Export'"],
+        "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Export'"],
         "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Delete', 'View', 'Export']
     };
     $scope.closeModalForm = function () {
