@@ -20,6 +20,7 @@ kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
         "Header": ['Name', 'Remarks', 'No.'],
         "Keys": ['Name', 'Remarks'],
         "Type": ['String', 'String'],
+        "RequiredFields": ['Name-Name'],
         "DataList": [],
         "APIUrl": ['/api/CustomerGroups?page=',//get
                    '/api/CustomerGroups', //post, put, delete
@@ -60,15 +61,7 @@ kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
 
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Name == null || $scope.dataDefinition.DataItem.Name == "") {
-            $scope.showFormError("Customer group name is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

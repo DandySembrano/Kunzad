@@ -18,7 +18,8 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
     $scope.dataDefinition = {
                                 "Header": ['Code', 'Name', 'Main Business Unit', 'Business Unit Type', 'Is Operating Site?', 'Has Airport?', 'Has Seaport?', 'No.'],
                                 "Keys": ['Code', 'Name', 'ParentBusinessUnitName', 'BusinessUnitTypeName', 'isOperatingSite', 'hasAirPort', 'hasSeaPort'],
-                                "Type":   ['Default', 'String', 'String', 'String', 'Boolean', 'Boolean', 'Boolean'],
+                                "Type": ['Default', 'String', 'String', 'String', 'Boolean', 'Boolean', 'Boolean'],
+                                "RequiredFields": ['Code-Code', 'Name-Name', 'BusinessUnitTypeName-Business Unit Type'],
                                 "DataList": [],
                                 "APIUrl": ['/api/BusinessUnits?page=',//get
                                              '/api/BusinessUnits', //post, put, delete
@@ -84,24 +85,8 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
     //-------------------------End of dirDataGrid1 Parameters-------------------
 
     //----------Functions that are related to dirDataGrid1-----------------------
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Code == null || $scope.dataDefinition.DataItem.Code == "") {
-            $scope.showFormError("Code is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.Name == null || $scope.dataDefinition.DataItem.Name == "") {
-            $scope.showFormError("Name is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.BusinessUnitTypeId == null || $scope.dataDefinition.DataItem.BusinessUnitTypeId == "") {
-            $scope.showFormError("Business Unit Type is required.");
-            return false;
-        }
-        return true;
-    };
 
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
 

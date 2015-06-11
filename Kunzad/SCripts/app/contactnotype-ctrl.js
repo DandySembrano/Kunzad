@@ -19,6 +19,7 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
                                 "Header": ['Type', 'No.'],
                                 "Keys": ['Type'],
                                 "Type": ['String'],
+                                "RequiredFields": ['Type-Type'],
                                 "DataList": [],
                                 "APIUrl": ['/api/ContactNumberTypes?page=',//get
                                            '/api/ContactNumberTypes', //post, put, delete
@@ -59,15 +60,7 @@ kunzadApp.controller("ContactnoTypeController", function ($scope, $http) {
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
 
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Type == null || $scope.dataDefinition.DataItem.Type == "") {
-            $scope.showFormError("Contact number type is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

@@ -20,6 +20,7 @@ kunzadApp.controller("ShipmentTypeController", function ($scope, $http) {
         "Header": ['Name', 'No.'],
         "Keys": ['Name'],
         "Type": ['String'],
+        "RequiredFields": ['Name-Name'],
         "DataList": [],
         "APIUrl": ['/api/ShipmentTypes?page=',//get
                      '/api/ShipmentTypes', //post, put, delete
@@ -60,15 +61,7 @@ kunzadApp.controller("ShipmentTypeController", function ($scope, $http) {
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
 
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Name == null || $scope.dataDefinition.DataItem.Name == "") {
-            $scope.showFormError("Service type name is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

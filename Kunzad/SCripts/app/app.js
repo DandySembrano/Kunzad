@@ -7,6 +7,7 @@ kunzadApp.directive('dirDataGrid1', function () {
      Directive Name: dirDataGrid1
      Description: Directive that will manage CRUD, Context Menu, Sorting and Pagination of data
      Author: Kenneth Ybañez
+     Note: If this is used more than once in a page, the other instance should be resetted.
     ---------------------------------------------------------------------------------*/
     return {
         restrict: 'E',
@@ -18,7 +19,9 @@ kunzadApp.directive('dirDataGrid1', function () {
                                             Keys        - Columns/Keys to be showin in DataGrid
                                             Type        - Type of the Columns/Keys(String,Date,DateTime,Time)
                                             DataList    - Contains the List of data to be displayed in DataGrid
-                                            APIUrl      - Contains the API Url, first index is for Get then second index is for CUD
+                                            APIUrl      - Contains the API Url, first index is for Get then second index is for CUD,
+                                                          If Get url parameter is more than one, separate it by using space.
+                                                          (Ex. /api/Truck?page=1 &truckerId=1&truckerName=2&......)
                                             DataItem    - Contains the data of the selected item in DataGrid List
                                             DataTarget  - Contains the data target for the context-menu
                                             ViewOnly    - Determine if the fields of the selected item are editable or not
@@ -46,14 +49,18 @@ kunzadApp.directive('dirDataGrid1', function () {
                                             PostView            - triggers after viewing under submit function
                                             PreAction           - triggers before executing the actions in actionForm function
                                             PostAction          - triggers after executing the actions in actionForm function
+                                            PreLoadAction       - triggers before calling loadData function under actionForm function
+                                            PostLoadAction      - triggers after calling loadData function under actionForm function
                                             PreCreateAction     - triggers before executing Create action under actionForm function
                                             PostCreateAction    - triggers after executing Create action under actionForm function
                                             PreEditAction       - triggers before executing Edit action under actionForm function
                                             PostEditAction      - triggers after executing Edit action under actionForm function
                                             PreDeleteAction     - triggers before executing Delete action under actionForm function
                                             PostDeleteAction    - triggers after executing Delete action under actionForm function
-                                            PreLoadAction       - triggers before calling loadData function
-                                            PostLoadAction      - triggers after calling loadData function
+                                            PreViewAction       - triggers before executing Edit action under actionForm function
+                                            PostViewAction      - triggers after executing Edit action under actionForm function
+                                            PreExportAction       - triggers before executing Edit action under actionForm function
+                                            PostExportAction      - triggers after executing Edit action under actionForm function
                                         */
             resetdata: '&',             //function that will reset the dataitem
             showformerror: '&',         //function that will trigger when an error occured
@@ -66,7 +73,7 @@ kunzadApp.directive('dirDataGrid1', function () {
             $scope.isNextPage = true;
             $scope.sortByDesc = true;
             $scope.sortByAsc = false;
-            $scope.criteria = $scope.datadefinition.Header[0];
+            $scope.criteria = $scope.datadefinition.Keys[0];
             $scope.selectedIndex = null;
             $scope.filteredValue = "";
 
@@ -78,6 +85,11 @@ kunzadApp.directive('dirDataGrid1', function () {
                     words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
                 }
                 return words.join(' ');
+            };
+
+            $scope.UpperCase = function (input) {
+                var value = input.toUpperCase();
+                return value;
             };
 
             $scope.filterHeader = function (input) {
@@ -101,6 +113,9 @@ kunzadApp.directive('dirDataGrid1', function () {
                     switch (type) {
                         case 'String':
                             $scope.filteredValue = $scope.camelCase(value);
+                            break;
+                        case 'String-Upper':
+                            $scope.filteredValue = $scope.UpperCase(value);
                             break;
                         case 'DateTime':
                             $scope.filteredValue = $filter('date')(value, "MM/dd/yyyy HH:mm:ss");
@@ -130,7 +145,12 @@ kunzadApp.directive('dirDataGrid1', function () {
             //Load data
             $scope.loadData = function (page) {
                 var spinner = new Spinner(opts).spin(spinnerTarget);
-                $http.get($scope.datadefinition.APIUrl[0] + page)
+                var url = "";
+                var apiUrlSplit = $scope.datadefinition.APIUrl[0].split(" ");
+                url = apiUrlSplit[0] + page;
+                for (var i = 1; i < apiUrlSplit.length; i++)
+                    url = url + apiUrlSplit[i];
+                $http.get(url)
                     .success(function (data, status) {
                         $scope.datadefinition.DataList = [];
                         $scope.datadefinition.DataList = data;
@@ -219,7 +239,7 @@ kunzadApp.directive('dirDataGrid1', function () {
                 switch (action) {
                     case 'Load':
                         if ($scope.otheractions({ action: 'PreLoadAction' }))
-                            $scope.loadData($scope.currentPage);
+                            $scope.loadData($scope.currentPage)
                         break;
                     case 'Create':
                         if ($scope.otheractions({ action: 'PreCreateAction' })) {
@@ -240,7 +260,16 @@ kunzadApp.directive('dirDataGrid1', function () {
                         }
                         break;
                     case 'View':
-                        $scope.action(action);
+                        if ($scope.otheractions({ action: 'PreViewAction' })) {
+                            $scope.action(action);
+                            $scope.otheractions({ action: 'PostViewAction' })
+                        }
+                        break;
+                    case 'Export':
+                        if ($scope.otheractions({ action: 'PreExportAction' })) {
+                            //code here that exports data
+                            $scope.otheractions({ action: 'PostExportAction' })
+                        }
                         break;
                     default:
                         $scope.otheractions({ action: action });
@@ -329,28 +358,66 @@ kunzadApp.directive('dirDataGrid1', function () {
                 return false;
             };
 
+            //Search key
+            $scope.searchKey = function (key) {
+                for (var i = 0; i < $scope.datadefinition.Keys.length; i++) {
+                    if (key == $scope.datadefinition.Keys[i])
+                        return true;
+                }
+                return false;
+            };
+
+            $scope.checkRequiredFields = function () {
+                var key = "", label = "";
+                for (var i = 0; i < $scope.datadefinition.RequiredFields.length; i++)
+                {
+                    var split = $scope.datadefinition.RequiredFields[i].split("-");
+                    key = split[0];
+                    if ($scope.searchKey(key) == false) {
+                        $scope.showformerror({ error: key + " is undefined." });
+                        return false;
+                    }
+                    else {
+                        if (split.length == 2)
+                            label = split[1];
+                        else
+                        {
+                            $scope.showformerror({ error: "Label name is required for Key: " + key});
+                            return false;
+                        }
+
+                        if ($scope.datadefinition.DataItem[key] == null || $scope.datadefinition.DataItem[key] == "") {
+                            $scope.showformerror({ error: label + " is required." });
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
             //Manage the submition of data base on the user action
             $scope.submit = function (action) {
                 if ($scope.otheractions({ action: 'PreSubmit' })) {
-                    switch (action) {
-                        case 'Create':
-                            if ($scope.otheractions({ action: 'PreSave' }))
-                                $scope.apiCreate();
-                            break;
-                        case 'Edit':
-                            if ($scope.otheractions({ action: 'PreUpdate' }))
-                                $scope.apiUpdate($scope.datadefinition.DataItem.Id)
-                            break;
-                        case 'Delete':
-                            if ($scope.otheractions({ action: 'PreDelete' }))
-                                $scope.apiDelete($scope.datadefinition.DataItem.Id);
-                            break;
-                        case 'View':
-                            if ($scope.otheractions({ action: 'PreView' })) {
-                                $scope.closecontainer();
-                                $scope.otheractions({ action: 'PostView' })
-                            }
-                            break;
+                    if ($scope.checkRequiredFields()) {
+                        switch (action) {
+                            case 'Create':
+                                if ($scope.otheractions({ action: 'PreSave' }))
+                                    $scope.apiCreate();
+                                break;
+                            case 'Edit':
+                                if ($scope.otheractions({ action: 'PreUpdate' }))
+                                    $scope.apiUpdate($scope.datadefinition.DataItem.Id)
+                                break;
+                            case 'Delete':
+                                if ($scope.otheractions({ action: 'PreDelete' }))
+                                    $scope.apiDelete($scope.datadefinition.DataItem.Id);
+                                break;
+                            case 'View':
+                                if ($scope.otheractions({ action: 'PreView' })) {
+                                    $scope.closecontainer();
+                                    $scope.otheractions({ action: 'PostView' })
+                                }
+                                break;
+                        }
                     }
                     $scope.otheractions({ action: 'PostSubmit' })
                 }
@@ -358,29 +425,24 @@ kunzadApp.directive('dirDataGrid1', function () {
 
             //Write the Context-Menu in DOM
             $scope.createContextMenu = function () {
+                var htmlScript = "", $content = "";
+
                 for (var i = 0; i < $scope.datadefinition.ContextMenu.length; i++) {
                     if(i == 0)
                     {
-                        var $content = "";
-                        $content = $('<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>').appendTo('#menuItem');
-                        $compile($content)($scope);
-
-                        $content = $('<li class="divider"></li>').appendTo('#menuItem');
-                        $compile($content)($scope);
+                        htmlScript = '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
+                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
+                        htmlScript = htmlScript + '<li class="divider"></li>';
                     }
                     else {
-                        var content = "";
-                        $content = $('<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>').appendTo('#menuItem');
-                        $compile($content)($scope);
+                        htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
+                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
                         if (i == 4)
-                        {
-                            $content = $('<li class="divider"></li>').appendTo('#menuItem');
-                            $compile($content)($scope);
-                        }
+                            htmlScript = htmlScript + '<li class="divider"></li>';
                     }
                 }
+                $content = angular.element(document.querySelector('#menuItem')).html(htmlScript);
+                $compile($content)($scope);
                 
             };
 

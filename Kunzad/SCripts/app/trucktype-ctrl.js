@@ -18,7 +18,8 @@ kunzadApp.controller("TruckTypeController", function ($scope, $http) {
     $scope.dataDefinition = {
         "Header": ['Type', 'Weight Capacity', 'Volume Capacity', 'No.'],
         "Keys":   ['Type', 'WeightCapacity', 'VolumeCapacity'],
-        "Type":   ['String', 'Number', 'Number'],
+        "Type": ['String', 'Number', 'Number'],
+        "RequiredFields": ['Type-Type', 'WeightCapacity-Weight Capacity', 'VolumeCapacity-Volume Capacity'],
         "DataList": [],
         "APIUrl": ['/api/TruckTypes?page=',//get
                    '/api/TruckTypes', //post, put, delete
@@ -59,24 +60,7 @@ kunzadApp.controller("TruckTypeController", function ($scope, $http) {
         $scope.errorMessage = message;
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
-
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Type == null || $scope.dataDefinition.DataItem.Type == "") {
-            $scope.showFormError("Truck Type is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.WeightCapacity == null || $scope.dataDefinition.DataItem.WeightCapacity == "") {
-            $scope.showFormError("Weight Capacity is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.VolumeCapacity == null || $scope.dataDefinition.DataItem.VolumeCapacity == "") {
-            $scope.showFormError("Volume Capacity is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

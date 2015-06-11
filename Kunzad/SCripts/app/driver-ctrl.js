@@ -18,7 +18,8 @@ kunzadApp.controller("DriverController", function ($scope, $http) {
     $scope.dataDefinition = {
         "Header": ['First_Name', 'Middle Name', 'Last Name', 'License Number', 'License Expiry', 'No.'],
         "Keys":   ['FirstName', 'MiddleName', 'LastName', 'LicenseNo', 'LicenseExpiry'],
-        "Type":   ['String', 'String', 'String', 'String', 'Date'],
+        "Type": ['String', 'String', 'String', 'String', 'Date'],
+        "RequiredFields": ['FirstName-First Name', 'LastName-Last Name'],
         "DataList": [],
         "APIUrl": ['/api/Drivers?page=',//get
                    '/api/Drivers', //post, put, delete
@@ -61,20 +62,7 @@ kunzadApp.controller("DriverController", function ($scope, $http) {
         $scope.errorMessage = message;
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
-
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.FirstName == null || $scope.dataDefinition.DataItem.FirstName == "") {
-                $scope.showFormError("First name is required.");
-                return false;
-            }
-        else if ($scope.dataDefinition.DataItem.LastName == null || $scope.dataDefinition.DataItem.LastName == "") {
-                $scope.showFormError("Last name is required.");
-                return false;
-            }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

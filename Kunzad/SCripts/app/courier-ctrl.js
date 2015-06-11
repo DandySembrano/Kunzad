@@ -19,6 +19,7 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
         "Header": ['Name', 'TIN', 'Street Address 1', 'Street Address 2', 'City/Municipality', 'Province/State', 'Postal Code', 'Country', 'No.'],
         "Keys": ['Name', 'TIN', 'Line1', 'Line2', 'CityMunicipalityName', 'StateProvinceName', 'PostalCode', 'CountryName'],
         "Type": ['Default', 'String', 'String', 'String', 'String', 'String', 'String', 'String'],
+        "RequiredFields": ['Name-Name', 'Line1-Street Address Line 1', 'CityMunicipalityName-City/Municipality'],
         "DataList": [],
         "APIUrl": ['/api/Couriers?page=',//get
                     '/api/Couriers', //post, put, delete
@@ -92,23 +93,7 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
 
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Name == null || $scope.dataDefinition.DataItem.Name == "") {
-            $scope.showFormError("Courier name is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.Line1 == null || $scope.dataDefinition.DataItem.Line1 == "") {
-            $scope.showFormError("Streed address Line1 is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.CityMunicipalityId == null || $scope.dataDefinition.DataItem.CityMunicipalityId == "") {
-            $scope.showFormError("City/Municipality is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {

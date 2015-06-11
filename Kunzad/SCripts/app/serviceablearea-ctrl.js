@@ -18,7 +18,8 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
     $scope.dataDefinition = {
         "Header": ['Name', 'Business Unit', 'City/Municipality', 'Province/State', 'Postal Code', 'Country', 'Is Serviceable?', 'No.'],
         "Keys": ['Name', 'BusinessUnitName', 'CityMunicipalityName', 'StateProvinceName', 'PostalCode', 'CountryName', 'IsServiceable'],
-        "Type": ['String', 'String', 'String', 'String', 'String', 'String','Boolean'],
+        "Type": ['String', 'String', 'String', 'String', 'String', 'String', 'Boolean'],
+        "RequiredFields": ['Name-Name', 'CityMunicipalityName-City/Municipality', 'PostalCode-Postal Code'],
         "DataList": [],
         "APIUrl": ['/api/ServiceableAreas?page=',//get
                    '/api/ServiceableAreas', //post, put, delete
@@ -93,24 +94,7 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
         $scope.errorMessage = message;
     };
     //-------------------------End of dirDataGrid1 Parameters-------------------
-
-    $scope.validateEntry = function () {
-        if ($scope.dataDefinition.DataItem.Name == null || $scope.dataDefinition.DataItem.Name == "") {
-            $scope.showFormError("Service area name is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.CityMunicipalityId == null || $scope.dataDefinition.DataItem.CityMunicipalityId == "") {
-            $scope.showFormError("City/Municipality is required.");
-            return false;
-        }
-        else if ($scope.dataDefinition.DataItem.PostalCode == null || $scope.dataDefinition.DataItem.PostalCode == "") {
-            $scope.showFormError("Postal code is required.");
-            return false;
-        }
-        return true;
-    };
     $scope.submit = function () {
-        if ($scope.validateEntry())
             $scope.submitButtonListener = true;
     };
     $scope.actionForm = function (action) {
@@ -121,7 +105,7 @@ kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, 
         var i;
         for (i = 0; i < $scope.businessUnitList.length; i++) {
             if (id == $scope.businessUnitList[i].Id) {
-                $scope.dataDefinition.DataItem.BusinessUnit = $scope.businessUnitList[i].Name;
+                $scope.dataDefinition.DataItem.BusinessUnitName = $scope.businessUnitList[i].Name;
                 break;
             }
         }
