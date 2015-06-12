@@ -5,9 +5,16 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
 kunzadApp.directive('dirDataGrid1', function () {
     /*---------------------------------------------------------------------------------//
      Directive Name: dirDataGrid1
-     Description: Directive that will manage CRUD, Context Menu, Sorting and Pagination of data
      Author: Kenneth Ybañez
      Note: If this is used more than once in a page, the other instance should be resetted.
+     Functionalities:
+     1. CRUD
+     2. Pagination
+     3. Sorting
+     4. Context-Menu
+     5. Overriding and Overloading by using otherActions scope predefined actions
+     6. Formatting of Date/Time,DateTime, String and Number
+     7. Validate required fields
     ---------------------------------------------------------------------------------*/
     return {
         restrict: 'E',
@@ -59,8 +66,8 @@ kunzadApp.directive('dirDataGrid1', function () {
                                             PostDeleteAction    - triggers after executing Delete action under actionForm function
                                             PreViewAction       - triggers before executing Edit action under actionForm function
                                             PostViewAction      - triggers after executing Edit action under actionForm function
-                                            PreExportAction       - triggers before executing Edit action under actionForm function
-                                            PostExportAction      - triggers after executing Edit action under actionForm function
+                                            PreExportAction     - triggers before executing Edit action under actionForm function
+                                            PostExportAction    - triggers after executing Edit action under actionForm function
                                         */
             resetdata: '&',             //function that will reset the dataitem
             showformerror: '&',         //function that will trigger when an error occured
@@ -70,7 +77,7 @@ kunzadApp.directive('dirDataGrid1', function () {
             $scope.currentPage = 1;
             $scope.pageSize = 20;
             $scope.isPrevPage = false;
-            $scope.isNextPage = true;
+            $scope.isNextPage = false;
             $scope.sortByDesc = true;
             $scope.sortByAsc = false;
             $scope.criteria = $scope.datadefinition.Keys[0];
@@ -155,6 +162,7 @@ kunzadApp.directive('dirDataGrid1', function () {
                         $scope.datadefinition.DataList = [];
                         $scope.datadefinition.DataList = data;
                         $scope.otheractions({ action: 'PostLoadAction' });
+                        $scope.otheractions({ action: 'PostAction' });
                         if ($scope.currentPage <= 1)
                             $scope.isPrevPage = false;
                          else 
@@ -234,48 +242,51 @@ kunzadApp.directive('dirDataGrid1', function () {
 
             //Manage user actions
             $scope.actionForm = function (action) {
-                $scope.otheractions({ action: 'PreAction' });
-                $scope.actionmode = action;
-                switch (action) {
-                    case 'Load':
-                        if ($scope.otheractions({ action: 'PreLoadAction' }))
-                            $scope.loadData($scope.currentPage)
-                        break;
-                    case 'Create':
-                        if ($scope.otheractions({ action: 'PreCreateAction' })) {
-                            if ($scope.action(action))
-                                $scope.otheractions({ action: 'PostCreateAction' })
-                        }
-                        break;
-                    case 'Edit':
-                        if ($scope.otheractions({ action: 'PreEditAction' })) {
-                            if ($scope.action(action))
-                                $scope.otheractions({ action: 'PostEditAction' })
-                        }
-                        break;
-                    case 'Delete':
-                        if ($scope.otheractions({ action: 'PreDeleteAction' })) {
-                            if ($scope.action(action))
-                                $scope.otheractions({ action: 'PostDeleteAction' })
-                        }
-                        break;
-                    case 'View':
-                        if ($scope.otheractions({ action: 'PreViewAction' })) {
-                            $scope.action(action);
-                            $scope.otheractions({ action: 'PostViewAction' })
-                        }
-                        break;
-                    case 'Export':
-                        if ($scope.otheractions({ action: 'PreExportAction' })) {
-                            //code here that exports data
-                            $scope.otheractions({ action: 'PostExportAction' })
-                        }
-                        break;
-                    default:
-                        $scope.otheractions({ action: action });
-                        break;
+                //It should be outside of the switch statement
+                if (action == 'Load')
+                {
+                    if ($scope.otheractions({ action: 'PreLoadAction' }))
+                        $scope.loadData($scope.currentPage)
                 }
-                $scope.otheractions({ action: 'PostAction' });
+                if ($scope.otheractions({ action: 'PreAction' })) {
+                    $scope.actionmode = action;
+                    switch (action) {
+                        case 'Create':
+                            if ($scope.otheractions({ action: 'PreCreateAction' })) {
+                                if ($scope.action(action))
+                                    $scope.otheractions({ action: 'PostCreateAction' })
+                            }
+                            break;
+                        case 'Edit':
+                            if ($scope.otheractions({ action: 'PreEditAction' })) {
+                                if ($scope.action(action))
+                                    $scope.otheractions({ action: 'PostEditAction' })
+                            }
+                            break;
+                        case 'Delete':
+                            if ($scope.otheractions({ action: 'PreDeleteAction' })) {
+                                if ($scope.action(action))
+                                    $scope.otheractions({ action: 'PostDeleteAction' })
+                            }
+                            break;
+                        case 'View':
+                            if ($scope.otheractions({ action: 'PreViewAction' })) {
+                                $scope.action(action);
+                                $scope.otheractions({ action: 'PostViewAction' })
+                            }
+                            break;
+                        case 'Export':
+                            if ($scope.otheractions({ action: 'PreExportAction' })) {
+                                //code here that exports data
+                                $scope.otheractions({ action: 'PostExportAction' })
+                            }
+                            break;
+                        default:
+                            $scope.otheractions({ action: action });
+                            break;
+                    }
+                    $scope.otheractions({ action: 'PostAction' });
+                }
             };
 
             //Save data
