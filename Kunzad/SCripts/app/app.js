@@ -83,6 +83,55 @@ kunzadApp.directive('dirDataGrid1', function () {
             $scope.selectedIndex = null;
             $scope.filteredValue = "";
 
+            //Export data to Excel or word
+            function fnExcelReport(type) {
+                var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+                var textRange; var j = 0;
+                tab = document.getElementById('export'); // id of table
+
+
+                for (j = 0 ; j < tab.rows.length ; j++) {
+                    tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                    //tab_text=tab_text+"</tr>";
+                }
+
+                tab_text = tab_text + "</table>";
+                tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                var ua = window.navigator.userAgent;
+                var firefox = navigator.userAgent.search("Firefox");
+                var msie = ua.indexOf("MSIE ");
+
+                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+                {
+                    exportTemplate.document.open("txt/html", "replace");
+                    exportTemplate.document.write(tab_text);
+                    exportTemplate.document.close();
+                    exportTemplate.focus();
+                    if (type == 'doc')
+                        sa = exportTemplate.document.execCommand("SaveAs", true, "Report.doc");
+                    else if(type == 'excel')
+                        sa = exportTemplate.document.execCommand("SaveAs", true, "Report.xls");
+                }
+                else                 //other browser not tested on IE 11
+                {
+                    if(type == 'doc')
+                        sa = window.open('data:application/vnd.ms-doc,' + encodeURIComponent(tab_text));
+                    else if (type == 'excel')
+                        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+                }
+                if (firefox > -1 && type == 'png')
+                    return $scope.$broadcast('export-png', {});
+                else if (firefox <= -1 && type == 'png') {
+                    alert('Not supported in this browser.');
+                    return;
+                }
+
+                return (sa);
+            }
+
             //Function that format a string value to camelCase
             $scope.camelCase = function (input) {
                 var words = input.split(' ');
@@ -275,16 +324,14 @@ kunzadApp.directive('dirDataGrid1', function () {
                             }
                             break;
                         case 'Excel':
-                            $scope.$broadcast('export-excel', {});
+                            fnExcelReport('excel');
                             break;
                         case 'Doc':
-                            $scope.$broadcast('export-doc', {});
-                            break;
-                        case 'PDF':
-                            $scope.$broadcast('export-pdf', {});
+                            fnExcelReport('doc');
                             break;
                         case 'PNG':
-                            $scope.$broadcast('export-png', {});
+                            fnExcelReport('png');
+                            //$scope.$broadcast('export-png', {});
                             break;
                         default:
                             $scope.otheractions({ action: action });
