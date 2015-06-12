@@ -1974,6 +1974,12 @@
     <Content Include="vendor\plugins\dropzone\dropzone.min.js" />
     <Content Include="vendor\plugins\dropzone\images\spritemap%402x.png" />
     <Content Include="vendor\plugins\dropzone\images\spritemap.png" />
+    <Content Include="vendor\plugins\export\html2canvas.js" />
+    <Content Include="vendor\plugins\export\jquery.base64.js" />
+    <Content Include="vendor\plugins\export\jspdf\jspdf.js" />
+    <Content Include="vendor\plugins\export\jspdf\libs\base64.js" />
+    <Content Include="vendor\plugins\export\jspdf\libs\sprintf.js" />
+    <Content Include="vendor\plugins\export\tableExport.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.childcounter.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.columnview.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.debug.js" />
@@ -2968,6 +2974,9 @@
     <Content Include="Views\Shared\_ContextMenuStateProvince.cshtml" />
     <Content Include="Views\Shared\_ContextMenuCityMunicipality.cshtml" />
     <Content Include="Views\Directives\DataGrid1.cshtml" />
+    <Content Include="vendor\plugins\export\demo.php" />
+    <Content Include="vendor\plugins\export\simple_html_dom.php" />
+    <Content Include="vendor\plugins\export\tableExtractor.php" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

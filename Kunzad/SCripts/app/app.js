@@ -15,6 +15,7 @@ kunzadApp.directive('dirDataGrid1', function () {
      5. Overriding and Overloading by using otherActions scope predefined actions
      6. Formatting of Date/Time,DateTime, String and Number
      7. Validate required fields
+     8. Export data to excel, word, png
     ---------------------------------------------------------------------------------*/
     return {
         restrict: 'E',
@@ -66,8 +67,6 @@ kunzadApp.directive('dirDataGrid1', function () {
                                             PostDeleteAction    - triggers after executing Delete action under actionForm function
                                             PreViewAction       - triggers before executing Edit action under actionForm function
                                             PostViewAction      - triggers after executing Edit action under actionForm function
-                                            PreExportAction     - triggers before executing Edit action under actionForm function
-                                            PostExportAction    - triggers after executing Edit action under actionForm function
                                         */
             resetdata: '&',             //function that will reset the dataitem
             showformerror: '&',         //function that will trigger when an error occured
@@ -275,11 +274,17 @@ kunzadApp.directive('dirDataGrid1', function () {
                                 $scope.otheractions({ action: 'PostViewAction' })
                             }
                             break;
-                        case 'Export':
-                            if ($scope.otheractions({ action: 'PreExportAction' })) {
-                                //code here that exports data
-                                $scope.otheractions({ action: 'PostExportAction' })
-                            }
+                        case 'Excel':
+                            $scope.$broadcast('export-excel', {});
+                            break;
+                        case 'Doc':
+                            $scope.$broadcast('export-doc', {});
+                            break;
+                        case 'PDF':
+                            $scope.$broadcast('export-pdf', {});
+                            break;
+                        case 'PNG':
+                            $scope.$broadcast('export-png', {});
                             break;
                         default:
                             $scope.otheractions({ action: action });
@@ -478,6 +483,25 @@ kunzadApp.directive('dirDataGrid1', function () {
             };
 
             init();
+        }
+    }
+});
+
+kunzadApp.directive('dirExport', function () {
+    return {
+        restrict: 'C',
+        link: function($scope, elm, attr){
+            $scope.$on('export-excel', function(e, d){
+                elm.tableExport({type:'excel', escape:'false'});
+            });
+
+            $scope.$on('export-doc', function(e, d){
+                elm.tableExport({type: 'doc', escape:'false'});
+            });
+
+            $scope.$on('export-png', function (e, d) {
+                elm.tableExport({ type: 'png', escape: 'false' });
+            });
         }
     }
 });

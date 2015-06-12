@@ -26,8 +26,8 @@ kunzadApp.controller("AirlineController", function ($scope, $http) {
                              "DataItem": {},
                              "DataTarget": "DataTableMenu",
                              "ViewOnly": false,
-                             "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Export'"],
-                             "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Delete', 'View', 'Export']
+                             "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Excel'", "'Doc'", "'PNG'"],
+                             "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Delete', 'View', 'Export to Excel', 'Export to Word', 'Export to Image']
     };
     $scope.closeModalForm = function () {
         jQuery.magnificPopup.close();

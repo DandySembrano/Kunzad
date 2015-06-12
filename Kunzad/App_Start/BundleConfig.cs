@@ -14,7 +14,15 @@ namespace Kunzad
                         "~/vendor/plugins/magnific/jquery.magnific-popup.js",
                         //for datetime picker---------------------------------------------
                         "~/vendor/plugins/moment/moment.js",
-                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"
+                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js",
+                        //----------------------------------------------------------------
+                        //for export------------------------------------------------------
+                        "~/vendor/plugins/export/tableExport.js",
+                        "~/vendor/plugins/export/jquery.base64.js",
+                        "~/vendor/plugins/export/html2canvas.js",
+                        "~/vendor/plugins/export/jspdf/libs/sprintf.js",
+                        "~/vendor/plugins/export/jspdf/jspdf.js",
+                        "~/vendor/plugins/export/jspdf/libs/base64.js"
                         //----------------------------------------------------------------
                         ));
 
