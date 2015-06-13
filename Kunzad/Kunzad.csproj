@@ -392,6 +392,8 @@
     <Content Include="Scripts\app\shippinglines-ctrl.js" />
     <Content Include="Scripts\app\trucker-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
+    <Content Include="Scripts\directive\dataExport.js" />
+    <Content Include="Scripts\directive\dataGrid1.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
