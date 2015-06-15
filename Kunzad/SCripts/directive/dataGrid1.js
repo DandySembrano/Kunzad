@@ -194,26 +194,6 @@
                 return $scope.filteredValue;
             };
 
-            //Load data
-            $scope.loadData = function (page) {
-                var spinner = new Spinner(opts).spin(spinnerTarget);
-                var url = "";
-                var apiUrlSplit = $scope.datadefinition.APIUrl[0].split(" ");
-                url = apiUrlSplit[0] + page;
-                for (var i = 1; i < apiUrlSplit.length; i++)
-                    url = url + apiUrlSplit[i];
-                $http.get(url)
-                    .success(function (data, status) {
-                        $scope.datadefinition.DataList = [];
-                        $scope.datadefinition.DataList = data;
-                        spinner.stop();
-                    })
-                    .error(function (data, status) {
-                        spinner.stop();
-                        $scope.showformerror({ error: status });
-                    })
-            };
-
             //Process Pagination
             $scope.processPagination = function () {
                 if ($scope.currentPage <= 1)
@@ -226,6 +206,27 @@
                     $scope.isNextPage = false;
                 else
                     $scope.isNextPage = true;
+            };
+
+            //Load data
+            $scope.loadData = function (page) {
+                var spinner = new Spinner(opts).spin(spinnerTarget);
+                var url = "";
+                var apiUrlSplit = $scope.datadefinition.APIUrl[0].split(" ");
+                url = apiUrlSplit[0] + page;
+                for (var i = 1; i < apiUrlSplit.length; i++)
+                    url = url + apiUrlSplit[i];
+                $http.get(url)
+                    .success(function (data, status) {
+                        $scope.datadefinition.DataList = [];
+                        $scope.datadefinition.DataList = data;
+                        $scope.processPagination();
+                        spinner.stop();
+                    })
+                    .error(function (data, status) {
+                        spinner.stop();
+                        $scope.showformerror({ error: status });
+                    })
             };
 
             //Process Sorting
@@ -299,7 +300,6 @@
                             $interval.cancel(stop);
                             stop = undefined;
                             $scope.otheractions({ action: 'PostLoadAction' });
-                            $scope.processPagination();
                             $scope.otheractions({ action: 'PostAction' });
                         }
                     }, 100);
