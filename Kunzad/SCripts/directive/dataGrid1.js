@@ -69,6 +69,7 @@
         },
         templateUrl: '/Directives/DataGrid1',
         controller: function ($scope, $http, $interval, $filter, $parse, $compile) {
+            var stop;
             $scope.currentPage = 1;
             $scope.pageSize = 20;
             $scope.isPrevPage = false;
@@ -205,24 +206,26 @@
                     .success(function (data, status) {
                         $scope.datadefinition.DataList = [];
                         $scope.datadefinition.DataList = data;
-                        $scope.otheractions({ action: 'PostLoadAction' });
-                        $scope.otheractions({ action: 'PostAction' });
-                        if ($scope.currentPage <= 1)
-                            $scope.isPrevPage = false;
-                        else
-                            $scope.isPrevPage = true;
-
-                        var rows = $scope.datadefinition.DataList.length;
-                        if (rows < $scope.pageSize)
-                            $scope.isNextPage = false;
-                        else
-                            $scope.isNextPage = true;
                         spinner.stop();
                     })
                     .error(function (data, status) {
                         spinner.stop();
                         $scope.showformerror({ error: status });
                     })
+            };
+
+            //Process Pagination
+            $scope.processPagination = function () {
+                if ($scope.currentPage <= 1)
+                    $scope.isPrevPage = false;
+                else
+                    $scope.isPrevPage = true;
+
+                var rows = $scope.datadefinition.DataList.length;
+                if (rows < $scope.pageSize)
+                    $scope.isNextPage = false;
+                else
+                    $scope.isNextPage = true;
             };
 
             //Process Sorting
@@ -286,10 +289,20 @@
 
             //Manage user actions
             $scope.actionForm = function (action) {
-                //It should be outside of the switch statement
+                //It should be outside of the PreAction statement
                 if (action == 'Load') {
                     if ($scope.otheractions({ action: 'PreLoadAction' }))
                         $scope.loadData($scope.currentPage)
+                    //set interval to make sure that the get call returns data before triggering some actions
+                    stop = $interval(function () {
+                        if ($scope.datadefinition.DataList.length > 0) {
+                            $interval.cancel(stop);
+                            stop = undefined;
+                            $scope.otheractions({ action: 'PostLoadAction' });
+                            $scope.processPagination();
+                            $scope.otheractions({ action: 'PostAction' });
+                        }
+                    }, 100);
                 }
                 if ($scope.otheractions({ action: 'PreAction' })) {
                     $scope.actionmode = action;
