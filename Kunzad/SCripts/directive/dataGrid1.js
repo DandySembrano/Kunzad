@@ -9,7 +9,7 @@
      3. Sorting
      4. Context-Menu
      5. Overriding and Overloading by using otherActions scope predefined actions
-     6. Formatting of Date,Time,DateTime, String and Number
+     6. Formatting of Date,Time,DateTime, String, String-Upper, Boolean and Number
      7. Validate required fields
      8. Export data to excel, word, png
     ---------------------------------------------------------------------------------*/
@@ -20,6 +20,7 @@
             actionmode: '=',            //scope that will hold the label header of the modal
             datadefinition: '=',        /* Properties:
                                             Header      - Contains the header of the DataGrid
+                                            Note: If first value of header key is two words, use underscore instead of space(Ex. Created_Date)
                                             Keys        - Columns/Keys to be showin in DataGrid
                                             Type        - Type of the Columns/Keys(String,Date,DateTime,Time)
                                             DataList    - Contains the List of data to be displayed in DataGrid
@@ -34,12 +35,12 @@
                                         */
             submitbuttontext: '=',      //scope that holds the submit button label
             submitbuttonlistener: '=',  //scope that will serve as listener that will identify if the user submit an action  
-            closecontainer: '&',        //function that will close the modal
-            opencontainer: '&',         //function that will open the modal
+            closecontainer: '&',        //function that will close the form container
+            opencontainer: '&',         //function that will open the form container
             otheractions: '&',          /*
-                                            Note: Return true if purpose is to overload, false if override(Same concept to overload),
-                                            function that will trigger when other actions is passed 
-                                            other than Create,View,Delete,Edit and Export in context-menu
+                                            Function that will trigger when other actions is passed 
+                                            other than the default actions found under actionForm function.
+                                            Note: Return true if purpose is to overload, false if override
 
                                             PreSubmit           - triggers before submit function
                                             PostSubmit          - triggers after submit function
@@ -51,8 +52,8 @@
                                             PostDelete          - triggers after calling apiDelete function under submit function
                                             PreView             - triggers before viewing under submit function
                                             PostView            - triggers after viewing under submit function
-                                            PreAction           - triggers before executing the actions in actionForm function
-                                            PostAction          - triggers after executing the actions in actionForm function
+                                            PreAction           - triggers before executing an action in actionForm function
+                                            PostAction          - triggers after executing an action in actionForm function
                                             PreLoadAction       - triggers before calling loadData function under actionForm function
                                             PostLoadAction      - triggers after calling loadData function under actionForm function
                                             PreCreateAction     - triggers before executing Create action under actionForm function
@@ -129,8 +130,8 @@
                 return (sa);
             }
 
-            //Function that format a string value to camelCase
-            $scope.camelCase = function (input) {
+            //Function that format a string value to properCase(Ex. Fast Cargo)
+            $scope.properCase = function (input) {
                 var words = input.split(' ');
                 for (var i = 0; i < words.length; i++) {
                     words[i] = words[i].toLowerCase(); // lowercase everything to get rid of weird casing issues
@@ -139,11 +140,13 @@
                 return words.join(' ');
             };
 
+            //Function that format a string value to UpperCase(Ex. FASTCARGO)
             $scope.UpperCase = function (input) {
                 var value = input.toUpperCase();
                 return value;
             };
 
+            //Function that will format the header name(Ex. User_Name to User Name)
             $scope.filterHeader = function (input) {
                 var value = input.split("_");
                 var finalValue = "";
@@ -156,7 +159,7 @@
                 return finalValue;
             };
 
-            //Function that format value
+            //Function that will format key value
             $scope.filterValue = function (value, index) {
                 var type = $scope.datadefinition.Type[index];
                 if (value == null)
@@ -164,7 +167,7 @@
                 else {
                     switch (type) {
                         case 'String':
-                            $scope.filteredValue = $scope.camelCase(value);
+                            $scope.filteredValue = $scope.properCase(value);
                             break;
                         case 'String-Upper':
                             $scope.filteredValue = $scope.UpperCase(value);
@@ -442,16 +445,19 @@
                 return false;
             };
 
+            //Function that check required fields
             $scope.checkRequiredFields = function () {
                 var key = "", label = "";
                 for (var i = 0; i < $scope.datadefinition.RequiredFields.length; i++) {
                     var split = $scope.datadefinition.RequiredFields[i].split("-");
                     key = split[0];
+                    //Check if key is valid
                     if ($scope.searchKey(key) == false) {
                         $scope.showformerror({ error: key + " is undefined." });
                         return false;
                     }
                     else {
+                        //Check if label name exist in a key
                         if (split.length == 2)
                             label = split[1];
                         else {
@@ -467,6 +473,7 @@
                 }
                 return true;
             };
+
             //Manage the submition of data base on the user action
             $scope.submit = function (action) {
                 if ($scope.otheractions({ action: 'PreSubmit' })) {
@@ -531,6 +538,7 @@
                 }
             }, 100);
 
+            //Call createContextMenu, actionForm('Load') and processSorting function
             var init = function () {
                 $scope.createContextMenu();
                 $scope.actionForm('Load');
