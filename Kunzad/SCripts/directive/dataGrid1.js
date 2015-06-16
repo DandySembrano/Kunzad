@@ -9,7 +9,7 @@
      3. Sorting
      4. Context-Menu
      5. Overriding and Overloading by using otherActions scope predefined actions
-     6. Formatting of Date/Time,DateTime, String and Number
+     6. Formatting of Date,Time,DateTime, String and Number
      7. Validate required fields
      8. Export data to excel, word, png
     ---------------------------------------------------------------------------------*/
@@ -356,6 +356,8 @@
                     .success(function (data, status) {
                         if (data.status == "SUCCESS") {
                             $scope.datadefinition.DataItem.Id = data.objParam1.Id;
+                            $scope.datadefinition.DataItem.CreatedDate = data.objParam1.CreatedDate;
+                            $scope.datadefinition.DataItem.CreatedByUserId = data.objParam1.CreatedByUserId;
                             $scope.datadefinition.DataList.push($scope.datadefinition.DataItem);
                             //reload pagination of datasource is greater than pageSize
                             if ($scope.datadefinition.DataList.length > $scope.pageSize) {
@@ -386,6 +388,8 @@
                     .success(function (data, status) {
                         if (data.status == "SUCCESS") {
                             $scope.datadefinition.DataList[$scope.selectedIndex].Id = data.objParam1.Id;
+                            $scope.datadefinition.DataItem.LastUpdatedDate = data.objParam1.LastUpdatedDate;
+                            $scope.datadefinition.DataItem.LastUpdatedByUserId = data.objParam1.LastUpdatedByUserId;
                             $scope.closecontainer();
                             spinner.stop();
                             $scope.otheractions({ action: 'PostUpdate' });
