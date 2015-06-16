@@ -375,7 +375,10 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
 
     //Initialize tab 1 and tab 2 name
     $scope.initializeHeaderName = function () {
-        $scope.modelName = "Shipping Line-" + $scope.shippingLineItem.Name;
+        if ($scope.shippingLineItem.Name == "" || $scope.shippingLineItem.Name == null)
+            $scope.modelName = "Shipping Lines";
+        else
+            $scope.modelName = "Shipping Line(" + $scope.shippingLineItem.Name + ")";
     }
 
     //initialize shippingLineItem

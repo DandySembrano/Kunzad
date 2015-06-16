@@ -300,8 +300,11 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
 
     //Initialize header name
     $scope.initializeHeaderName = function () {
-        $scope.modelName = "Country-" + $scope.countryItem.Name;
-    }
+        if ($scope.countryItem.Name == "" || $scope.countryItem.Name == null)
+            $scope.modelName = "Country";
+        else
+            $scope.modelName = "Country(" + $scope.countryItem.Name + ")";
+    };
 
     //initialize countryItem
     $scope.initCountryItem = function () {

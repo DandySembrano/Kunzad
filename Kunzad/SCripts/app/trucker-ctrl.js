@@ -253,7 +253,10 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     };
 
     $scope.initializeHeaderName = function () {
-        $scope.modelName = "Trucker-" + $scope.dataItem.Name;
+        if ($scope.dataItem.Name == "" || $scope.dataItem.Name == null)
+            $scope.modelName = "Trucker";
+        else
+            $scope.modelName = "Trucker(" + $scope.dataItem.Name  + ")";
     };
 
     // Get Truck Type
