@@ -16,7 +16,7 @@ kunzadApp.controller("DriverController", function ($scope, $http) {
     $scope.actionCreate = false; //default to false
     $scope.actionMode = "Create";//default to Create
     $scope.dataDefinition = {
-        "Header": ['First_Name', 'Middle Name', 'Last Name', 'License Number', 'License Expiry', 'No.'],
+        "Header": ['First Name', 'Middle Name', 'Last Name', 'License Number', 'License Expiry', 'No.'],
         "Keys":   ['FirstName', 'MiddleName', 'LastName', 'LicenseNo', 'LicenseExpiry'],
         "Type": ['String', 'String', 'String', 'String', 'Date'],
         "RequiredFields": ['FirstName-First Name', 'LastName-Last Name'],
@@ -27,8 +27,8 @@ kunzadApp.controller("DriverController", function ($scope, $http) {
         "DataItem": {},
         "DataTarget": "DataTableMenu",
         "ViewOnly": false,
-        "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Excel'", "'Doc'", "'PNG'"],
-        "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Delete', 'View', 'Export to Excel', 'Export to Word', 'Export to Image']
+        "ContextMenu": [],
+        "ContextMenuLabel": []
     };
     $scope.closeModalForm = function () {
         jQuery.magnificPopup.close();

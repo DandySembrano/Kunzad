@@ -81,7 +81,7 @@
                        class="form-control"
                        placeholder=""
                        ng-disabled="dataDefinition.ViewOnly"
-                       ng-model="dataDefinition.DataItem.CityMunicipalityName"
+                       ng-model="dataDefinition.DataItem.CityMunicipality.Name"
                        typeahead-editable="false"
                        typeahead-on-select="onSelectCity($item, $model, $label)"
                        typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
@@ -94,7 +94,7 @@
             <div class="col-md-8">
                 <input type="text"
                        class="form-control" placeholder=""
-                       ng-model="dataDefinition.DataItem.StateProvinceName"
+                       ng-model="dataDefinition.DataItem.CityMunicipality.StateProvince.Name"
                        ng-disabled="true">
             </div>
         </div>
@@ -117,7 +117,7 @@
                 <input type="text"
                        class="form-control"
                        placeholder=""
-                       ng-model="dataDefinition.DataItem.CountryName"
+                       ng-model="dataDefinition.DataItem.CityMunicipality.StateProvince.Country.Name"
                        ng-disabled="true">
             </div>
         </div>

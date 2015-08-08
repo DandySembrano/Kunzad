@@ -1,0 +1,9 @@
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\bin\Debug\KunzadDb.dacpac
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\bin\Debug\KunzadDb.dll
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\bin\Debug\KunzadDb.pdb
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\Model.xml
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\refactor.xml
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\postdeploy.sql
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\predeploy.sql
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\KunzadDb.dll
+D:\APPLICATION\Kunzad\Kunzad\KunzadDB\obj\Debug\KunzadDb.pdb

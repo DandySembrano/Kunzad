@@ -30,8 +30,8 @@
                                             DataItem    - Contains the data of the selected item in DataGrid List
                                             DataTarget  - Contains the data target for the context-menu
                                             ViewOnly    - Determine if the fields of the selected item are editable or not
-                                            ContextMenu - Actions to be passed in each context menu item
-                                            ContextMenuLabel - Lable for each context menu item
+                                            ContextMenu - Actions to be passed in each context menu item (Ex: ["'actionName'"])
+                                            ContextMenuLabel - Lable for each context menu item (Ex: ['actionLabel'])
                                         */
             submitbuttontext: '=',      //scope that holds the submit button label
             submitbuttonlistener: '=',  //scope that will serve as listener that will identify if the user submit an action  
@@ -80,121 +80,118 @@
             $scope.criteria = $scope.datadefinition.Keys[0];
             $scope.selectedIndex = null;
             $scope.filteredValue = "";
+            $scope.gridOptions = {};
+            $scope.contextMenuDefault = ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'"];
+            $scope.contextMenuLabelDefault = ['Reload', 'Create', 'Edit', 'Delete', 'View'];
 
-            //Export data to Excel or word
-            function fnExcelReport(type) {
-                var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
-                var textRange; var j = 0;
-                tab = document.getElementById('export'); // id of table
+            //Set the focus on top of the page during load
+            $scope.focusOnTop = function () {
+                $(document).ready(function () {
+                    $(this).scrollTop(0);
+                });
+            };
 
-
-                for (j = 0 ; j < tab.rows.length ; j++) {
-                    tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
-                    //tab_text=tab_text+"</tr>";
-                }
-
-                tab_text = tab_text + "</table>";
-                tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
-                tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
-                tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
-
-                var ua = window.navigator.userAgent;
-                var firefox = navigator.userAgent.search("Firefox");
-                var msie = ua.indexOf("MSIE ");
-
-                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
-                {
-                    exportTemplate.document.open("txt/html", "replace");
-                    exportTemplate.document.write(tab_text);
-                    exportTemplate.document.close();
-                    exportTemplate.focus();
-                    if (type == 'doc')
-                        sa = exportTemplate.document.execCommand("SaveAs", true, "Report.doc");
-                    else if (type == 'excel')
-                        sa = exportTemplate.document.execCommand("SaveAs", true, "Report.xls");
-                }
-                else                 //other browser not tested on IE 11
-                {
-                    if (type == 'doc')
-                        sa = window.open('data:application/vnd.ms-doc,' + encodeURIComponent(tab_text));
-                    else if (type == 'excel')
-                        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
-                }
-                if (firefox > -1 && type == 'png')
-                    return $scope.$broadcast('export-png', {});
-                else if (firefox <= -1 && type == 'png') {
-                    alert('Not supported in this browser.');
-                    return;
-                }
-
-                return (sa);
+            //Initialize addtional context-menu item
+            for (var i = 0; i < $scope.datadefinition.ContextMenu.length; i ++){
+                $scope.contextMenuDefault.push($scope.datadefinition.ContextMenu[i]);
+                $scope.contextMenuLabelDefault.push($scope.datadefinition.ContextMenuLabel[i]);
             }
 
-            //Function that format a string value to properCase(Ex. Fast Cargo)
-            $scope.properCase = function (input) {
-                var words = input.split(' ');
-                for (var i = 0; i < words.length; i++) {
-                    words[i] = words[i].toLowerCase(); // lowercase everything to get rid of weird casing issues
-                    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+            //Initialize ui-grid options
+            $scope.initGridOptions = function () {
+                var columns = [];
+                //Initialize Number Listing
+                var columnProperties = {};
+                columnProperties.name = $scope.datadefinition.Header[$scope.datadefinition.Header.length - 1];
+                columnProperties.field = 'No';
+                columnProperties.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>';
+                columnProperties.width = 40;
+                columnProperties.enableColumnResizing = true;
+                columnProperties.enableColumnMenu = false;
+                columnProperties.enableColumnMoving = false;
+                columns.push(columnProperties);
+                
+                //Initialize column data
+                for (var i = 0; i < ($scope.datadefinition.Header.length - 1) ; i++) {
+                    var columnProperties = {};
+                    columnProperties.name = $scope.datadefinition.Header[i];
+                    columnProperties.field = $scope.datadefinition.Keys[i];
+                    //format field value
+                    columnProperties.cellFilter = $scope.filterValue($scope.datadefinition.Type[i]);
+                    columns.push(columnProperties);
                 }
-                return words.join(' ');
+
+                $scope.gridOptions = {
+                    columnDefs: columns,
+                    rowTemplate: '<div>' +
+                        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
+                      '</div>',
+                    //enableVerticalScrollbar: 0,
+                    //enableHorizontalScrollbar: 2,
+                    enableColumnResizing: true,
+                    enableGridMenu: true,
+                    enableSelectAll: true,
+                    exporterCsvFilename: 'myFile.csv',
+                    exporterPdfDefaultStyle: { fontSize: 9 },
+                    exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+                    exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+                    exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+                    exporterPdfFooter: function (currentPage, pageCount) {
+                        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+                    },
+                    exporterPdfCustomFormatter: function (docDefinition) {
+                        docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                        docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+                        return docDefinition;
+                    },
+                    exporterPdfOrientation: 'landscape',
+                    exporterPdfPageSize: 'a4',
+                    exporterPdfMaxGridWidth: 500,
+                    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+                    onRegisterApi: function (gridApi) {
+                        $scope.gridApi = gridApi;
+                    }
+                };
             };
 
-            //Function that format a string value to UpperCase(Ex. FASTCARGO)
-            $scope.UpperCase = function (input) {
-                var value = input.toUpperCase();
-                return value;
-            };
-
-            //Function that will format the header name(Ex. User_Name to User Name)
-            $scope.filterHeader = function (input) {
-                var value = input.split("_");
-                var finalValue = "";
-                if (value.length > 1) {
-                    for (var i = 0; i < value.length; i++)
-                        finalValue = finalValue + " " + value[i];
+            //set grid height
+            function setHeight(extra) {
+                $scope.height = (($scope.gridOptions.data.length * 30) + 48);
+                if (extra) {
+                    $scope.height += extra;
                 }
-                else
-                    finalValue = input;
-                return finalValue;
-            };
+                $scope.gridOptions.gridHeight = $scope.height;
+            }
 
             //Function that will format key value
-            $scope.filterValue = function (value, index) {
-                var type = $scope.datadefinition.Type[index];
-                if (value == null)
-                    $scope.filteredValue = "";
-                else {
-                    switch (type) {
-                        case 'String':
-                            $scope.filteredValue = $scope.properCase(value);
-                            break;
-                        case 'String-Upper':
-                            $scope.filteredValue = $scope.UpperCase(value);
-                            break;
-                        case 'DateTime':
-                            $scope.filteredValue = $filter('date')(value, "MM/dd/yyyy HH:mm:ss");
-                            break;
-                        case 'Date':
-                            $scope.filteredValue = $filter('date')(value, "MM/dd/yyyy");
-                            break;
-                        case 'Time':
-                            $scope.filteredValue = $filter('date')(value, "HH:mm:ss");
-                            break;
-                        case 'Number':
-                            $scope.filteredValue = value;
-                            break;
-                        case 'Boolean':
-                            if (value)
-                                $scope.filteredValue = "Yes";
-                            else
-                                $scope.filteredValue = "No";
-                            break;
-                        default:
-                            $scope.filteredValue = value;
-                    }
+            $scope.filterValue = function (type) {
+                var format;
+                switch (type) {
+                    case 'String':
+                        format = 'ProperCase';
+                        break;
+                    case 'String-Upper':
+                        format = 'StringUpper';
+                        break;
+                    case 'Date':
+                        format = 'Date';
+                        break;
+                    case 'DateTime':
+                        format = 'DateTime';
+                        break;
+                    case 'Time':
+                        format = 'Time';
+                        break;
+                    case 'Boolean':
+                        format = 'Boolean';
+                        break;
+                    case 'Decimal':
+                        format = 'Decimal';
+                        break;
+                    default:
+                        format = 'Default';
                 }
-                return $scope.filteredValue;
+                return format;
             };
 
             //Process Pagination
@@ -223,30 +220,16 @@
                     .success(function (data, status) {
                         $scope.datadefinition.DataList = [];
                         $scope.datadefinition.DataList = data;
+                        $scope.gridOptions.data = $scope.datadefinition.DataList;
+                        //setHeight(100);
                         $scope.processPagination();
+                        $scope.focusOnTop();
                         spinner.stop();
                     })
                     .error(function (data, status) {
                         spinner.stop();
                         $scope.showformerror({ error: status });
                     })
-            };
-
-            //Process Sorting
-            $scope.processSorting = function (criteria) {
-                //Ascending
-                if ($scope.sortByDesc == true) {
-                    $scope.sortByAsc = true;
-                    $scope.sortByDesc = false;
-                    criteria = criteria;
-                }
-                    //Descending
-                else {
-                    $scope.sortByAsc = false;
-                    $scope.sortByDesc = true;
-                    criteria = '-' + criteria;
-                }
-                $scope.criteria = criteria;
             };
 
             //search data
@@ -302,6 +285,8 @@
                         if ($scope.datadefinition.DataList.length > 0) {
                             $interval.cancel(stop);
                             stop = undefined;
+                            $scope.gridOptions.data = $scope.datadefinition.DataList;
+                            //setHeight(100);
                             $scope.otheractions({ action: 'PostLoadAction' });
                             $scope.otheractions({ action: 'PostAction' });
                         }
@@ -362,11 +347,11 @@
                             $scope.datadefinition.DataItem.CreatedDate = data.objParam1.CreatedDate;
                             $scope.datadefinition.DataItem.CreatedByUserId = data.objParam1.CreatedByUserId;
                             $scope.datadefinition.DataList.push($scope.datadefinition.DataItem);
+                            $scope.gridOptions.data = $scope.datadefinition.DataList;
                             //reload pagination of datasource is greater than pageSize
-                            if ($scope.datadefinition.DataList.length > $scope.pageSize) {
-                                //$scope.currentPage = $scope.currentPage + 1;
+                            if ($scope.datadefinition.DataList.length > $scope.pageSize)
                                 $scope.loadData($scope.currentPage);
-                            }
+                            //setHeight(100);
                             $scope.closecontainer();
                             spinner.stop();
                             $scope.otheractions({ action: 'PostSave' });
@@ -393,6 +378,7 @@
                             $scope.datadefinition.DataList[$scope.selectedIndex].Id = data.objParam1.Id;
                             $scope.datadefinition.DataItem.LastUpdatedDate = data.objParam1.LastUpdatedDate;
                             $scope.datadefinition.DataItem.LastUpdatedByUserId = data.objParam1.LastUpdatedByUserId;
+                            $scope.gridOptions.data = $scope.datadefinition.DataList;
                             $scope.closecontainer();
                             spinner.stop();
                             $scope.otheractions({ action: 'PostUpdate' });
@@ -507,16 +493,16 @@
             $scope.createContextMenu = function () {
                 var htmlScript = "", $content = "";
 
-                for (var i = 0; i < $scope.datadefinition.ContextMenu.length; i++) {
+                for (var i = 0; i < $scope.contextMenuDefault.length; i++) {
                     if (i == 0) {
-                        htmlScript = '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
+                        htmlScript = '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.contextMenuDefault[i] + ')">'
+                                    + $scope.contextMenuLabelDefault[i] + '</a></li>';
                         htmlScript = htmlScript + '<li class="divider"></li>';
                     }
                     else {
-                        htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
-                        if (i == 4)
+                        htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.contextMenuDefault[i] + ')">'
+                                    + $scope.contextMenuLabelDefault[i] + '</a></li>';
+                        if (i == 4 && ($scope.contextMenuDefault.length -1) != i)
                             htmlScript = htmlScript + '<li class="divider"></li>';
                     }
                 }
@@ -542,7 +528,7 @@
             var init = function () {
                 $scope.createContextMenu();
                 $scope.actionForm('Load');
-                $scope.processSorting($scope.criteria);
+                $scope.initGridOptions();
             };
 
             init();

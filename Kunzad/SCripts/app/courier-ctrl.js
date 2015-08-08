@@ -17,7 +17,7 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
     $scope.actionMode = "Create";//default to Create
     $scope.dataDefinition = {
         "Header": ['Name', 'TIN', 'Street Address 1', 'Street Address 2', 'City/Municipality', 'Province/State', 'Postal Code', 'Country', 'No.'],
-        "Keys": ['Name', 'TIN', 'Line1', 'Line2', 'CityMunicipalityName', 'StateProvinceName', 'PostalCode', 'CountryName'],
+        "Keys": ['Name', 'TIN', 'Line1', 'Line2', 'CityMunicipality.Name', 'CityMunicipality.StateProvince.Name', 'PostalCode', 'CityMunicipality.StateProvince.Country.Name'],
         "Type": ['Default', 'String', 'String', 'String', 'String', 'String', 'String', 'String'],
         "RequiredFields": ['Name-Name', 'Line1-Street Address Line 1', 'CityMunicipalityName-City/Municipality'],
         "DataList": [],
@@ -27,8 +27,8 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
         "DataItem": {},
         "DataTarget": "DataTableMenu",
         "ViewOnly": false,
-        "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Excel'", "'Doc'", "'PNG'"],
-        "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Delete', 'View', 'Export to Excel', 'Export to Word', 'Export to Image']
+        "ContextMenu": [],
+        "ContextMenuLabel": []
     };
     $scope.closeModalForm = function () {
         jQuery.magnificPopup.close();
@@ -47,14 +47,14 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
                 $scope.country = $rootScope.country;
                 $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
                 return true;
-            case 'PostLoadAction':
-                for (var i = 0; i < $scope.dataDefinition.DataList.length; i++)
-                {
-                    $scope.dataDefinition.DataList[i].CityMunicipalityName = $scope.dataDefinition.DataList[i].CityMunicipality.Name;
-                    $scope.dataDefinition.DataList[i].StateProvinceName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Name;
-                    $scope.dataDefinition.DataList[i].CountryName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Country.Name;
-                }
-                return true;
+            //case 'PostLoadAction':
+            //    for (var i = 0; i < $scope.dataDefinition.DataList.length; i++)
+            //    {
+            //        $scope.dataDefinition.DataList[i].CityMunicipalityName = $scope.dataDefinition.DataList[i].CityMunicipality.Name;
+            //        $scope.dataDefinition.DataList[i].StateProvinceName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Name;
+            //        $scope.dataDefinition.DataList[i].CountryName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Country.Name;
+            //    }
+            //    return true;
             default:
                 return true;
         }
@@ -103,9 +103,9 @@ kunzadApp.controller("CourierController", function ($rootScope, $scope, $http) {
     //---------------------------Code if using typeahead in city/municipality-------------------
     $scope.onSelectCity = function ($item, $model, $label) {
         $scope.dataDefinition.DataItem.CityMunicipalityId = $item.Id;
-        $scope.dataDefinition.DataItem.CityMunicipalityName = $item.Name;
-        $scope.dataDefinition.DataItem.StateProvinceName = $item.StateProvinceName;
-        $scope.dataDefinition.DataItem.CountryName = $scope.country.Name;
+        $scope.dataDefinition.DataItem.CityMunicipality.Name = $item.Name;
+        $scope.dataDefinition.DataItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+        $scope.dataDefinition.DataItem.CityMunicipality.StateProvince.Country.Name = $scope.country.Name;
     };
     //---------------------------End of typeahead-----------------------------------------------
 

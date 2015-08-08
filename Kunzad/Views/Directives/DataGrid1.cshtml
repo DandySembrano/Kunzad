@@ -1,44 +1,5 @@
 ﻿<!--Data Table Content-->
-<div class="myTableContainter">
-    <!--For IE-->
-    <iframe id="exportTemplate" style="display:none"></iframe>
-    <!--End of for IE-->
-    <table class="myTableContent dir-export" id="export">
-        <thead>
-            <tr class="myTableRow-header text-dark small">
-                <th class="myTableCell cell-seqno small text-center">
-                    <strong>{{datadefinition.Header[datadefinition.Header.length - 1]}}</strong>
-                </th>
-                <th class="myTableCell cell-10 small"
-                    ng-repeat="header in datadefinition.Header" ng-if="$index != (datadefinition.Header.length - 1)"
-                    ng-click="processSorting(datadefinition.Keys[$index])">
-                    <strong>{{filterHeader(header)}}</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="criteria === datadefinition.Keys[$index] || criteria === '-' + datadefinition.Keys[$index] ? sortByDesc: false">
-                    </span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="criteria === datadefinition.Keys[$index] || criteria === '-' + datadefinition.Keys[$index] ? sortByAsc: false">
-                    </span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class ="myTableRow"
-                ng-repeat="data in datadefinition.DataList | orderBy: criteria"
-                ng-click="setSelected(data.Id)"
-                context-menu="setSelected(data.Id)"
-                data-target="{{datadefinition.DataTarget}}">
-                <td class ="myTableCell cell-seqno small text-center">
-                    {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
-                </td>
-                <td class="myTableCell cell-10 small"
-                     ng-repeat="key in datadefinition.Keys">
-                    {{filterValue(data[key], $index)}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div><br />
+<div ui-grid="gridOptions" id ="toTop" class="grid" ng-style="{ 'height': height }"  ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
 <!--Pagination Buttons-->
 <div class="myTableContainter padding-left-10">
     <div class="myTableContent">

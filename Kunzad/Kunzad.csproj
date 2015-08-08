@@ -392,8 +392,8 @@
     <Content Include="Scripts\app\shippinglines-ctrl.js" />
     <Content Include="Scripts\app\trucker-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
-    <Content Include="Scripts\directive\dataExport.js" />
     <Content Include="Scripts\directive\dataGrid1.js" />
+    <Content Include="Scripts\filter\filter.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1976,12 +1976,6 @@
     <Content Include="vendor\plugins\dropzone\dropzone.min.js" />
     <Content Include="vendor\plugins\dropzone\images\spritemap%402x.png" />
     <Content Include="vendor\plugins\dropzone\images\spritemap.png" />
-    <Content Include="vendor\plugins\export\html2canvas.js" />
-    <Content Include="vendor\plugins\export\jquery.base64.js" />
-    <Content Include="vendor\plugins\export\jspdf\jspdf.js" />
-    <Content Include="vendor\plugins\export\jspdf\libs\base64.js" />
-    <Content Include="vendor\plugins\export\jspdf\libs\sprintf.js" />
-    <Content Include="vendor\plugins\export\tableExport.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.childcounter.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.columnview.js" />
     <Content Include="vendor\plugins\fancytree\extensions\jquery.fancytree.debug.js" />
@@ -2353,6 +2347,13 @@
     <Content Include="vendor\plugins\tagmanager\tagmanager.js" />
     <Content Include="vendor\plugins\tagsinput\tagsinput.css" />
     <Content Include="vendor\plugins\tagsinput\tagsinput.min.js" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.css" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.svg" />
+    <Content Include="vendor\plugins\uigrid\js\csv.js" />
+    <Content Include="vendor\plugins\uigrid\js\pdfmake.js" />
+    <Content Include="vendor\plugins\uigrid\js\ui-grid-stable.js" />
+    <Content Include="vendor\plugins\uigrid\js\ui-grid.js" />
+    <Content Include="vendor\plugins\uigrid\js\vfs_fonts.js" />
     <Content Include="vendor\plugins\validate\additional-methods.js" />
     <Content Include="vendor\plugins\validate\additional-methods.min.js" />
     <Content Include="vendor\plugins\validate\jquery.form.js" />
@@ -2976,6 +2977,9 @@
     <Content Include="Views\Shared\_ContextMenuStateProvince.cshtml" />
     <Content Include="Views\Shared\_ContextMenuCityMunicipality.cshtml" />
     <Content Include="Views\Directives\DataGrid1.cshtml" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.eot" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.ttf" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.woff" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2986,6 +2990,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="vendor\plugins\datatables\extensions\Editor\examples\simple\echo\" />
+    <Folder Include="vendor\plugins\uigrid\extras\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

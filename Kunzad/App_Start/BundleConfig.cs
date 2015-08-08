@@ -14,15 +14,7 @@ namespace Kunzad
                         "~/vendor/plugins/magnific/jquery.magnific-popup.js",
                         //for datetime picker---------------------------------------------
                         "~/vendor/plugins/moment/moment.js",
-                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js",
-                        //----------------------------------------------------------------
-                        //for export------------------------------------------------------
-                        "~/vendor/plugins/export/tableExport.js",
-                        "~/vendor/plugins/export/jquery.base64.js",
-                        "~/vendor/plugins/export/html2canvas.js",
-                        "~/vendor/plugins/export/jspdf/libs/sprintf.js",
-                        "~/vendor/plugins/export/jspdf/jspdf.js",
-                        "~/vendor/plugins/export/jspdf/libs/base64.js"
+                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"
                         //----------------------------------------------------------------
                         ));
 
@@ -40,7 +32,12 @@ namespace Kunzad
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
+                        "~/vendor/plugins/uigrid/js/ui-grid.js",
+                        "~/vendor/plugins/uigrid/js/csv.js",
+                        "~/vendor/plugins/uigrid/js/pdfmake.js",
+                        "~/vendor/plugins/uigrid/js/vfs_fonts.js",
                         "~/Scripts/app/app.js",
+                        "~/Scripts/filter/filter.js",
                         "~/Scripts/directive/dataGrid1.js",
                         "~/Scripts/directive/dataExport.js",
                         "~/Scripts/app/customer-ctrl.js",

@@ -1,0 +1,1496 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="KunzadDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AirFreight">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AirLineId" Type="int" Nullable="false" />
+    <Property Name="AirWaybillNumber" Type="varchar" MaxLength="20" />
+    <Property Name="AirWaybillDate" Type="datetime" />
+    <Property Name="EstimatedDepartureDate" Type="datetime" Nullable="false" />
+    <Property Name="EstimatedDepartureTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="EstimatedArrivalDate" Type="datetime" Nullable="false" />
+    <Property Name="EstimatedArrivalTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="OriginBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="DepartureDate" Type="datetime" />
+    <Property Name="DepartureTime" Type="time" Precision="7" />
+    <Property Name="ArrivalDate" Type="datetime" />
+    <Property Name="ArrivalTime" Type="time" Precision="7" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="AirFreightShipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AirFreightId" Type="int" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="CostAllocation" Type="money" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="AirLine">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="BusinessUnit">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="BusinessUnitTypeId" Type="int" Nullable="false" />
+    <Property Name="ParentBusinessUnitId" Type="int" />
+    <Property Name="isOperatingSite" Type="bit" Nullable="false" />
+    <Property Name="hasAirPort" Type="bit" Nullable="false" />
+    <Property Name="hasSeaPort" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="BusinessUnitContact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="ContactId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="BusinessUnitType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Charge">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CityMunicipality">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="StateProvinceId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Contact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Title" Type="varchar" MaxLength="150" />
+    <Property Name="Email" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="AlternateEmail" Type="varchar" MaxLength="150" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ContactNumberType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Type" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ContactPhone">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ContactId" Type="int" Nullable="false" />
+    <Property Name="ContactNumber" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="ContactNumberTypeId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Country">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Courier">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="TIN" Type="varchar" MaxLength="50" />
+    <Property Name="Line1" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Line2" Type="varchar" MaxLength="150" />
+    <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
+    <Property Name="PostalCode" Type="varchar" MaxLength="20" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CourierTransaction">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CourierId" Type="int" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="CourierCost" Type="money" Nullable="false" />
+    <Property Name="CallDate" Type="datetime" />
+    <Property Name="CallTime" Type="time" Precision="7" />
+    <Property Name="CompletedDate" Type="date" />
+    <Property Name="CompletedTime" Type="time" Precision="7" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CourierTransactionDetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CourierTransactionId" Type="int" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="CostAllocation" Type="money" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="varchar" MaxLength="20" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CustomerGroupId" Type="int" Nullable="false" />
+    <Property Name="TIN" Type="varchar" MaxLength="50" />
+    <Property Name="IndustryId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CustomerAddress">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+    <Property Name="Line1" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Line2" Type="varchar" MaxLength="150" />
+    <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
+    <Property Name="PostalCode" Type="varchar" MaxLength="20" />
+    <Property Name="IsBillingAddress" Type="bit" Nullable="false" />
+    <Property Name="IsDeliveryAddress" Type="bit" Nullable="false" />
+    <Property Name="IsPickupAddress" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CustomerContact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+    <Property Name="ContactId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="CustomerGroup">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Remarks" Type="varchar(max)" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Driver">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FirstName" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="MiddleName" Type="varchar" MaxLength="150" />
+    <Property Name="LastName" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="LicenseNo" Type="varchar" MaxLength="50" />
+    <Property Name="LicenseExpiry" Type="datetime" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Industry">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="SeaFreight">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BLNumber" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="BLDate" Type="datetime" Nullable="false" />
+    <Property Name="VesselVoyageId" Type="int" Nullable="false" />
+    <Property Name="OriginBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="FreightCost" Type="money" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="SeaFreightShipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SeaFreightId" Type="int" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="CostAllocation" Type="money" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Service">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="ServiceCategoryId" Type="int" Nullable="false" />
+    <Property Name="Description" Type="varchar" MaxLength="255" />
+    <Property Name="IsMultimodal" Type="bit" Nullable="false" />
+    <Property Name="Length" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="Width" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="Height" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="MaxWeight" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="DeliveryWorkingDays" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ServiceableArea">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CityMunicipalityId" Type="int" Nullable="false" />
+    <Property Name="PostalCode" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="IsServiceable" Type="bit" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ServiceCategory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ServiceCharge">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="ServiceId" Type="int" Nullable="false" />
+    <Property Name="ChargeId" Type="int" Nullable="false" />
+    <Property Name="ChargeName" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="IsTaxInclusive" Type="bit" Nullable="false" />
+    <Property Name="TaxPercentage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Shipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="ServiceId" Type="int" Nullable="false" />
+    <Property Name="ShipmentTypeId" Type="int" Nullable="false" />
+    <Property Name="PaymentMode" Type="char" MaxLength="1" Nullable="false" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+    <Property Name="BillToCustomerId" Type="int" />
+    <Property Name="Quantity" Type="smallint" Nullable="false" />
+    <Property Name="TotalCBM" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+    <Property Name="IsRevenue" Type="bit" Nullable="false" />
+    <Property Name="Revenue" Type="money" Nullable="false" />
+    <Property Name="IsTaxInclusive" Type="bit" Nullable="false" />
+    <Property Name="TaxAmount" Type="money" Nullable="false" />
+    <Property Name="TaxPercentage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+    <Property Name="Description" Type="text" Nullable="false" />
+    <Property Name="DeliverTo" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="DeliveryAddressId" Type="int" Nullable="false" />
+    <Property Name="DeliveryDate" Type="datetime" />
+    <Property Name="DeliveryTime" Type="time" Precision="7" />
+    <Property Name="ReceivedByName" Type="varchar" MaxLength="150" />
+    <Property Name="ParentShipmentId" Type="int" Nullable="false" />
+    <Property Name="IsConsolidation" Type="bit" Nullable="false" />
+    <Property Name="IsMultipleDelivery" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ShipmentCharges">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="ServiceChargeId" Type="int" Nullable="false" />
+    <Property Name="ServiceChargeName" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Amount" Type="money" Nullable="false" />
+    <Property Name="IsTaxInclusive" Type="bit" Nullable="false" />
+    <Property Name="TaxAmount" Type="money" Nullable="false" />
+    <Property Name="TaxPercentage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ShipmentDimension">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="Length" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="Width" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="Height" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="VolumetricWeight" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+    <Property Name="Quantity" Type="smallint" Nullable="false" />
+    <Property Name="TotalCBM" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+    <Property Name="Description" Type="text" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ShipmentType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="ShippingLine">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="StateProvince">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CountryId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Truck">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PlateNo" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="TruckTypeId" Type="int" Nullable="false" />
+    <Property Name="TruckerId" Type="int" Nullable="false" />
+    <Property Name="WeightCapacity" Type="decimal" Precision="18" Scale="4" />
+    <Property Name="VolumeCapacity" Type="decimal" Precision="18" Scale="4" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Trucker">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="TIN" Type="varchar" MaxLength="50" />
+    <Property Name="Line1" Type="varchar" MaxLength="150" />
+    <Property Name="Line2" Type="varchar" MaxLength="150" />
+    <Property Name="CityMunicipalityId" Type="int" />
+    <Property Name="PostalCode" Type="varchar" MaxLength="20" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Trucking">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DocumentNo" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="TruckerId" Type="int" Nullable="false" />
+    <Property Name="TruckId" Type="int" Nullable="false" />
+    <Property Name="DriverId" Type="int" Nullable="false" />
+    <Property Name="OriginServiceableAreaId" Type="int" Nullable="false" />
+    <Property Name="DestinationServiceableAreaId" Type="int" Nullable="false" />
+    <Property Name="TruckerCost" Type="money" Nullable="false" />
+    <Property Name="TruckingStatusId" Type="bit" Nullable="false" />
+    <Property Name="TruckCallDate" Type="datetime" />
+    <Property Name="TruckCallTime" Type="time" Precision="7" />
+    <Property Name="DispatchDate" Type="date" />
+    <Property Name="DispatchTime" Type="time" Precision="7" />
+    <Property Name="CompletedDate" Type="date" />
+    <Property Name="CompletedTime" Type="time" Precision="7" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="TruckingDelivery">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TruckingId" Type="int" Nullable="false" />
+    <Property Name="ShipmentId" Type="int" Nullable="false" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+    <Property Name="CustomerDocumentNo" Type="varchar" MaxLength="20" />
+    <Property Name="Quantity" Type="smallint" Nullable="false" />
+    <Property Name="CBM" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+    <Property Name="Description" Type="text" />
+    <Property Name="DeliverTo" Type="varchar" MaxLength="150" />
+    <Property Name="DeliveryAddressId" Type="int" />
+    <Property Name="DeliveryDate" Type="datetime" />
+    <Property Name="DeliveryTime" Type="time" Precision="7" />
+    <Property Name="CostAllocation" Type="money" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="TruckType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Type" Type="varchar" MaxLength="50" />
+    <Property Name="WeightCapacity" Type="decimal" Precision="18" Scale="4" />
+    <Property Name="VolumeCapacity" Type="decimal" Precision="18" Scale="4" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LoginName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="MiddleName" Type="varchar" MaxLength="50" />
+    <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Email" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" Nullable="false" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="Vessel">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="ShippingLineId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <EntityType Name="VesselVoyage">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="VesselId" Type="int" Nullable="false" />
+    <Property Name="VoyageNo" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="EstimatedDepartureDate" Type="datetime" Nullable="false" />
+    <Property Name="EstimatedDepartureTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="EstimatedArrivalDate" Type="datetime" Nullable="false" />
+    <Property Name="EstimatedArrivalTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="OriginBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="int" Nullable="false" />
+    <Property Name="DepartureDate" Type="datetime" />
+    <Property Name="DepartureTime" Type="time" Precision="7" />
+    <Property Name="ArrivalDate" Type="datetime" />
+    <Property Name="ArrivalTime" Type="time" Precision="7" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="LastUpdatedDate" Type="datetime" />
+    <Property Name="CreatedByUserId" Type="int" />
+    <Property Name="LastUpdatedByUserId" Type="int" />
+  </EntityType>
+  <Association Name="FK_AirFreight_AirLine">
+    <End Role="AirLine" Type="Self.AirLine" Multiplicity="1" />
+    <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AirLine">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="AirLineId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreight_DestinationBusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="DestinationBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreight_OriginBusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="OriginBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreightShipment_AirFreight">
+    <End Role="AirFreight" Type="Self.AirFreight" Multiplicity="1" />
+    <End Role="AirFreightShipment" Type="Self.AirFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AirFreight">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreightShipment">
+        <PropertyRef Name="AirFreightId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreightShipment_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="AirFreightShipment" Type="Self.AirFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreightShipment">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnit_BusinessUnitType">
+    <End Role="BusinessUnitType" Type="Self.BusinessUnitType" Multiplicity="1" />
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnitType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnit">
+        <PropertyRef Name="BusinessUnitTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnitContact_BusiessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="BusinessUnitContact" Type="Self.BusinessUnitContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnitContact">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnitContact_Contact">
+    <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+    <End Role="BusinessUnitContact" Type="Self.BusinessUnitContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnitContact">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CityMunicipality_Trucker">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="0..1" />
+    <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucker">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CityTown_StateProvince">
+    <End Role="StateProvince" Type="Self.StateProvince" Multiplicity="1" />
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateProvince">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CityMunicipality">
+        <PropertyRef Name="StateProvinceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ContactPhone_Contact">
+    <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+    <End Role="ContactPhone" Type="Self.ContactPhone" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ContactPhone">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ContactPhone_ContactNumberType">
+    <End Role="ContactNumberType" Type="Self.ContactNumberType" Multiplicity="1" />
+    <End Role="ContactPhone" Type="Self.ContactPhone" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ContactNumberType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ContactPhone">
+        <PropertyRef Name="ContactNumberTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Courier_CityMunicipality">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+    <End Role="Courier" Type="Self.Courier" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Courier">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierService_BusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="CourierTransaction" Type="Self.CourierTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransaction">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierService_Courier">
+    <End Role="Courier" Type="Self.Courier" Multiplicity="1" />
+    <End Role="CourierTransaction" Type="Self.CourierTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Courier">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransaction">
+        <PropertyRef Name="CourierId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierTransactionDetails_CourierTransaction">
+    <End Role="CourierTransaction" Type="Self.CourierTransaction" Multiplicity="1" />
+    <End Role="CourierTransactionDetails" Type="Self.CourierTransactionDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CourierTransaction">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransactionDetails">
+        <PropertyRef Name="CourierTransactionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierTransactionDetails_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="CourierTransactionDetails" Type="Self.CourierTransactionDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransactionDetails">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Customer_CustomerGroup">
+    <End Role="CustomerGroup" Type="Self.CustomerGroup" Multiplicity="1" />
+    <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CustomerGroup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Customer">
+        <PropertyRef Name="CustomerGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Customer_Industry">
+    <End Role="Industry" Type="Self.Industry" Multiplicity="1" />
+    <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Industry">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Customer">
+        <PropertyRef Name="IndustryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_CityMunicipality">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+    <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerContact_Contact">
+    <End Role="Contact" Type="Self.Contact" Multiplicity="1" />
+    <End Role="CustomerContact" Type="Self.CustomerContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerContact">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerContact_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="CustomerContact" Type="Self.CustomerContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerContact">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_DestinationBusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="SeaFreight" Type="Self.SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="DestinationBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_OriginBusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="SeaFreight" Type="Self.SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="OriginBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_VesselVoyage">
+    <End Role="VesselVoyage" Type="Self.VesselVoyage" Multiplicity="1" />
+    <End Role="SeaFreight" Type="Self.SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="VesselVoyage">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="VesselVoyageId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreightShipment_SeaFreight">
+    <End Role="SeaFreight" Type="Self.SeaFreight" Multiplicity="1" />
+    <End Role="SeaFreightShipment" Type="Self.SeaFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SeaFreight">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreightShipment">
+        <PropertyRef Name="SeaFreightId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreightShipment_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="SeaFreightShipment" Type="Self.SeaFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreightShipment">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Service_ServiceCategory">
+    <End Role="ServiceCategory" Type="Self.ServiceCategory" Multiplicity="1" />
+    <End Role="Service" Type="Self.Service" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceCategory">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Service">
+        <PropertyRef Name="ServiceCategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceableArea_CityMunicipality">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+    <End Role="ServiceableArea" Type="Self.ServiceableArea" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceableArea">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceCharge_Charge">
+    <End Role="Charge" Type="Self.Charge" Multiplicity="1" />
+    <End Role="ServiceCharge" Type="Self.ServiceCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Charge">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceCharge">
+        <PropertyRef Name="ChargeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceCharge_Service">
+    <End Role="Service" Type="Self.Service" Multiplicity="1" />
+    <End Role="ServiceCharge" Type="Self.ServiceCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceCharge">
+        <PropertyRef Name="ServiceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_BusinessUnit">
+    <End Role="BusinessUnit" Type="Self.BusinessUnit" Multiplicity="1" />
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_Service">
+    <End Role="Service" Type="Self.Service" Multiplicity="1" />
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="ServiceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_ShipmentType">
+    <End Role="ShipmentType" Type="Self.ShipmentType" Multiplicity="1" />
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShipmentType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="ShipmentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentCharges_ServiceCharge">
+    <End Role="ServiceCharge" Type="Self.ServiceCharge" Multiplicity="1" />
+    <End Role="ShipmentCharges" Type="Self.ShipmentCharges" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceCharge">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentCharges">
+        <PropertyRef Name="ServiceChargeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentCharges_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="ShipmentCharges" Type="Self.ShipmentCharges" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentCharges">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentDimension_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="ShipmentDimension" Type="Self.ShipmentDimension" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentDimension">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StateProvince_Country">
+    <End Role="Country" Type="Self.Country" Multiplicity="1" />
+    <End Role="StateProvince" Type="Self.StateProvince" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Country">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="StateProvince">
+        <PropertyRef Name="CountryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Truck_Trucker">
+    <End Role="Trucker" Type="Self.Trucker" Multiplicity="1" />
+    <End Role="Truck" Type="Self.Truck" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucker">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Truck">
+        <PropertyRef Name="TruckerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Truck_TruckType">
+    <End Role="TruckType" Type="Self.TruckType" Multiplicity="1" />
+    <End Role="Truck" Type="Self.Truck" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TruckType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Truck">
+        <PropertyRef Name="TruckTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Driver">
+    <End Role="Driver" Type="Self.Driver" Multiplicity="1" />
+    <End Role="Trucking" Type="Self.Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Driver">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="DriverId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Truck">
+    <End Role="Truck" Type="Self.Truck" Multiplicity="1" />
+    <End Role="Trucking" Type="Self.Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Truck">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="TruckId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Trucker">
+    <End Role="Trucker" Type="Self.Trucker" Multiplicity="1" />
+    <End Role="Trucking" Type="Self.Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucker">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="TruckerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="TruckingDelivery" Type="Self.TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Shipment">
+    <End Role="Shipment" Type="Self.Shipment" Multiplicity="1" />
+    <End Role="TruckingDelivery" Type="Self.TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Trucking">
+    <End Role="Trucking" Type="Self.Trucking" Multiplicity="1" />
+    <End Role="TruckingDelivery" Type="Self.TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucking">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="TruckingId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_User_Created">
+    <End Role="User" Type="Self.User" Multiplicity="1" />
+    <End Role="User1" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="CreatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_User_Updated">
+    <End Role="User" Type="Self.User" Multiplicity="0..1" />
+    <End Role="User1" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="LastUpdatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Vessel_ShippingLine">
+    <End Role="ShippingLine" Type="Self.ShippingLine" Multiplicity="1" />
+    <End Role="Vessel" Type="Self.Vessel" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShippingLine">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Vessel">
+        <PropertyRef Name="ShippingLineId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VesselVoyage_Vessel">
+    <End Role="Vessel" Type="Self.Vessel" Multiplicity="1" />
+    <End Role="VesselVoyage" Type="Self.VesselVoyage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Vessel">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VesselVoyage">
+        <PropertyRef Name="VesselId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="KunzadDbModelStoreContainer">
+    <EntitySet Name="AirFreight" EntityType="Self.AirFreight" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AirFreightShipment" EntityType="Self.AirFreightShipment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AirLine" EntityType="Self.AirLine" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BusinessUnit" EntityType="Self.BusinessUnit" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BusinessUnitContact" EntityType="Self.BusinessUnitContact" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BusinessUnitType" EntityType="Self.BusinessUnitType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Charge" EntityType="Self.Charge" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CityMunicipality" EntityType="Self.CityMunicipality" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ContactNumberType" EntityType="Self.ContactNumberType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ContactPhone" EntityType="Self.ContactPhone" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Courier" EntityType="Self.Courier" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CourierTransaction" EntityType="Self.CourierTransaction" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CourierTransactionDetails" EntityType="Self.CourierTransactionDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomerAddress" EntityType="Self.CustomerAddress" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomerContact" EntityType="Self.CustomerContact" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomerGroup" EntityType="Self.CustomerGroup" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Driver" EntityType="Self.Driver" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Industry" EntityType="Self.Industry" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SeaFreight" EntityType="Self.SeaFreight" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SeaFreightShipment" EntityType="Self.SeaFreightShipment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Service" EntityType="Self.Service" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ServiceableArea" EntityType="Self.ServiceableArea" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ServiceCategory" EntityType="Self.ServiceCategory" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ServiceCharge" EntityType="Self.ServiceCharge" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Shipment" EntityType="Self.Shipment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ShipmentCharges" EntityType="Self.ShipmentCharges" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ShipmentDimension" EntityType="Self.ShipmentDimension" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ShipmentType" EntityType="Self.ShipmentType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ShippingLine" EntityType="Self.ShippingLine" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StateProvince" EntityType="Self.StateProvince" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Truck" EntityType="Self.Truck" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Trucker" EntityType="Self.Trucker" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Trucking" EntityType="Self.Trucking" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TruckingDelivery" EntityType="Self.TruckingDelivery" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TruckType" EntityType="Self.TruckType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Vessel" EntityType="Self.Vessel" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="VesselVoyage" EntityType="Self.VesselVoyage" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_AirFreight_AirLine" Association="Self.FK_AirFreight_AirLine">
+      <End Role="AirLine" EntitySet="AirLine" />
+      <End Role="AirFreight" EntitySet="AirFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreight_DestinationBusinessUnit" Association="Self.FK_AirFreight_DestinationBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="AirFreight" EntitySet="AirFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreight_OriginBusinessUnit" Association="Self.FK_AirFreight_OriginBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="AirFreight" EntitySet="AirFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreightShipment_AirFreight" Association="Self.FK_AirFreightShipment_AirFreight">
+      <End Role="AirFreight" EntitySet="AirFreight" />
+      <End Role="AirFreightShipment" EntitySet="AirFreightShipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreightShipment_Shipment" Association="Self.FK_AirFreightShipment_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="AirFreightShipment" EntitySet="AirFreightShipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnit_BusinessUnitType" Association="Self.FK_BusinessUnit_BusinessUnitType">
+      <End Role="BusinessUnitType" EntitySet="BusinessUnitType" />
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnitContact_BusiessUnit" Association="Self.FK_BusinessUnitContact_BusiessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="BusinessUnitContact" EntitySet="BusinessUnitContact" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnitContact_Contact" Association="Self.FK_BusinessUnitContact_Contact">
+      <End Role="Contact" EntitySet="Contact" />
+      <End Role="BusinessUnitContact" EntitySet="BusinessUnitContact" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CityMunicipality_Trucker" Association="Self.FK_CityMunicipality_Trucker">
+      <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+      <End Role="Trucker" EntitySet="Trucker" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CityTown_StateProvince" Association="Self.FK_CityTown_StateProvince">
+      <End Role="StateProvince" EntitySet="StateProvince" />
+      <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ContactPhone_Contact" Association="Self.FK_ContactPhone_Contact">
+      <End Role="Contact" EntitySet="Contact" />
+      <End Role="ContactPhone" EntitySet="ContactPhone" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ContactPhone_ContactNumberType" Association="Self.FK_ContactPhone_ContactNumberType">
+      <End Role="ContactNumberType" EntitySet="ContactNumberType" />
+      <End Role="ContactPhone" EntitySet="ContactPhone" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Courier_CityMunicipality" Association="Self.FK_Courier_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+      <End Role="Courier" EntitySet="Courier" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierService_BusinessUnit" Association="Self.FK_CourierService_BusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="CourierTransaction" EntitySet="CourierTransaction" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierService_Courier" Association="Self.FK_CourierService_Courier">
+      <End Role="Courier" EntitySet="Courier" />
+      <End Role="CourierTransaction" EntitySet="CourierTransaction" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierTransactionDetails_CourierTransaction" Association="Self.FK_CourierTransactionDetails_CourierTransaction">
+      <End Role="CourierTransaction" EntitySet="CourierTransaction" />
+      <End Role="CourierTransactionDetails" EntitySet="CourierTransactionDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierTransactionDetails_Shipment" Association="Self.FK_CourierTransactionDetails_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="CourierTransactionDetails" EntitySet="CourierTransactionDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Customer_CustomerGroup" Association="Self.FK_Customer_CustomerGroup">
+      <End Role="CustomerGroup" EntitySet="CustomerGroup" />
+      <End Role="Customer" EntitySet="Customer" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Customer_Industry" Association="Self.FK_Customer_Industry">
+      <End Role="Industry" EntitySet="Industry" />
+      <End Role="Customer" EntitySet="Customer" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="Self.FK_CustomerAddress_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddress" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_Customer" Association="Self.FK_CustomerAddress_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddress" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerContact_Contact" Association="Self.FK_CustomerContact_Contact">
+      <End Role="Contact" EntitySet="Contact" />
+      <End Role="CustomerContact" EntitySet="CustomerContact" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerContact_Customer" Association="Self.FK_CustomerContact_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="CustomerContact" EntitySet="CustomerContact" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_DestinationBusinessUnit" Association="Self.FK_SeaFreight_DestinationBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="SeaFreight" EntitySet="SeaFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_OriginBusinessUnit" Association="Self.FK_SeaFreight_OriginBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="SeaFreight" EntitySet="SeaFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_VesselVoyage" Association="Self.FK_SeaFreight_VesselVoyage">
+      <End Role="VesselVoyage" EntitySet="VesselVoyage" />
+      <End Role="SeaFreight" EntitySet="SeaFreight" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreightShipment_SeaFreight" Association="Self.FK_SeaFreightShipment_SeaFreight">
+      <End Role="SeaFreight" EntitySet="SeaFreight" />
+      <End Role="SeaFreightShipment" EntitySet="SeaFreightShipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreightShipment_Shipment" Association="Self.FK_SeaFreightShipment_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="SeaFreightShipment" EntitySet="SeaFreightShipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Service_ServiceCategory" Association="Self.FK_Service_ServiceCategory">
+      <End Role="ServiceCategory" EntitySet="ServiceCategory" />
+      <End Role="Service" EntitySet="Service" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceableArea_CityMunicipality" Association="Self.FK_ServiceableArea_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipality" />
+      <End Role="ServiceableArea" EntitySet="ServiceableArea" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceCharge_Charge" Association="Self.FK_ServiceCharge_Charge">
+      <End Role="Charge" EntitySet="Charge" />
+      <End Role="ServiceCharge" EntitySet="ServiceCharge" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceCharge_Service" Association="Self.FK_ServiceCharge_Service">
+      <End Role="Service" EntitySet="Service" />
+      <End Role="ServiceCharge" EntitySet="ServiceCharge" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_BusinessUnit" Association="Self.FK_Shipment_BusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnit" />
+      <End Role="Shipment" EntitySet="Shipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_Customer" Association="Self.FK_Shipment_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="Shipment" EntitySet="Shipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_Service" Association="Self.FK_Shipment_Service">
+      <End Role="Service" EntitySet="Service" />
+      <End Role="Shipment" EntitySet="Shipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_ShipmentType" Association="Self.FK_Shipment_ShipmentType">
+      <End Role="ShipmentType" EntitySet="ShipmentType" />
+      <End Role="Shipment" EntitySet="Shipment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentCharges_ServiceCharge" Association="Self.FK_ShipmentCharges_ServiceCharge">
+      <End Role="ServiceCharge" EntitySet="ServiceCharge" />
+      <End Role="ShipmentCharges" EntitySet="ShipmentCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentCharges_Shipment" Association="Self.FK_ShipmentCharges_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="ShipmentCharges" EntitySet="ShipmentCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentDimension_Shipment" Association="Self.FK_ShipmentDimension_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="ShipmentDimension" EntitySet="ShipmentDimension" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StateProvince_Country" Association="Self.FK_StateProvince_Country">
+      <End Role="Country" EntitySet="Country" />
+      <End Role="StateProvince" EntitySet="StateProvince" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Truck_Trucker" Association="Self.FK_Truck_Trucker">
+      <End Role="Trucker" EntitySet="Trucker" />
+      <End Role="Truck" EntitySet="Truck" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Truck_TruckType" Association="Self.FK_Truck_TruckType">
+      <End Role="TruckType" EntitySet="TruckType" />
+      <End Role="Truck" EntitySet="Truck" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Driver" Association="Self.FK_Trucking_Driver">
+      <End Role="Driver" EntitySet="Driver" />
+      <End Role="Trucking" EntitySet="Trucking" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Truck" Association="Self.FK_Trucking_Truck">
+      <End Role="Truck" EntitySet="Truck" />
+      <End Role="Trucking" EntitySet="Trucking" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Trucker" Association="Self.FK_Trucking_Trucker">
+      <End Role="Trucker" EntitySet="Trucker" />
+      <End Role="Trucking" EntitySet="Trucking" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Customer" Association="Self.FK_TruckingDelivery_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDelivery" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Shipment" Association="Self.FK_TruckingDelivery_Shipment">
+      <End Role="Shipment" EntitySet="Shipment" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDelivery" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Trucking" Association="Self.FK_TruckingDelivery_Trucking">
+      <End Role="Trucking" EntitySet="Trucking" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDelivery" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_User_Created" Association="Self.FK_User_User_Created">
+      <End Role="User" EntitySet="User" />
+      <End Role="User1" EntitySet="User" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_User_Updated" Association="Self.FK_User_User_Updated">
+      <End Role="User" EntitySet="User" />
+      <End Role="User1" EntitySet="User" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Vessel_ShippingLine" Association="Self.FK_Vessel_ShippingLine">
+      <End Role="ShippingLine" EntitySet="ShippingLine" />
+      <End Role="Vessel" EntitySet="Vessel" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VesselVoyage_Vessel" Association="Self.FK_VesselVoyage_Vessel">
+      <End Role="Vessel" EntitySet="Vessel" />
+      <End Role="VesselVoyage" EntitySet="VesselVoyage" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
