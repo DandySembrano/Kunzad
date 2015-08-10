@@ -15,8 +15,8 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     $scope.customerContactList = [];
     $scope.customerContactPhoneList = [];
     $scope.dataItem;
-    var pageSize = 20;
 
+    var pageSize = 20;
     $scope.isPrevPage = false;
     $scope.isNextPage = true;
     $scope.actionMode = "Create";
@@ -61,10 +61,10 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
 
     // Get Customer List
     $scope.loadData = function (page) {
-      
         $http.get("/api/Customers?page=" + page)
             .success(function (data, status) {
                 $scope.data = data;
+                gridOptions1.data = data;
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -77,12 +77,112 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
                 } else {
                     $scope.isNextPage = true;
                 }
-              
             })
             .error(function (data, status) {
              
             })
     }
+
+    $scope.gridOptions1 = {
+        data:'data',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { field: 'Code' },
+          { field: 'Name',},
+          { name:'Customer Group',field: 'CustomerGroup.Name' },
+          { name:'Industry',field: 'Industry.Name' },
+          { field: 'TIN' },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'myFile.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
+    $scope.gridOptions2 = {
+        data: 'customerAddressList',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { name: 'Line1', field: 'Line1' },
+          { name: 'Line2', field: 'Line2' },
+          { name: 'City Municipality', field: 'Line2' },
+          { name: 'Province/State', field: 'Line2' },
+          { name: 'Postal Code', field: 'Line2' },
+          { name: 'Country', field: 'Line2' },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'myFile.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
 
     // Create/Insert New
     $scope.apiCreate = function () {
@@ -96,7 +196,7 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             delete dataModel.CustomerAddresses[i].CityMunicipality;
             delete dataModel.CustomerAddresses[i].Id;
         }
-        console.log(dataModel);
+        
         $http.post("/api/Customers", dataModel)
             .success(function (data, status) {
                 $scope.dataItem = angular.copy(data);
@@ -163,30 +263,43 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             })
     }
 
-    $scope.setSelected = function (i) {
-        $scope.selected = i;
+    $scope.setSelected = function (id) {
+        for (var j = 1; j < $scope.data.length; j++) {    
+            if(id == $scope.data[j].Id){
+                $scope.selected = j;
+                break;
+            }
+        }  
     }
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
         switch ($scope.actionMode) {
             case "Create":
-                $scope.initDataItem();
-                $scope.initAddress();
-                $scope.initCustomerContact();
-                $scope.initContact();
-                $scope.initContactPhone();
-                $scope.customerAddressList = [];
-                $scope.customerContactList = [];
-                $scope.customerContactPhoneList = [];
-                $scope.viewOnly = false;
-                $scope.submitButtonText = "Submit";
-                $scope.showForm = true;
-                $scope.showSubForm = false;
-                $scope.showFooter = true;
-                $scope.showSubFooter = false;
-                $scope.selectedTab = $scope.tabPages[0];
-                break;
+                if ($scope.selectedTab == 'General') { //if general
+                    $scope.initDataItem();
+                    $scope.initAddress();
+                    $scope.initCustomerContact();
+                    $scope.initContact();
+                    $scope.initContactPhone();
+                    $scope.customerAddressList = [];
+                    $scope.customerContactList = [];
+                    $scope.customerContactPhoneList = [];
+                    $scope.viewOnly = false;
+                    $scope.submitButtonText = "Submit";
+                    $scope.showForm = true;
+                    $scope.showSubForm = false;
+                    $scope.showFooter = true;
+                    $scope.showSubFooter = false;
+                    $scope.selectedTab = $scope.tabPages[0];
+                    break;
+                } else if ($scope.selectedTab == 'Addresses') { //if address
+                    $scope.initAddress();
+                    $scope.openModalForm('#modal-panel-address')
+                    $scope.customerAddressAction = action;
+                    break;
+                }
+
             case "Edit":
                 $scope.dataItem = angular.copy($scope.data[$scope.selected]);
                 $scope.customerAddressList = $scope.dataItem.CustomerAddresses;
@@ -413,6 +526,7 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     $scope.apiUpdateCustomerAddresses = function () {
         $scope.customerAddressList[$scope.selectedCustomerAddressIndex] = angular.copy($scope.customerAddress);
         $scope.dataItem.CustomerAddresses[$scope.selectedCustomerAddressIndex] = angular.copy($scope.customerAddress);
+        $scope.gridOptions2.data = $scope.dataItem.CustomerAddresses[$scope.selectedCustomerAddressIndex];
         $scope.closeModalForm();
     }
 
