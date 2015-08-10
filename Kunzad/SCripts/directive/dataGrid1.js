@@ -110,7 +110,6 @@
                 columnProperties.enableColumnMenu = false;
                 columnProperties.enableColumnMoving = false;
                 columns.push(columnProperties);
-                
                 //Initialize column data
                 for (var i = 0; i < ($scope.datadefinition.Header.length - 1) ; i++) {
                     var columnProperties = {};
@@ -121,6 +120,7 @@
                     columns.push(columnProperties);
                 }
 
+                console.log(columns);
                 $scope.gridOptions = {
                     columnDefs: columns,
                     rowTemplate: '<div>' +

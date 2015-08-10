@@ -6,32 +6,7 @@
 @section tableContent{
     <div class="row">
         <div class="col-lg-12">
-            <div class="myTableContainter">
-                <div class="myTableContent">
-                    <!--Header-->
-                    <div class="myTableRow-header text-dark">
-                        <div class="myTableCell cell-seqno small text-center">
-                            <strong>No.</strong>
-                        </div>
-                        <div class="myTableCell cell-10 small" ng-click="processSLOrderBy('Name')">
-                            <strong>Name</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="orderBySLNameDesc"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="orderBySLNameAsc"></span>
-                        </div>
-                    </div>
-                    <!--Detail-->
-                    <div class="myTableRow"
-                         ng-repeat="s in shippingLineList | orderBy:slCriteria"
-                         ng-click="setSelected($index, s.Id)"
-                         context-menu="setSelected($index, s.Id)"
-                         data-target="DataTableMenu">
-                        <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-                        <div class="myTableCell cell-10 small">{{s.Name}}</div>
-                    </div>
-                </div>
-            </div>
+            <div ui-grid="shippingLineGridOptions" id="toTop" class="grid" ng-style="{ 'height': height }" ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
         </div>
     </div>
 }
@@ -72,7 +47,8 @@
                     </button>
                 </div>
             </div><br />
-            <div class="myTableContainter">
+            <div ui-grid="vesselGridOptions" id="toTop" class="grid" ng-style="{ 'height': height }" ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+            @*<div class="myTableContainter">
                 <div class="myTableContent">
                     <!--Header-->
                     <div class="myTableRow-header text-dark" ng-show="vesselList.length > 0">
@@ -94,7 +70,7 @@
                         <div class="myTableCell cell-8 small">{{item.Name}}</div>
                     </div>
                 </div>
-            </div><br />
+            </div>*@<br />
             <!--Pagination Buttons-->
             <div class="myTableContainter" ng-show="paginatedVessels.length > 0">
                 <div class="myTableContent">
