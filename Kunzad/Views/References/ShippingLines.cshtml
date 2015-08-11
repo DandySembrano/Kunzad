@@ -6,7 +6,7 @@
 @section tableContent{
     <div class="row">
         <div class="col-lg-12">
-            <div ui-grid="shippingLineGridOptions" id="toTop" class="grid" ng-style="{ 'height': height }" ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+            <div ui-grid="shippingLineGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
         </div>
     </div>
 }
@@ -47,30 +47,8 @@
                     </button>
                 </div>
             </div><br />
-            <div ui-grid="vesselGridOptions" id="toTop" class="grid" ng-style="{ 'height': height }" ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
-            @*<div class="myTableContainter">
-                <div class="myTableContent">
-                    <!--Header-->
-                    <div class="myTableRow-header text-dark" ng-show="vesselList.length > 0">
-                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                        <div class="myTableCell cell-8 small" ng-click="processVesselOrderBy('Name')">
-                            <strong>Name</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="orderByVesselNameDesc"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="orderByVesselNameAsc"></span>
-                        </div>
-                    </div>
-                    <!--Vessel List-->
-                    <div class="myTableRow"
-                         ng-repeat="item in paginatedVessels | orderBy:vesselCriteria"
-                         context-menu="setSelectedVessel(item.Id, item.Name)"
-                         data-target="DataTableVessel">
-                        <div class="myTableCell cell-seqno small text-center">{{vesselCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((vesselCurrentPage - 1) * vesselPageSize))}}</div>
-                        <div class="myTableCell cell-8 small">{{item.Name}}</div>
-                    </div>
-                </div>
-            </div>*@<br />
+            <div ui-grid="vesselGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+            <br />
             <!--Pagination Buttons-->
             <div class="myTableContainter" ng-show="paginatedVessels.length > 0">
                 <div class="myTableContent">
@@ -121,7 +99,8 @@
                     {{vesselNameHolder}}
                 </div>
             </div><br />
-            <div class="myTableContainter">
+            <div ui-grid="voyageGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+            @*<div class="myTableContainter">
                 <div class="myTableContent">
                     <!--Header-->
                     <div class="myTableRow-header text-dark" ng-show="showVoyageHeader">
@@ -205,7 +184,7 @@
                         </div>
                     </div>
                 </div>
-            </div><br />
+            </div>*@<br />
             <!--Pagination Buttons-->
             <div class="myTableContainter" ng-show="paginatedVoyage.length > 0">
                 <div class="myTableContent">
