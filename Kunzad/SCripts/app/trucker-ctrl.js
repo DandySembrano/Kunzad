@@ -9,8 +9,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     // Required controller properties. should be present in all dataTable controller
     $scope.modelName = "Trucker";
     $scope.modelhref = "#/truckers";
-    $scope.data = [];
-    $scope.dataItem;
+    $scope.truckerGridOptions = {};
+    $scope.truckerGridOptions.data = [];
+    $scope.truckerGridOptions.dataItem;
     $scope.truckList = [];
     var pageSize = 20;
 
@@ -111,152 +112,106 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         }
     };
     //-------------------------------------------------------------------------------
-    //-----------Scopes for displaying arrow up and arrow down glyphicon for truckers
-    $scope.truckerCriteria = 'Name';
-    $scope.truckerOrderByDesc = true;
-    $scope.truckerOrderByAsc = false;
-    $scope.processTruckerOrderBy = function (criteria) {
-        switch (criteria) {
-            case 'Name':
-                //Ascending
-                if ($scope.truckerOrderByDesc == true) {
-                    $scope.truckerOrderByDesc = false;
-                    $scope.truckerOrderByAsc = true;
-                    criteria = 'Name';
-                }
-                    //Descending
-                else {
-                    $scope.truckerOrderByDesc = true;
-                    $scope.truckerOrderByAsc = false;
-                    criteria = '-Name';
-                }
-                break;
-            case 'TIN':
-                //Ascending
-                if ($scope.truckerOrderByDesc == true) {
-                    $scope.truckerOrderByDesc = false;
-                    $scope.truckerOrderByAsc = true;
-                    criteria = 'TIN';
-                }
-                    //Descending
-                else {
-                    $scope.truckerOrderByDesc = true;
-                    $scope.truckerOrderByAsc = false;
-                    criteria = '-TIN';
-                }
-                break;
-            case 'Line1':
-                //Ascending
-                if ($scope.truckerOrderByDesc == true) {
-                    $scope.truckerOrderByDesc = false;
-                    $scope.truckerOrderByAsc = true;
-                    criteria = 'Line1';
-                }
-                    //Descending
-                else {
-                    $scope.truckerOrderByDesc = true;
-                    $scope.truckerOrderByAsc = false;
-                    criteria = '-Line1';
-                }
-                break;
-            case 'PostalCode':
-                //Ascending
-                if ($scope.truckerOrderByDesc == true) {
-                    $scope.truckerOrderByDesc = false;
-                    $scope.truckerOrderByAsc = true;
-                    criteria = 'PostalCode';
-                }
-                    //Descending
-                else {
-                    $scope.truckerOrderByDesc = true;
-                    $scope.truckerOrderByAsc = false;
-                    criteria = '-PostalCode';
-                }
-                break;
+    //Initialize ui-grid options---------------------------------------
+    $scope.initTruckerGridOptions = function () {
+        var columns = [];
+        $scope.truckerHeader = ['Name', 'Tin Number', 'Street Address 1', 'Street Address 2', 'City/Municipality', 'Postal Code', 'No'];
+        $scope.truckerKeys = ['Name', 'TIN', 'Line1', 'Line2', 'CityMunicipality.Name', 'PostalCode'];
+        $scope.truckerType = ['String', 'String', 'String', 'String', 'String', 'String'];
+
+        //Initialize Number Listing
+        var columnProperties = {};
+        columnProperties.name = $scope.truckerHeader[$scope.truckerHeader.length - 1];
+        columnProperties.field = 'No';
+        columnProperties.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>';
+        columnProperties.width = 40;
+        columnProperties.enableColumnResizing = true;
+        columnProperties.enableColumnMenu = false;
+        columnProperties.enableColumnMoving = false;
+        columns.push(columnProperties);
+        //Initialize column data
+        for (var i = 0; i < ($scope.truckerHeader.length - 1) ; i++) {
+            var columnProperties = {};
+            columnProperties.name = $scope.truckerHeader[i];
+            columnProperties.field = $scope.truckerKeys[i];
+            //format field value
+            columnProperties.cellFilter = $scope.filterValue($scope.truckerType[i]);
+            columns.push(columnProperties);
         }
-        $scope.truckerCriteria = criteria;
-    }
-    //---------------------------------------------------------------------
-    //Scopes for displaying arrow up and arrow down glyphicon for trucks
-    $scope.truckCriteria = 'PlateNo';
-    $scope.truckOrderByDesc = true;
-    $scope.truckOrderByAsc = false;
-    $scope.processTruckOrderBy = function (criteria) {
-        switch (criteria) {
-            case 'PlateNo':
-                //Ascending
-                if ($scope.truckOrderByDesc == true) {
-                    $scope.truckOrderByDesc = false;
-                    $scope.truckOrderByAsc = true;
-                    criteria = 'PlateNo';
-                }
-                    //Descending
-                else {
-                    $scope.truckOrderByDesc = true;
-                    $scope.truckOrderByAsc = false;
-                    criteria = '-PlateNo';
-                }
-                break;
-            case 'Type':
-                //Ascending
-                if ($scope.truckOrderByDesc == true) {
-                    $scope.truckOrderByDesc = false;
-                    $scope.truckOrderByAsc = true;
-                    criteria = 'TruckType.Type';
-                }
-                    //Descending
-                else {
-                    $scope.truckOrderByDesc = true;
-                    $scope.truckOrderByAsc = false;
-                    criteria = '-TruckType.Type';
-                }
-                break;
-            case 'Weight':
-                //Ascending
-                if ($scope.truckOrderByDesc == true) {
-                    $scope.truckOrderByDesc = false;
-                    $scope.truckOrderByAsc = true;
-                    criteria = 'TruckType.WeightCapacity';
-                }
-                    //Descending
-                else {
-                    $scope.truckOrderByDesc = true;
-                    $scope.truckOrderByAsc = false;
-                    criteria = '-TruckType.WeightCapacity';
-                }
-                break;
-            case 'Volume':
-                //Ascending
-                if ($scope.truckOrderByDesc == true) {
-                    $scope.truckOrderByDesc = false;
-                    $scope.truckOrderByAsc = true;
-                    criteria = 'TruckType.VolumeCapacity';
-                }
-                    //Descending
-                else {
-                    $scope.truckOrderByDesc = true;
-                    $scope.truckOrderByAsc = false;
-                    criteria = '-TruckType.VolumeCapacity';
-                }
-                break;
-        }
-        $scope.truckCriteria = criteria;
+        $scope.truckerGridOptions = {
+            columnDefs: columns,
+            rowTemplate: '<div>' +
+                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+              '</div>',
+            enableColumnResizing: true,
+            enableGridMenu: true,
+            enableSelectAll: true,
+            exporterCsvFilename: 'myFile.csv',
+            exporterPdfDefaultStyle: { fontSize: 9 },
+            exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+            exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+            exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+            exporterPdfFooter: function (currentPage, pageCount) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfCustomFormatter: function (docDefinition) {
+                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+                return docDefinition;
+            },
+            exporterPdfOrientation: 'landscape',
+            exporterPdfPageSize: 'a4',
+            exporterPdfMaxGridWidth: 500,
+            exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
     };
-    //---------------------------------------------------------------------
+    //Function that will format key value
+    $scope.filterValue = function (type) {
+        var format;
+        switch (type) {
+            case 'String':
+                format = 'ProperCase';
+                break;
+            case 'String-Upper':
+                format = 'StringUpper';
+                break;
+            case 'Date':
+                format = 'Date';
+                break;
+            case 'DateTime':
+                format = 'DateTime';
+                break;
+            case 'Time':
+                format = 'Time';
+                break;
+            case 'Boolean':
+                format = 'Boolean';
+                break;
+            case 'Decimal':
+                format = 'Decimal';
+                break;
+            default:
+                format = 'Default';
+        }
+        return format;
+    };
 
     //Format the TIN number
     $scope.formatTIN = function () {
-        if ($scope.dataItem.TIN.length == 3)
-            $scope.dataItem.TIN = $scope.dataItem.TIN + "-";
-        if ($scope.dataItem.TIN.length == 7)
-            $scope.dataItem.TIN = $scope.dataItem.TIN + "-";
+        if ($scope.truckerGridOptions.dataItem.TIN.length == 3)
+            $scope.truckerGridOptions.dataItem.TIN = $scope.truckerGridOptions.dataItem.TIN + "-";
+        if ($scope.truckerGridOptions.dataItem.TIN.length == 7)
+            $scope.truckerGridOptions.dataItem.TIN = $scope.truckerGridOptions.dataItem.TIN + "-";
     };
 
     $scope.initializeHeaderName = function () {
-        if ($scope.dataItem.Name == "" || $scope.dataItem.Name == null)
+        if ($scope.truckerGridOptions.dataItem.Name == "" || $scope.truckerGridOptions.dataItem.Name == null)
             $scope.modelName = "Trucker";
         else
-            $scope.modelName = "Trucker(" + $scope.dataItem.Name  + ")";
+            $scope.modelName = "Trucker(" + $scope.truckerGridOptions.dataItem.Name + ")";
     };
 
     // Get Truck Type
@@ -270,8 +225,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //search trucker
     $scope.searchTrucker = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.data.length; i++) {
-            if (id == $scope.data[i].Id) {
+        for (i = 0; i < $scope.truckerGridOptions.data.length; i++) {
+            if (id == $scope.truckerGridOptions.data[i].Id) {
                 return i;
             }
         }
@@ -280,7 +235,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
 
     //set dataitem as model for trucker form
     $scope.initDataItem = function () {
-        $scope.dataItem = {
+        $scope.truckerGridOptions.dataItem = {
             "Id": null,
             "Name": null,
             "TIN": null,
@@ -314,7 +269,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get("/api/Truckers?page=" + page)
             .success(function (data, status) {
-                $scope.data = data;
+                $scope.truckerGridOptions.data = data;
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -340,9 +295,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $http.get("/api/Truckers/" + id)
             .success(function (data, status) {
                 //copy Trucks data
-                $scope.dataItem.Trucks = angular.copy(data.Trucks);
+                $scope.truckerGridOptions.dataItem.Trucks = angular.copy(data.Trucks);
                 $scope.truckList = [];
-                $scope.truckList = angular.copy($scope.dataItem.Trucks);
+                $scope.truckList = angular.copy($scope.truckerGridOptions.dataItem.Trucks);
                 //set truckIdDummy to prevent conflict of Truck Ids
                 if ($scope.truckList.length >= 1)
                     $scope.truckIdDummy = $scope.truckList[$scope.truckList.length - 1].Id;
@@ -362,7 +317,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.apiCreate = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
-        var dataModel = angular.copy($scope.dataItem);
+        var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
         dataModel.Trucks = angular.copy($scope.truckList);
 
         for (i = 0; i < dataModel.Trucks.length; i++) {
@@ -382,8 +337,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
                     ////Initialize TruckerId
-                    //$scope.dataItem.Id = angular.copy(data.Id);
-                    $scope.data.push(data.objParam1);
+                    //$scope.truckerGridOptions.dataItem.Id = angular.copy(data.Id);
+                    $scope.truckerGridOptions.data.push(data.objParam1);
                     //initialize TruckId
                     //for (i = 0; i < $scope.truckList.length; i++)
                     //    $scope.truckList[i].Id = angular.copy(data.Trucks[i].Id);
@@ -408,7 +363,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0, j = 0;
 
-        var dataModel = angular.copy($scope.dataItem);
+        var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
         dataModel.Trucks = angular.copy($scope.truckList);
         for (i = 0; i < dataModel.Trucks.length; i++) {
             //delete if truckId if newly added truck
@@ -424,19 +379,18 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         delete dataModel.CityMunicipality;
         $http.put("/api/Truckers/" + id, dataModel)
             .success(function (data, status) {
-                    //initialize trucker info
+                //initialize trucker info
                 if (data.status == "SUCCESS") {
-                    $scope.data[$scope.selected] = [];
-                    $scope.data[$scope.selected] = angular.copy(data.objParam1);
+                    $scope.truckerGridOptions.data[$scope.selected] = [];
+                    $scope.truckerGridOptions.data[$scope.selected] = angular.copy(data.objParam1);
                     //initialize TruckId
                     //for (i = 0; i < $scope.truckList.length; i++) {
-                    //    $scope.truckList[i].Id = angular.copy($scope.data[$scope.selected].Trucks[i].Id);
+                    //    $scope.truckList[i].Id = angular.copy($scope.truckerGridOptions.data[$scope.selected].Trucks[i].Id);
                     //}
                     $scope.closeForm();
                     spinner.stop();
                 }
-                else
-                {
+                else {
                     $scope.showFormError(data.message);
                     $scope.selectedTab = $scope.tabPages[0];
                     spinner.stop();
@@ -455,12 +409,11 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $http.delete("/api/Truckers/" + id)
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
-                    $scope.data.splice($scope.selectedTruckerIndex, 1);
+                    $scope.truckerGridOptions.data.splice($scope.selectedTruckerIndex, 1);
                     $scope.closeForm();
                     spinner.stop();
                 }
-                else
-                {
+                else {
                     $scope.showFormError(data.message);
                     $scope.selectedTab = $scope.tabPages[0];
                     spinner.stop();
@@ -473,8 +426,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             })
     };
 
-    $scope.setSelected = function (i, id) {
-        $scope.selected = i;
+    $scope.setSelected = function (id) {
         $scope.truckerIdHolder = id;
     };
 
@@ -499,27 +451,27 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.truckIdDummy = 0;
                 break;
             case "Edit":
-                $scope.dataItem = [];
-                $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
-                $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
+                $scope.truckerGridOptions.dataItem = [];
+                $scope.truckerGridOptions.dataItem = angular.copy($scope.truckerGridOptions.data[$scope.selectedTruckerIndex]);
+                $scope.apiGet($scope.truckerGridOptions.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 $scope.showForm = true;
                 break;
             case "Delete":
-                $scope.dataItem = [];
-                $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
-                $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
+                $scope.truckerGridOptions.dataItem = [];
+                $scope.truckerGridOptions.dataItem = angular.copy($scope.truckerGridOptions.data[$scope.selectedTruckerIndex]);
+                $scope.apiGet($scope.truckerGridOptions.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 $scope.showForm = true;
                 break;
             case "View":
-                $scope.dataItem = [];
-                $scope.dataItem = angular.copy($scope.data[$scope.selectedTruckerIndex]);
-                $scope.apiGet($scope.data[$scope.selectedTruckerIndex].Id);
+                $scope.truckerGridOptions.dataItem = [];
+                $scope.truckerGridOptions.dataItem = angular.copy($scope.truckerGridOptions.data[$scope.selectedTruckerIndex]);
+                $scope.apiGet($scope.truckerGridOptions.data[$scope.selectedTruckerIndex].Id);
                 $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
@@ -552,12 +504,12 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
 
     // Validate Form Data Entry
     function validateEntry() {
-        if ($scope.dataItem.Name == null || $scope.dataItem.Name == "") {
+        if ($scope.truckerGridOptions.dataItem.Name == null || $scope.truckerGridOptions.dataItem.Name == "") {
             $scope.showFormError("Trucker name is required.");
             $scope.selectedTab = $scope.tabPages[0];
             return false;
         }
-        else if ($scope.dataItem.CityMunicipalityId == null || $scope.dataItem.CityMunicipalityId == "") {
+        else if ($scope.truckerGridOptions.dataItem.CityMunicipalityId == null || $scope.truckerGridOptions.dataItem.CityMunicipalityId == "") {
             $scope.showFormError("City/Municipality is required.");
             $scope.selectedTab = $scope.tabPages[0];
             return false;
@@ -571,10 +523,10 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 if (validateEntry()) {
                     $scope.apiCreate();
                 }
-                break;  
+                break;
             case "Edit":
                 if (validateEntry()) {
-                    $scope.apiUpdate($scope.dataItem.Id);
+                    $scope.apiUpdate($scope.truckerGridOptions.dataItem.Id);
                 }
                 break;
             case "Delete":
@@ -596,28 +548,28 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //set truck as model for truck form
     $scope.initTruck = function () {
         $scope.Truck = {
-                "Trucker": {
-                    "Id": null,
-                    "Name": null,
-                    "TIN": null,
-                    "Line1": null,
-                    "Line2": null,
-                    "CityMunicipalityId": null,
-                    "PostalCode": null,
-                },
-                "TruckType": {
-                    "Trucks": [],
-                    "Id": null,
-                    "Type": null,
-                    "WeightCapacity": null,
-                    "VolumeCapacity": null,
-                },
-                "Truckings": [],
+            "Trucker": {
                 "Id": null,
-                "PlateNo": null,
-                "TruckTypeId": null,
-                "TruckerId": null
-            }
+                "Name": null,
+                "TIN": null,
+                "Line1": null,
+                "Line2": null,
+                "CityMunicipalityId": null,
+                "PostalCode": null,
+            },
+            "TruckType": {
+                "Trucks": [],
+                "Id": null,
+                "Type": null,
+                "WeightCapacity": null,
+                "VolumeCapacity": null,
+            },
+            "Truckings": [],
+            "Id": null,
+            "PlateNo": null,
+            "TruckTypeId": null,
+            "TruckerId": null
+        }
     };
 
     $scope.showFormErrorTruck = function (message) {
@@ -651,7 +603,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.apiCreateTruck = function () {
         $scope.truckIdDummy = $scope.truckIdDummy + 1;
         $scope.Truck.Id = $scope.truckIdDummy;
-        $scope.Truck.TruckerId = $scope.dataItem.Id;
+        $scope.Truck.TruckerId = $scope.truckerGridOptions.dataItem.Id;
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
         $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
         $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
@@ -673,15 +625,14 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //Delete Truck
     $scope.apiDeleteTruck = function () {
         $scope.truckList.splice($scope.selectedTruckIndex, 1);
-        $scope.processTruckPagination($scope.truckCurrentPage,'');
+        $scope.processTruckPagination($scope.truckCurrentPage, '');
         $scope.closeModalForm();
     }
 
     //search truck
     $scope.searchTruck = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.truckList.length; i++)
-        {
+        for (i = 0; i < $scope.truckList.length; i++) {
             if (id == $scope.truckList[i].Id) {
                 return i;
             }
@@ -727,7 +678,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                     $scope.apiCreateTruck();
                 break;
             case "Edit":
-                if (validateTruck()) 
+                if (validateTruck())
                     $scope.apiUpdateTruck();
                 break;
             case "Delete":
@@ -742,22 +693,22 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
 
     //Initialize CityMunicipality property of dataItem
     $scope.onSelectCity = function ($item, $model, $label) {
-        $scope.dataItem.CityMunicipalityId = $item.Id;
-        $scope.dataItem.CityMunicipality.Id = $item.Id;
-        $scope.dataItem.CityMunicipality.Name = $item.Name;
-        $scope.dataItem.CityMunicipality.StateProvince.Id = $item.StateProvinceId;
-        $scope.dataItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
-        $scope.dataItem.CityMunicipality.StateProvince.Country.Id = $scope.Country.Id;
-        $scope.dataItem.CityMunicipality.StateProvince.Country.Name = $scope.Country.Name;
+        $scope.truckerGridOptions.dataItem.CityMunicipalityId = $item.Id;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.Id = $item.Id;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.Name = $item.Name;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.StateProvince.Id = $item.StateProvinceId;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.StateProvince.Country.Id = $scope.Country.Id;
+        $scope.truckerGridOptions.dataItem.CityMunicipality.StateProvince.Country.Name = $scope.Country.Name;
     };
 
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.initTruckerGridOptions();
         getTruckTypes();
-        $scope.processTruckerOrderBy($scope.truckerCriteria);
-        $scope.processTruckOrderBy($scope.truckCriteria)
+
     }
     init();
 });

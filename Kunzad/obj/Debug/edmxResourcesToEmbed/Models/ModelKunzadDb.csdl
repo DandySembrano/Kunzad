@@ -78,8 +78,6 @@
     <NavigationProperty Name="SeaFreights" Relationship="Self.FK_SeaFreight_DestinationBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
     <NavigationProperty Name="SeaFreights1" Relationship="Self.FK_SeaFreight_OriginBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
     <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipment_BusinessUnit" FromRole="BusinessUnit" ToRole="Shipment" />
-    <NavigationProperty Name="VesselVoyages" Relationship="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId" FromRole="BusinessUnit" ToRole="VesselVoyage" />
-    <NavigationProperty Name="VesselVoyages1" Relationship="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId" FromRole="BusinessUnit" ToRole="VesselVoyage" />
   </EntityType>
   <EntityType Name="BusinessUnitContact">
     <Key>
@@ -123,18 +121,18 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="StateProvinceId" Type="Int32" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Precision="3" />
     <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedByUserId" Type="Int32" />
     <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Truckers" Relationship="Self.FK_CityMunicipality_Trucker" FromRole="CityMunicipality" ToRole="Trucker" />
     <NavigationProperty Name="StateProvince" Relationship="Self.FK_CityTown_StateProvince" FromRole="CityMunicipality" ToRole="StateProvince" />
+    <NavigationProperty Name="Couriers" Relationship="Self.FK_Courier_CityMunicipality" FromRole="CityMunicipality" ToRole="Courier" />
+    <NavigationProperty Name="CustomerAddresses" Relationship="Self.FK_CustomerAddress_CityMunicipality" FromRole="CityMunicipality" ToRole="CustomerAddress" />
     <NavigationProperty Name="ServiceableAreas" Relationship="Self.FK_ServiceableArea_CityMunicipality" FromRole="CityMunicipality" ToRole="ServiceableArea" />
-    <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CityMunicipality" ToRole="CustomerAddress" />
-    <NavigationProperty Name="Truckers" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="CityMunicipality" ToRole="Trucker" />
-    <NavigationProperty Name="Couriers" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="CityMunicipality" ToRole="Courier" />
   </EntityType>
   <EntityType Name="Contact">
     <Key>
@@ -184,7 +182,7 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Precision="3" />
@@ -200,16 +198,16 @@
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
     <Property Name="CreatedDate" Type="DateTime" Precision="3" />
     <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedByUserId" Type="Int32" />
     <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="Self.FK_Courier_CityMunicipality" FromRole="Courier" ToRole="CityMunicipality" />
     <NavigationProperty Name="CourierTransactions" Relationship="Self.FK_CourierService_Courier" FromRole="Courier" ToRole="CourierTransaction" />
-    <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
-    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="Courier" ToRole="CityMunicipality" />
   </EntityType>
   <EntityType Name="CourierTransaction">
     <Key>
@@ -262,10 +260,30 @@
     <Property Name="LastUpdatedByUserId" Type="Int32" />
     <NavigationProperty Name="CustomerGroup" Relationship="Self.FK_Customer_CustomerGroup" FromRole="Customer" ToRole="CustomerGroup" />
     <NavigationProperty Name="Industry" Relationship="Self.FK_Customer_Industry" FromRole="Customer" ToRole="Industry" />
+    <NavigationProperty Name="CustomerAddresses" Relationship="Self.FK_CustomerAddress_Customer" FromRole="Customer" ToRole="CustomerAddress" />
     <NavigationProperty Name="CustomerContacts" Relationship="Self.FK_CustomerContact_Customer" FromRole="Customer" ToRole="CustomerContact" />
     <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipment_Customer" FromRole="Customer" ToRole="Shipment" />
     <NavigationProperty Name="TruckingDeliveries" Relationship="Self.FK_TruckingDelivery_Customer" FromRole="Customer" ToRole="TruckingDelivery" />
-    <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="Customer" ToRole="CustomerAddress" />
+  </EntityType>
+  <EntityType Name="CustomerAddress">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="IsBillingAddress" Type="Boolean" Nullable="false" />
+    <Property Name="IsDeliveryAddress" Type="Boolean" Nullable="false" />
+    <Property Name="IsPickupAddress" Type="Boolean" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="Self.FK_CustomerAddress_CityMunicipality" FromRole="CustomerAddress" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Customer" Relationship="Self.FK_CustomerAddress_Customer" FromRole="CustomerAddress" ToRole="Customer" />
   </EntityType>
   <EntityType Name="CustomerContact">
     <Key>
@@ -287,12 +305,12 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="CreatedDate" Type="DateTime" Precision="3" />
     <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedByUserId" Type="Int32" />
     <Property Name="LastUpdatedByUserId" Type="Int32" />
     <NavigationProperty Name="Customers" Relationship="Self.FK_Customer_CustomerGroup" FromRole="CustomerGroup" ToRole="Customer" />
-    <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="Driver">
     <Key>
@@ -533,7 +551,7 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="CountryId" Type="Int32" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Precision="3" />
@@ -568,17 +586,17 @@
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
-    <Property Name="CreatedByUserId" Type="Int32" />
-    <Property Name="LastUpdatedByUserId" Type="Int32" />
-    <NavigationProperty Name="Trucks" Relationship="Self.FK_Truck_Trucker" FromRole="Trucker" ToRole="Truck" />
-    <NavigationProperty Name="Truckings" Relationship="Self.FK_Trucking_Trucker" FromRole="Trucker" ToRole="Trucking" />
     <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
     <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
     <Property Name="CityMunicipalityId" Type="Int32" />
     <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="Trucker" ToRole="CityMunicipality" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="Self.FK_CityMunicipality_Trucker" FromRole="Trucker" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Trucks" Relationship="Self.FK_Truck_Trucker" FromRole="Trucker" ToRole="Truck" />
+    <NavigationProperty Name="Truckings" Relationship="Self.FK_Trucking_Trucker" FromRole="Trucker" ToRole="Trucking" />
   </EntityType>
   <EntityType Name="Trucking">
     <Key>
@@ -657,14 +675,14 @@
     <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="CreatedDate" Type="DateTime" Precision="3" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedByUserId" Type="Int32" Nullable="false" />
     <Property Name="LastUpdatedByUserId" Type="Int32" />
-    <NavigationProperty Name="User1" Relationship="KunzadDbModel.FK_User_User_Created" FromRole="User" ToRole="User1" />
-    <NavigationProperty Name="User2" Relationship="KunzadDbModel.FK_User_User_Created" FromRole="User1" ToRole="User" />
-    <NavigationProperty Name="User11" Relationship="KunzadDbModel.FK_User_User_Updated" FromRole="User" ToRole="User1" />
-    <NavigationProperty Name="User3" Relationship="KunzadDbModel.FK_User_User_Updated" FromRole="User1" ToRole="User" />
+    <NavigationProperty Name="User1" Relationship="Self.FK_User_User_Created" FromRole="User" ToRole="User1" />
+    <NavigationProperty Name="User2" Relationship="Self.FK_User_User_Created" FromRole="User1" ToRole="User" />
+    <NavigationProperty Name="User11" Relationship="Self.FK_User_User_Updated" FromRole="User" ToRole="User1" />
+    <NavigationProperty Name="User3" Relationship="Self.FK_User_User_Updated" FromRole="User1" ToRole="User" />
   </EntityType>
   <EntityType Name="Vessel">
     <Key>
@@ -703,8 +721,6 @@
     <Property Name="LastUpdatedByUserId" Type="Int32" />
     <NavigationProperty Name="SeaFreights" Relationship="Self.FK_SeaFreight_VesselVoyage" FromRole="VesselVoyage" ToRole="SeaFreight" />
     <NavigationProperty Name="Vessel" Relationship="Self.FK_VesselVoyage_Vessel" FromRole="VesselVoyage" ToRole="Vessel" />
-    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId" FromRole="VesselVoyage" ToRole="BusinessUnit" />
-    <NavigationProperty Name="BusinessUnit1" Relationship="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId" FromRole="VesselVoyage" ToRole="BusinessUnit" />
   </EntityType>
   <Association Name="FK_AirFreight_AirLine">
     <End Role="AirLine" Type="Self.AirLine" Multiplicity="1" />
@@ -862,6 +878,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_CityMunicipality_Trucker">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="0..1" />
+    <End Role="Trucker" Type="Self.Trucker" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucker">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_CityTown_StateProvince">
     <End Role="StateProvince" Type="Self.StateProvince" Multiplicity="1" />
     <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="*" />
@@ -871,6 +899,30 @@
       </Principal>
       <Dependent Role="CityMunicipality">
         <PropertyRef Name="StateProvinceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Courier_CityMunicipality">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+    <End Role="Courier" Type="Self.Courier" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Courier">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_CityMunicipality">
+    <End Role="CityMunicipality" Type="Self.CityMunicipality" Multiplicity="1" />
+    <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CityMunicipalityId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -991,6 +1043,18 @@
       </Principal>
       <Dependent Role="Customer">
         <PropertyRef Name="IndustryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="CustomerAddress" Type="Self.CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CustomerId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1246,6 +1310,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_User_User_Created">
+    <End Role="User" Type="Self.User" Multiplicity="1" />
+    <End Role="User1" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="CreatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_User_Updated">
+    <End Role="User" Type="Self.User" Multiplicity="0..1" />
+    <End Role="User1" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="LastUpdatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_VesselVoyage_Vessel">
     <End Role="Vessel" Type="Self.Vessel" Multiplicity="1" />
     <End Role="VesselVoyage" Type="Self.VesselVoyage" Multiplicity="*" />
@@ -1258,7 +1346,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="false">
+  <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="AirFreights" EntityType="Self.AirFreight" />
     <EntitySet Name="AirFreightShipments" EntityType="Self.AirFreightShipment" />
     <EntitySet Name="AirLines" EntityType="Self.AirLine" />
@@ -1275,6 +1363,7 @@
     <EntitySet Name="CourierTransactions" EntityType="Self.CourierTransaction" />
     <EntitySet Name="CourierTransactionDetails" EntityType="Self.CourierTransactionDetail" />
     <EntitySet Name="Customers" EntityType="Self.Customer" />
+    <EntitySet Name="CustomerAddresses" EntityType="Self.CustomerAddress" />
     <EntitySet Name="CustomerContacts" EntityType="Self.CustomerContact" />
     <EntitySet Name="CustomerGroups" EntityType="Self.CustomerGroup" />
     <EntitySet Name="Drivers" EntityType="Self.Driver" />
@@ -1351,9 +1440,21 @@
       <End Role="Charge" EntitySet="Charges" />
       <End Role="ServiceCharge" EntitySet="ServiceCharges" />
     </AssociationSet>
+    <AssociationSet Name="FK_CityMunicipality_Trucker" Association="Self.FK_CityMunicipality_Trucker">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="Trucker" EntitySet="Truckers" />
+    </AssociationSet>
     <AssociationSet Name="FK_CityTown_StateProvince" Association="Self.FK_CityTown_StateProvince">
       <End Role="StateProvince" EntitySet="StateProvinces" />
       <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Courier_CityMunicipality" Association="Self.FK_Courier_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="Courier" EntitySet="Couriers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="Self.FK_CustomerAddress_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
     </AssociationSet>
     <AssociationSet Name="FK_ServiceableArea_CityMunicipality" Association="Self.FK_ServiceableArea_CityMunicipality">
       <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
@@ -1394,6 +1495,10 @@
     <AssociationSet Name="FK_Customer_Industry" Association="Self.FK_Customer_Industry">
       <End Role="Industry" EntitySet="Industries" />
       <End Role="Customer" EntitySet="Customers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_Customer" Association="Self.FK_CustomerAddress_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
     </AssociationSet>
     <AssociationSet Name="FK_CustomerContact_Customer" Association="Self.FK_CustomerContact_Customer">
       <End Role="Customer" EntitySet="Customers" />
@@ -1479,158 +1584,17 @@
       <End Role="Trucking" EntitySet="Truckings" />
       <End Role="TruckingDelivery" EntitySet="TruckingDeliveries" />
     </AssociationSet>
+    <AssociationSet Name="FK_User_User_Created" Association="Self.FK_User_User_Created">
+      <End Role="User" EntitySet="Users" />
+      <End Role="User1" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_User_Updated" Association="Self.FK_User_User_Updated">
+      <End Role="User" EntitySet="Users" />
+      <End Role="User1" EntitySet="Users" />
+    </AssociationSet>
     <AssociationSet Name="FK_VesselVoyage_Vessel" Association="Self.FK_VesselVoyage_Vessel">
       <End Role="Vessel" EntitySet="Vessels" />
       <End Role="VesselVoyage" EntitySet="VesselVoyages" />
     </AssociationSet>
-    <AssociationSet Name="FK_User_User_Created" Association="KunzadDbModel.FK_User_User_Created">
-      <End Role="User" EntitySet="Users" />
-      <End Role="User1" EntitySet="Users" />
-    </AssociationSet>
-    <AssociationSet Name="FK_User_User_Updated" Association="KunzadDbModel.FK_User_User_Updated">
-      <End Role="User" EntitySet="Users" />
-      <End Role="User1" EntitySet="Users" />
-    </AssociationSet>
-    <EntitySet Name="CustomerAddresses" EntityType="KunzadDbModel.CustomerAddress" />
-    <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="KunzadDbModel.FK_CustomerAddress_CityMunicipality">
-      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
-      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
-    </AssociationSet>
-    <AssociationSet Name="FK_CustomerAddress_Customer" Association="KunzadDbModel.FK_CustomerAddress_Customer">
-      <End Role="Customer" EntitySet="Customers" />
-      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
-    </AssociationSet>
-    <AssociationSet Name="FK_CityMunicipality_Trucker" Association="KunzadDbModel.FK_CityMunicipality_Trucker">
-      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
-      <End Role="Trucker" EntitySet="Truckers" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Courier_CityMunicipality" Association="KunzadDbModel.FK_Courier_CityMunicipality">
-      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
-      <End Role="Courier" EntitySet="Couriers" />
-    </AssociationSet>
-    <AssociationSet Name="FK_VesselVoyage_DestinationBusinessUnitId" Association="KunzadDbModel.FK_VesselVoyage_DestinationBusinessUnitId">
-      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
-      <End Role="VesselVoyage" EntitySet="VesselVoyages" />
-    </AssociationSet>
-    <AssociationSet Name="FK_VesselVoyage_OriginBusinessUnitId" Association="KunzadDbModel.FK_VesselVoyage_OriginBusinessUnitId">
-      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
-      <End Role="VesselVoyage" EntitySet="VesselVoyages" />
-    </AssociationSet>
   </EntityContainer>
-  <Association Name="FK_User_User_Created">
-    <End Type="KunzadDbModel.User" Role="User" Multiplicity="1" />
-    <End Type="KunzadDbModel.User" Role="User1" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="User">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="User1">
-        <PropertyRef Name="CreatedByUserId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_User_User_Updated">
-    <End Type="KunzadDbModel.User" Role="User" Multiplicity="0..1" />
-    <End Type="KunzadDbModel.User" Role="User1" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="User">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="User1">
-        <PropertyRef Name="LastUpdatedByUserId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <EntityType Name="CustomerAddress">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="CustomerId" Type="Int32" Nullable="false" />
-    <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
-    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="IsBillingAddress" Type="Boolean" Nullable="false" />
-    <Property Name="IsDeliveryAddress" Type="Boolean" Nullable="false" />
-    <Property Name="IsPickupAddress" Type="Boolean" Nullable="false" />
-    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
-    <Property Name="CreatedByUserId" Type="Int32" />
-    <Property Name="LastUpdatedByUserId" Type="Int32" />
-    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CustomerAddress" ToRole="CityMunicipality" />
-    <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="CustomerAddress" ToRole="Customer" />
-  </EntityType>
-  <Association Name="FK_CustomerAddress_CityMunicipality">
-    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
-    <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="CityMunicipality">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="CustomerAddress">
-        <PropertyRef Name="CityMunicipalityId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_CustomerAddress_Customer">
-    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
-    <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Customer">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="CustomerAddress">
-        <PropertyRef Name="CustomerId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_CityMunicipality_Trucker">
-    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="0..1" />
-    <End Type="KunzadDbModel.Trucker" Role="Trucker" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="CityMunicipality">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Trucker">
-        <PropertyRef Name="CityMunicipalityId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Courier_CityMunicipality">
-    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
-    <End Type="KunzadDbModel.Courier" Role="Courier" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="CityMunicipality">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Courier">
-        <PropertyRef Name="CityMunicipalityId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_VesselVoyage_DestinationBusinessUnitId">
-    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
-    <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="BusinessUnit">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="VesselVoyage">
-        <PropertyRef Name="DestinationBusinessUnitId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_VesselVoyage_OriginBusinessUnitId">
-    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
-    <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="BusinessUnit">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="VesselVoyage">
-        <PropertyRef Name="OriginBusinessUnitId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
 </Schema>

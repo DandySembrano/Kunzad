@@ -16,10 +16,10 @@ namespace Kunzad.Models
     {
         public CityMunicipality()
         {
-            this.ServiceableAreas = new HashSet<ServiceableArea>();
-            this.CustomerAddresses = new HashSet<CustomerAddress>();
             this.Truckers = new HashSet<Trucker>();
             this.Couriers = new HashSet<Courier>();
+            this.CustomerAddresses = new HashSet<CustomerAddress>();
+            this.ServiceableAreas = new HashSet<ServiceableArea>();
         }
     
         public int Id { get; set; }
@@ -30,10 +30,10 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
-        public virtual StateProvince StateProvince { get; set; }
-        public virtual ICollection<ServiceableArea> ServiceableAreas { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
         public virtual ICollection<Trucker> Truckers { get; set; }
+        public virtual StateProvince StateProvince { get; set; }
         public virtual ICollection<Courier> Couriers { get; set; }
+        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
+        public virtual ICollection<ServiceableArea> ServiceableAreas { get; set; }
     }
 }

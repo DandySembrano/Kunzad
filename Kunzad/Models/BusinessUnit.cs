@@ -23,8 +23,6 @@ namespace Kunzad.Models
             this.SeaFreights = new HashSet<SeaFreight>();
             this.SeaFreights1 = new HashSet<SeaFreight>();
             this.Shipments = new HashSet<Shipment>();
-            this.VesselVoyages = new HashSet<VesselVoyage>();
-            this.VesselVoyages1 = new HashSet<VesselVoyage>();
         }
     
         public int Id { get; set; }
@@ -48,7 +46,5 @@ namespace Kunzad.Models
         public virtual ICollection<SeaFreight> SeaFreights { get; set; }
         public virtual ICollection<SeaFreight> SeaFreights1 { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
-        public virtual ICollection<VesselVoyage> VesselVoyages { get; set; }
-        public virtual ICollection<VesselVoyage> VesselVoyages1 { get; set; }
     }
 }

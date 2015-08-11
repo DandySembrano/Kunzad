@@ -176,13 +176,13 @@
     <EntitySetMapping Name="Couriers">
       <EntityTypeMapping TypeName="KunzadDbModel.Courier">
         <MappingFragment StoreEntitySet="Courier">
-          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
-          <ScalarProperty Name="Line2" ColumnName="Line2" />
-          <ScalarProperty Name="Line1" ColumnName="Line1" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="TIN" ColumnName="TIN" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
           <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
@@ -238,6 +238,25 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="CustomerAddresses">
+      <EntityTypeMapping TypeName="KunzadDbModel.CustomerAddress">
+        <MappingFragment StoreEntitySet="CustomerAddress">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="IsBillingAddress" ColumnName="IsBillingAddress" />
+          <ScalarProperty Name="IsDeliveryAddress" ColumnName="IsDeliveryAddress" />
+          <ScalarProperty Name="IsPickupAddress" ColumnName="IsPickupAddress" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="CustomerContacts">
       <EntityTypeMapping TypeName="KunzadDbModel.CustomerContact">
         <MappingFragment StoreEntitySet="CustomerContact">
@@ -254,9 +273,9 @@
     <EntitySetMapping Name="CustomerGroups">
       <EntityTypeMapping TypeName="KunzadDbModel.CustomerGroup">
         <MappingFragment StoreEntitySet="CustomerGroup">
-          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
           <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
@@ -513,13 +532,13 @@
     <EntitySetMapping Name="Truckers">
       <EntityTypeMapping TypeName="KunzadDbModel.Trucker">
         <MappingFragment StoreEntitySet="Trucker">
-          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
-          <ScalarProperty Name="Line2" ColumnName="Line2" />
-          <ScalarProperty Name="Line1" ColumnName="Line1" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="TIN" ColumnName="TIN" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
           <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
@@ -638,25 +657,6 @@
           <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
           <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
           <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="CustomerAddresses">
-      <EntityTypeMapping TypeName="KunzadDbModel.CustomerAddress">
-        <MappingFragment StoreEntitySet="CustomerAddress">
-          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
-          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
-          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="IsPickupAddress" ColumnName="IsPickupAddress" />
-          <ScalarProperty Name="IsDeliveryAddress" ColumnName="IsDeliveryAddress" />
-          <ScalarProperty Name="IsBillingAddress" ColumnName="IsBillingAddress" />
-          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
-          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
-          <ScalarProperty Name="Line2" ColumnName="Line2" />
-          <ScalarProperty Name="Line1" ColumnName="Line1" />
-          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

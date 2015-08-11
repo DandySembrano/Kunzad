@@ -6,58 +6,7 @@
 @section tableContent{
     <div class="row">
         <div class="col-lg-12">
-            <div class="myTableContainter">
-                <div class="myTableContent">
-                    <!--Header-->
-                    <div class="myTableRow-header text-dark">
-                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                        <div class="myTableCell cell-3 small"
-                             ng-click="processTruckerOrderBy('Name')">
-                            <strong>Name</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="truckerCriteria === 'Name' || truckerCriteria === '-Name' ? truckerOrderByDesc: false"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="truckerCriteria === 'Name' || truckerCriteria === '-Name' ? truckerOrderByAsc: false"></span>
-                        </div>
-                        <div class="myTableCell cell-2 small"
-                             ng-click="processTruckerOrderBy('TIN')">
-                            <strong>TIN</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="truckerCriteria === 'TIN' || truckerCriteria === '-TIN' ? truckerOrderByDesc: false"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="truckerCriteria === 'TIN' || truckerCriteria === '-TIN' ? truckerOrderByAsc: false"></span>
-                        </div>
-                        <div class="myTableCell cell-5 small"
-                             ng-click="processTruckerOrderBy('Line1')">
-                            <strong>Address</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="truckerCriteria === 'Line1' || truckerCriteria === '-Line1' ? truckerOrderByDesc: false"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="truckerCriteria === 'Line1' || truckerCriteria === '-Line1' ? truckerOrderByAsc: false"></span>
-                        </div>
-                        <div class="myTableCell cell-2 small"
-                             ng-click="processTruckerOrderBy('PostalCode')">
-                            <strong>Postal Code</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="truckerCriteria === 'PostalCode' || truckerCriteria === '-PostalCode' ? truckerOrderByDesc: false"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="truckerCriteria === 'PostalCode' || truckerCriteria === '-PostalCode' ? truckerOrderByAsc: false"></span>
-                        </div>
-                    </div>
-                    <!--Details-->
-                    <div class="myTableRow"
-                         ng-repeat="t in data | orderBy: truckerCriteria | filter: filterTrucker"
-                         ng-click="setSelected($index, t.Id)"
-                         context-menu="setSelected($index, t.Id)"
-                         data-target="DataTableMenu">
-                        <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
-                        <div class="myTableCell cell-3 small">{{t.Name}}</div>
-                        <div class="myTableCell cell-3 small">{{t.TIN}}</div>
-                        <div class="myTableCell cell-3 small">{{(t.Line1 == "" || t.Line1 == null ? "" : (t.Line1 + ", ")) + (t.Line2 == "" || t.Line2 == null ? "" : (t.Line2 + ", ")) + t.CityMunicipality.Name}}</div>
-                        <div class="myTableCell cell-3 small">{{t.PostalCode}}</div>
-                    </div>
-                </div>
-            </div>
+            <div ui-grid="truckerGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
         </div>
     </div>
 }
@@ -78,7 +27,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="dataItem.Name"
+                               ng-model="truckerGridOptions.dataItem.Name"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}"
                                ng-change="initializeHeaderName()">
@@ -91,7 +40,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="dataItem.TIN"
+                               ng-model="truckerGridOptions.dataItem.TIN"
                                ng-disabled="viewOnly"
                                pattern=".{0,50}"
                                ng-change="formatTIN()"
@@ -105,7 +54,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder="Street address line 1"
-                               ng-model="dataItem.Line1"
+                               ng-model="truckerGridOptions.dataItem.Line1"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}">
                     </div>
@@ -117,7 +66,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder="Street address line 2"
-                               ng-model="dataItem.Line2"
+                               ng-model="truckerGridOptions.dataItem.Line2"
                                ng-disabled="viewOnly"
                                pattern=".{0,150}">
                     </div>
@@ -126,10 +75,10 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">City/Municipality</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" 
+                        <input type="text" class="form-control"
                                placeholder=""
                                ng-disabled="viewOnly"
-                               ng-model="dataItem.CityMunicipality.Name"
+                               ng-model="truckerGridOptions.dataItem.CityMunicipality.Name"
                                typeahead-editable="false"
                                typeahead-on-select="onSelectCity($item, $model, $label)"
                                typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
@@ -143,7 +92,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="dataItem.CityMunicipality.StateProvince.Name"
+                               ng-model="truckerGridOptions.dataItem.CityMunicipality.StateProvince.Name"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -154,7 +103,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="dataItem.PostalCode"
+                               ng-model="truckerGridOptions.dataItem.PostalCode"
                                ng-disabled="viewOnly"
                                pattern=".{0,20}">
                     </div>
@@ -375,7 +324,7 @@
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Trucker {{dataItem.Name}}</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Trucker {{truckerGridOptions.dataItem.Name}}</span>
         </div>
         <!--Modal Body-->
         <div class="panel-body">
@@ -389,7 +338,7 @@
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn btn-primary" type="submit" ng-click="apiDelete(dataItem.Id); closeModalForm()">Delete</button>
+            <button class="btn btn-primary" type="submit" ng-click="apiDelete(truckerGridOptions.dataItem.Id); closeModalForm()">Delete</button>
             <button class="btn" type="submit" ng-click="closeModalForm()">Cancel</button>
         </div>
     </div>
