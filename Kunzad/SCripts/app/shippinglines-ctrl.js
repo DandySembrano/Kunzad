@@ -8,9 +8,12 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //------------------------------------------------------------------------------//
     $scope.modelName = "Shipping Lines";
     $scope.modelhref = "#/shippinglines";
-    $scope.shippingLineList = [];
+    $scope.shippingLineGridOptions = {};
+    $scope.shippingLineGridOptions.data = [];
+    $scope.vesselGridOptions = {};
+    $scope.vesselGridOptions.data = [];
     $scope.shippingLineItem;
-    $scope.vesselList = [];
+    $scope.vesselGridOptions.data = [];
     $scope.vesselItem;
     $scope.voyageList = [];
     $scope.voyageItem;
@@ -42,33 +45,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.tabPages = ["Shipping Line", "Vessels"];
     $scope.selectedTab = "General";
     $scope.showForm = false;
-    //---------------------OrderBy for Shipping Line--------------------
     $scope.slIDholder = 0;
     $scope.selectedSLIndex = null;
-    $scope.slCriteria = 'Name';
-    $scope.orderBySLNameDesc = true;
-    $scope.orderBySLNameAsc = false;
-
-    //process sorting of Shipping Line list
-    $scope.processSLOrderBy = function (criteria) {
-        switch (criteria) {
-            case 'Name':
-                //Ascending
-                if ($scope.orderBySLNameDesc == true) {
-                    $scope.orderBySLNameAsc = true;
-                    $scope.orderBySLNameDesc = false;
-                    criteria = 'Name';
-                }
-                    //Descending
-                else {
-                    $scope.orderBySLNameAsc = false;
-                    $scope.orderBySLNameDesc = true;
-                    criteria = '-Name';
-                }
-                break;
-        }
-        $scope.slCriteria = criteria;
-    };
     //------------------------------------------------------------------
     //---------------------OrderBy for Vessel---------------------------
     $scope.vesselIDholder = 0;
@@ -219,11 +197,11 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $scope.paginatedVessels = [];
 
         //Initialize vesselMaxPage
-        if ($scope.vesselList.length >= $scope.vesselPageSize) {
-            if (($scope.vesselList.length % $scope.vesselPageSize) == 0)
-                $scope.vesselMaxPage = $scope.vesselList.length / $scope.vesselPageSize;
+        if ($scope.vesselGridOptions.data.length >= $scope.vesselPageSize) {
+            if (($scope.vesselGridOptions.data.length % $scope.vesselPageSize) == 0)
+                $scope.vesselMaxPage = $scope.vesselGridOptions.data.length / $scope.vesselPageSize;
             else
-                $scope.vesselMaxPage = Math.ceil($scope.vesselList.length / $scope.vesselPageSize);
+                $scope.vesselMaxPage = Math.ceil($scope.vesselGridOptions.data.length / $scope.vesselPageSize);
         }
         else
             $scope.vesselMaxPage = 1;
@@ -242,13 +220,13 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             }
             $scope.firstPageVessels = false;
             $scope.previousPageVessels = false;
-            if ($scope.vesselList.length >= $scope.vesselPageSize)
+            if ($scope.vesselGridOptions.data.length >= $scope.vesselPageSize)
                 end = $scope.vesselPageSize;
             else
-                end = $scope.vesselList.length;
+                end = $scope.vesselGridOptions.data.length;
 
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVessels.push($scope.vesselList[i]);
+                $scope.paginatedVessels.push($scope.vesselGridOptions.data[i]);
             }
         }
             //Last Page
@@ -267,9 +245,9 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             $scope.lastPageVessels = false;
             $scope.nextPageVessels = false;
             begin = (vesselCurrentPage - 1) * $scope.vesselPageSize;
-            end = $scope.vesselList.length;
+            end = $scope.vesselGridOptions.data.length;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVessels.push($scope.vesselList[i]);
+                $scope.paginatedVessels.push($scope.vesselGridOptions.data[i]);
             }
         }
             //Previous and Next
@@ -281,7 +259,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             begin = (vesselCurrentPage - 1) * $scope.vesselPageSize;
             end = begin + $scope.vesselPageSize;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVessels.push($scope.vesselList[i]);
+                $scope.paginatedVessels.push($scope.vesselGridOptions.data[i]);
             }
         }
     };
@@ -373,6 +351,161 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     };
     //--------------------------End of Voyage Pagination-----------------
 
+    //Initialize ui-grid options
+    $scope.initShippingLineGridOptions = function () {
+        var columns = [];
+        $scope.shippingLineHeader = ['Name', 'No'];
+        $scope.shippingLineKeys = ['Name'];
+        $scope.shippingLineType = ['String'];
+
+        //Initialize Number Listing
+        var columnProperties = {};
+        columnProperties.name = $scope.shippingLineHeader[$scope.shippingLineHeader.length - 1];
+        columnProperties.field = 'No';
+        columnProperties.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.vesselCurrentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.vesselCurrentPage - 1) * grid.appScope.vesselPageSize)))}}</div>';
+        columnProperties.width = 40;
+        columnProperties.enableColumnResizing = true;
+        columnProperties.enableColumnMenu = false;
+        columnProperties.enableColumnMoving = false;
+        columns.push(columnProperties);
+        //Initialize column data
+        for (var i = 0; i < ($scope.shippingLineHeader.length - 1) ; i++) {
+            var columnProperties = {};
+            columnProperties.name = $scope.shippingLineHeader[i];
+            columnProperties.field = $scope.shippingLineKeys[i];
+            //format field value
+            columnProperties.cellFilter = $scope.filterValue($scope.shippingLineType[i]);
+            columns.push(columnProperties);
+        }
+        $scope.shippingLineGridOptions = {
+            columnDefs: columns,
+            rowTemplate: '<div>' +
+                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+              '</div>',
+            //enableVerticalScrollbar: 0,
+            //enableHorizontalScrollbar: 2,
+            enableColumnResizing: true,
+            enableGridMenu: true,
+            enableSelectAll: true,
+            exporterCsvFilename: 'myFile.csv',
+            exporterPdfDefaultStyle: { fontSize: 9 },
+            exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+            exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+            exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+            exporterPdfFooter: function (currentPage, pageCount) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfCustomFormatter: function (docDefinition) {
+                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+                return docDefinition;
+            },
+            exporterPdfOrientation: 'landscape',
+            exporterPdfPageSize: 'a4',
+            exporterPdfMaxGridWidth: 500,
+            exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
+    };
+
+    $scope.initVesselGridOptions = function () {
+        var columnsVessel = [];
+        $scope.vesselHeader = ['Name', 'No'];
+        $scope.vesselKeys = ['Name'];
+        $scope.vesselType = ['String'];
+
+        //Initialize Number Listing
+        var columnPropertiesVessel = {};
+        columnPropertiesVessel.name = $scope.vesselHeader[$scope.vesselHeader.length - 1];
+        columnPropertiesVessel.field = 'No';
+        columnPropertiesVessel.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.vesselCurrentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.vesselCurrentPage - 1) * grid.appScope.vesselPageSize)))}}</div>';
+        columnPropertiesVessel.width = 40;
+        columnPropertiesVessel.enableColumnResizing = true;
+        columnPropertiesVessel.enableColumnMenu = false;
+        columnPropertiesVessel.enableColumnMoving = false;
+        columnsVessel.push(columnPropertiesVessel);
+        //Initialize column data
+        for (var i = 0; i < ($scope.vesselHeader.length - 1) ; i++) {
+            var columnPropertiesVessel = {};
+            columnPropertiesVessel.name = $scope.vesselHeader[i];
+            columnPropertiesVessel.field = $scope.vesselKeys[i];
+            //format field value
+            columnPropertiesVessel.cellFilter = $scope.filterValue($scope.vesselType[i]);
+            columnsVessel.push(columnPropertiesVessel);
+        }
+        $scope.vesselGridOptions = {
+            columnDefs: columnsVessel,
+            rowTemplate: '<div>' +
+                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelectedVessel(row.entity.Id, row.entity.Name)" data-target= "DataTableVessel"></div>' +
+              '</div>',
+            //enableVerticalScrollbar: 0,
+            //enableHorizontalScrollbar: 2,
+            enableColumnResizing: true,
+            enableGridMenu: true,
+            enableSelectAll: true,
+            exporterCsvFilename: 'myFile.csv',
+            exporterPdfDefaultStyle: { fontSize: 9 },
+            exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+            exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+            exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+            exporterPdfFooter: function (currentPage, pageCount) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfCustomFormatter: function (docDefinition) {
+                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+                return docDefinition;
+            },
+            exporterPdfOrientation: 'landscape',
+            exporterPdfPageSize: 'a4',
+            exporterPdfMaxGridWidth: 500,
+            exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
+    };
+
+    //Function that will format key value
+    $scope.filterValue = function (type) {
+        var format;
+        switch (type) {
+            case 'String':
+                format = 'ProperCase';
+                break;
+            case 'String-Upper':
+                format = 'StringUpper';
+                break;
+            case 'Date':
+                format = 'Date';
+                break;
+            case 'DateTime':
+                format = 'DateTime';
+                break;
+            case 'Time':
+                format = 'Time';
+                break;
+            case 'Boolean':
+                format = 'Boolean';
+                break;
+            case 'Decimal':
+                format = 'Decimal';
+                break;
+            default:
+                format = 'Default';
+        }
+        return format;
+    };
+
+    //Set the focus on top of the page during load
+    $scope.focusOnTop = function () {
+        $(document).ready(function () {
+            $(this).scrollTop(0);
+        });
+    };
+
     //Initialize tab 1 and tab 2 name
     $scope.initializeHeaderName = function () {
         if ($scope.shippingLineItem.Name == "" || $scope.shippingLineItem.Name == null)
@@ -402,7 +535,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $http.get("/api/ShippingLines?page=" + page)
             .success(function (data, status) {
                 //initialize country
-                $scope.shippingLineList = data;
+                $scope.shippingLineGridOptions.data = data;
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -415,6 +548,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 } else {
                     $scope.isNextPage = true;
                 }
+                $scope.focusOnTop
                 spinner.stop();
             })
             .error(function (data, status) {
@@ -435,16 +569,15 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     };
 
     //initialized when user delete, update or view a record in the shipping line list
-    $scope.setSelected = function (i, id) {
-        $scope.selected = i;
+    $scope.setSelected = function (id) {
         $scope.slIDholder = id;
     };
 
     //search ShippingLine
     $scope.searchSL = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.shippingLineList.length; i++) {
-            if (id == $scope.shippingLineList[i].Id) {
+        for (i = 0; i < $scope.shippingLineGridOptions.data.length; i++) {
+            if (id == $scope.shippingLineGridOptions.data[i].Id) {
                 return i;
             }
         }
@@ -522,7 +655,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0, j = 0;
         //---------------------------------------customize object for easy saving of data------------------------------
-        $scope.shippingLineItem.Vessels = angular.copy($scope.vesselList);
+        $scope.shippingLineItem.Vessels = angular.copy($scope.vesselGridOptions.data);
         for (j = 0; j < $scope.shippingLineItem.Vessels.length; j++) {
             for (i = 0; i < $scope.voyageList.length; i++) {
                 if ($scope.shippingLineItem.Vessels[j].Id == $scope.voyageList[i].VesselId)
@@ -550,7 +683,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
                     //Add Shipping Line in the list
-                    $scope.shippingLineList.push(data.objParam1);
+                    $scope.shippingLineGridOptions.data.push(data.objParam1);
                     $scope.closeForm();
                     spinner.stop();
                 }
@@ -574,7 +707,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         //---------------------------------------customize object for easy saving of data------------------------------
         //insert vessels
         $scope.shippingLineItem.Vessels = [];
-        $scope.shippingLineItem.Vessels = angular.copy($scope.vesselList);
+        $scope.shippingLineItem.Vessels = angular.copy($scope.vesselGridOptions.data);
         for (j = 0; j < $scope.shippingLineItem.Vessels.length; j++) {
             //reset Vessel Voyages
             $scope.shippingLineItem.Vessels[j].VesselVoyages = [];
@@ -629,8 +762,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
                     //initialize Shipping Line info
-                    $scope.shippingLineList[$scope.selectedSLIndex] = [];
-                    $scope.shippingLineList[$scope.selectedSLIndex] = angular.copy(data.objParam1);
+                    $scope.shippingLineGridOptions.data[$scope.selectedSLIndex] = [];
+                    $scope.shippingLineGridOptions.data[$scope.selectedSLIndex] = angular.copy(data.objParam1);
                     $scope.closeForm();
                     spinner.stop();
                 }
@@ -653,7 +786,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $http.delete("/api/ShippingLines/" + id)
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
-                    $scope.shippingLineList.splice($scope.selectedSLIndex, 1);
+                    $scope.shippingLineGridOptions.data.splice($scope.selectedSLIndex, 1);
                     $scope.closeForm();
                     spinner.stop();
                 }
@@ -680,7 +813,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             case "Create":
                 $scope.vesselIdDummy = 0;
                 $scope.voyageIdDummy = 0;
-                $scope.vesselList = [];
+                $scope.vesselGridOptions.data = [];
                 $scope.voyageList = [];
                 $scope.initializeShippingLineItem();
                 //$scope.initializeHeaderName();
@@ -690,12 +823,12 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "Edit":
                 $scope.shippingLineItem = [];
-                $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
+                $scope.shippingLineItem = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex]);
                 //Store vessel of a shipping line
-                $scope.vesselList = [];
-                $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
+                $scope.vesselGridOptions.data = [];
+                $scope.vesselGridOptions.data = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
-                $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
+                $scope.apiGet($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Id);
                 $scope.initializeHeaderName();
                 //set vesselIdDummy to prevent conflict of Vessel Ids
                 if ($scope.shippingLineItem.Vessels.length >= 1)
@@ -706,11 +839,11 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "Delete":
                 $scope.shippingLineItem = [];
-                $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
-                $scope.vesselList = [];
-                $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
+                $scope.shippingLineItem = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex]);
+                $scope.vesselGridOptions.data = [];
+                $scope.vesselGridOptions.data = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
-                $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
+                $scope.apiGet($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Id);
                 $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
@@ -718,11 +851,11 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "View":
                 $scope.shippingLineItem = [];
-                $scope.shippingLineItem = angular.copy($scope.shippingLineList[$scope.selectedSLIndex]);
-                $scope.vesselList = [];
-                $scope.vesselList = angular.copy($scope.shippingLineList[$scope.selectedSLIndex].Vessels);
+                $scope.shippingLineItem = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex]);
+                $scope.vesselGridOptions.data = [];
+                $scope.vesselGridOptions.data = angular.copy($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Vessels);
                 $scope.processVesselPagination($scope.vesselCurrentPage, '');
-                $scope.apiGet($scope.shippingLineList[$scope.selectedSLIndex].Id);
+                $scope.apiGet($scope.shippingLineGridOptions.data[$scope.selectedSLIndex].Id);
                 $scope.initializeHeaderName();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
@@ -811,8 +944,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //search in vessel list
     $scope.searchInVessel = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.vesselList.length; i++) {
-            if (id == $scope.vesselList[i].Id) {
+        for (i = 0; i < $scope.vesselGridOptions.data.length; i++) {
+            if (id == $scope.vesselGridOptions.data[i].Id) {
                 return i;
             }
         }
@@ -835,7 +968,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "Edit":
                 $scope.vesselItem = [];
-                $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
+                $scope.vesselItem = angular.copy($scope.vesselGridOptions.data[$scope.selectedVesselActionIndex]);
                 $scope.openModalForm('#modal-panel-vessel')
                 break;
             case "Delete":
@@ -844,20 +977,20 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 else
                     $scope.showVoyageHeader = false;
                 $scope.vesselItem = [];
-                $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
+                $scope.vesselItem = angular.copy($scope.vesselGridOptions.data[$scope.selectedVesselActionIndex]);
                 $scope.viewOnly = false;
                 $scope.openModalForm('#modal-panel-vessel')
                 break;
             case "View":
                 $scope.vesselItem = [];
-                $scope.vesselItem = angular.copy($scope.vesselList[$scope.selectedVesselActionIndex]);
+                $scope.vesselItem = angular.copy($scope.vesselGridOptions.data[$scope.selectedVesselActionIndex]);
                 $scope.openModalForm('#modal-panel-vessel')
                 $scope.viewOnly = true;
                 break;
             case "showVoyage":
                 //Initialize tab 3 name
                 $scope.tabPages[2] = "Voyages";
-                $scope.vesselIdHolder = $scope.vesselList[$scope.selectedVesselActionIndex].Id;
+                $scope.vesselIdHolder = $scope.vesselGridOptions.data[$scope.selectedVesselActionIndex].Id;
                 if ($scope.searchVessel($scope.vesselIdHolder))
                     $scope.showVoyageHeader = true;
                 else
@@ -883,21 +1016,21 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $scope.vesselIdDummy = $scope.vesselIdDummy + 1;
         $scope.vesselItem.Id = $scope.vesselIdDummy;
         $scope.vesselItem.ShippingLineId = -1;
-        $scope.vesselList.push($scope.vesselItem);
+        $scope.vesselGridOptions.data.push($scope.vesselItem);
         $scope.processVesselPagination($scope.vesselCurrentPage, 'LASTPAGE');
         $scope.closeModalForm();
     };
 
     //Update Vessel
     $scope.apiUpdateVessel = function () {
-        $scope.vesselList[$scope.selectedVesselActionIndex] = angular.copy($scope.vesselItem);
+        $scope.vesselGridOptions.data[$scope.selectedVesselActionIndex] = angular.copy($scope.vesselItem);
         $scope.processVesselPagination($scope.vesselCurrentPage, '');
         $scope.closeModalForm();
     };
 
     //Delete Vessel
     $scope.apiDeleteVessel = function () {
-        $scope.vesselList.splice($scope.selectedVesselActionIndex, 1);
+        $scope.vesselGridOptions.data.splice($scope.selectedVesselActionIndex, 1);
         $scope.deleteVoyage($scope.vesselItem.Id);
         $scope.processVesselPagination($scope.vesselCurrentPage, '');
         $scope.closeModalForm();
@@ -1145,9 +1278,10 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     var init = function () {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
+        $scope.initShippingLineGridOptions();
+        $scope.initVesselGridOptions();
         //Retrieve Business Units
         $scope.getBusinessUnits();
-        $scope.processSLOrderBy($scope.slCriteria);
         $scope.processVesselOrderBy($scope.vesselCriteria);
         $scope.processVoyageOrderBy($scope.voyageCriteria);
     }
