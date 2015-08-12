@@ -32,7 +32,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     $scope.tabPages = ["General", "Addresses", "Contacts"];
     $scope.subTabPages = ["General"];
     $scope.selectedTab = "General";
-    $scope.selectedSubTab = "General";
 
     $scope.CustomerGroups = [];
     $scope.CustomerContactTypes = [];
@@ -43,6 +42,8 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     $scope.showSubFooter = false;
     $scope.showMenu = true;
     $scope.showSubMenu = false;
+    $scope.showMenuAddress = false;
+    $scope.showMenuContact = false;
    
     $scope.initDataItem = function () {
         $scope.dataItem = {
@@ -64,7 +65,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         $http.get("/api/Customers?page=" + page)
             .success(function (data, status) {
                 $scope.data = data;
-                gridOptions1.data = data;
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -103,7 +103,7 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
           { field: 'TIN' },
         ],
         rowTemplate: '<div>' +
-        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DTCustGeneral"></div>' +
         '</div>',
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
@@ -148,13 +148,13 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
           },
           { name: 'Line1', field: 'Line1' },
           { name: 'Line2', field: 'Line2' },
-          { name: 'City Municipality', field: 'Line2' },
-          { name: 'Province/State', field: 'Line2' },
-          { name: 'Postal Code', field: 'Line2' },
-          { name: 'Country', field: 'Line2' },
+          { name: 'City Municipality', field: 'CityMunicipality.Name' },
+          { name: 'Province/State', field: 'CityMunicipality.StateProvince.Name' },
+          { name: 'Postal Code', field: 'PostalCode' },
+          { name: 'Country', field: 'CityMunicipality.StateProvince.Country.Name' },
         ],
         rowTemplate: '<div>' +
-        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "DataTableMenu"></div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedAddress(row.entity.Id)"  context-menu="grid.appScope.setSelectedAddress(row.entity.Id)" data-target= "DTCustAdresss"></div>' +
         '</div>',
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
@@ -184,6 +184,8 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         }
     };
 
+
+
     // Create/Insert New
     $scope.apiCreate = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -201,7 +203,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             .success(function (data, status) {
                 $scope.dataItem = angular.copy(data);
                 $scope.data.push($scope.dataItem);
-                console.log($scope.data);
                 $scope.closeForm();
                 spinner.stop();
             })
@@ -223,7 +224,8 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     }
 
     // Update
-    $scope.apiUpdate = function (id) {
+    $scope.apiUpdate = function (id)
+    {
         // Set navigation properties to null so it will not be inserted as new record //
         
         var dataModel = angular.copy($scope.dataItem);
@@ -264,42 +266,34 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     }
 
     $scope.setSelected = function (id) {
-        for (var j = 1; j < $scope.data.length; j++) {    
+        for (var j = 0; j <= $scope.data.length; j++) {    
             if(id == $scope.data[j].Id){
                 $scope.selected = j;
                 break;
             }
-        }  
+        }
     }
 
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
         switch ($scope.actionMode) {
             case "Create":
-                if ($scope.selectedTab == 'General') { //if general
-                    $scope.initDataItem();
-                    $scope.initAddress();
-                    $scope.initCustomerContact();
-                    $scope.initContact();
-                    $scope.initContactPhone();
-                    $scope.customerAddressList = [];
-                    $scope.customerContactList = [];
-                    $scope.customerContactPhoneList = [];
-                    $scope.viewOnly = false;
-                    $scope.submitButtonText = "Submit";
-                    $scope.showForm = true;
-                    $scope.showSubForm = false;
-                    $scope.showFooter = true;
-                    $scope.showSubFooter = false;
-                    $scope.selectedTab = $scope.tabPages[0];
-                    break;
-                } else if ($scope.selectedTab == 'Addresses') { //if address
-                    $scope.initAddress();
-                    $scope.openModalForm('#modal-panel-address')
-                    $scope.customerAddressAction = action;
-                    break;
-                }
-
+                $scope.initDataItem();
+                $scope.initAddress();
+                $scope.initCustomerContact();
+                $scope.initContact();
+                $scope.initContactPhone();
+                $scope.customerAddressList = [];
+                $scope.customerContactList = [];
+                $scope.customerContactPhoneList = [];
+                $scope.viewOnly = false;
+                $scope.submitButtonText = "Submit";
+                $scope.showForm = true;
+                $scope.showSubForm = false;
+                $scope.showFooter = true;
+                $scope.showSubFooter = false;
+                $scope.selectedTab = $scope.tabPages[0];
+                break;
             case "Edit":
                 $scope.dataItem = angular.copy($scope.data[$scope.selected]);
                 $scope.customerAddressList = $scope.dataItem.CustomerAddresses;
@@ -458,25 +452,19 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
 
     $scope.setSelectedTab = function (tab) {
         $scope.selectedTab = tab;
-        if ($scope.selectedTab == 'Contacts' && $scope.customerContactList.length <= 0) {
-            $scope.actionSubForm('Create');
-        } else if ($scope.selectedTab == 'Contacts' && $scope.customerContactList.length > 0) {
-            $scope.showSubForm = false;
-            $scope.showSubFooter = false;
-            $scope.showFooter = true;
-            $scope.showMenu = false;
-            $scope.showSubMenu = true;
-        }else{
-            $scope.showSubForm = false;
-            $scope.showFooter = true;
-            $scope.showSubFooter = false;
-            $scope.showSubMenu = false;
+        if (tab == 'General') {
             $scope.showMenu = true;
+            $scope.showMenuAddress = false;
+            $scope.showMenuContact = false;
+        } else if (tab == 'Addresses') {
+            $scope.showMenu = false;
+            $scope.showMenuAddress = true;
+            $scope.showMenuContact = false;
+        } else if (tab == 'Contacts') {
+            $scope.showMenu = false;
+            $scope.showMenuAddress = false;
+            $scope.showMenuContact = true;
         }
-    }
-
-    $scope.setSelectedSubTab = function (subTab) {
-        $scope.selectedSubTab = subTab;
     }
 
     //---------------------------------------------------------------------------------//
@@ -516,6 +504,14 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         }
     }
 
+    $scope.setSelectedAddress = function (id) {
+        for (var j = 0; j <= $scope.customerAddressList.length; j++) {
+            if (id == $scope.customerAddressList[j].Id) {
+                $scope.selectedAddress = j;
+                break;
+            }
+        }
+    }
     // Create/Insert New Customer Address
     $scope.apiCreateCustomerAddresses = function () {
         $scope.customerAddressList.push($scope.customerAddress);
@@ -524,9 +520,9 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     
     // Update
     $scope.apiUpdateCustomerAddresses = function () {
-        $scope.customerAddressList[$scope.selectedCustomerAddressIndex] = angular.copy($scope.customerAddress);
-        $scope.dataItem.CustomerAddresses[$scope.selectedCustomerAddressIndex] = angular.copy($scope.customerAddress);
-        $scope.gridOptions2.data = $scope.dataItem.CustomerAddresses[$scope.selectedCustomerAddressIndex];
+        $scope.customerAddressList[$scope.selectedAddress] = angular.copy($scope.customerAddress);
+        $scope.dataItem.CustomerAddresses[$scope.selectedAddress] = angular.copy($scope.customerAddress);
+        $scope.gridOptions2.data = $scope.dataItem.CustomerAddresses[$scope.selectedAddress];
         $scope.closeModalForm();
     }
 
@@ -537,22 +533,26 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         $scope.closeModalForm();
     }
 
-    $scope.openCustomerAddressForm = function (action, i) {
+    $scope.actionFormAddress = function (action, i) {
         $scope.customerAddressAction = action;
-        $scope.selectedCustomerAddressIndex = i;
         switch ($scope.customerAddressAction) {
             case "Create":
                 $scope.initAddress();
                 $scope.openModalForm('#modal-panel-address')
                 break;
             case "Edit":
-                $scope.customerAddress = angular.copy($scope.customerAddressList[i]);
+                $scope.customerAddress = angular.copy($scope.customerAddressList[$scope.selectedAddress]);
                 $scope.openModalForm('#modal-panel-address')
                 break;
             case "Delete":
-                $scope.customerAddress = $scope.customerAddressList[i];
+                $scope.customerAddress = $scope.customerAddressList[$scope.selectedAddress];
                 $scope.openModalForm('#modal-panel-address')
                 break;
+            case "View":
+                $scope.customerAddress = angular.copy($scope.customerAddressList[$scope.selectedAddress]);
+                $scope.openModalForm('#modal-panel-address')
+                $scope.viewOnly = true;
+                $scope.submitButtonText = "Close";
         }
     }
 
@@ -567,7 +567,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
                     $scope.showFormError("Invalid City/Municipalities.");
                     return;
                 }
-
                 $scope.apiCreateCustomerAddresses();
                 break;
             case "Edit":
@@ -619,21 +618,141 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
         }
     }
 
-    $scope.closeSubForm = function () {
-        $scope.isError = false;
-        $scope.showSubForm = false;
-        $scope.showSubFooter = false;
-        $scope.showFooter = true;
-        $scope.showMenu = false;
-        $scope.showSubMenu = true;
-        $scope.showForm = true;
+    $scope.gridOptionsContact = {
+        data: 'customerContactList',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { name: 'Name', field: 'Contact.Name' },
+          { name: 'Title', field: 'Contact.Title' },
+          { name: 'Email', field: 'Contact.Email' },
+          { name: 'Alternate Email', field: 'Contact.AlternateEmail' },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedContact(row.entity.Id)"  context-menu="grid.appScope.setSelectedContact(row.entity.Id)" data-target= "DTCustContact"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'myFile.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
+    $scope.actionFormContact = function (action, i) {
+        $scope.customerContactAction = action;
+        switch ($scope.customerContactAction) {
+            case "Create":
+                $scope.initCustomerContact();
+                $scope.initContact();
+                $scope.initContactPhone();
+                $scope.customerContactPhoneList = [];
+                $scope.openModalForm('#modal-panel-contactphone')
+                break;
+            case "Edit":
+                $scope.contact = angular.copy($scope.customerContactList[$scope.selectedContact].Contact);
+                $scope.customerContactPhoneList = angular.copy($scope.customerContactList[$scope.selectedContact].Contact.ContactPhones);
+                $scope.openModalForm('#modal-panel-contactphone')
+                break;
+            case "Delete":
+                $scope.customerAddress = $scope.customerAddressList[$scope.selectedAddress];
+                $scope.openModalForm('#modal-panel-address')
+                break;
+        }
     }
 
-    $scope.ContatPhoneAction = null;
-    $scope.selectedCustomerContactPhoneIndex = null;
+    $scope.setSelectedContact = function (id) {
+        for (var j = 0; j <= $scope.customerContactList.length; j++) {
+            if (id == $scope.customerContactList[j].Id) {
+                $scope.selectedContact = j;
+                break;
+            }
+        }
+    }
+    // Create/Insert New Customer Address
+    $scope.apiCreateCustomerAddresses = function () {
+        $scope.customerAddressList.push($scope.customerAddress);
+        $scope.closeModalForm();
+    }
 
-    $scope.setSubSelected = function ($index) {
-        $scope.subSelected = $index;
+    $scope.setSelectedContactPhone = function (id) {
+        $scope.selectedContactPhone = id;
+    }
+
+    $scope.actionFormContactPhone = function (action) {
+        switch (action) {
+            case "Create":
+                $scope.customerContactPhoneList.push({});
+                break;
+            case "Delete":
+                delete $scope.customerContactPhoneList[$scope.selectedContactPhone];
+                break;
+        }
+    }
+
+
+    $scope.saveCustomerContact = function (action) {
+        switch (action) {
+            case "Create":
+                $scope.contact.ContactPhones = $scope.customerContactPhoneList;
+                for (var i = 0; i < $scope.contact.ContactPhones.length; i++) {
+                    delete $scope.contact.ContactPhones[i].Id;
+                }
+                $scope.customerContact.Contact = $scope.contact;
+                if ($scope.dataItem.Id == null || $scope.dataItem.Id == '') {
+                    $scope.customerContact.CustomerId = -1;
+                    $scope.customerContact.ContactId = -1;
+                } else {
+                    $scope.customerContact.CustomerId = $scope.dataItem.Id;
+                    $scope.customerContact.ContactId = -1;
+                }
+                delete $scope.customerContact.Contact.Id;
+                $scope.customerContactList.push($scope.customerContact);
+                $scope.closeModalForm();
+                break;
+            case "Edit":
+                /*$scope.contact.ContactPhones = angular.copy($scope.customerContactPhoneList);
+                for (var i = 0; i < $scope.contact.ContactPhones.length; i++) {
+                    if ($scope.contact.ContactPhones[i].Id == null || $scope.contact.ContactPhones[i].Id == '') {
+                        delete $scope.contact.ContactPhones[i].Id;
+                    }
+                }
+                $scope.customerContact.Contact = $scope.contact;;
+                $scope.customerContactList[$scope.selectedContactPhone] = angular.copy($scope.customerContact);
+                $scope.closeModalForm();
+                break;*/
+            case "Delete":
+                $scope.apiDeleteCustomerAddresses();
+                break;
+        }
     }
 
     // Get Customer Group
@@ -654,207 +773,6 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
             }
         }
         $scope.dataItem.CustomerContact = cContact;
-    }
-
-    $scope.openCustomerContactPhoneForm = function (action, i) {
-        $scope.ContatPhoneAction = action;
-        $scope.selectedCustomerContactPhoneIndex = i;
-        switch ($scope.ContatPhoneAction) {
-            case "Create":
-                $scope.initContactPhone();
-                $scope.openModalForm('#modal-panel-contactphone')
-                break;
-            case "Edit":
-                $scope.initContactPhone();
-                $scope.customerContactPhone = angular.copy($scope.customerContactPhoneList[i]);
-                $scope.openModalForm('#modal-panel-contactphone')
-                break;
-            case "Delete":
-                $scope.initContactPhone();
-                $scope.customerContactPhone = angular.copy($scope.customerContactPhoneList[i]);
-                $scope.openModalForm('#modal-panel-contactphone')
-                break;
-        }
-    }
-    $scope.actionSubForm = function (subAction) {
-        $scope.subActionMode = subAction;
-        switch ($scope.subActionMode) {
-            case "Create":
-                $scope.initCustomerContact();
-                $scope.initContact();
-                $scope.initContactPhone();
-                $scope.customerContactPhoneList = [];
-                $scope.viewOnly = false;
-                $scope.saveContactText = "Add Contact";
-                $scope.showSubForm = true;
-                $scope.showSubFooter = true;
-                $scope.showFooter = false;
-                $scope.showMenu = false;
-                $scope.showSubMenu = false;
-                break;
-            case "Edit":
-                $scope.initCustomerContact();
-                $scope.initContact();
-                $scope.initContactPhone();
-                $scope.customerContactPhoneList = [];
-                $scope.customerContact = angular.copy($scope.customerContactList[$scope.subSelected]);
-                $scope.contact = $scope.customerContact.Contact;
-                $scope.customerContactPhoneList = $scope.contact.ContactPhones;
-                $scope.viewOnly = false;
-                $scope.saveContactText = "Update Contact";
-                $scope.showSubForm = true;
-                $scope.showSubFooter = true;
-                $scope.showFooter = false;
-                $scope.showMenu = false;
-                $scope.showSubMenu = false;
-                break;
-            case "Delete":
-                $scope.initCustomerContact();
-                $scope.initContact();
-                $scope.initContactPhone();
-                $scope.customerContactPhoneList = [];
-                $scope.customerContact = angular.copy($scope.customerContactList[$scope.subSelected]);
-                $scope.contact = $scope.customerContact.Contact;
-                $scope.customerContactPhoneList = $scope.contact.ContactPhones;
-                $scope.viewOnly = true;
-                $scope.saveContactText = "Delete Contact";
-                $scope.showSubForm = true;
-                $scope.showSubFooter = true;
-                $scope.showFooter = false;
-                $scope.showMenu = false;
-                $scope.showSubMenu = false;
-                break;
-            case "View":
-                $scope.initCustomerContact();
-                $scope.initContact();
-                $scope.initContactPhone();
-                $scope.customerContactPhoneList = [];
-                $scope.customerContact = angular.copy($scope.customerContactList[$scope.subSelected]);
-                $scope.contact = $scope.customerContact.Contact;
-                $scope.customerContactPhoneList = $scope.contact.ContactPhones;
-                $scope.viewOnly = true;
-                $scope.saveContactText = "Close Contact";
-                $scope.showSubForm = true;
-                $scope.showSubFooter = true;
-                $scope.showFooter = false;
-                $scope.showMenu = false;
-                $scope.showSubMenu = false;
-                break;
-        }
-    }
-
-    $scope.saveCustomerContactPHone = function (action) {
-        switch (action) {
-            case "Create":
-                if ($scope.customerContactPhone.ContactNumber == null || $scope.customerContactPhone.ContactNumber == '') {
-                    $scope.showFormError("Invalid Contact No.");
-                    return;
-                }
-                if ($scope.customerContactPhone.ContactNumberTypeId == null || $scope.customerContactPhone.ContactNumberTypeId == '') {
-                    $scope.showFormError("Invalid Type Id.");
-                    return;
-                }
-                $scope.customerContactPhoneList.push($scope.customerContactPhone);
-                $scope.closeModalForm();
-                break;
-            case "Edit":
-                if ($scope.customerContactPhone.ContactNumber == null || $scope.customerContactPhone.ContactNumber == '') {
-                    $scope.showFormError("Invalid Contact No.");
-                    return;
-                }
-                if ($scope.customerContactPhone.ContactNumberTypeId == null || $scope.customerContactPhone.ContactNumberTypeId == '') {
-                    $scope.showFormError("Invalid Type Id.");
-                    return;
-                }
-                $scope.customerContactPhoneList[$scope.selectedCustomerContactPhoneIndex] = angular.copy($scope.customerContactPhone);
-
-               $scope.closeModalForm();
-                break;
-            case "Delete":
-                $scope.contact.ContactPhones.splice($scope.selectedCustomerContactPhoneIndex, 1);
-                $scope.closeModalForm();
-                break;
-        }
-    }
-
-    $scope.submitSubForm = function () {
-        switch ($scope.subActionMode) {
-            case "Create":
-                if ($scope.contact.Name == null || $scope.contact.Name == '') {
-                    $scope.showFormError("Invalid Contact Name.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                if ($scope.contact.Email == null || $scope.contact.Email == '') {
-                    $scope.showFormError("Invalid Contact Email.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                if ($scope.contact.AlternateEmail == null || $scope.contact.AlternateEmail == '') {
-                    $scope.showFormError("Invalid Contact Alternate Email.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                $scope.contact.ContactPhones = $scope.customerContactPhoneList;
-                for(var i=0;i<$scope.contact.ContactPhones.length;i++){
-                    delete $scope.contact.ContactPhones[i].Id;
-                }
-               
-                $scope.customerContact.Contact = $scope.contact;
-                if ($scope.dataItem.Id == null || $scope.dataItem.Id == '') {
-                    $scope.customerContact.CustomerId = -1;
-                    $scope.customerContact.ContactId = -1;
-                } else {
-                    $scope.customerContact.CustomerId = $scope.dataItem.Id;
-                    $scope.customerContact.ContactId = -1;
-                }
-                delete $scope.customerContact.Contact.Id;
-                $scope.customerContactList.push($scope.customerContact);
-                $scope.closeSubForm();
-                break;
-            case "Edit":
-                if ($scope.contact.Name == null || $scope.contact.Name == '') {
-                    $scope.showFormError("Invalid Contact Name.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                if ($scope.contact.Email == null || $scope.contact.Email == '') {
-                    $scope.showFormError("Invalid Contact Email.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                if ($scope.contact.AlternateEmail == null || $scope.contact.AlternateEmail == '') {
-                    $scope.showFormError("Invalid Contact Alternate Email.");
-                    $scope.selectedTab = $scope.tabPages[2];
-                    return false;
-                }
-
-                $scope.contact.ContactPhones = angular.copy($scope.customerContactPhoneList);
-                for (var i = 0; i < $scope.contact.ContactPhones.length; i++) {
-                    if ($scope.contact.ContactPhones[i].Id == null || $scope.contact.ContactPhones[i].Id == '') {
-                        delete $scope.contact.ContactPhones[i].Id;
-                    }
-                }
-                
-                $scope.customerContact.Contact = $scope.contact;
-                $scope.customerContactList[$scope.subSelected] = angular.copy($scope.customerContact);
-                $scope.closeSubForm();
-                $scope.showForm = true;
-                break;
-            case "Delete":
-                $scope.customerContactList.splice($scope.subSelected, 1);
-                $scope.closeSubForm();
-                $scope.showForm = true;
-                break;
-            case "View":
-                $scope.closeForm();
-                break;
-        }
     }
 
     //---------------------------------------------------------------------------------//

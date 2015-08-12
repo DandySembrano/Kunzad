@@ -1,35 +1,10 @@
 ﻿@{
-    Layout = "~/Views/Shared/_DataTableLayout4.cshtml";
+    Layout = "~/Views/Shared/_DataTableCustomer.cshtml";
 }
 
 <!-- Customer List/DataTable -->
 @section tableContent{
     <div ui-grid="gridOptions1" ui-grid-exporter class="grid"></div>
-    @*<div class="row">
-        <div class="col-lg-12">
-            <table class="table table-hover">
-                <thead class="text-dark">
-                    <tr>
-                        <th class="col-md-1 small"><strong>No</strong></th>
-                        <th class="col-md-1 small"><strong>Code</strong></th>
-                        <th class="col-md-3 small"><strong>Name</strong></th>
-                        <th class="col-md-3 small"><strong>Industry</strong></th>
-                        <th class="col-md-2 small"><strong>TIN</strong></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="c in data" ng-click="setSelected($index)"
-                        context-menu="setSelected($index)" data-target="DataTableMenu">
-                        <td class="small">{{currentPage == 1?($index + 1) : (($index + 1) + ((currentPage -1) * pageSize) )}}</td>
-                        <td class="small">{{c.Code}}</td>
-                        <td class="small">{{c.Name}}</td>
-                        <td class="small" ng-repeat="indust in Industries | filter:{Id : c.IndustryId}">{{indust.Name}}</td>
-                        <td class="small">{{c.TIN}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>*@
 }
 
 <!-- Customer Form -->
@@ -91,73 +66,27 @@
 <!-- Customer Addresses -->
 @section tab2Content{
     <div ng-show="selectedTab === tabPages[1]">
-        <button class="btn btn-sm pull-right" ng-click="openCustomerAddressForm('Create')">
-            <span class="glyphicon glyphicon-plus"></span>
+        <button class="btn btn-sm pull-right" ng-click="actionFormAddress('Create')">
+            <span class="glyphicon glyphicon-plus">
+            </span>
         </button>
         <br />
         <br/>
         <div  ui-grid="gridOptions2" ui-grid-exporter class="grid"></div>
-        @*<div class="col-lg-12">
-
-            <h2 class="mt25 lh35 mtn text-left">
-                <b>{{dataItem.Name}}</b>
-            </h2>
-            <button class="btn btn-sm pull-right" ng-click="openCustomerAddressForm('Create')">
-                <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="row" ng-repeat="item in customerAddressList">
-                <div class=""></div>
-                <div class="col-lg-8">
-                    <div class="well">
-                        <div class="row">
-                            <div class="col-md-12" align="right">
-                                <button class="btn btn-xs btn-primary light" type="button" ng-click="openCustomerAddressForm('Edit', $index)">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </button>
-                                <button class="btn btn-xs btn-danger light" type="button" ng-click="openCustomerAddressForm('Delete', $index)">
-                                    <span class="glyphicons glyphicons-bin"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <address>
-                            <strong>{{dataItem.Name}}</strong>
-                            <span><br>{{item.Line1}}</span>
-                            <span ng-show="item.Line2 != null && item.Line2 != ''"><br>{{item.Line2}}</span>
-                            <span><br>{{item.CityMunicipality.Name + ", " + item.CityMunicipality.StateProvince.Name + " " + item.PostalCode }}</span>
-                            <span><br>{{country.Name}}</span>
-                        </address>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="checkbox-custom checkbox-disabled">
-                                    <input id="checkbox1" type="checkbox" ng-model="item.IsPickupAddress" disabled="">
-                                    <label for="checkbox1" class="small">Pickup Address</label>
-                                </div>
-                                <div class="checkbox-custom checkbox-disabled">
-                                    <input id="checkbox2" type="checkbox" ng-model="item.IsDeliveryAddress" disabled="">
-                                    <label for="checkbox2" class="small">Delivery Address</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="checkbox-custom checkbox-disabled">
-                                    <input id="checkbox3" type="checkbox" ng-model="item.IsBillingAddress" disabled="">
-                                    <label for="checkbox3" class="small">Billing Address</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-sm pull-right" ng-click="initAddress(); openModalForm('#modal-panel-address');"
-                    ng-show="dataItem.CustomerAddresses.length > 1"></button>
-        </div>*@
     </div>
 }
 
 <!-- Contacts -->
 @section tab3Content{
     <div class="row" ng-show="selectedTab === tabPages[2]">
-        <!--contact list-->
-        <div class="row" ng-show="!showSubForm">
+        <button class="btn btn-sm pull-right" ng-click="actionFormContact('Create')">
+            <span class=" glyphicon glyphicon-plus">
+            </span>
+        </button>
+        <br />
+        <br />
+        <div ui-grid="gridOptionsContact" ui-grid-exporter class="grid"></div>
+        @*<div class="row" ng-show="!showSubForm">
             <div class="col-md-12">
                 <div class="panel mb25 mt5">
                     <div class="panel-body pn">
@@ -194,10 +123,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
 
         <!--General,Contacts,PHones-->
-        <div class="row" ng-show="showSubForm">
+        @*<div class="row" ng-show="showSubForm">
             <div class="col-md-12">
                 <div class="">
                     <div class="alert alert-danger alert-sm" ng-show="isError">
@@ -288,10 +217,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
 
-        <br />
-        <div ng-show="showSubFooter">
+        @*<div ng-show="showSubFooter">
             <div class="panel-footer">
                 <div class="row">
                     <div class="col-md-6" align="left">
@@ -305,7 +233,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
 }
 
@@ -332,7 +260,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <form class="form-horizontal" role="form">
-
+                        
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Street Address</label>
                             <div class="col-md-8">
@@ -420,7 +348,7 @@
 <div id="modal-panel-contactphone" class="popup-basic bg-none mfp-with-anim mfp-hide">
     <div class="panel">
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{ContatPhoneAction}} Contact Phone</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{customerAddressAction}} Customer Contact</span>
         </div>
         <div class="panel-body">
             <div class="alert alert-danger alert-sm" ng-show="isError">
@@ -430,32 +358,84 @@
             <div class="row">
                 <div class="col-lg-12">
                     <form class="form-horizontal" role="form">
-
                         <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Contact No</label>
+                            <label class="col-md-3 control-label small">Name</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control"
-                                       ng-model="customerContactPhone.ContactNumber" ng-disabled="viewOnly">
+                                <input type="text" class="form-control" placeholder="Name"
+                                       ng-model="contact.Name" ng-disabled="viewOnly">
                             </div>
                         </div>
 
                         <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Type Id</label>
+                            <label class="col-md-3 control-label small">Title</label>
                             <div class="col-md-8">
-                                <select class="form-control" placeholder="" ng-disabled="viewOnly"
-                                        ng-change="selectContactType(dataItem.CustomerContactTypeId)"
-                                        ng-model="customerContactPhone.ContactNumberTypeId" ng-options="cCon.Id as cCon.Type for cCon in CustomerContactTypes"></select>
+                                <input type="text" class="form-control" placeholder="Title"
+                                       ng-model="contact.Title" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Email</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Email"
+                                       ng-model="contact.Email" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Alternate Email</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Alternate Email"
+                                       ng-model="contact.AlternateEmail" ng-disabled="viewOnly">
                             </div>
                         </div>
                     </form>
                 </div>
+                <button class="btn btn-sm pull-right" ng-click="actionFormContactPhone('Create',0)">
+                    <span class=" glyphicon glyphicon-plus">
+                    </span>
+                </button>
+                <br />
+                <br />
 
+                <div class="col-lg-12">
+                    <span class="panel-title">
+                        <span class="glyphicons glyphicons-table"></span>
+                        Contact Phone
+                    </span>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="col-md-5"><strong>Contact Number</strong></th>
+                                <th class="col-md-5 "><strong>Type</strong></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr ng-repeat="c in customerContactPhoneList"
+                                ng-click="setSelectedContactPhone($index)">
+                                <td><input class="col-md-pull-10" type="text" ng-model="c.ContactNumber" ng-disabled="viewOnly" /></td>
+                                <td>
+                                    <select class="col-md-pull-10" placeholder="" ng-disabled="viewOnly"
+                                            ng-change="selectContactType(c.ContactNumberTypeId)"
+                                            ng-model="c.ContactNumberTypeId" ng-options="cg.Id as cg.Type for cg in CustomerContactTypes"></select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm pull-right" ng-click="actionFormContactPhone('Delete',$index)">
+                                        <span class="glyphicons glyphicons-circle_minus"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
             </div>
-        </div>
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
-                    ng-click="saveCustomerContactPHone(ContatPhoneAction)">
-                {{ContatPhoneAction === 'Create' ? 'Add' : ContatPhoneAction}}
+                    ng-click="saveCustomerContact(customerContactAction)">
+                {{customerContactAction === 'Create' ? 'Add' : customerContactAction}}
             </button>
 
         </div>

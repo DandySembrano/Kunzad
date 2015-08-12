@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class CustomersController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
+        private int pageSize = 5;
 
         // GET: api/Customers
         public IQueryable<Customer> GetCustomers()
@@ -31,7 +31,7 @@ namespace Kunzad.ApiControllers
                 return db.Customers
                     .Include(c => c.CustomerGroup)
                     .Include(c => c.Industry)
-                    .Include(c => c.CustomerAddresses)
+                    .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
                     .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
                     .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
             }
@@ -40,7 +40,7 @@ namespace Kunzad.ApiControllers
                 return db.Customers
                     .Include(c => c.CustomerGroup)
                     .Include(c => c.Industry)
-                    .Include(c => c.CustomerAddresses)
+                    .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
                     .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
                     .OrderBy(c => c.Name).Take(pageSize);
             }
