@@ -57,6 +57,8 @@ kunzadApp.filter('Decimal', function ($filter) {
     return function (value) {
         if (value == "" || value == null)
             return "";
-        value.toFixed(4);
+        else
+            return value.toFixed(4);
+
     }
 });

@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------------//
 // Filename: trucker-ctrl.js
 // Description: Controller for Trucker
-// Author: Kenneth Ybañez
+// Author: Kenneth Ybañez       06-01-2015
+// Modified By: John Crismund Elumbaring    08-10-2015              
+//    
 //---------------------------------------------------------------------------------//
 
 kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
@@ -12,7 +14,6 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.truckerGridOptions = {};
     $scope.truckerGridOptions.data = [];
     $scope.truckerGridOptions.dataItem;
-    $scope.truckList = [];
     var pageSize = 20;
 
     $scope.isPrevPage = false;
@@ -45,11 +46,11 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.paginatedTrucks = [];
 
         //Initialize truckMaxPage
-        if ($scope.truckList.length >= $scope.truckPageSize) {
-            if (($scope.truckList.length % $scope.truckPageSize) == 0)
-                $scope.truckMaxPage = $scope.truckList.length / $scope.truckPageSize;
+        if ($scope.truckGridOptions.data.length >= $scope.truckPageSize) {
+            if (($scope.truckGridOptions.data.length % $scope.truckPageSize) == 0)
+                $scope.truckMaxPage = $scope.truckGridOptions.data.length / $scope.truckPageSize;
             else
-                $scope.truckMaxPage = Math.ceil($scope.truckList.length / $scope.truckPageSize);
+                $scope.truckMaxPage = Math.ceil($scope.truckGridOptions.data.length / $scope.truckPageSize);
         }
         else
             $scope.truckMaxPage = 1;
@@ -68,13 +69,13 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             }
             $scope.firstPageTrucks = false;
             $scope.previousPageTrucks = false;
-            if ($scope.truckList.length >= $scope.truckPageSize)
+            if ($scope.truckGridOptions.data.length >= $scope.truckPageSize)
                 end = $scope.truckPageSize;
             else
-                end = $scope.truckList.length;
+                end = $scope.truckGridOptions.data.length;
 
             for (i = begin ; i < end; i++) {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
+                $scope.paginatedTrucks.push($scope.truckGridOptions.data[i]);
             }
         }
             //Last Page
@@ -93,9 +94,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             $scope.lastPageTrucks = false;
             $scope.nextPageTrucks = false;
             begin = (truckCurrentPage - 1) * $scope.truckPageSize;
-            end = $scope.truckList.length;
+            end = $scope.truckGridOptions.data.length;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
+                $scope.paginatedTrucks.push($scope.truckGridOptions.data[i]);
             }
         }
             //Previous and Next
@@ -107,9 +108,10 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             begin = (truckCurrentPage - 1) * $scope.truckPageSize;
             end = begin + $scope.truckPageSize;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedTrucks.push($scope.truckList[i]);
+                $scope.paginatedTrucks.push($scope.truckGridOptions.data[i]);
             }
         }
+        console.log($scope.paginatedTrucks)
     };
     //-------------------------------------------------------------------------------
     //Initialize ui-grid options---------------------------------------
@@ -168,6 +170,63 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
             }
         };
     };
+    //----------------------------------------Initialize truck Grid Options------------------------------------------------------
+    $scope.initTruckGridOptions = function () {
+        var columnsTruck = [];
+        $scope.truckHeader = ['Plate Number','Truck Type','Weight Capacity','Volume Capacity', 'No'];
+        $scope.truckKeys = ['PlateNo', 'TruckType.Type', 'TruckType.WeightCapacity', 'TruckType.VolumeCapacity'];
+        $scope.truckKeyType = ['String', 'String', 'Decimal', 'Decimal'];
+
+        //Initialize Number Listing
+        var columnPropertiesTruck = {};
+        columnPropertiesTruck.name = $scope.truckHeader[$scope.truckHeader.length - 1];
+        columnPropertiesTruck.field = 'No';
+        columnPropertiesTruck.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.truckCurrentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.truckCurrentPage - 1) * grid.appScope.truckPageSize)))}}</div>';
+        columnPropertiesTruck.width = 40;
+        columnPropertiesTruck.enableColumnResizing = true;
+        columnPropertiesTruck.enableColumnMenu = false;
+        columnPropertiesTruck.enableColumnMoving = false;
+        columnsTruck.push(columnPropertiesTruck);
+        //Initialize column data
+        for (var i = 0; i < ($scope.truckHeader.length - 1) ; i++) {
+            var columnPropertiesTruck = {};
+            columnPropertiesTruck.name = $scope.truckHeader[i];
+            columnPropertiesTruck.field = $scope.truckKeys[i];
+            //format field value
+            columnPropertiesTruck.cellFilter = $scope.filterValue($scope.truckKeyType[i]);
+            columnsTruck.push(columnPropertiesTruck);
+        }
+        $scope.truckGridOptions = {
+            columnDefs: columnsTruck,
+            rowTemplate: '<div>' +
+                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedTruck(row.entity.Id, row.entity.Name)"  context-menu="grid.appScope.setSelectedTruck(row.entity.Id, row.entity.Name)" data-target= "DataTableVessel"></div>' +
+              '</div>',
+            enableColumnResizing: true,
+            enableGridMenu: true,
+            enableSelectAll: true,
+            exporterCsvFilename: 'myFile.csv',
+            exporterPdfDefaultStyle: { fontSize: 9 },
+            exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+            exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+            exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+            exporterPdfFooter: function (currentPage, pageCount) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfCustomFormatter: function (docDefinition) {
+                docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+                docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+                return docDefinition;
+            },
+            exporterPdfOrientation: 'landscape',
+            exporterPdfPageSize: 'a4',
+            exporterPdfMaxGridWidth: 500,
+            exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
+    };
+    //--------------------------------------------------------------------------------------------------------------
     //Function that will format key value
     $scope.filterValue = function (type) {
         var format;
@@ -218,7 +277,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     var getTruckTypes = function () {
         $http.get("/api/TruckTypes")
             .success(function (data, status) {
-                $scope.TruckTypes = data;
+                $scope.truckTypes = data;
             })
     }
 
@@ -295,12 +354,12 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $http.get("/api/Truckers/" + id)
             .success(function (data, status) {
                 //copy Trucks data
-                $scope.truckerGridOptions.dataItem.Trucks = angular.copy(data.Trucks);
-                $scope.truckList = [];
-                $scope.truckList = angular.copy($scope.truckerGridOptions.dataItem.Trucks);
+                $scope.truckerGridOptions.Trucks = angular.copy(data.Trucks);
+                $scope.truckGridOptions.data = [];
+                $scope.truckGridOptions.data= angular.copy($scope.truckerGridOptions.Trucks);
                 //set truckIdDummy to prevent conflict of Truck Ids
-                if ($scope.truckList.length >= 1)
-                    $scope.truckIdDummy = $scope.truckList[$scope.truckList.length - 1].Id;
+                if ($scope.truckerGridOptions.data.length >= 1)
+                    $scope.truckIdDummy = $scope.truckerGridOptions.data[$scope.truckerGridOptions.data.length - 1].Id;
                 //process trucks pagination
                 $scope.processTruckPagination($scope.truckCurrentPage);
                 spinner.stop();
@@ -318,7 +377,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
         var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
-        dataModel.Trucks = angular.copy($scope.truckList);
+        dataModel.Trucks = angular.copy($scope.truckerGridOptions.data);
 
         for (i = 0; i < dataModel.Trucks.length; i++) {
             //initialize truckerId to 1 as dummy
@@ -340,8 +399,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                     //$scope.truckerGridOptions.dataItem.Id = angular.copy(data.Id);
                     $scope.truckerGridOptions.data.push(data.objParam1);
                     //initialize TruckId
-                    //for (i = 0; i < $scope.truckList.length; i++)
-                    //    $scope.truckList[i].Id = angular.copy(data.Trucks[i].Id);
+                    //for (i = 0; i < $scope.truckerGridOptions.data.length; i++)
+                    //    $scope.truckerGridOptions.data[i].Id = angular.copy(data.Trucks[i].Id);
                     $scope.closeForm();
                     spinner.stop();
                 }
@@ -364,7 +423,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var i = 0, j = 0;
 
         var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
-        dataModel.Trucks = angular.copy($scope.truckList);
+        dataModel.Trucks = angular.copy($scope.truckerGridOptions.data);
         for (i = 0; i < dataModel.Trucks.length; i++) {
             //delete if truckId if newly added truck
             if (dataModel.Trucks[i].Id == null)
@@ -384,8 +443,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                     $scope.truckerGridOptions.data[$scope.selected] = [];
                     $scope.truckerGridOptions.data[$scope.selected] = angular.copy(data.objParam1);
                     //initialize TruckId
-                    //for (i = 0; i < $scope.truckList.length; i++) {
-                    //    $scope.truckList[i].Id = angular.copy($scope.truckerGridOptions.data[$scope.selected].Trucks[i].Id);
+                    //for (i = 0; i < $scope.truckerGridOptions.data.length; i++) {
+                    //    $scope.truckerGridOptions.data[i].Id = angular.copy($scope.truckerGridOptions.data[$scope.selected].Trucks[i].Id);
                     //}
                     $scope.closeForm();
                     spinner.stop();
@@ -441,9 +500,11 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.selectedTab = $scope.tabPages[0];
         $scope.actionMode = action;
         $scope.selectedTruckerIndex = $scope.searchTrucker($scope.truckerIdHolder);
+        $scope.truckGridOptions.data =[];
+
         switch ($scope.actionMode) {
             case "Create":
-                $scope.truckList = [];
+                $scope.truckerGridOptions.data = [];
                 $scope.initDataItem();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
@@ -591,9 +652,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
 
     $scope.selectTruckType = function (id) {
         var truckType = null;
-        for (i = 0; i < $scope.TruckTypes.length; i++) {
-            if ($scope.TruckTypes[i].Id === id) {
-                truckType = $scope.TruckTypes[i]
+        for (i = 0; i < $scope.truckTypes.length; i++) {
+            if ($scope.truckTypes[i].Id === id) {
+                truckType = $scope.truckTypes[i]
             }
         }
         $scope.Truck.TruckType = truckType;
@@ -607,7 +668,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
         $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
         $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
-        $scope.truckList.push($scope.Truck);
+        $scope.truckerGridOptions.data.push($scope.Truck);
         $scope.processTruckPagination($scope.truckCurrentPage, 'LASTPAGE');
         $scope.closeModalForm();
     };
@@ -617,14 +678,14 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
         $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
         $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
-        $scope.truckList[$scope.selectedTruckIndex] = angular.copy($scope.Truck);
+        $scope.truckerGridOptions.data[$scope.selectedTruckIndex] = angular.copy($scope.Truck);
         $scope.processTruckPagination($scope.truckCurrentPage, '');
         $scope.closeModalForm();
     };
 
     //Delete Truck
     $scope.apiDeleteTruck = function () {
-        $scope.truckList.splice($scope.selectedTruckIndex, 1);
+        $scope.truckerGridOptions.data.splice($scope.selectedTruckIndex, 1);
         $scope.processTruckPagination($scope.truckCurrentPage, '');
         $scope.closeModalForm();
     }
@@ -632,8 +693,8 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     //search truck
     $scope.searchTruck = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.truckList.length; i++) {
-            if (id == $scope.truckList[i].Id) {
+        for (i = 0; i < $scope.truckerGridOptions.data.length; i++) {
+            if (id == $scope.truckerGridOptions.data[i].Id) {
                 return i;
             }
         }
@@ -654,16 +715,16 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.openModalForm('#modal-panel-truck')
                 break;
             case "Edit":
-                $scope.Truck = angular.copy($scope.truckList[$scope.selectedTruckIndex]);
+                $scope.Truck = angular.copy($scope.truckerGridOptions.data[$scope.selectedTruckIndex]);
                 $scope.openModalForm('#modal-panel-truck')
                 break;
             case "Delete":
-                $scope.Truck = $scope.truckList[$scope.selectedTruckIndex];
+                $scope.Truck = $scope.truckerGridOptions.data[$scope.selectedTruckIndex];
                 $scope.viewOnly = false;
                 $scope.openModalForm('#modal-panel-truck')
                 break;
             case "View":
-                $scope.Truck = $scope.truckList[$scope.selectedTruckIndex];
+                $scope.Truck = $scope.truckerGridOptions.data[$scope.selectedTruckIndex];
                 $scope.viewOnly = true;
                 $scope.openModalForm('#modal-panel-truck')
                 break;
@@ -707,6 +768,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
         $scope.initTruckerGridOptions();
+        $scope.initTruckGridOptions();
         getTruckTypes();
 
     }
