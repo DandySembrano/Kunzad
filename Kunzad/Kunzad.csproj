@@ -2955,8 +2955,8 @@
     <Content Include="Views\References\ShippingLines.cshtml" />
     <Content Include="Views\References\BusinessUnit.cshtml" />
     <Content Include="Views\References\ServiceableArea.cshtml" />
-    <Content Include="Views\Shared\_ContextMenu2.cshtml" />
-    <Content Include="Views\Shared\_DataTableLayout4.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuCustomer.cshtml" />
+    <Content Include="Views\Shared\_DataTableCustomer.cshtml" />
     <Content Include="Views\Shared\_ContextMenuTruck.cshtml" />
     <Content Include="Views\Shared\_ContextMenuVessel.cshtml" />
     <Content Include="Views\Shared\_ContextMenuVoyage.cshtml" />
