@@ -16,7 +16,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.vesselGridOptions.data = [];
     $scope.vesselItem;
     $scope.voyageGridOptions = {};
-    $scope.voyageGridOptions.data = [];
+    $scope.voyageList = [];
     $scope.voyageItem;
     $scope.showVoyage = false;
     $scope.isPrevPage = false;
@@ -49,115 +49,6 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.slIDholder = 0;
     $scope.vesselIDholder = 0;
     $scope.selectedSLIndex = null;
-    //------------------------------------------------------------------
-    //---------------------OrderBy for Voyage---------------------------
-    $scope.voyageIDholder = 0;
-    $scope.voyageCriteria = 'VoyageNo';
-    $scope.voyageOrderByDesc = true;
-    $scope.voyageOrderByAsc = false;
-    $scope.processVoyageOrderBy = function (criteria) {
-        switch (criteria) {
-            case 'VoyageNo':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'VoyageNo';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-VoyageNo';
-                }
-                break;
-            case 'BusinessUnitNameOrigin':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'BusinessUnitNameOrigin[0].Name';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-BusinessUnitNameOrigin[0].Name';
-                }
-                break;
-            case 'BusinessUnitNameDestination':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'BusinessUnitNameDestination[0].Name';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-BusinessUnitNameDestination[0].Name';
-                }
-                break;
-            case 'EstimatedDepartureDate':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'EstimatedDepartureDate || EstimatedDepartureTime';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-EstimatedDepartureDate || -EstimatedDepartureTime';
-                }
-                break;
-            case 'EstimatedArrivalDate':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'EstimatedArrivalDate || EstimatedArrivalTime';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-EstimatedArrivalDate || -EstimatedArrivalTime';
-                }
-                break;
-            case 'DepartureDate':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'DepartureDate || DepartureTime';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-DepartureDate || -DepartureTime';
-                }
-                break;
-            case 'ArrivalDate':
-                //Ascending
-                if ($scope.voyageOrderByDesc == true) {
-                    $scope.voyageOrderByDesc = false;
-                    $scope.voyageOrderByAsc = true;
-                    criteria = 'ArrivalDate || ArrivalTime';
-                }
-                    //Descending
-                else {
-                    $scope.voyageOrderByDesc = true;
-                    $scope.voyageOrderByAsc = false;
-                    criteria = '-ArrivalDate || -ArrivalTime';
-                }
-                break;
-        }
-        $scope.voyageCriteria = criteria;
-    };
     //------------------------------------------------------------------
     //--------------------------Vessel Pagination-----------------------
     $scope.vesselCurrentPage = 1;
@@ -243,19 +134,19 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     $scope.voyageCurrentPage = 1;
     $scope.voyagePageSize = 20;
     $scope.voyageMaxPage = 0;
-    $scope.paginatedVoyage = [];
+    $scope.voyageGridOptions.data = [];
     $scope.processVoyagePagination = function (voyageCurrentPage, action) {
         $scope.firstPageVoyage = false;
         $scope.lastPageVoyage = false;
         $scope.previousPageVoyage = false;
         $scope.nextPageVoyage = false;
         $scope.filteredVoyage = [];
-        $scope.paginatedVoyage = [];
+        $scope.voyageGridOptions.data = [];
 
         var i = 0;
-        for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-            if ($scope.vesselIdHolder == $scope.voyageGridOptions.data[i].VesselId)
-                $scope.filteredVoyage.push($scope.voyageGridOptions.data[i]);
+        for (i = 0; i < $scope.voyageList.length; i++) {
+            if ($scope.vesselIdHolder == $scope.voyageList[i].VesselId)
+                $scope.filteredVoyage.push($scope.voyageList[i]);
         }
         //Initialize voyageMaxPage
         if ($scope.filteredVoyage.length >= $scope.voyagePageSize) {
@@ -287,7 +178,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 end = $scope.filteredVoyage.length;
 
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVoyage.push($scope.filteredVoyage[i]);
+                $scope.voyageGridOptions.data.push($scope.filteredVoyage[i]);
             }
         }
             //Last Page
@@ -308,7 +199,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             begin = (voyageCurrentPage - 1) * $scope.voyagePageSize;
             end = $scope.filteredVoyage.length;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVoyage.push($scope.filteredVoyage[i]);
+                $scope.voyageGridOptions.data.push($scope.filteredVoyage[i]);
             }
         }
             //Previous and Next
@@ -320,7 +211,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
             begin = (voyageCurrentPage - 1) * $scope.voyagePageSize;
             end = begin + $scope.voyagePageSize;
             for (i = begin ; i < end; i++) {
-                $scope.paginatedVoyage.push($scope.filteredVoyage[i]);
+                $scope.voyageGridOptions.data.push($scope.filteredVoyage[i]);
             }
         }
     };
@@ -561,7 +452,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         var i = 0;
         $http.get("/api/ShippingLines?page=" + page)
             .success(function (data, status) {
-                //initialize country
+                //initialize shipping line
                 $scope.shippingLineGridOptions.data = data;
                 $scope.currentPage = page;
                 if (page <= 1) {
@@ -652,21 +543,21 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         var i = 0;
         $http.get("/api/VesselVoyages?shippingLineId=" + id)
         .success(function (data, status) {
-            $scope.voyageGridOptions.data = [];
+            $scope.voyageList = [];
             //initialize Vessel Voyages
-            $scope.voyageGridOptions.data = angular.copy(data);
+            $scope.voyageList = angular.copy(data);
             //format date fields
-            for (i = 0; i < $scope.voyageGridOptions.data.length; i++)
+            for (i = 0; i < $scope.voyageList.length; i++)
             {
-                $scope.voyageGridOptions.data[i].EstimatedDepartureDate = $filter('date')($scope.voyageGridOptions.data[i].EstimatedDepartureDate, "MM/dd/yyyy");
-                $scope.voyageGridOptions.data[i].EstimatedArrivalDate = $filter('date')($scope.voyageGridOptions.data[i].EstimatedArrivalDate, "MM/dd/yyyy");
-                $scope.voyageGridOptions.data[i].DepartureDate = $filter('date')($scope.voyageGridOptions.data[i].DepartureDate, "MM/dd/yyyy");
-                $scope.voyageGridOptions.data[i].ArrivalDate = $filter('date')($scope.voyageGridOptions.data[i].ArrivalDate, "MM/dd/yyyy");
+                $scope.voyageList[i].EstimatedDepartureDate = $filter('date')($scope.voyageList[i].EstimatedDepartureDate, "MM/dd/yyyy");
+                $scope.voyageList[i].EstimatedArrivalDate = $filter('date')($scope.voyageList[i].EstimatedArrivalDate, "MM/dd/yyyy");
+                $scope.voyageList[i].DepartureDate = $filter('date')($scope.voyageList[i].DepartureDate, "MM/dd/yyyy");
+                $scope.voyageList[i].ArrivalDate = $filter('date')($scope.voyageList[i].ArrivalDate, "MM/dd/yyyy");
             }
             //set voyageIdDummy to prevent conflict of Voyage Ids
-            if ($scope.voyageGridOptions.data.length >= 1)
+            if ($scope.voyageList.length >= 1)
             {
-                $scope.voyageIdDummy = $scope.voyageGridOptions.data[$scope.voyageGridOptions.data.length - 1].Id;
+                $scope.voyageIdDummy = $scope.voyageList[$scope.voyageList.length - 1].Id;
             }
             spinner.stop();
         })
@@ -684,10 +575,10 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         //---------------------------------------customize object for easy saving of data------------------------------
         $scope.shippingLineItem.Vessels = angular.copy($scope.vesselGridOptions.data);
         for (j = 0; j < $scope.shippingLineItem.Vessels.length; j++) {
-            for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-                if ($scope.shippingLineItem.Vessels[j].Id == $scope.voyageGridOptions.data[i].VesselId)
+            for (i = 0; i < $scope.voyageList.length; i++) {
+                if ($scope.shippingLineItem.Vessels[j].Id == $scope.voyageList[i].VesselId)
                     //insert Voyage
-                    $scope.shippingLineItem.Vessels[j].VesselVoyages.push($scope.voyageGridOptions.data[i]);
+                    $scope.shippingLineItem.Vessels[j].VesselVoyages.push($scope.voyageList[i]);
             }
         }
         var shippingLineModel = angular.copy($scope.shippingLineItem);
@@ -738,10 +629,10 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         for (j = 0; j < $scope.shippingLineItem.Vessels.length; j++) {
             //reset Vessel Voyages
             $scope.shippingLineItem.Vessels[j].VesselVoyages = [];
-            for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-                if ($scope.shippingLineItem.Vessels[j].Id == $scope.voyageGridOptions.data[i].VesselId)
+            for (i = 0; i < $scope.voyageList.length; i++) {
+                if ($scope.shippingLineItem.Vessels[j].Id == $scope.voyageList[i].VesselId)
                     //insert Voyages
-                    $scope.shippingLineItem.Vessels[j].VesselVoyages.push($scope.voyageGridOptions.data[i]);
+                    $scope.shippingLineItem.Vessels[j].VesselVoyages.push($scope.voyageList[i]);
             }
         }
         var shippingLineModel = angular.copy($scope.shippingLineItem);
@@ -841,7 +732,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 $scope.vesselIdDummy = 0;
                 $scope.voyageIdDummy = 0;
                 $scope.vesselGridOptions.data = [];
-                $scope.voyageGridOptions.data = [];
+                $scope.voyageList = [];
                 $scope.initializeShippingLineItem();
                 //$scope.initializeHeaderName();
                 $scope.viewOnly = false;
@@ -950,9 +841,9 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //delete voyage if state/province is deleted
     $scope.deleteVoyage = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-            if (id == $scope.voyageGridOptions.data[i].VesselId) {
-                $scope.voyageGridOptions.data.splice(i, 1);
+        for (i = 0; i < $scope.voyageList.length; i++) {
+            if (id == $scope.voyageList[i].VesselId) {
+                $scope.voyageList.splice(i, 1);
             }
         }
     };
@@ -960,8 +851,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //search vessel in voyage list
     $scope.searchVessel = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-            if (id == $scope.voyageGridOptions.data[i].VesselId) {
+        for (i = 0; i < $scope.voyageList.length; i++) {
+            if (id == $scope.voyageList[i].VesselId) {
                 return true;
             }
         }
@@ -1161,8 +1052,8 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
 
     function searchVoyage(id) {
         var i = 0;
-        for (i = 0; i < $scope.voyageGridOptions.data.length; i++) {
-            if (id == $scope.voyageGridOptions.data[i].Id)
+        for (i = 0; i < $scope.voyageList.length; i++) {
+            if (id == $scope.voyageList[i].Id)
                 return i;
         }
     };
@@ -1182,14 +1073,14 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "Edit":
                 $scope.voyageItem = [];
-                $scope.voyageItem = angular.copy($scope.voyageGridOptions.data[$scope.selectedVoyageActionIndex]);
+                $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
                 //initialize holders
                 $scope.initializeHolders();
                 $scope.openModalForm('#modal-panel-voyage')
                 break;
             case "Delete":
                 $scope.voyageItem = [];
-                $scope.voyageItem = angular.copy($scope.voyageGridOptions.data[$scope.selectedVoyageActionIndex]);
+                $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
                 //initialize holders
                 $scope.initializeHolders();
                 $scope.viewOnly = false;
@@ -1197,7 +1088,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
                 break;
             case "View":
                 $scope.voyageItem = [];
-                $scope.voyageItem = angular.copy($scope.voyageGridOptions.data[$scope.selectedVoyageActionIndex]);
+                $scope.voyageItem = angular.copy($scope.voyageList[$scope.selectedVoyageActionIndex]);
                 //initialize holders
                 $scope.initializeHolders();
                 $scope.viewOnly = true;
@@ -1253,7 +1144,7 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
         $scope.voyageItem.VesselId = $scope.vesselIdHolder;
         $scope.voyageIdDummy = $scope.voyageIdDummy + 1;
         $scope.voyageItem.Id = $scope.voyageIdDummy;
-        $scope.voyageGridOptions.data.push($scope.voyageItem);
+        $scope.voyageList.push($scope.voyageItem);
         $scope.showVoyageHeader = true;
         $scope.processVoyagePagination($scope.voyageCurrentPage, 'LASTPAGE');
         $scope.closeModalForm();
@@ -1262,14 +1153,14 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     //Update Voyage
     $scope.apiUpdateVoyage = function () {
         $scope.initializeDateTime();
-        $scope.voyageGridOptions.data[$scope.selectedVoyageActionIndex] = angular.copy($scope.voyageItem);
+        $scope.voyageList[$scope.selectedVoyageActionIndex] = angular.copy($scope.voyageItem);
         $scope.processVoyagePagination($scope.voyageCurrentPage, '');
         $scope.closeModalForm();
     };
 
     //Delete Voyage
     $scope.apiDeleteVoyage = function () {
-        $scope.voyageGridOptions.data.splice($scope.selectedVoyageActionIndex, 1);
+        $scope.voyageList.splice($scope.selectedVoyageActionIndex, 1);
         $scope.closeModalForm();
         if ($scope.searchVessel($scope.vesselIdHolder))
             $scope.showVoyageHeader = true;
