@@ -34,6 +34,8 @@ namespace Kunzad.ApiControllers
                     .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
                     .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
                     .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+
+
             }
             else
             {
@@ -217,9 +219,9 @@ namespace Kunzad.ApiControllers
                     throw;
                 }
             }catch(Exception ex){
-                
-                return null;
+                ModelState.AddModelError("",ex.Message);
             }
+            return BadRequest(ModelState);
 
         }
 
@@ -259,7 +261,8 @@ namespace Kunzad.ApiControllers
 
                 return CreatedAtRoute("DefaultApi", new { id = customer.Id }, customer);
             }catch(Exception ex){
-                return null;
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
             }
         }
 
@@ -285,7 +288,8 @@ namespace Kunzad.ApiControllers
                 
                 return Ok(customer);
             }catch(Exception ex){
-                return null;
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
             }
         }
 

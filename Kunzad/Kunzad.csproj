@@ -2386,6 +2386,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Address.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AirFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>

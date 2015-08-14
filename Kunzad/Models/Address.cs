@@ -12,28 +12,17 @@ namespace Kunzad.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CityMunicipality
+    public partial class Address
     {
-        public CityMunicipality()
-        {
-            this.ServiceableAreas = new HashSet<ServiceableArea>();
-            this.CustomerAddresses = new HashSet<CustomerAddress>();
-            this.Truckers = new HashSet<Trucker>();
-            this.Couriers = new HashSet<Courier>();
-        }
-    
         public int Id { get; set; }
-        public string Name { get; set; }
-        public int StateProvinceId { get; set; }
+        public string Line1 { get; set; }
+        public string LIne2 { get; set; }
+        public string LIne3 { get; set; }
+        public int CityMunicipalityId { get; set; }
+        public string PostalCode { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
-    
-        public virtual StateProvince StateProvince { get; set; }
-        public virtual ICollection<ServiceableArea> ServiceableAreas { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
-        public virtual ICollection<Trucker> Truckers { get; set; }
-        public virtual ICollection<Courier> Couriers { get; set; }
     }
 }
