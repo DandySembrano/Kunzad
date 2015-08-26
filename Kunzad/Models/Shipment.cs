@@ -51,6 +51,10 @@ namespace Kunzad.Models
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
+        public Nullable<System.DateTime> PickUpDate { get; set; }
+        public Nullable<System.TimeSpan> PickUpTime { get; set; }
+        public string DeliverToContactNumber { get; set; }
+        public string Origin { get; set; }
     
         public virtual ICollection<AirFreightShipment> AirFreightShipments { get; set; }
         public virtual BusinessUnit BusinessUnit { get; set; }
