@@ -14,6 +14,11 @@ namespace Kunzad.Controllers
             return View();
         }
 
+        public ActionResult Booking()
+        {
+            return View();
+        }
+
         public ActionResult Customers()
         {
             return View();

@@ -9,6 +9,11 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
                 templateUrl: '/Home/_Main'
             })
 
+            .when('/booking', {
+                templateUrl: '/References/booking',
+                controller: 'BookingController'
+            })
+
             .when('/customers', {
                 templateUrl: '/References/Customers',
                 controller: 'CustomerController'

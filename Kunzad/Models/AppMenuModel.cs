@@ -26,7 +26,7 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Create New", "glyphicons glyphicons-circle_plus", "#"));
+            m.MenuItems.Add(new MenuItem("Create New", "glyphicons glyphicons-circle_plus", "#/booking"));
             m.MenuItems.Add(new MenuItem("Outbound", "glyphicons glyphicons-inbox_out", "#"));
             m.MenuItems.Add(new MenuItem("Inbound", "glyphicons glyphicons-inbox_in", "#"));
             menuGroup.MenuGroupItems.Add(m);

@@ -27,6 +27,14 @@ kunzadApp.filter('Boolean', function ($filter) {
             return "No";
     }
 });
+kunzadApp.filter('Bit', function ($filter) {
+    return function (value) {
+        if (value == 1)
+            return "Yes";
+        else
+            return "No";
+    }
+});
 kunzadApp.filter('Default', function ($filter) {
     return function (value) {
         if (value == "" || value == null)

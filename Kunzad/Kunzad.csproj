@@ -364,6 +364,7 @@
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\airline-ctrl.js" />
     <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\booking-ctrl.js" />
     <Content Include="Scripts\app\businessunit-ctrl.js" />
     <Content Include="Scripts\app\businessunittype-ctrl.js" />
     <Content Include="Scripts\app\contactnotype-ctrl.js" />
@@ -2369,6 +2370,8 @@
     <Compile Include="ApiControllers\IndustriesController.cs" />
     <Compile Include="ApiControllers\ServiceableAreasController.cs" />
     <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
+    <Compile Include="ApiControllers\ServicesController.cs" />
+    <Compile Include="ApiControllers\ShipmentsController.cs" />
     <Compile Include="ApiControllers\ShipmentTypesController.cs" />
     <Compile Include="ApiControllers\ShippingLinesController.cs" />
     <Compile Include="ApiControllers\StateProvincesController.cs" />
@@ -2385,9 +2388,6 @@
     <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Address.cs">
-      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AirFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
@@ -2986,6 +2986,8 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
+    <Content Include="Views\References\Booking.cshtml" />
+    <Content Include="Views\Shared\_TransactionLayout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

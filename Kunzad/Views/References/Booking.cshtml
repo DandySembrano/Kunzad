@@ -1,0 +1,371 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+
+<!-- General -->
+@section tab1Content{
+    <div class="alert alert-danger alert-sm" ng-show="isError">
+        <i class="fa fa-remove pr10"></i>
+        <strong>ERROR!</strong>    {{errorMessage}}
+    </div>
+    @*Column 1*@
+    <div class="col-lg-6">
+        <form class="form-horizontal" role="form">
+            @*Shipment No*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Shipment No</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="System Generated"
+                           ng-model="shipmentItem.Id"
+                           ng-disabled="true">
+                </div>
+            </div>
+            @*Business Unit*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Business Unit</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.BusinessUnit"
+                           ng-disabled="viewOnly"
+                           ng-click="showBusinessUnit()">
+                </div>
+            </div>
+            @*Service*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Service</label>
+                <div class="col-md-8">
+                    <select class="form-control"
+                            placeholder=""
+                            ng-disabled="viewOnly"
+                            ng-model="shipmentItem.ServiceId"
+                            ng-options="item.Id as item.Name for item in serviceList"></select>
+                </div>
+            </div>
+            @*Shipment Type*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Shipment Type</label>
+                <div class="col-md-8">
+                    <select class="form-control"
+                            placeholder=""
+                            ng-disabled="viewOnly"
+                            ng-model="shipmentItem.ShipmentTypeId"
+                            ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
+                </div>
+            </div>    
+            @*Payment Mode*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Payment Mode</label>
+                <div class="col-md-8">
+                    <select class="form-control"
+                            placeholder=""
+                            ng-disabled="viewOnly"
+                            ng-model="shipmentItem.PaymentMode"
+                            ng-options="item.Id as item.Name for item in paymentModeList"></select>
+                </div>
+            </div> 
+            <div class="form-group form-group-sm">
+                <label class="col-md-6 control-label small text-left"><strong>Customer Information</strong></label>
+            </div>
+            @*Customer Code*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Code</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.Customer"
+                           ng-disabled="viewOnly"
+                           ng-click="showCustomerList()">
+                </div>
+            </div>
+            @*Customer Name*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Name</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.CustomerName"
+                           ng-disabled="true">
+                </div>
+            </div>
+            @*Customer Contact No*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Contact No</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.CustomerContactNo"
+                           ng-disabled="true">
+                </div>
+            </div>
+            @*Customer Address*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Address</label>
+                <div class="col-md-8">
+                    <textarea rows="3" style="height:auto;"
+                              class="form-control"
+                              placeholder=""
+                              ng-model="shipmentItem.CustomerAddress"
+                              ng-disabled="true"></textarea>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-6 control-label small text-left"><strong>Consignee Information</strong></label>
+            </div>
+            @*Consginee*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Name</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.DeliverTo"
+                           ng-disabled="viewOnly">
+                </div>
+            </div>
+            @*Consignee Contact No*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Contact No</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.DeliverToContactNo"
+                           ng-disabled="viewOnly">
+                </div>
+            </div>
+            @*Consignee Address*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Address</label>
+                <div class="col-md-8">
+                    <textarea rows="3" style="height:auto;"
+                              class="form-control"
+                              placeholder=""
+                              ng-model="shipmentItem.DeliveryAddress"
+                              ng-disabled="viewOnly"></textarea>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-6 control-label small text-left"><strong>Bil To Customer Information</strong></label>
+            </div>
+            @*Bill To Customer Code*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Code</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.BillToCustomerCode"
+                           ng-disabled="viewOnly"
+                           ng-click="showCustomerList()">
+                </div>
+            </div>
+            @*Bill To Customer Name*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Name</label>
+                <div class="col-md-8">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.BillToCustomerName"
+                           ng-disabled="true">
+                </div>
+            </div>  
+        </form>
+    </div>
+    @*Column 2*@
+    <div class="col-lg-6">
+        <form class="form-horizontal" role="form">             
+            @*Is Revenue*@
+            <div class="form-group form-group-sm" style="padding-bottom:5px;">
+                <label class="col-md-3 control-label small"></label>
+                <div class="col-md-8">
+                    <div class="checkbox-custom">
+                        <input id="isRevenue"
+                               type="checkbox"
+                               ng-model="shipmentItem.IsRevenue"
+                               ng-disabled="viewonly">
+                        <label for="isRevenue"
+                               class="small">Is Revenue?</label>
+                    </div>
+                </div>
+            </div>
+            @*Revenue*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Revenue</label>
+                <div class="col-md-8">
+                    <input type="number"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.Revenue"
+                           ng-disabled="(viewOnly == false && shipmentItem.IsRevenue == true) ? false : true">
+                </div>
+            </div>
+            @*Is Tax Inclusivee*@
+            <div class="form-group form-group-sm" style="padding-bottom:5px;">
+                <label class="col-md-3 control-label small"></label>
+                <div class="col-md-8">
+                    <div class="checkbox-custom">
+                        <input id="IsTaxInclusive"
+                               type="checkbox"
+                               ng-model="shipmentItem.IsTaxInclusive"
+                               ng-disabled="viewOnly">
+                        <label for="IsTaxInclusive"
+                               class="small">Is Tax Inclusive?</label>
+                    </div>
+                </div>
+            </div>
+            @*Tax Amount*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Tax Amount</label>
+                <div class="col-md-8">
+                    <input type="number"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.TaxAmount"
+                           ng-disabled="(viewOnly == false && shipmentItem.IsTaxInclusive == true) ? false : true">
+                </div>
+            </div>
+            @*Tax Percentage*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Tax Percentage</label>
+                <div class="col-md-8">
+                    <input type="number"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.TaxPercentage"
+                           ng-disabled="(viewOnly == false && shipmentItem.IsTaxInclusive == true) ? false : true">
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-6 control-label small text-left"><strong>Cargo Details</strong></label>
+            </div>            
+            @*Is Consolidated, IsMultipleDelivery*@
+            <div class="form-group form-group-sm" style="padding-bottom:5px;">
+                <div class="row">
+                    <label class="col-md-3 control-label small"></label>
+                    <div class="col-md-8">
+                        <div class="checkbox-custom">
+                            <input id="isConsolidated"
+                                   type="checkbox"
+                                   ng-model="shipmentItem.IsConsolidation"
+                                   ng-disabled="viewonly">
+                            <label for="isConsolidated"
+                                   class="small">Is Consolidated?</label>
+                            <input id="isMultipleDelivery"
+                                   type="checkbox"
+                                   ng-model="shipmentItem.IsMultipleDelivery"
+                                   ng-disabled="viewOnly">
+                            <label for="isMultipleDelivery"
+                                   class="small">Is Multiple Delivery?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*Quantity*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Total Qty</label>
+                <div class="col-md-8">
+                    <input type="number"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.Quantity"
+                           ng-disabled="viewOnly">
+                </div>
+            </div>
+            @*Total CBM*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Total CBM</label>
+                <div class="col-md-8">
+                    <input type="number"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="shipmentItem.TotalCBM"
+                           ng-disabled="viewOnly">
+                </div>
+            </div>
+            @*Cargo Description*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Description</label>
+                <div class="col-md-8">
+                    <textarea rows="3" style="height:auto;"
+                              class="form-control"
+                              placeholder=""
+                              ng-model="shipmentItem.Description"
+                              ng-disabled="viewOnly"></textarea>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-6 control-label small text-left"><strong>Pick Up Details</strong></label>
+            </div>
+            @*Pick Up Date*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Date</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='pickupdate'
+                               class="form-control"
+                               ng-model="shipmentItem.TargetPickupDate"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @*Pick Up Time*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Time</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='pickuptime'
+                               class="form-control"
+                               ng-model="shipmentItem.TargetPickupTime"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @*Pick Up Address*@
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Address</label>
+                <div class="col-md-8">
+                    <textarea rows="3" style="height:auto;"
+                              class="form-control"
+                              placeholder=""
+                              ng-model="shipmentItem.OriginAddress"
+                              ng-disabled="viewonly"></textarea>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    $('#pickupdate').datetimepicker({
+                        format: 'MM-DD-YYYY',
+                        sideBySide: false,
+                        pickTime: false,
+                        //minDate: moment()
+                    })
+                    $('#pickuptime').datetimepicker({
+                        format: 'HH:mm',
+                        sideBySide: false,
+                        pickDate: false
+                    })
+                });
+            </script>
+        </form>
+    </div>
+}
+<!-- List -->
+@section tab2Content{
+    <div ui-grid="shipmentGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+}
