@@ -371,7 +371,7 @@
 }
 
 <!-- Customer List Modal -->
-<div id="customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+<div id="customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -389,7 +389,7 @@
 </div>
 <!--End of Customer List Modal -->
 <!-- Bill To Customer List Modal -->
-<div id="billto-customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+<div id="billto-customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -407,7 +407,7 @@
 </div>
 <!--End of Bill To Customer List Modal -->
 <!-- Business Unit List Modal -->
-<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -420,16 +420,24 @@
                     <table class="myTableContent table-bordered">
                         <thead>
                             <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-10 small">Code</th>
-                                <th class="myTableCell cell-10 small">Name</th>
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Code</th>
+                                <th class="myTableCell cell-10 small text-center">Name</th>
+                                <th class="myTableCell cell-10 small text-center">Operating Site?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Airport?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Seaport?</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="myTableRow"
                                 ng-repeat="bu in businessUnitList"
                                 ng-click="closeBusinessUnitList(bu)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
                                 <td class="myTableCell cell-10 small">{{bu.Code}}</td>
                                 <td class="myTableCell cell-10 small">{{bu.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.isOperatingSite == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasAirPort == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasSeaPort == true ? 'Yes' : 'No')}}</td>
                             </tr>
                         </tbody>
                     </table>
