@@ -3,41 +3,9 @@
 }
 <!-- Country List/DataTable -->
 @section tableContent{
-    <div class="myTableContainter">
-        <div class="myTableContent">
-            <!--Header-->
-            <div class="myTableRow-header text-dark small">
-                <div class="myTableCell cell-seqno small text-center"><strong>No</strong></div>
-                <div class="myTableCell cell-fixed-10 small text-left" ng-click="processCountrySorting('Code')">
-                    <strong>Code</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="countryCriteria === 'Code' || countryCriteria === '-Code' ? orderByCountryDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="countryCriteria === 'Code' || countryCriteria === '-Code' ? orderByCountryAsc: false"></span>
-                </div>
-                <div class="myTableCell cell-9 small text-left" ng-click="processCountrySorting('Name')">
-                    <strong>Name</strong>
-                    <span class="glyphicon glyphicon-chevron-down"
-                          ng-show="countryCriteria === 'Name' || countryCriteria === '-Name' ? orderByCountryDesc: false"></span>
-                    <span class="glyphicon glyphicon-chevron-up"
-                          ng-show="countryCriteria === 'Name' || countryCriteria === '-Name' ? orderByCountryAsc: false"></span>
-                </div>
-            </div>
-            <!--Details-->
-            <div class="myTableRow" 
-                 ng-repeat="c in country | orderBy:countryCriteria"
-                 ng-click="setSelected($index, c.Id)"
-                 context-menu="setSelected($index, c.Id)"
-                 data-target="DataTableMenu">
-                <div class="myTableCell cell-seqno small text-center">
-                    {{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}
-                </div>
-                <div class="myTableCell cell-fixed-10 small text-left">{{c.Code}}</div>
-                <div class="myTableCell cell-9 small text-left">{{c.Name}}</div>
-            </div>
-        </div>
-    </div>
+    <div ui-grid="gridOptionsCountry" ui-grid-exporter class="grid"></div>
 }
+
 <!-- Country/General Form -->
 @section tab1Content{
     <div class="row" ng-show="selectedTab === tabPages[0]">
@@ -72,146 +40,29 @@
     </div>
 }
 
-<!-- State/Province Form-->
+<!-- State/Province -->
 @section tab2Content{
-    <div class="row" ng-show="selectedTab === tabPages[1] ">
-        <div class="col-lg-12">
-            <div class="row">
-                <div class="padding-right-30">
-                    <button class="btn btn-sm pull-right" ng-click="openStateProvinceForm('Create')">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </button>
-                </div>
-            </div><br />
-            <div class="myTableContainter">
-                <div class="myTableContent">
-                    <!--Header-->
-                    <div class="myTableRow-header text-dark small" ng-show="stateProvince.length > 0">
-                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                        <div class="myTableCell cell-8 small" ng-click="processSPSorting('Name')">
-                            <strong>Name</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="orderBySPNameDesc"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="orderBySPNameAsc"></span>
-                        </div>
-                    </div>
-                    <!--Details-->
-                    <div class="myTableRow"
-                         ng-repeat="item in paginatedStateProvince | orderBy:spCriteria"
-                         context-menu="setSelectedStateProvince(item.Id, item.Name)"
-                         data-target="DataTableStateProvince">
-                        <div class="myTableCell cell-seqno small text-center">{{stateProvinceCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((stateProvinceCurrentPage - 1) * stateProvincePageSize))}}</div>
-                        <div class="myTableCell cell-8 small">{{item.Name}}</div>
-                    </div>
-                </div>
-            </div><br />
-            <!--Pagination Buttons-->
-            <div class="myTableContainter" ng-show="paginatedStateProvince.length > 0">
-                <div class="myTableContent">
-                    <div class="myTableRow-no-border text-right">
-                        <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage - 1), '')"
-                                        ng-disabled="!previousPageStateProvince">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-default btn-sm"
-                                        type="button"
-                                        ng-disabled="true">
-                                    {{ stateProvinceCurrentPage }}
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processStateProvincePagination(stateProvinceCurrentPage = (stateProvinceCurrentPage + 1), '')"
-                                        ng-disabled="!nextPageStateProvince">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div ng-show="selectedTab === tabPages[1]">
+        <button class="btn btn-sm pull-right" ng-click="openStateProvinceForm('Create')">
+            <span class="glyphicon glyphicon-plus">
+            </span>
+        </button>
+        <br />
+        <br />
+        <div ui-grid="gridOptionsStateProvince" ui-grid-exporter class="grid"></div>
     </div>
 }
+
 <!-- City/Municipality Form-->
 @section tab3Content{
-    <div class="row" ng-show="selectedTab === tabPages[2]">
-        <div class="col-lg-12">
-            <div class="row">
-                <div class="padding-right-30">
-                    <button class="btn btn-sm pull-right" ng-click="openCityMunicipalityForm('Create')">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </button>
-                </div>
-                <div class="myTableCell-10 text-dark" style="font-size: 20px; padding-left:30px">
-                    {{spNameHolder}}
-                </div>
-
-            </div><br />
-            <div class="myTableContainter">
-                <div class="myTableContent">
-                    <!--Header-->
-                    <div class="myTableRow-header text-dark small" ng-show="showCityMunicipalityHeader">
-                        <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
-                        <div class="myTableCell cell-5 small" ng-click="processCMSorting('Name')">
-                            <strong>Name</strong>
-                            <span class="glyphicon glyphicon-chevron-down"
-                                  ng-show="orderByCMNameDesc"></span>
-                            <span class="glyphicon glyphicon-chevron-up"
-                                  ng-show="orderByCMNameAsc"></span>
-                        </div>
-                    </div>
-                    <!--Detail-->
-                    <div class="myTableRow"
-                         ng-repeat="item in paginatedCityMunicipality | orderBy:cmCriteria"
-                         context-menu="setSelectedCityMunicipality(item.Id)"
-                         data-target="DataTableCityMunicipality">
-                        <div class="myTableCell cell-seqno small text-center">{{cityMunicipalityCurrentPage == 1 ? ($index + 1) : (($index + 1) + ((cityMunicipalityCurrentPage - 1) * cityMunicipalityPageSize))}}</div>
-                        <div class="myTableCell cell-5 small">{{item.Name}}</div>
-                    </div>
-                </div>
-            </div><br />
-            <!--Pagination Buttons-->
-            <div class="myTableContainter" ng-show="paginatedCityMunicipality.length > 0">
-                <div class="myTableContent">
-                    <div class="myTableRow-no-border text-right">
-                        <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage - 1), '')"
-                                        ng-disabled="!previousPageCityMunicipality">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-default btn-sm"
-                                        type="button"
-                                        ng-disabled="true">
-                                    {{ cityMunicipalityCurrentPage }}
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processCityMunicipalityPagination(cityMunicipalityCurrentPage = (cityMunicipalityCurrentPage + 1), '')"
-                                        ng-disabled="!nextPageCityMunicipality">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div ng-show="selectedTab === tabPages[2]">
+        <button class="btn btn-sm pull-right" ng-click="openCityMunicipalityForm('Create')">
+            <span class="glyphicon glyphicon-plus">
+            </span>
+        </button>
+        <br />
+        <br />
+        <div ui-grid="gridOptionsCityMunicipality" ui-grid-exporter class="grid"></div>
     </div>
 }
 
@@ -251,7 +102,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
                     ng-click="saveStateProvince(stateProvinceAction)">
-                {{stateProvinceAction === 'Delete' ? 'Delete' : stateProvinceAction === 'Create' ? 'Create' : stateProvinceAction === 'Edit' ? 'Edit' : 'Close'}}
+                {{stateProvinceAction === 'Delete' ? 'Delete' : stateProvinceAction === 'Create' ? 'Create' : stateProvinceAction === 'Edit' ? 'Update' : 'Close'}}
             </button>
         </div>
     </div>
@@ -292,7 +143,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
                     ng-click="saveCityMunicipality(cityMunicipalityAction)">
-                {{cityMunicipalityAction === 'Delete' ? 'Delete' : cityMunicipalityAction === 'Create' ? 'Create' : cityMunicipalityAction === 'Edit' ? 'Edit' : 'Close'}}
+                {{cityMunicipalityAction === 'Delete' ? 'Delete' : cityMunicipalityAction === 'Create' ? 'Save' : cityMunicipalityAction === 'Edit' ? 'Update' : 'Close'}}
             </button>
         </div>
     </div>
