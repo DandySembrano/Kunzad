@@ -6,7 +6,7 @@
 @section tab1Content{
     <div class="alert alert-danger alert-sm" ng-show="isError">
         <i class="fa fa-remove pr10"></i>
-        <strong>ERROR!</strong>    {{errorMessage}}
+        <strong>ERROR!</strong>{{errorMessage}}
     </div>
     @*Column 1*@
     <div class="col-lg-6">
@@ -31,7 +31,7 @@
                            placeholder=""
                            ng-model="shipmentItem.BusinessUnit"
                            ng-disabled="viewOnly"
-                           ng-click="showBusinessUnit()">
+                           ng-click="showModal('#business-unit-list-modal')">
                 </div>
             </div>
             @*Service*@
@@ -55,7 +55,7 @@
                             ng-model="shipmentItem.ShipmentTypeId"
                             ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
                 </div>
-            </div>    
+            </div>
             @*Payment Mode*@
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Payment Mode</label>
@@ -66,7 +66,7 @@
                             ng-model="shipmentItem.PaymentMode"
                             ng-options="item.Id as item.Name for item in paymentModeList"></select>
                 </div>
-            </div> 
+            </div>
             <div class="form-group form-group-sm">
                 <label class="col-md-6 control-label small text-left"><strong>Customer Information</strong></label>
             </div>
@@ -79,7 +79,7 @@
                            placeholder=""
                            ng-model="shipmentItem.Customer"
                            ng-disabled="viewOnly"
-                           ng-click="showCustomerList()">
+                           ng-click="showModal('#customer-list-modal')">
                 </div>
             </div>
             @*Customer Name*@
@@ -163,7 +163,7 @@
                            placeholder=""
                            ng-model="shipmentItem.BillToCustomerCode"
                            ng-disabled="viewOnly"
-                           ng-click="showCustomerList()">
+                           ng-click="showModal('#billto-customer-list-modal')">
                 </div>
             </div>
             @*Bill To Customer Name*@
@@ -176,12 +176,12 @@
                            ng-model="shipmentItem.BillToCustomerName"
                            ng-disabled="true">
                 </div>
-            </div>  
+            </div>
         </form>
     </div>
     @*Column 2*@
     <div class="col-lg-6">
-        <form class="form-horizontal" role="form">             
+        <form class="form-horizontal" role="form">
             @*Is Revenue*@
             <div class="form-group form-group-sm" style="padding-bottom:5px;">
                 <label class="col-md-3 control-label small"></label>
@@ -245,7 +245,7 @@
             </div>
             <div class="form-group form-group-sm">
                 <label class="col-md-6 control-label small text-left"><strong>Cargo Details</strong></label>
-            </div>            
+            </div>
             @*Is Consolidated, IsMultipleDelivery*@
             <div class="form-group form-group-sm" style="padding-bottom:5px;">
                 <div class="row">
@@ -369,3 +369,77 @@
 @section tab2Content{
     <div ui-grid="shipmentGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
 }
+
+<!-- Customer List Modal -->
+<div id="customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            Customer List
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeCustomerList(c)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Customer List Modal -->
+<!-- Bill To Customer List Modal -->
+<div id="billto-customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            Bill To Customer
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeBillToCustomerList(c)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Bill To Customer List Modal -->
+<!-- Business Unit List Modal -->
+<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-10 small">Code</th>
+                                <th class="myTableCell cell-10 small">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="bu in businessUnitList"
+                                ng-click="closeBusinessUnitList(bu)">
+                                <td class="myTableCell cell-10 small">{{bu.Code}}</td>
+                                <td class="myTableCell cell-10 small">{{bu.Name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeBusinessUnitList(bu)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Business Unit List Modal -->

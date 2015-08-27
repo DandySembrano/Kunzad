@@ -1,6 +1,6 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
 function BookingController($scope, $http, $interval) {
-    $scope.modelName = "Shipment";
+    $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.shipmentGridOptions = {};
     $scope.shipmentGridOptions.data = [];
@@ -20,14 +20,64 @@ function BookingController($scope, $http, $interval) {
     $scope.selectedShipmentIndex = 0;
     var pageSize = 20;
 
-    //$interval(function () { }, 100);
+    //Displays Modal
+    $scope.showModal = function (panel) {
+        openModalPanel(panel);
+    };
+
+    //Close Business Unit List Modal
+    $scope.closeBusinessUnitList = function (bu) {
+        if (angular.isDefined(bu)) {
+            $scope.shipmentItem.BusinessUnitId = bu.Id;
+            $scope.shipmentItem.BusinessUnit = bu.Name;
+        }
+        jQuery.magnificPopup.close();
+    };
+
+    //Close Customer List Modal
+    $scope.closeCustomerList = function (c) {
+        if (angular.isDefined(c)) {
+            $scope.shipmentItem.CustomerId = c.Id;
+            $scope.shipmentItem.CustomerCode = c.Code;
+            $scope.shipmentItem.CustomerContactNo = c.ContactNo;
+            $scope.shipmentItem.CustomerAddress = c.Address;
+        }
+        jQuery.magnificPopup.close();
+    };
+
+    //Close Bill To Customer List Modal
+    $scope.closeBillToCustomerList = function (c) {
+        if (angular.isDefined(c)) {
+            $scope.shipmentItem.BillToCustomerId = c.Id;
+            $scope.shipmentItem.BillToCustomerCode = c.Code;
+            $scope.shipmentItem.BillToCustomerName = c.Name;
+        }
+        jQuery.magnificPopup.close();
+    };
+
+    //Initialize Business Unit List for Modal
+    $scope.initBusinessUnitList = function () {
+        $http.get("/api/BusinessUnits")
+        .success(function (data, status) {
+            $scope.businessUnitList = data;
+        })
+    };
+
+    //Initialize Customer List for Modal
+    $scope.initCustomerList = function () {
+        $http.get("/api/Customers")
+        .success(function (data, status) {
+            $scope.customerList = data;
+        })
+    };
+
     //Initialize Payment Mode List for DropDown
     $scope.initPaymentModeList = function () {
         $scope.paymentModeList = [{ "Id": "A", "Name": "Account" },
                                   { "Id": "P", "Name": "Prepaid" },
                                   { "Id": "C", "Name": "Collect Account" },
                                   { "Id": "D", "Name": "Cash On Delivery" }
-                                 ]
+        ]
     };
 
     //Initialize Service List for DropDown
@@ -65,7 +115,7 @@ function BookingController($scope, $http, $interval) {
             "DeliveryAddress": null,
             "DeliverToContactNo": null,
             "OriginAddressId": null,
-            "OriginAddress":null,
+            "OriginAddress": null,
             "BillToCustomerId": null,
             "BillToCustomerCode": null,
             "BillToCustomerName": null,
@@ -141,27 +191,27 @@ function BookingController($scope, $http, $interval) {
     //initialized shipment gridoption
     $scope.initShipmentGridOptions = function () {
         var columns = [];
-        $scope.shipmentHeader   = ['Shipment No', 'Business Unit', 'Origin', 'Service', 'Qty', 'Total CBM', 'Cargo Description', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'Bill To', 'Payment Mode', 'With Revenue?', 'Revenue', 'Tax Inclusive?', 'Tax Amount', 'Consolidated?', 'Multiple Delivery?', 'No'];
+        $scope.shipmentHeader = ['Shipment No', 'Business Unit', 'Origin', 'Service', 'Qty', 'Total CBM', 'Cargo Description', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'Bill To', 'Payment Mode', 'With Revenue?', 'Revenue', 'Tax Inclusive?', 'Tax Amount', 'Consolidated?', 'Multiple Delivery?', 'No'];
         $scope.shipmentKeys = ['Id', 'BusinessUnit.Name', 'Address.Line1', 'Service.Name', 'Quantity', 'TotalCBM', 'Description', 'TargetPickupDate', 'TargetPickupTime', 'Customer.Name', 'CustomerAddress.Line1', 'CustomerContact.ContactPhone.ContactNumber', 'DeliverTo', 'CustomerAddress.Line1', 'DeliverToContactNo', 'Customer.Name', 'PaymentMode', 'IsRevenue', 'Revenue', 'IsTaxInclusive', 'TaxAmount', 'IsConsolidation', 'IsMultipleDelivery'];
-        $scope.KeyType     = ['Default', 'String', 'String', 'String', 'Decimal', 'Decimal', 'String', 'Date', 'Time', 'String', 'String', 'Default', 'String', 'String', 'Default', 'String', 'String', 'Bit', 'Default', 'Bit', 'Default', 'Bit', 'Bit'];
-        $scope.colWidth         = [150, 150, 150, 100, 50, 150, 200, 150, 150, 200, 200, 200, 200, 200, 200, 200, 150, 130, 100, 120, 120, 120, 150];
+        $scope.KeyType = ['Default', 'String', 'String', 'String', 'Decimal', 'Decimal', 'String', 'Date', 'Time', 'String', 'String', 'Default', 'String', 'String', 'Default', 'String', 'String', 'Bit', 'Default', 'Bit', 'Default', 'Bit', 'Bit'];
+        $scope.colWidth = [150, 150, 150, 100, 50, 150, 200, 150, 150, 200, 200, 200, 200, 200, 200, 200, 150, 130, 100, 120, 120, 120, 150];
 
         //Initialize Number Listing
-        var columnProperties                    = {};
-        columnProperties.name                   = $scope.shipmentHeader[$scope.shipmentHeader.length - 1];
-        columnProperties.field                  = 'No';
-        columnProperties.cellTemplate           = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>';
-        columnProperties.width                  = 40;
-        columnProperties.enableColumnResizing   = true;
-        columnProperties.enableColumnMenu       = false;
-        columnProperties.enableColumnMoving     = false;
+        var columnProperties = {};
+        columnProperties.name = $scope.shipmentHeader[$scope.shipmentHeader.length - 1];
+        columnProperties.field = 'No';
+        columnProperties.cellTemplate = '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>';
+        columnProperties.width = 40;
+        columnProperties.enableColumnResizing = true;
+        columnProperties.enableColumnMenu = false;
+        columnProperties.enableColumnMoving = false;
         columns.push(columnProperties);
         //Initialize column data
         for (var i = 0; i < ($scope.shipmentHeader.length - 1) ; i++) {
             var columnProperties = {};
-            columnProperties.name   = $scope.shipmentHeader[i];
-            columnProperties.field  = $scope.shipmentKeys[i];
-            columnProperties.width  = $scope.colWidth[i];
+            columnProperties.name = $scope.shipmentHeader[i];
+            columnProperties.field = $scope.shipmentKeys[i];
+            columnProperties.width = $scope.colWidth[i];
             //format field value
             columnProperties.cellFilter = $scope.filterValue($scope.KeyType[i]);
             columns.push(columnProperties);
@@ -265,9 +315,12 @@ function BookingController($scope, $http, $interval) {
         // Call function to load data during content load
         $scope.loadData($scope.currentPage);
         $scope.initShipmentGridOptions();
+        $scope.initCustomerList();
+        $scope.initBusinessUnitList();
         $scope.initPaymentModeList();
         $scope.initServiceList();
         $scope.initShipmentTypeList();
-    }
+    };
+
     init();
 };
