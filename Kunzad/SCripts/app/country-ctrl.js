@@ -376,6 +376,145 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
             })
     };
 
+    $scope.gridOptionsCountry = {
+        data: 'country',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { field: 'Code' },
+          { field: 'Name', },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(colRenderIndex, row.entity.Id)"  context-menu="grid.appScope.setSelected(colRenderIndex, row.entity.Id)" data-target= "DataTableMenu"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'Countries' + Date.now() + '.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
+    $scope.gridOptionsStateProvince = {
+        data: 'stateProvince',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { field: 'Name', },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedStateProvince(row.entity.Id, row.entity.Name)"  context-menu="grid.appScope.setSelectedStateProvince(row.entity.Id, row.entity.Name)" data-target= "DataTableStateProvince"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'StatesProvinces' + Date.now() + '.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
+    $scope.gridOptionsCityMunicipality = {
+        data: 'cityMunicipality',
+        enableSorting: true,
+        columnDefs: [
+          {
+              field: 'No',
+              enableSorting: false,
+              width: 40,
+              enableColumnResizing: true,
+              enableColumnMenu: false,
+              enableColumnMoving: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center">{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+          { field: 'Name', },
+        ],
+        rowTemplate: '<div>' +
+        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedCityMunicipality(row.entity.Id)"  context-menu="grid.appScope.setSelectedCityMunicipality(row.entity.Id)" data-target= "DataTableCityMunicipality"></div>' +
+        '</div>',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'CitiesMunicipalities' + Date.now() + '.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
     //initialized when user delete, update or view a record in the list
     $scope.setSelected = function (i, id) {
         $scope.selected = i;
@@ -456,10 +595,8 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         var i = 0, j = 0;
         //---------------------------------------customize object for easy saving of data------------------------------
         $scope.countryItem.StateProvinces = angular.copy($scope.stateProvince);
-        for(j = 0; j < $scope.countryItem.StateProvinces.length; j++)
-        {
-            for (i = 0; i < $scope.cityMunicipality.length; i++) 
-            {
+        for (j = 0; j < $scope.countryItem.StateProvinces.length; j++) {
+            for (i = 0; i < $scope.cityMunicipality.length; i++) {
                 if ($scope.countryItem.StateProvinces[j].Id == $scope.cityMunicipality[i].StateProvinceId)
                     //insert cityMunicipality
                     $scope.countryItem.StateProvinces[j].CityMunicipalities.push($scope.cityMunicipality[i]);
@@ -500,7 +637,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
                 $scope.selectedTab = $scope.tabPages[0];
                 spinner.stop();
             })
-        
+
     };
 
     // Update Country, State/Province, City/Municipality
@@ -508,7 +645,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0, j = 0;
         //---------------------------------------customize object for easy saving of data------------------------------
-        $scope.countryItem.StateProvinces = []; 
+        $scope.countryItem.StateProvinces = [];
         $scope.countryItem.StateProvinces = angular.copy($scope.stateProvince);
         for (j = 0; j < $scope.countryItem.StateProvinces.length; j++) {
             //reset City/Municipalities
@@ -521,22 +658,18 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
         }
         var countryModel = angular.copy($scope.countryItem);
         for (j = 0; j < countryModel.StateProvinces.length; j++) {
-            if (countryModel.StateProvinces[j].CountryId == -1)
-            {
+            if (countryModel.StateProvinces[j].CountryId == -1) {
                 //remove stateProvinceId
                 delete countryModel.StateProvinces[j].Id
-                for (i = 0; i < countryModel.StateProvinces[j].CityMunicipalities.length; i++)
-                {
-                        //remove cityMunicipalityId
-                        delete countryModel.StateProvinces[j].CityMunicipalities[i].Id;
-                        delete countryModel.StateProvinces[j].CityMunicipalities[i].StateProvinceName;
-                        delete countryModel.StateProvinces[j].CityMunicipalities[i].ItemStatus;
+                for (i = 0; i < countryModel.StateProvinces[j].CityMunicipalities.length; i++) {
+                    //remove cityMunicipalityId
+                    delete countryModel.StateProvinces[j].CityMunicipalities[i].Id;
+                    delete countryModel.StateProvinces[j].CityMunicipalities[i].StateProvinceName;
+                    delete countryModel.StateProvinces[j].CityMunicipalities[i].ItemStatus;
                 }
             }
-            else
-            {
-                for (i = 0; i < countryModel.StateProvinces[j].CityMunicipalities.length; i++)
-                {
+            else {
+                for (i = 0; i < countryModel.StateProvinces[j].CityMunicipalities.length; i++) {
                     if (countryModel.StateProvinces[j].CityMunicipalities[i].ItemStatus == "New") {
                         //remove cityMunicipalityId
                         delete countryModel.StateProvinces[j].CityMunicipalities[i].Id;
@@ -700,13 +833,10 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     };
 
     //search state/province in city/municipality
-    $scope.searchStateProvince = function (id)
-    {
+    $scope.searchStateProvince = function (id) {
         var i = 0;
-        for (i = 0; i < $scope.cityMunicipality.length; i++)
-        {
-            if (id == $scope.cityMunicipality[i].StateProvinceId)
-            {
+        for (i = 0; i < $scope.cityMunicipality.length; i++) {
+            if (id == $scope.cityMunicipality[i].StateProvinceId) {
                 return true;
             }
         }
@@ -782,8 +912,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
 
     function validateStateProvince() {
         //validate here
-        if ($scope.stateProvinceItem.Name == null || $scope.stateProvinceItem.Name == "")
-        {
+        if ($scope.stateProvinceItem.Name == null || $scope.stateProvinceItem.Name == "") {
             $scope.showFormErrorStateProvince("Name is required.");
             return false;
         }
@@ -889,8 +1018,7 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     };
 
     function validateCityMunicipality() {
-        if ($scope.cityMunicipalityItem.Name == null || $scope.cityMunicipalityItem.Name == "")
-        {
+        if ($scope.cityMunicipalityItem.Name == null || $scope.cityMunicipalityItem.Name == "") {
             $scope.showFormErrorCityMunicipality("Name is required.");
             return false;
         }
