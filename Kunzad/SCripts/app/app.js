@@ -1,6 +1,16 @@
 ﻿// app.js
 
 var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter']);
+    kunzadApp.run(function ($rootScope) {
+        //Triggers before actionForm function
+        $rootScope.formatControlNo = function (prefix, length, value) {
+            var formattedValue = prefix + value.toString();
+            while (formattedValue.length < length) {
+                formattedValue = "0" + formattedValue;
+            }
+            return formattedValue;
+        };
+    })
     kunzadApp.config(['$routeProvider', function ($routeProvider) {
         //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
         $routeProvider

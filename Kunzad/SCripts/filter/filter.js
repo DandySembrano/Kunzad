@@ -1,4 +1,14 @@
-﻿kunzadApp.filter('Date', function ($filter) {
+﻿kunzadApp.filter('ControlNo', function ($filter) {
+    return function (value) {
+        var formattedValue = value.toString();
+        while (formattedValue.length < 15)
+        {
+            formattedValue = "0" + formattedValue;
+        }
+        return formattedValue;
+    }
+});
+kunzadApp.filter('Date', function ($filter) {
     return function (value) {
         if (value == "" || value == null)
             return "";
