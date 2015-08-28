@@ -1,7 +1,23 @@
 ﻿@{
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
-
+<style type="text/css">
+    fieldset.scheduler-border {
+        border: 1px solid #ddd !important;
+        padding: 0 1.4em 1.4em 1.4em !important;
+        margin: 0 0 10px 0 !important;
+        -webkit-box-shadow:  0px 0px 0px 0px #000;
+                box-shadow:  0px 0px 0px 0px #000;
+        border-radius: 8px;
+    }
+    legend.scheduler-border {
+        font-size: 15px !important;
+        font-weight: bold !important;
+        margin-bottom: 10px;
+        border: 0;
+        width: 100%;
+    }
+</style>
 <!-- General -->
 @section tab1Content{
     <div class="alert alert-danger alert-sm" ng-show="isError">
@@ -67,116 +83,124 @@
                             ng-options="item.Id as item.Name for item in paymentModeList"></select>
                 </div>
             </div>
-            <div class="form-group form-group-sm">
-                <label class="col-md-6 control-label small text-left"><strong>Customer Information</strong></label>
-            </div>
-            @*Customer Code*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Code</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.CustomerCode"
-                           ng-disabled="viewOnly"
-                           ng-click="showModal('#customer-list-modal')">
+
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">
+                    <label class="col-md-6 control-label small text-left"><strong>Customer Information</strong></label>
+                </legend>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Code</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.CustomerCode"
+                               ng-disabled="viewOnly"
+                               ng-click="showModal('#customer-list-modal')">
+                    </div>
                 </div>
-            </div>
-            @*Customer Name*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Name</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.CustomerName"
-                           ng-disabled="true">
+                @*Customer Name*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.CustomerName"
+                               ng-disabled="true">
+                    </div>
                 </div>
-            </div>
-            @*Customer Contact No*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Contact No</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.CustomerContactNo"
-                           ng-disabled="true">
+                @*Customer Contact No*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Contact No</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.CustomerContactNo"
+                               ng-disabled="true">
+                    </div>
                 </div>
-            </div>
-            @*Customer Address*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Address</label>
-                <div class="col-md-8">
-                    <textarea rows="3" style="height:auto;"
-                              class="form-control"
-                              placeholder=""
-                              ng-model="shipmentItem.CustomerAddress"
-                              ng-disabled="true"></textarea>
+                @*Customer Address*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Address</label>
+                    <div class="col-md-8">
+                        <textarea rows="3" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="shipmentItem.CustomerAddress"
+                                  ng-disabled="true"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group form-group-sm">
-                <label class="col-md-6 control-label small text-left"><strong>Consignee Information</strong></label>
-            </div>
-            @*Consginee*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Name</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.DeliverTo"
-                           ng-disabled="viewOnly">
+            </fieldset>
+            
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">
+                    <label class="col-md-6 control-label small text-left"><strong>Consignee Information</strong></label>
+                </legend>
+
+                @*Consginee*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.DeliverTo"
+                               ng-disabled="viewOnly">
+                    </div>
                 </div>
-            </div>
-            @*Consignee Contact No*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Contact No</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.DeliverToContactNo"
-                           ng-disabled="viewOnly">
+                @*Consignee Contact No*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Contact No</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.DeliverToContactNo"
+                               ng-disabled="viewOnly">
+                    </div>
                 </div>
-            </div>
-            @*Consignee Address*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Address</label>
-                <div class="col-md-8">
-                    <textarea rows="3" style="height:auto;"
-                              class="form-control"
-                              placeholder=""
-                              ng-model="shipmentItem.DeliveryAddress"
-                              ng-disabled="viewOnly"></textarea>
+                @*Consignee Address*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Address</label>
+                    <div class="col-md-8">
+                        <textarea rows="3" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="shipmentItem.DeliveryAddress"
+                                  ng-disabled="viewOnly"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group form-group-sm">
-                <label class="col-md-6 control-label small text-left"><strong>Bil To Customer Information</strong></label>
-            </div>
-            @*Bill To Customer Code*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Code</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.BillToCustomerCode"
-                           ng-disabled="viewOnly"
-                           ng-click="showModal('#billto-customer-list-modal')">
+            </fieldset>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">
+                    <label class="col-md-6 control-label small text-left"><strong>Bill To Customer Information</strong></label>
+                </legend>
+                @*Bill To Customer Code*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Code</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.BillToCustomerCode"
+                               ng-disabled="viewOnly"
+                               ng-click="showModal('#billto-customer-list-modal')">
+                    </div>
                 </div>
-            </div>
-            @*Bill To Customer Name*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Name</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.BillToCustomerName"
-                           ng-disabled="true">
+                @*Bill To Customer Name*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.BillToCustomerName"
+                               ng-disabled="true">
+                    </div>
                 </div>
-            </div>
+            </fieldset>
         </form>
     </div>
     @*Column 2*@
@@ -243,110 +267,115 @@
                            ng-disabled="(viewOnly == false && shipmentItem.IsTaxInclusive == true) ? false : true">
                 </div>
             </div>
-            <div class="form-group form-group-sm">
-                <label class="col-md-6 control-label small text-left"><strong>Cargo Details</strong></label>
-            </div>
-            @*Is Consolidated, IsMultipleDelivery*@
-            <div class="form-group form-group-sm" style="padding-bottom:5px;">
-                <div class="row">
-                    <label class="col-md-3 control-label small"></label>
-                    <div class="col-md-8">
-                        <div class="checkbox-custom">
-                            <input id="isConsolidated"
-                                   type="checkbox"
-                                   ng-model="shipmentItem.IsConsolidation"
-                                   ng-disabled="viewonly">
-                            <label for="isConsolidated"
-                                   class="small">Is Consolidated?</label>
-                            <input id="isMultipleDelivery"
-                                   type="checkbox"
-                                   ng-model="shipmentItem.IsMultipleDelivery"
-                                   ng-disabled="viewOnly">
-                            <label for="isMultipleDelivery"
-                                   class="small">Is Multiple Delivery?</label>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">
+                    <label class="col-md-6 control-label small text-left"><strong>Cargo Details</strong></label>
+                </legend>
+
+                @*Is Consolidated, IsMultipleDelivery*@
+                <div class="form-group form-group-sm" style="padding-bottom:5px;">
+                    <div class="row">
+                        <label class="col-md-3 control-label small"></label>
+                        <div class="col-md-8">
+                            <div class="checkbox-custom">
+                                <input id="isConsolidated"
+                                       type="checkbox"
+                                       ng-model="shipmentItem.IsConsolidation"
+                                       ng-disabled="viewonly">
+                                <label for="isConsolidated"
+                                       class="small">Is Consolidated?</label>
+                                <input id="isMultipleDelivery"
+                                       type="checkbox"
+                                       ng-model="shipmentItem.IsMultipleDelivery"
+                                       ng-disabled="viewOnly">
+                                <label for="isMultipleDelivery"
+                                       class="small">Is Multiple Delivery?</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            @*Quantity*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Total Qty</label>
-                <div class="col-md-8">
-                    <input type="number"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.Quantity"
-                           ng-disabled="viewOnly">
-                </div>
-            </div>
-            @*Total CBM*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Total CBM</label>
-                <div class="col-md-8">
-                    <input type="number"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="shipmentItem.TotalCBM"
-                           ng-disabled="viewOnly">
-                </div>
-            </div>
-            @*Cargo Description*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Description</label>
-                <div class="col-md-8">
-                    <textarea rows="3" style="height:auto;"
-                              class="form-control"
-                              placeholder=""
-                              ng-model="shipmentItem.Description"
-                              ng-disabled="viewOnly"></textarea>
-                </div>
-            </div>
-            <div class="form-group form-group-sm">
-                <label class="col-md-6 control-label small text-left"><strong>Pick Up Details</strong></label>
-            </div>
-            @*Pick Up Date*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Date</label>
-                <div class="col-md-4">
-                    <div class='input-group date'>
-                        <input type='text'
-                               id='pickupdate'
+                @*Quantity*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Total Qty</label>
+                    <div class="col-md-8">
+                        <input type="number"
                                class="form-control"
-                               ng-model="shipmentItem.TargetPickupDate"
-                               ng-disabled="viewonly" />
-                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
-                            <span class=" glyphicon glyphicon-remove-circle"></span>
-                        </span>
+                               placeholder=""
+                               ng-model="shipmentItem.Quantity"
+                               ng-disabled="viewOnly">
                     </div>
                 </div>
-            </div>
-            @*Pick Up Time*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Time</label>
-                <div class="col-md-4">
-                    <div class='input-group date'>
-                        <input type='text'
-                               id='pickuptime'
+                @*Total CBM*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Total CBM</label>
+                    <div class="col-md-8">
+                        <input type="number"
                                class="form-control"
-                               ng-model="shipmentItem.TargetPickupTime"
-                               ng-disabled="viewonly" />
-                        <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
-                            <span class=" glyphicon glyphicon-remove-circle"></span>
-                        </span>
+                               placeholder=""
+                               ng-model="shipmentItem.TotalCBM"
+                               ng-disabled="viewOnly">
                     </div>
                 </div>
-            </div>
-            @*Pick Up Address*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Address</label>
-                <div class="col-md-8">
-                    <textarea rows="3" style="height:auto;"
-                              class="form-control"
-                              placeholder=""
-                              ng-model="shipmentItem.OriginAddress"
-                              ng-disabled="viewonly"></textarea>
+                @*Cargo Description*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Description</label>
+                    <div class="col-md-8">
+                        <textarea rows="3" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="shipmentItem.Description"
+                                  ng-disabled="viewOnly"></textarea>
+                    </div>
                 </div>
-            </div>
+            </fieldset>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">
+                    <label class="col-md-6 control-label small text-left"><strong>Pick Up Details</strong></label>
+                </legend>
+                @*Pick Up Date*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Date</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='pickupdate'
+                                   class="form-control"
+                                   ng-model="shipmentItem.TargetPickupDate"
+                                   ng-disabled="viewonly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                @*Pick Up Time*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Time</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='pickuptime'
+                                   class="form-control"
+                                   ng-model="shipmentItem.TargetPickupTime"
+                                   ng-disabled="viewonly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                @*Pick Up Address*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Address</label>
+                    <div class="col-md-8">
+                        <textarea rows="3" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="shipmentItem.OriginAddress"
+                                  ng-disabled="viewonly"></textarea>
+                    </div>
+                </div>
+            </fieldset>
             <script type="text/javascript">
                 $(function () {
                     $('#pickupdate').datetimepicker({
