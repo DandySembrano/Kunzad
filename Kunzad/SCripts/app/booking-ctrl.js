@@ -39,6 +39,7 @@ function BookingController($scope, $http, $interval) {
         if (angular.isDefined(c)) {
             $scope.shipmentItem.CustomerId = c.Id;
             $scope.shipmentItem.CustomerCode = c.Code;
+            $scope.shipmentItem.CustomerName = c.Name;
             $scope.shipmentItem.CustomerContactNo = c.ContactNo;
             $scope.shipmentItem.CustomerAddress = c.Address;
         }

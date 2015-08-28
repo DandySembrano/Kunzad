@@ -77,7 +77,7 @@
                     <input type="text"
                            class="form-control"
                            placeholder=""
-                           ng-model="shipmentItem.Customer"
+                           ng-model="shipmentItem.CustomerCode"
                            ng-disabled="viewOnly"
                            ng-click="showModal('#customer-list-modal')">
                 </div>
@@ -379,7 +379,26 @@
         </div>
         <!--Modal Body-->
         <div class="panel-body">
-            Customer List
+            <div class="myTableContainter ">
+                <table class="myTableContent table-bordered">
+                    <thead>
+                        <tr class="myTableRow-header text-dark small">
+                            <th class="myTableCell cell-seqno small">No</th>
+                            <th class="myTableCell cell-10 small text-center">Code</th>
+                            <th class="myTableCell cell-10 small text-center">Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="myTableRow"
+                            ng-repeat="c in customerList"
+                            ng-click="closeCustomerList(c)">
+                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                            <td class="myTableCell cell-10 small">{{c.Code}}</td>
+                            <td class="myTableCell cell-10 small">{{c.Name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
@@ -388,6 +407,7 @@
     </div>
 </div>
 <!--End of Customer List Modal -->
+
 <!-- Bill To Customer List Modal -->
 <div id="billto-customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -397,7 +417,26 @@
         </div>
         <!--Modal Body-->
         <div class="panel-body">
-            Bill To Customer
+            <div class="myTableContainter ">
+                <table class="myTableContent table-bordered">
+                    <thead>
+                        <tr class="myTableRow-header text-dark small">
+                            <th class="myTableCell cell-seqno small">No</th>
+                            <th class="myTableCell cell-10 small text-center">Code</th>
+                            <th class="myTableCell cell-10 small text-center">Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="myTableRow"
+                            ng-repeat="c in customerList"
+                            ng-click="closeBillToCustomerList(c)">
+                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                            <td class="myTableCell cell-10 small">{{c.Code}}</td>
+                            <td class="myTableCell cell-10 small">{{c.Name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
@@ -406,6 +445,7 @@
     </div>
 </div>
 <!--End of Bill To Customer List Modal -->
+
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
