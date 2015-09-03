@@ -1,6 +1,26 @@
 ﻿@{
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
+<style>
+    fieldset.scheduler-border {
+        border: 1px groove #ddd !important;
+        padding: 0 1.4em 1.4em 1.4em !important;
+        margin: 0 0 1.5em 0 !important;
+    }
+
+    legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width: auto;
+        padding: 0 10px;
+        border-bottom: none;
+    }
+
+    legend{
+        margin: 0;
+    }
+</style>
 <!-- General -->
 @section tab1Content{
     <div class="alert alert-danger alert-sm" ng-show="isError">
@@ -68,9 +88,7 @@
             </div>
 
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">
-                    <label class="col-md-6 control-label small text-left"><strong>Customer Information</strong></label>
-                </legend>
+                <legend class="scheduler-border">Customer Information</legend>
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Code</label>
                     <div class="col-md-8">
@@ -118,9 +136,7 @@
             </fieldset>
             
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">
-                    <label class="col-md-6 control-label small text-left"><strong>Consignee Information</strong></label>
-                </legend>
+                <legend class="scheduler-border">Consignee Information</legend>
 
                 @*Consginee*@
                 <div class="form-group form-group-sm">
@@ -157,9 +173,7 @@
                 </div>
             </fieldset>
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">
-                    <label class="col-md-6 control-label small text-left"><strong>Bill To Customer Information</strong></label>
-                </legend>
+                <legend class="scheduler-border">Bill To Customer Information</legend>
                 @*Bill To Customer Code*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Code</label>
@@ -250,9 +264,7 @@
                 </div>
             </div>
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">
-                    <label class="col-md-6 control-label small text-left"><strong>Cargo Details</strong></label>
-                </legend>
+                <legend class="scheduler-border">Cargo Details</legend>
 
                 @*Is Consolidated, IsMultipleDelivery*@
                 <div class="form-group form-group-sm" style="padding-bottom:5px;">
@@ -307,9 +319,7 @@
                 </div>
             </fieldset>
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">
-                    <label class="col-md-6 control-label small text-left"><strong>Pick Up Details</strong></label>
-                </legend>
+                <legend class="scheduler-border">Pick Up Details</legend>
                 @*Pick Up Date*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Date</label>
