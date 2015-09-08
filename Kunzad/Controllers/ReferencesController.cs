@@ -87,6 +87,13 @@ namespace Kunzad.Controllers
         {
             return View();
         }
-        
+        public ActionResult Trucking()
+        {
+            return View();
+        }
+        public ActionResult SeaFreight()
+        {
+            return View();
+        }
     }
 }
