@@ -19,11 +19,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.shipmentIDholder = 0;
     $scope.selectedShipmentIndex = 0;
     $scope.controlNoHolder = 0;
+    $scope.modalType = null;
     var pageSize = 20;
 
     //Displays Modal
-    $scope.showModal = function (panel) {
+    $scope.showModal = function (panel, type) {
         openModalPanel(panel);
+        $scope.modalType = type;
     };
 
     //Show Customer Contacts List
@@ -32,7 +34,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
        .success(function (data, status) {
            $scope.customerContactList = [];
            $scope.customerContactList = data;
-           $scope.showModal('#customer-contacts-list-modal');
+           $scope.showModal('#customer-contacts-list-modal', $scope.modalType);
        })
        .error(function (error, status) {
            $scope.isError = true;
@@ -46,7 +48,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
        .success(function (data, status) {
            $scope.customerContactPhoneList = [];
            $scope.customerContactPhoneList = data;
-           $scope.showModal('#customer-contact-phones-list-modal');
+           $scope.showModal('#customer-contact-phones-list-modal', $scope.modalType);
        })
        .error(function (error, status) {
            $scope.isError = true;
@@ -60,7 +62,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         .success(function (data, status) {
             $scope.customerAddressList = [];
             $scope.customerAddressList = data;
-            $scope.showModal('#customer-address-list-modal');
+            $scope.showModal('#customer-address-list-modal', $scope.modalType);
         })
         .error(function (error, status) {
             $scope.isError = true;
@@ -82,9 +84,16 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Close Customer List Modal
     $scope.closeCustomerList = function (c) {
         if (angular.isDefined(c)) {
-            $scope.shipmentItem.CustomerId = c.Id;
-            $scope.shipmentItem.Customer.Code = c.Code;
-            $scope.shipmentItem.Customer.Name = c.Name;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerId = c.Id;
+                $scope.shipmentItem.Customer.Code = c.Code;
+                $scope.shipmentItem.Customer.Name = c.Name;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerId = c.Id;
+                $scope.shipmentItem.BillToCustomerCode = c.Code;
+                $scope.shipmentItem.BillToCustomerName = c.Name;
+            }
             jQuery.magnificPopup.close();
             var promise = $interval(function () {
                 $interval.cancel(promise);
@@ -93,7 +102,16 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             }, 500);
         }
         else {
-            $scope.shipmentItem.CustomerId = null;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerId = null;
+                $scope.shipmentItem.Customer.Code = null;
+                $scope.shipmentItem.Customer.Name = null;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerId = null;
+                $scope.shipmentItem.BillToCustomerCode = null;
+                $scope.shipmentItem.BillToCustomerName = null;
+            }
             jQuery.magnificPopup.close();
         }
     };
@@ -101,7 +119,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Close Customer Contact List Modal
     $scope.closeCustomerContacts = function (cc) {
         if (angular.isDefined(cc)) {
-            $scope.shipmentItem.CustomerContactId = cc.Contact.Id;
+            if ($scope.modalType == "customer") 
+                $scope.shipmentItem.CustomerContactId = cc.Contact.Id;
+            else
+                $scope.shipmentItem.BillToCustomerContactId = cc.Contact.Id;
+
             jQuery.magnificPopup.close();
             var promise = $interval(function () {
                 $interval.cancel(promise);
@@ -110,7 +132,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             }, 500);
         }
         else {
-            $scope.shipmentItem.CustomerContactId = null;
+            if ($scope.modalType == "customer")
+                $scope.shipmentItem.CustomerContactId = null;
+            else
+                $scope.shipmentItem.BillToCustomerContactId = null;
+
             jQuery.magnificPopup.close();
         }
     };
@@ -118,17 +144,33 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Close Customer Contact Phone List Modal
     $scope.closeCustomerContactPhones = function (ccp) {
         if (angular.isDefined(ccp)) {
-            $scope.shipmentItem.CustomerContactPhoneId = ccp.Id;
-            $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber = ccp.ContactNumber;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerContactPhoneId = ccp.Id;
+                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber = ccp.ContactNumber;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerContactPhoneId = ccp.Id;
+                $scope.shipmentItem.BillToCustomerContactPhone = ccp.ContactNumber;
+            }
             jQuery.magnificPopup.close();
             var promise = $interval(function () {
                 $interval.cancel(promise);
                 promise = undefined;
-                $scope.showCustomerAddressList($scope.shipmentItem.CustomerId);
+                if ($scope.modalType == "customer")
+                    $scope.showCustomerAddressList($scope.shipmentItem.CustomerId);
+                else
+                    $scope.showCustomerAddressList($scope.shipmentItem.BillToCustomerId);
             }, 500);
         }
         else {
-            $scope.shipmentItem.CustomerContactPhoneId = null;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerContactPhoneId = null;
+                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber = null;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerContactPhoneId = null;
+                $scope.shipmentItem.BillToCustomerContactPhone = null;
+            }
             jQuery.magnificPopup.close();
         }
     };
@@ -136,26 +178,27 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Close Customer Address List Modal
     $scope.closeCustomerAddressList = function (ca) {
         if (angular.isDefined(ca)) {
-            $scope.shipmentItem.CustomerAddressId = ca.Id;
-            $scope.shipmentItem.CustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerAddressId = ca.Id;
+                $scope.shipmentItem.CustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerAddressId = ca.Id;
+                $scope.shipmentItem.BillToCustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
+            }
             jQuery.magnificPopup.close();
         }
         else {
-            $scope.shipmentItem.CustomerContactPhoneId = null;
+            if ($scope.modalType == "customer") {
+                $scope.shipmentItem.CustomerContactPhoneId = null;
+                $scope.shipmentItem.CustomerAddress = null;
+            }
+            else {
+                $scope.shipmentItem.BillToCustomerAddressId = null;
+                $scope.shipmentItem.BillToCustomerAddress = null;
+            }
             jQuery.magnificPopup.close();
         }
-    };
-
-    //Close Bill To Customer List Modal
-    $scope.closeBillToCustomerList = function (c) {
-        if (angular.isDefined(c)) {
-            $scope.shipmentItem.BillToCustomerId = c.Id;
-            $scope.shipmentItem.BillToCustomerCode = c.Code;
-            $scope.shipmentItem.BillToCustomerName = c.Name;
-        }
-        else
-            $scope.shipmentItem.BillToCustomerId = null;
-        jQuery.magnificPopup.close();
     };
 
     //Initialize Business Unit List for Modal
@@ -278,8 +321,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             "OriginAddressId": null,
             "Origin": null,
             "BillToCustomerId": null,
+            "BillToCustomerContactId": null,
             "BillToCustomerCode": null,
             "BillToCustomerName": null,
+            "BillToCustomerAddressId": null,
+            "BillToCustomerAddress": null,
+            "BillToCustomerContactPhoneId": null,
+            "BillToCustomerContactPhone": null,
             "Quantity": 0,
             "TotalCBM": 0,
             "IsRevenue": false,
@@ -547,7 +595,26 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $scope.shipmentItem.TotalCBM        = $filter('number')($scope.shipmentItem.TotalCBM, 4);
         $scope.shipmentItem.Revenue         = $filter('number')($scope.shipmentItem.Revenue, 4);
         $scope.shipmentItem.TaxAmount       = $filter('number')($scope.shipmentItem.TaxAmount, 4);
-        $scope.shipmentItem.TaxPercentage   = $filter('number')($scope.shipmentItem.TaxPercentage, 4);
+        $scope.shipmentItem.TaxPercentage = $filter('number')($scope.shipmentItem.TaxPercentage, 4);
+
+        
+        if ($scope.shipmentItem.BillToCustomerContactId == null || $scope.shipmentItem.BillToCustomerContactId == "") {
+            $scope.isError = true;
+            $scope.errorMessage = "Bill To Customer Contact is required.";
+            return false
+        }
+        else if ($scope.shipmentItem.BillToCustomerContactPhoneId == null || $scope.shipmentItem.BillToCustomerContactPhoneId == "") {
+            $scope.isError = true;
+            $scope.errorMessage = "Bill To Customer Contact Phone is required.";
+            return false
+        }
+        else if ($scope.shipmentItem.BillToCustomerAddressId == null || $scope.shipmentItem.BillToCustomerAddressId == "")
+        {
+            $scope.isError = true;
+            $scope.errorMessage = "Bill To Customer Address is required.";
+            return false
+        }
+        return true;
     };
 
     //Set default 
@@ -565,24 +632,24 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.submit = function () {
         $scope.isError = false;
         $scope.errorMessage = "";
-        $scope.preSubmit();
-        
-        switch ($scope.actionMode) {
-            case 'Create':
-                if ($scope.checkRequiredFields()) {
-                    if($scope.apiCreate())
-                        $scope.selectedTab = "List";
-                }
-                break;
-            case 'Edit':
-                if ($scope.checkRequiredFields())
-                    $scope.apiUpdate($scope.shipmentItem.Id)
-                break;
-            case 'Delete':
-                $scope.apiDelete($scope.shipmentItem.Id);
-                break;
-            case 'View':
-                break;
+        if ($scope.preSubmit()) {
+            switch ($scope.actionMode) {
+                case 'Create':
+                    if ($scope.checkRequiredFields()) {
+                        if ($scope.apiCreate())
+                            $scope.selectedTab = "List";
+                    }
+                    break;
+                case 'Edit':
+                    if ($scope.checkRequiredFields())
+                        $scope.apiUpdate($scope.shipmentItem.Id)
+                    break;
+                case 'Delete':
+                    $scope.apiDelete($scope.shipmentItem.Id);
+                    break;
+                case 'View':
+                    break;
+            }
         }
         $scope.focusOnTop();
     }
@@ -601,7 +668,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $http.post("/api/Shipments", dataModel)
         .success(function (data, status) {
             if (data.status == "SUCCESS") {
-                $scope.shipmentItem.Id = angular.copy(data.objParam1.Id);
+                $scope.shipmentItem = angular.copy(data.objParam1);
                 $scope.shipmentGridOptions.data.push($scope.shipmentItem);
                 $scope.selectedTab = $scope.tabPages[1];
                 spinner.stop();
@@ -698,5 +765,40 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $scope.initShipmentTypeList();
     };
 
+    //Find specific character
+    $scope.findCharacter = function (v, c) {
+        for (var i = 0; i < v.length; i++)
+        {
+            if (v.charAt(i) == c)
+                return true;
+        }
+        return false;
+    };
+
+    //Check if input is whole number
+    $('#consigneecontactno,#quantity').keypress(function (key) {
+        if (key.charCode < 48 || key.charCode > 57) return false;
+    });
+
+    //Check if input is decimal number only
+    $('#taxamount,#taxpercentage,#revenue,#cbm').keypress(function (key) {
+        if (key.charCode == 46) {
+            if ($scope.findCharacter(this.value, '.'))
+                return false;
+            else
+                return true;
+        }
+        else if (key.charCode < 48 || key.charCode > 57)
+            return false;
+        else
+            return true;
+    });
+
+    //Check if input contains letter only
+    $('#consigneename').keypress(function (key) {
+        if ((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45)) return false;
+    });
+
+    //Initialize needed functions during page load
     init();
 };

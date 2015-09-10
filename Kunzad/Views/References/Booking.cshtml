@@ -78,7 +78,7 @@
                                placeholder=""
                                ng-model="shipmentItem.Customer.Code"
                                ng-disabled="viewOnly"
-                               ng-click="showModal('#customer-list-modal')">
+                               ng-click="showModal('#customer-list-modal', 'customer')">
                     </div>
                 </div>
                 @*Customer Name*@
@@ -123,7 +123,8 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Name</label>
                     <div class="col-md-8">
-                        <input type="text"
+                        <input id="consigneename"
+                               type="text"
                                class="form-control"
                                placeholder=""
                                ng-model="shipmentItem.DeliverTo"
@@ -134,7 +135,8 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Contact No</label>
                     <div class="col-md-8">
-                        <input type="text"
+                        <input id="consigneecontactno"
+                               type="text"
                                class="form-control"
                                placeholder=""
                                ng-model="shipmentItem.DeliverToContactNo"
@@ -164,7 +166,7 @@
                                placeholder=""
                                ng-model="shipmentItem.BillToCustomerCode"
                                ng-disabled="viewOnly"
-                               ng-click="showModal('#billto-customer-list-modal')">
+                               ng-click="showModal('#customer-list-modal', 'billto')">
                     </div>
                 </div>
                 @*Bill To Customer Name*@
@@ -176,6 +178,28 @@
                                placeholder=""
                                ng-model="shipmentItem.BillToCustomerName"
                                ng-disabled="true">
+                    </div>
+                </div>      
+                @*Bill To Customer Contact*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Contact No</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="shipmentItem.BillToCustomerContactPhone"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                @*Bill To Customer Address*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Address</label>
+                    <div class="col-md-8">
+                        <textarea rows="3" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="shipmentItem.BillToCustomerAddress"
+                                  ng-disabled="true"></textarea>
                     </div>
                 </div>
             </fieldset>
@@ -202,14 +226,15 @@
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Revenue</label>
                 <div class="col-md-8">
-                    <input type="text"
+                    <input id="revenue"
+                           type="text"
                            class="form-control"
                            placeholder=""
                            ng-model="shipmentItem.Revenue"
                            ng-disabled="(viewOnly == false && shipmentItem.IsRevenue == true) ? false : true">
                 </div>
             </div>
-            @*Is Tax Inclusivee*@
+            @*Is Tax Inclusive*@
             <div class="form-group form-group-sm" style="padding-bottom:5px;">
                 <label class="col-md-3 control-label small"></label>
                 <div class="col-md-8">
@@ -227,7 +252,8 @@
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Tax Amount</label>
                 <div class="col-md-8">
-                    <input type="text"
+                    <input id="taxamount"
+                           type="text"
                            class="form-control"
                            placeholder=""
                            ng-model="shipmentItem.TaxAmount"
@@ -238,7 +264,8 @@
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Tax Percentage</label>
                 <div class="col-md-8">
-                    <input type="text"
+                    <input id="taxpercentage"
+                           type="text"
                            class="form-control"
                            ng-model="shipmentItem.TaxPercentage"
                            ng-disabled="(viewOnly == false && shipmentItem.IsTaxInclusive == true) ? false : true">
@@ -272,7 +299,8 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Total Qty</label>
                     <div class="col-md-8">
-                        <input type="text"
+                        <input id="quantity"
+                               type="text"
                                class="form-control"
                                ng-model="shipmentItem.Quantity"
                                ng-disabled="viewOnly">
@@ -282,7 +310,8 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Total CBM</label>
                     <div class="col-md-8">
-                        <input type="text"
+                        <input id="cbm"
+                               type="text"
                                class="form-control"
                                ng-model="shipmentItem.TotalCBM"
                                ng-disabled="viewOnly">
@@ -533,44 +562,6 @@
     </div>
 </div>
 <!--End of Customer List Modal -->
-
-<!-- Bill To Customer List Modal -->
-<div id="billto-customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div class="myTableContainter ">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Code</th>
-                            <th class="myTableCell cell-10 small text-center">Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="c in customerList"
-                            ng-click="closeBillToCustomerList(c)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{c.Code}}</td>
-                            <td class="myTableCell cell-10 small">{{c.Name}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeBillToCustomerList(c)">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Bill To Customer List Modal -->
 
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
