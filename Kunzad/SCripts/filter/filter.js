@@ -80,3 +80,20 @@ kunzadApp.filter('Decimal', function ($filter) {
 
     }
 });
+kunzadApp.filter('PaymentMode', function ($filter) {
+    return function (value) {
+        if (value == "" || value == null)
+            return "";
+        console.log(value);
+        var paymentModeList = [{ "Id": "A", "Name": "Account" },
+                                  { "Id": "P", "Name": "Prepaid" },
+                                  { "Id": "C", "Name": "Collect Account" },
+                                  { "Id": "D", "Name": "Cash On Delivery" }
+        ]
+        for (var i = 0; i < paymentModeList.length; i++)
+        {
+            if (value == paymentModeList[i].Id)
+                return paymentModeList[i].Name;
+        }
+    }
+});

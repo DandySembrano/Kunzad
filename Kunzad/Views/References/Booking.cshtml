@@ -76,7 +76,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.CustomerCode"
+                               ng-model="shipmentItem.Customer.Code"
                                ng-disabled="viewOnly"
                                ng-click="showModal('#customer-list-modal')">
                     </div>
@@ -88,7 +88,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.CustomerName"
+                               ng-model="shipmentItem.Customer.Name"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.CustomerContactNo"
+                               ng-model="shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -401,6 +401,134 @@
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
             <button class="btn" type="submit" ng-click="closeCustomerList(c)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Customer List Modal 
+
+<!-- Customer Contacts List Modal -->
+<div id="customer-contacts-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Contact List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="myTableContainter ">
+                <table class="myTableContent table-bordered">
+                    <thead>
+                        <tr class="myTableRow-header text-dark small">
+                            <th class="myTableCell cell-seqno small">No</th>
+                            <th class="myTableCell cell-10 small text-center">Name</th>
+                            <th class="myTableCell cell-10 small text-center">Title</th>
+                            <th class="myTableCell cell-10 small text-center">Email</th>
+                            <th class="myTableCell cell-10 small text-center">Alternate Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="myTableRow"
+                            ng-repeat="cc in customerContactList"
+                            ng-click="closeCustomerContacts(cc)">
+                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                            <td class="myTableCell cell-10 small">{{cc.Contact.Name}}</td>
+                            <td class="myTableCell cell-10 small">{{cc.Contact.Title}}</td>
+                            <td class="myTableCell cell-10 small">{{cc.Contact.Email}}</td>
+                            <td class="myTableCell cell-10 small">{{cc.Contact.AlternateEmail}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeCustomerContacts(cc)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Customer Contacts List Modal -->
+
+<!-- Customer Contact Phone List Modal -->
+<div id="customer-contact-phones-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Contact Phone List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="myTableContainter ">
+                <table class="myTableContent table-bordered">
+                    <thead>
+                        <tr class="myTableRow-header text-dark small">
+                            <th class="myTableCell cell-seqno small">No</th>
+                            <th class="myTableCell cell-10 small text-center">Contact Number</th>
+                            <th class="myTableCell cell-10 small text-center">Contact Number Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="myTableRow"
+                            ng-repeat="ccp in customerContactPhoneList"
+                            ng-click="closeCustomerContactPhones(ccp)">
+                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                            <td class="myTableCell cell-10 small">{{ccp.ContactNumber}}</td>
+                            <td class="myTableCell cell-10 small">{{ccp.ContactNumberType.Type}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeCustomerContactPhones(ccp)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Customer Contact Phone List Modal -->
+
+<!-- Customer Address List Modal -->
+<div id="customer-address-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="myTableContainter ">
+                <table class="myTableContent table-bordered">
+                    <thead>
+                        <tr class="myTableRow-header text-dark small">
+                            <th class="myTableCell cell-seqno small">No</th>
+                            <th class="myTableCell cell-10 small text-center">Line 1</th>
+                            <th class="myTableCell cell-10 small text-center">Line 2</th>
+                            <th class="myTableCell cell-10 small text-center">City/Municipality</th>
+                            <th class="myTableCell cell-10 small text-center">Postal Code</th>
+                            <th class="myTableCell cell-10 small text-center">Is Billing Address?</th>
+                            <th class="myTableCell cell-10 small text-center">Is Delivery Address?</th>
+                            <th class="myTableCell cell-10 small text-center">Is Pickup Address?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="myTableRow"
+                            ng-repeat="ca in customerAddressList"
+                            ng-click="closeCustomerAddressList(ca)">
+                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                            <td class="myTableCell cell-10 small">{{ca.Line1}}</td>
+                            <td class="myTableCell cell-10 small">{{ca.Line2}}</td>
+                            <td class="myTableCell cell-10 small">{{ca.CityMunicipality.Name}}</td>
+                            <td class="myTableCell cell-10 small">{{ca.PostalCode}}</td>
+                            <td class="myTableCell cell-10 small">{{(ca.IsBillingAddress == true ? "Yes" : "No")}}</td>
+                            <td class="myTableCell cell-10 small">{{(ca.IsDeliveryAddress == true ? "Yes" : "No")}}</td>
+                            <td class="myTableCell cell-10 small">{{(ca.IsPickupAddress == true ? "Yes" : "No")}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeCustomerAddressList(ca)">Cancel</button>
         </div>
     </div>
 </div>

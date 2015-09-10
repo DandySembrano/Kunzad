@@ -16,7 +16,7 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
         $routeProvider
 
             .when('/home', {
-                templateUrl: '/Home/_Main'
+                templateUrl: '/Home/Main'
             })
 
             .when('/booking', {

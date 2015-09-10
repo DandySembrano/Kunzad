@@ -15,11 +15,43 @@ namespace Kunzad.ApiControllers
     public class ShipmentsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        private Response response = new Response();
+        private int pageSize = 20;
         // GET: api/Shipments
         public IQueryable<Shipment> GetShipments()
         {
             return db.Shipments;
+        }
+
+        // GET: api/Shipments?page=1
+        public IHttpActionResult GetShipments(int page)
+        {
+
+            var shipment = db.Shipments
+                .Include(s => s.Customer.CustomerAddresses)
+                .Include(s => s.Customer.CustomerContacts)
+                .ToArray();
+            if (shipment.Length == 0)
+                return Ok(shipment);
+            for (int i = 0; i < shipment.Length; i++)
+            {
+                db.Entry(shipment[i]).Reference(s => s.BusinessUnit).Load();
+                db.Entry(shipment[i]).Reference(s => s.Service).Load();
+                db.Entry(shipment[i]).Reference(s => s.ShipmentType).Load();
+                db.Entry(shipment[i]).Reference(s => s.Customer).Load();
+                shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId && ca.CustomerId == shipment[i].CustomerId).ToArray();
+                shipment[i].Customer.CustomerContacts = shipment[i].Customer.CustomerContacts.Where(cc => cc.Id == shipment[i].CustomerContactId && cc.CustomerId == shipment[i].CustomerId).ToArray();
+
+                foreach (var cc in shipment[i].Customer.CustomerContacts)
+                    cc.Customer = null;
+                foreach (var ca in shipment[i].Customer.CustomerAddresses)
+                    ca.Customer = null;              
+            }
+
+            if (page > 1)
+                return Ok(shipment.Skip((page - 1) * pageSize).Take(pageSize));
+            else
+                return Ok(shipment.Take(pageSize));
         }
 
         // GET: api/Shipments/5
@@ -44,50 +76,61 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutShipment(int id, Shipment shipment)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            if (!ModelState.IsValid || id != shipment.Id)
             {
-                return BadRequest(ModelState);
-            }
-
-            if (id != shipment.Id)
-            {
-                return BadRequest();
+                response.message = "Bad request.";
+                return Ok(response);
             }
 
             db.Entry(shipment).State = EntityState.Modified;
 
             try
             {
+                shipment.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = shipment;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!ShipmentExists(id))
                 {
-                    return NotFound();
+                    response.message = "Shipment doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/Shipments
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult PostShipment(Shipment shipment)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
+            }
+            try
+            {
+                shipment.CreatedDate = DateTime.Now;
+                db.Shipments.Add(shipment);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = shipment;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Shipments.Add(shipment);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = shipment.Id }, shipment);
+            return Ok(response);
         }
 
         // DELETE: api/Shipments/5
@@ -95,15 +138,24 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult DeleteShipment(int id)
         {
             Shipment shipment = db.Shipments.Find(id);
+            response.status = "FAILURE";
             if (shipment == null)
             {
-                return NotFound();
+                response.message = "Shipment doesn't exist.";
+                return Ok(response);
+            }
+            try
+            {
+                db.Shipments.Remove(shipment);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Shipments.Remove(shipment);
-            db.SaveChanges();
-
-            return Ok(shipment);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)

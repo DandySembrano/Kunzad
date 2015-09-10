@@ -2361,9 +2361,11 @@
     <Compile Include="ApiControllers\BusinessUnitsController.cs" />
     <Compile Include="ApiControllers\BusinessUnitTypesController.cs" />
     <Compile Include="ApiControllers\ContactNumberTypesController.cs" />
+    <Compile Include="ApiControllers\ContactPhonesController.cs" />
     <Compile Include="ApiControllers\CountriesController.cs" />
     <Compile Include="ApiControllers\CouriersController.cs" />
     <Compile Include="ApiControllers\CustomerAddressesController.cs" />
+    <Compile Include="ApiControllers\CustomerContactsController.cs" />
     <Compile Include="ApiControllers\CustomerGroupsController.cs" />
     <Compile Include="ApiControllers\CustomersController.cs" />
     <Compile Include="ApiControllers\DriversController.cs" />

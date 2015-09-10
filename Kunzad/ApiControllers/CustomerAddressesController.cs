@@ -22,6 +22,19 @@ namespace Kunzad.ApiControllers
             return db.CustomerAddresses;
         }
 
+        public IHttpActionResult GetCustomerAddresses(int customerId)
+        {
+            var customerAddresses = db.CustomerAddresses.Where(ca => ca.CustomerId == customerId).ToArray();
+            if (customerAddresses.Length == 0)
+                return Ok();
+            for (int i = 0; i < customerAddresses.Length; i++)
+            {
+                db.Entry(customerAddresses[i]).Reference(ca => ca.CityMunicipality).Load();
+            }
+
+            return Ok(customerAddresses);
+        }
+
         // GET: api/CustomerAddresses/5
         [ResponseType(typeof(CustomerAddress))]
         public IHttpActionResult GetCustomerAddress(int id)
