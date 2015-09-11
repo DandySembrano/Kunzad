@@ -374,6 +374,7 @@
     <Content Include="Scripts\app\customergroup-ctrl.js" />
     <Content Include="Scripts\app\driver-ctrl.js" />
     <Content Include="Scripts\app\industry-ctrl.js" />
+    <Content Include="Scripts\app\seafreight-ctrl.js" />
     <Content Include="Scripts\app\serviceablearea-ctrl.js" />
     <Content Include="Scripts\app\servicecategory-ctrl.js" />
     <Content Include="Scripts\app\shipmenttype-ctrl.js" />
@@ -2370,6 +2371,7 @@
     <Compile Include="ApiControllers\CustomersController.cs" />
     <Compile Include="ApiControllers\DriversController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
+    <Compile Include="ApiControllers\SeaFreightsController.cs" />
     <Compile Include="ApiControllers\ServiceableAreasController.cs" />
     <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
     <Compile Include="ApiControllers\ServicesController.cs" />
@@ -2971,6 +2973,9 @@
     <Content Include="vendor\plugins\uigrid\css\ui-grid.eot" />
     <Content Include="vendor\plugins\uigrid\css\ui-grid.ttf" />
     <Content Include="vendor\plugins\uigrid\css\ui-grid.woff" />
+    <Content Include="Views\References\Booking.cshtml" />
+    <Content Include="Views\Shared\_TransactionLayout.cshtml" />
+    <Content Include="Views\References\SeaFreight.cshtml" />
     <EntityDeploy Include="Models\ModelKunzadDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
@@ -2988,8 +2993,6 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\References\Booking.cshtml" />
-    <Content Include="Views\Shared\_TransactionLayout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

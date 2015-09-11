@@ -39,6 +39,7 @@ namespace Kunzad.Models
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
             m.MenuItems.Add(new MenuItem("Trucking", "glyphicons glyphicons-truck", "#/trucking"));
+            m.MenuItems.Add(new MenuItem("Trucking", "glyphicons glyphicons-truck", "#"));
             m.MenuItems.Add(new MenuItem("Sea Freight", "glyphicons glyphicons-boat", "#/seafreight"));
             m.MenuItems.Add(new MenuItem("Air Freight", "glyphicons glyphicons-airplane", "#"));
             menuGroup.MenuGroupItems.Add(m);

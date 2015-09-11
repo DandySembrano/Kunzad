@@ -41,6 +41,7 @@ namespace Kunzad
                         "~/Scripts/directive/dataGrid1.js",
                         "~/Scripts/directive/dataExport.js",
                         "~/Scripts/app/booking-ctrl.js",
+                        "~/Scripts/app/seafreight-ctrl.js",
                         "~/Scripts/app/customer-ctrl.js",
                         "~/Scripts/app/customergroup-ctrl.js",
                         "~/Scripts/app/courier-ctrl.js",

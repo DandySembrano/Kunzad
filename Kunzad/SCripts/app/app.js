@@ -23,6 +23,10 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
                 templateUrl: '/References/booking',
                 controller: 'BookingController'
             })
+            .when('/seafreight', {
+                templateUrl: '/References/SeaFreight',
+                controller: 'SeaFreightController'
+            })
 
             .when('/customers', {
                 templateUrl: '/References/Customers',
