@@ -51,8 +51,6 @@ namespace Kunzad.ApiControllers
                 shipment[i].BusinessUnit.SeaFreights = null;
                 shipment[i].BusinessUnit.SeaFreights1 = null;
                 shipment[i].BusinessUnit.Shipments = null;
-                shipment[i].BusinessUnit.VesselVoyages = null;
-                shipment[i].BusinessUnit.VesselVoyages1 = null;
                 shipment[i].Service.ServiceCategory = null;
                 shipment[i].Service.ServiceCharges = null;
                 shipment[i].Service.Shipments = null;
