@@ -21,7 +21,7 @@ namespace Kunzad.Models
 
             // Shipment
             m = new MenuGroupItem();
-            m.Name = "Shipment";
+            m.Name = "Booking";
             m.Icon = "glyphicons glyphicons-cargo";
             m.IsSubMenu = true;
             m.Link = "#";
