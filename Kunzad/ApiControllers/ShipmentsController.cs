@@ -24,34 +24,72 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Shipments?page=1
+        [ResponseType(typeof(Shipment))]
         public IHttpActionResult GetShipments(int page)
         {
-
             var shipment = db.Shipments
-                .Include(s => s.Customer.CustomerAddresses)
-                .Include(s => s.Customer.CustomerContacts)
-                .ToArray();
+                            .Include(s => s.BusinessUnit)
+                            .Include(s => s.Service)
+                            .Include(s => s.ShipmentType)
+                            .Include(s => s.Customer)
+                            .Include(s => s.Customer.CustomerAddresses)
+                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                            .Include(s => s.Customer.CustomerContacts)
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                            .ToArray();
             if (shipment.Length == 0)
                 return Ok(shipment);
             for (int i = 0; i < shipment.Length; i++)
             {
-                db.Entry(shipment[i]).Reference(s => s.BusinessUnit).Load();
-                db.Entry(shipment[i]).Reference(s => s.Service).Load();
-                db.Entry(shipment[i]).Reference(s => s.ShipmentType).Load();
-                db.Entry(shipment[i]).Reference(s => s.Customer).Load();
-                shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId && ca.CustomerId == shipment[i].CustomerId).ToArray();
-                shipment[i].Customer.CustomerContacts = shipment[i].Customer.CustomerContacts.Where(cc => cc.Id == shipment[i].CustomerContactId && cc.CustomerId == shipment[i].CustomerId).ToArray();
 
+                shipment[i].BusinessUnit.AirFreights = null;
+                shipment[i].BusinessUnit.AirFreights1 = null;
+                shipment[i].BusinessUnit.BusinessUnitContacts = null;
+                shipment[i].BusinessUnit.BusinessUnitType = null;
+                shipment[i].BusinessUnit.CourierTransactions = null;
+                shipment[i].BusinessUnit.SeaFreights = null;
+                shipment[i].BusinessUnit.SeaFreights1 = null;
+                shipment[i].BusinessUnit.Shipments = null;
+                shipment[i].BusinessUnit.VesselVoyages = null;
+                shipment[i].BusinessUnit.VesselVoyages1 = null;
+                shipment[i].Service.ServiceCategory = null;
+                shipment[i].Service.ServiceCharges = null;
+                shipment[i].Service.Shipments = null;
+                shipment[i].ShipmentType.Shipments = null;
+                shipment[i].Customer.CustomerGroup = null;
+                shipment[i].Customer.Industry = null;
+                shipment[i].Customer.Shipments = null;
+                shipment[i].Customer.TruckingDeliveries = null;
+
+                shipment[i].Customer.CustomerContacts = shipment[i].Customer.CustomerContacts.Where(cc => cc.Id == shipment[i].CustomerContactId).ToArray();
                 foreach (var cc in shipment[i].Customer.CustomerContacts)
+                {
                     cc.Customer = null;
-                foreach (var ca in shipment[i].Customer.CustomerAddresses)
-                    ca.Customer = null;              
-            }
+                    cc.Contact.BusinessUnitContacts = null;
+                    cc.Contact.CustomerContacts = null;
+                    cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == shipment[i].CustomerContactPhoneId).ToArray();
+                    foreach (var ccp in cc.Contact.ContactPhones)
+                    {
+                        ccp.Contact = null;
+                        ccp.ContactNumberType = null;
+                    }
+                }
 
-            if (page > 1)
-                return Ok(shipment.Skip((page - 1) * pageSize).Take(pageSize));
-            else
-                return Ok(shipment.Take(pageSize));
+                //shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId).ToArray();
+                foreach (var ca in shipment[i].Customer.CustomerAddresses)
+                {
+                    ca.CityMunicipality.Couriers = null;
+                    ca.CityMunicipality.CustomerAddresses = null;
+                    ca.CityMunicipality.ServiceableAreas = null;
+                    ca.CityMunicipality.StateProvince = null;
+                }
+
+            }
+                if (page > 1)
+                    return Ok(shipment.Skip((page - 1) * pageSize).Take(pageSize));
+                else
+                    return Ok(shipment.Take(pageSize));
         }
 
         // GET: api/Shipments/5
@@ -87,6 +125,8 @@ namespace Kunzad.ApiControllers
 
             try
             {
+                shipment.OriginAddressId = shipment.CustomerAddressId;
+                shipment.DeliveryAddressId = 1;
                 shipment.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
                 response.status = "SUCCESS";
@@ -119,6 +159,8 @@ namespace Kunzad.ApiControllers
             }
             try
             {
+                shipment.OriginAddressId = shipment.CustomerAddressId;
+                shipment.DeliveryAddressId = 1;
                 shipment.CreatedDate = DateTime.Now;
                 db.Shipments.Add(shipment);
                 db.SaveChanges();

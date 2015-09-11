@@ -73,10 +73,10 @@ kunzadApp.filter('ProperCase', function ($filter) {
 });
 kunzadApp.filter('Decimal', function ($filter) {
     return function (value) {
-        if (value == "" || value == null)
-            return "";
+        if (value == "" || value == null || value == 0.00)
+            return 0.0000;
         else
-            return value.toFixed(4);
+            return $filter('number')(value, 4);
 
     }
 });
@@ -84,7 +84,6 @@ kunzadApp.filter('PaymentMode', function ($filter) {
     return function (value) {
         if (value == "" || value == null)
             return "";
-        console.log(value);
         var paymentModeList = [{ "Id": "A", "Name": "Account" },
                                   { "Id": "P", "Name": "Prepaid" },
                                   { "Id": "C", "Name": "Collect Account" },

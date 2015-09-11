@@ -66,6 +66,27 @@ namespace Kunzad.ApiControllers
             return Ok(customer);
         }
 
+        //GET: api/Customers?customerId=1&customerContactId=1&customerContactPhoneId=1&customerAddressId=1
+        [ResponseType(typeof(Customer))]
+        public IHttpActionResult GetCustomer(int customerId, int customerContactId, int customerContactPhoneId, int customerAddressId) {
+            var customer = db.Customers.Where(c => c.Id == customerId).ToArray();
+            customer[0].CustomerAddresses = db.CustomerAddresses.Include(ca => ca.CityMunicipality).Where(ca => ca.Id == customerAddressId).ToList();
+            customer[0].CustomerContacts = db.CustomerContacts.Include(cc => cc.Contact).Where(cc => cc.Id == customerContactId).ToList();
+            customer[0].CustomerContacts = db.CustomerContacts.Include(cc => cc.Contact.ContactPhones).Where(cc => cc.Id == customerContactId).ToList();
+            foreach (var cc in customer[0].CustomerContacts)
+            {
+                cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == customerContactPhoneId).ToArray();
+            }
+            foreach (var ca in customer[0].CustomerAddresses)
+            {
+                ca.CityMunicipality.Couriers = null;
+                ca.CityMunicipality.CustomerAddresses = null;
+                ca.CityMunicipality.ServiceableAreas = null;
+                ca.CityMunicipality.StateProvince = null;
+            }
+            return Ok(customer);
+        }
+
         // PUT: api/Customers/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCustomer(int id, Customer customer)

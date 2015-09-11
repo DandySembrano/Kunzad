@@ -40,6 +40,7 @@
                 <div class="col-md-8">
                     <select class="form-control"
                             placeholder=""
+                            ng-click="setServiceType(shipmentItem.ServiceId)"
                             ng-disabled="viewOnly"
                             ng-model="shipmentItem.ServiceId"
                             ng-options="item.Id as item.Name for item in serviceList"></select>
@@ -52,6 +53,7 @@
                     <select class="form-control"
                             placeholder=""
                             ng-disabled="viewOnly"
+                            ng-click="setShipmentType(shipmentItem.ShipmentTypeId)"
                             ng-model="shipmentItem.ShipmentTypeId"
                             ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
                 </div>
@@ -99,7 +101,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber"
+                               ng-model="shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -150,7 +152,7 @@
                         <textarea rows="3" style="height:auto;"
                                   class="form-control"
                                   placeholder=""
-                                  ng-model="shipmentItem.Origin"
+                                  ng-model="shipmentItem.DeliveryAddress"
                                   ng-disabled="viewOnly"></textarea>
                     </div>
                 </div>
@@ -164,7 +166,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.BillToCustomerCode"
+                               ng-model="shipmentItem.BillToCustomer[0].Code"
                                ng-disabled="viewOnly"
                                ng-click="showModal('#customer-list-modal', 'billto')">
                     </div>
@@ -176,7 +178,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.BillToCustomerName"
+                               ng-model="shipmentItem.BillToCustomer[0].Name"
                                ng-disabled="true">
                     </div>
                 </div>      
@@ -187,7 +189,7 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="shipmentItem.BillToCustomerContactPhone"
+                               ng-model="shipmentItem.BillToCustomer[0].CustomerContacts[0].Contact.ContactPhones[0].ContactNumber"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -216,7 +218,7 @@
                         <input id="isRevenue"
                                type="checkbox"
                                ng-model="shipmentItem.IsRevenue"
-                               ng-disabled="viewonly">
+                               ng-disabled="viewOnly">
                         <label for="isRevenue"
                                class="small">Is Revenue?</label>
                     </div>
@@ -282,7 +284,7 @@
                                 <input id="isConsolidated"
                                        type="checkbox"
                                        ng-model="shipmentItem.IsConsolidation"
-                                       ng-disabled="viewonly">
+                                       ng-disabled="viewOnly">
                                 <label for="isConsolidated"
                                        class="small">Is Consolidated?</label>
                                 <input id="isMultipleDelivery"

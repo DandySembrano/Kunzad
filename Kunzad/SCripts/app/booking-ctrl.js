@@ -22,6 +22,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.modalType = null;
     var pageSize = 20;
 
+    $interval(function () { }, 100);
+
     //Displays Modal
     $scope.showModal = function (panel, type) {
         openModalPanel(panel);
@@ -30,43 +32,52 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
 
     //Show Customer Contacts List
     $scope.showCustomerContacts = function (customerId) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get("/api/CustomerContacts?customerId=" + customerId)
        .success(function (data, status) {
            $scope.customerContactList = [];
            $scope.customerContactList = data;
+           spinner.stop();
            $scope.showModal('#customer-contacts-list-modal', $scope.modalType);
        })
        .error(function (error, status) {
            $scope.isError = true;
            $scope.errorMessage = status;
+           spinner.stop();
        });
     };
 
     //Show Customer Contact Phones List
     $scope.showCustomerContactPhones = function (contactId) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get("/api/ContactPhones?contactId=" + contactId)
        .success(function (data, status) {
            $scope.customerContactPhoneList = [];
            $scope.customerContactPhoneList = data;
+           spinner.stop();
            $scope.showModal('#customer-contact-phones-list-modal', $scope.modalType);
        })
        .error(function (error, status) {
            $scope.isError = true;
            $scope.errorMessage = status;
+           spinner.stop();
        });
     };
 
     //Show Customer Addresses List
     $scope.showCustomerAddressList = function (customerId) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get("/api/CustomerAddresses?customerId=" + customerId)
         .success(function (data, status) {
             $scope.customerAddressList = [];
             $scope.customerAddressList = data;
+            spinner.stop();
             $scope.showModal('#customer-address-list-modal', $scope.modalType);
         })
         .error(function (error, status) {
             $scope.isError = true;
             $scope.errorMessage = status;
+            spinner.stop();
         });
     };
 
@@ -91,8 +102,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             }
             else {
                 $scope.shipmentItem.BillToCustomerId = c.Id;
-                $scope.shipmentItem.BillToCustomerCode = c.Code;
-                $scope.shipmentItem.BillToCustomerName = c.Name;
+                $scope.shipmentItem.BillToCustomer[0].Code = c.Code;
+                $scope.shipmentItem.BillToCustomer[0].Name = c.Name;
             }
             jQuery.magnificPopup.close();
             var promise = $interval(function () {
@@ -109,8 +120,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             }
             else {
                 $scope.shipmentItem.BillToCustomerId = null;
-                $scope.shipmentItem.BillToCustomerCode = null;
-                $scope.shipmentItem.BillToCustomerName = null;
+                $scope.shipmentItem.BillToCustomer[0].Code = null;
+                $scope.shipmentItem.BillToCustomer[0].Name = null;
             }
             jQuery.magnificPopup.close();
         }
@@ -146,11 +157,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         if (angular.isDefined(ccp)) {
             if ($scope.modalType == "customer") {
                 $scope.shipmentItem.CustomerContactPhoneId = ccp.Id;
-                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber = ccp.ContactNumber;
+                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = ccp.ContactNumber;
             }
             else {
                 $scope.shipmentItem.BillToCustomerContactPhoneId = ccp.Id;
-                $scope.shipmentItem.BillToCustomerContactPhone = ccp.ContactNumber;
+                $scope.shipmentItem.BillToCustomer[0].CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = ccp.ContactNumber;
             }
             jQuery.magnificPopup.close();
             var promise = $interval(function () {
@@ -165,11 +176,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         else {
             if ($scope.modalType == "customer") {
                 $scope.shipmentItem.CustomerContactPhoneId = null;
-                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactNumber = null;
+                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = null;
             }
             else {
                 $scope.shipmentItem.BillToCustomerContactPhoneId = null;
-                $scope.shipmentItem.BillToCustomerContactPhone = null;
+                $scope.shipmentItem.BillToCustomer[0].CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = null;
             }
             jQuery.magnificPopup.close();
         }
@@ -181,21 +192,25 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             if ($scope.modalType == "customer") {
                 $scope.shipmentItem.CustomerAddressId = ca.Id;
                 $scope.shipmentItem.CustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
+                $scope.shipmentItem.Customer.CustomerAddresses[0] = ca;
             }
             else {
                 $scope.shipmentItem.BillToCustomerAddressId = ca.Id;
                 $scope.shipmentItem.BillToCustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
+                $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0] = ca;
             }
             jQuery.magnificPopup.close();
         }
         else {
             if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerContactPhoneId = null;
+                $scope.shipmentItem.CustomerAddressId = null;
                 $scope.shipmentItem.CustomerAddress = null;
+                $scope.shipmentItem.Customer.CustomerAddresses[0] = null;
             }
             else {
                 $scope.shipmentItem.BillToCustomerAddressId = null;
                 $scope.shipmentItem.BillToCustomerAddress = null;
+                $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0] = null;
             }
             jQuery.magnificPopup.close();
         }
@@ -309,7 +324,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 }],
                 "CustomerContacts": [{
                     "Contact": {
-                        "ContactNumber": null
+                        "ContactPhones":[{
+                            "ContactNumber":null
+                        }]
                     }
                 }],
             },
@@ -319,15 +336,34 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             "DeliverToContactNo": null,
             "Description": null,
             "OriginAddressId": null,
-            "Origin": null,
+            "OriginAddress": null,
             "BillToCustomerId": null,
             "BillToCustomerContactId": null,
-            "BillToCustomerCode": null,
-            "BillToCustomerName": null,
             "BillToCustomerAddressId": null,
             "BillToCustomerAddress": null,
             "BillToCustomerContactPhoneId": null,
-            "BillToCustomerContactPhone": null,
+            "BillToCustomer": [{
+                "Id": null,
+                "Code": null,
+                "Name": null,
+                "TIN": null,
+                "CustomerAddresses": [{
+                    "Line1": null,
+                    "Line2": null,
+                    "PostalCode": null,
+                    "CityMunicipality": {
+                        "Id": null,
+                        "Name": null
+                    },
+                }],
+                "CustomerContacts": [{
+                    "Contact": {
+                        "ContactPhones": [{
+                            "ContactNumber": null
+                        }]
+                    }
+                }],
+            }],
             "Quantity": 0,
             "TotalCBM": 0,
             "IsRevenue": false,
@@ -351,11 +387,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //initialized shipment gridoption
     $scope.initShipmentGridOptions = function () {
         var columns = [];
-        $scope.shipmentHeader = ['Shipment No', 'Business Unit', 'Origin', 'Service', 'Shipment Type', 'Qty', 'Total CBM', 'Cargo Description', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'Bill To', 'Payment Mode', 'With Revenue?', 'Revenue', 'Tax Inclusive?', 'Tax Amount', 'Consolidated?', 'Multiple Delivery?', 'No'];
-        $scope.shipmentKeys = ['Id', 'BusinessUnit.Name', 'Address.Line1', 'Service.Name', 'ShipmentType.Name', 'Quantity', 'TotalCBM', 'Description', 'PickupDate', 'PickupTime', 'Customer.Name', 'Customer.CustomerAddresses[0].Line1', 'Customer.CustomerContacts[0].Contact.ContactNumber', 'DeliverTo', 'CustomerAddress.Line1', 'DeliverToContactNo', 'Customer.Name', 'PaymentMode', 'IsRevenue', 'Revenue', 'IsTaxInclusive', 'TaxAmount', 'IsConsolidation', 'IsMultipleDelivery'];
-        $scope.KeyType = ['ControlNo', 'String', 'String', 'String', 'String', 'Decimal', 'Decimal', 'String', 'Date', 'Time', 'String', 'String', 'Default', 'String', 'String', 'Default', 'String', 'PaymentMode', 'Boolean', 'Default', 'Boolean', 'Default', 'Boolean', 'Boolean'];
-        $scope.colWidth = [150, 150, 150, 100, 150, 100, 150, 200, 150, 150, 200, 200, 200, 200, 200, 200, 200, 150, 130, 100, 120, 120, 120, 150];
-        $scope.RequiredFields = ['BusinessUnitId-Business Unit', 'ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'CustomerId-Customer', 'BillToCustomerId-Bill to Customer', 'DeliverTo-Consignee', 'Origin-Consignee Address', 'PaymentMode-Payment Mode'];
+        $scope.shipmentHeader = ['Shipment No', 'Business Unit','Service', 'Shipment Type', 'Qty', 'Total CBM', 'Cargo Description', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'Bill To', 'Payment Mode', 'With Revenue?', 'Revenue', 'Tax Inclusive?', 'Tax Amount', 'Consolidated?', 'Multiple Delivery?', 'No'];
+        $scope.shipmentKeys = ['Id', 'BusinessUnit.Name', 'Service.Name', 'ShipmentType.Name', 'Quantity', 'TotalCBM', 'Description', 'PickupDate', 'PickupTime', 'Customer.Name', 'Customer.CustomerAddresses[0].Line1', 'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'DeliverTo', 'CustomerAddress.Line1', 'DeliverToContactNo', 'BillToCustomer[0].Name', 'PaymentMode', 'IsRevenue', 'Revenue', 'IsTaxInclusive', 'TaxAmount', 'IsConsolidation', 'IsMultipleDelivery'];
+        $scope.KeyType = ['ControlNo', 'String', 'String', 'String', 'Number', 'Decimal', 'String', 'Date', 'Time', 'String', 'String', 'Default', 'String', 'String', 'Default', 'String', 'PaymentMode', 'Boolean', 'Decimal', 'Boolean', 'Decimal', 'Boolean', 'Boolean'];
+        $scope.colWidth = [150, 150, 100, 150, 100, 150, 200, 150, 150, 200, 200, 200, 200, 200, 200, 200, 150, 130, 100, 120, 120, 120, 150];
+        $scope.RequiredFields = ['BusinessUnitId-Business Unit', 'ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'CustomerId-Customer', 'BillToCustomerId-Bill to Customer', 'DeliverTo-Consignee', 'PaymentMode-Payment Mode'];
         //Initialize Number Listing
         var columnProperties = {};
         columnProperties.name = $scope.shipmentHeader[$scope.shipmentHeader.length - 1];
@@ -410,21 +446,33 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Retrieve shipments
     $scope.loadData = function (page) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        var i = 0;
+        $scope.BillToCustomer = [];
         $http.get("/api/Shipments?page=" + page)
             .success(function (data, status) {
-                $http.get("/api/ContactPhones/" + data[0].CustomerContactId)
-                .success(function (data1, status) {
-                    data[0].Customer.CustomerContacts[0].Contact = data1;
-                })
-
-                $http.get("/api/CityMunicipalities/" + data[0].Customer.CustomerAddresses[0].CityMunicipalityId)
-                .success(function (data1, status) {
-                    data[0].Customer.CustomerAddresses[0].CityMunicipality = data1;
-                })
-
-                //initialize shipment
                 $scope.shipmentGridOptions.data = data;
+                for (var i = 0; i < $scope.shipmentGridOptions.data.length; i++) {
+                    //Retrieve BillToCustomer information per shipments
+                    $scope.shipmentGridOptions.data[i].BillToCustomer = {};
+                    var url = '/api/Customers?customerId=' + $scope.shipmentGridOptions.data[i].BillToCustomerId + '&customerContactId=' + $scope.shipmentGridOptions.data[i].BillToCustomerContactId;
+                    url = url + '&customerContactPhoneId=' + $scope.shipmentGridOptions.data[i].BillToCustomerContactPhoneId + '&customerAddressId=' + $scope.shipmentGridOptions.data[i].BillToCustomerAddressId;
+                    $http.get(url)
+                    .success(function (data1, status) {
+                        $scope.BillToCustomer.push(data1);
+                    })
+                    .error(function (error, status) {
+                        spinner.stop();
+                    })
+                };
+
+                //Initialize BillToCustomer property of shipmentItem
+                var promise = $interval(function () {
+                    if ($scope.BillToCustomer.length == $scope.shipmentGridOptions.data.length) {
+                        for (var i = 0; i < $scope.BillToCustomer.length; i++)
+                            $scope.shipmentGridOptions.data[i].BillToCustomer = angular.copy($scope.BillToCustomer[i]);
+                        $interval.cancel(promise);
+                        promise = undefined;
+                    }
+                }, 100);
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -456,6 +504,29 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.setSelected = function (id) {
         $scope.shipmentIDholder = id;
     };
+
+    //Initialize service type
+    $scope.setServiceType = function (id) {
+        for (var i = 0; i < $scope.serviceList.length; i++)
+        {
+            if (id == $scope.serviceList[i].Id)
+            {
+                $scope.shipmentItem.Service = $scope.serviceList[i];
+                return true;
+            }
+        }
+    };
+
+    //Initialize shipment type
+    $scope.setShipmentType = function (id)
+    {
+        for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
+            if (id == $scope.serviceList[i].Id) {
+                $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
+                return true;
+            }
+        }
+    }
 
     //search ShippingLine
     $scope.searchShipment = function (id) {
@@ -544,6 +615,17 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         return true;
     };
 
+    //Function that will trigger during Edit,Delete and View Action
+    $scope.onEDV = function ()
+    {
+        $scope.shipmentItem = [];
+        $scope.shipmentItem = angular.copy($scope.shipmentGridOptions.data[$scope.selectedShipmentIndex]);
+        $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode;
+        $scope.shipmentItem.BillToCustomerAddress = $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0].Line2 + "," + $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0].PostalCode;
+        $scope.controlNoHolder = $scope.shipmentItem.Id;
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+    }
+
     //Triggers when user create, delete, update or view a Shipping Line in the list
     $scope.actionForm = function (action) {
         $scope.actionMode = action;
@@ -558,29 +640,17 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 $scope.submitButtonText = "Submit";
                 break;
             case "Edit":
-                $scope.shipmentItem = [];
-                $scope.shipmentItem = angular.copy($scope.shipmentGridOptions.data[$scope.selectedShipmentIndex]);
-                $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode;
-                $scope.controlNoHolder = $scope.shipmentItem.Id;
-                $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+                $scope.onEDV();
                 $scope.viewOnly = false;
                 $scope.submitButtonText = "Submit";
                 break;
             case "Delete":
-                $scope.shipmentItem = [];
-                $scope.shipmentItem = angular.copy($scope.shipmentGridOptions.data[$scope.selectedShipmentIndex]);
-                $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode;
-                $scope.controlNoHolder = $scope.shipmentItem.Id;
-                $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+                $scope.onEDV();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Delete";
                 break;
             case "View":
-                $scope.shipmentItem = [];
-                $scope.shipmentItem = angular.copy($scope.shipmentGridOptions.data[$scope.selectedShipmentIndex]);
-                $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode;
-                $scope.controlNoHolder = $scope.shipmentItem.Id;
-                $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+                $scope.onEDV();
                 $scope.viewOnly = true;
                 $scope.submitButtonText = "Close";
                 break;
@@ -592,11 +662,10 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $scope.shipmentItem.Id              = $scope.controlNoHolder;
         $scope.shipmentItem.PickupDate      = $filter('date')(document.getElementById('pickupdate').value, "yyyy-MM-dd");
         $scope.shipmentItem.PickupTime      = $filter('date')(document.getElementById('pickuptime').value, "hh:mm:ss");
-        $scope.shipmentItem.TotalCBM        = $filter('number')($scope.shipmentItem.TotalCBM, 4);
-        $scope.shipmentItem.Revenue         = $filter('number')($scope.shipmentItem.Revenue, 4);
-        $scope.shipmentItem.TaxAmount       = $filter('number')($scope.shipmentItem.TaxAmount, 4);
-        $scope.shipmentItem.TaxPercentage = $filter('number')($scope.shipmentItem.TaxPercentage, 4);
-
+        $scope.shipmentItem.TotalCBM        = $filter('Decimal')($scope.shipmentItem.TotalCBM);
+        $scope.shipmentItem.Revenue         = $filter('Decimal')($scope.shipmentItem.Revenue);
+        $scope.shipmentItem.TaxAmount       = $filter('Decimal')($scope.shipmentItem.TaxAmount);
+        $scope.shipmentItem.TaxPercentage = $filter('number')($scope.shipmentItem.TaxPercentage);
         
         if ($scope.shipmentItem.BillToCustomerContactId == null || $scope.shipmentItem.BillToCustomerContactId == "") {
             $scope.isError = true;
@@ -648,6 +717,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                     $scope.apiDelete($scope.shipmentItem.Id);
                     break;
                 case 'View':
+                    $scope.selectedTab = $scope.tabPages[1];
                     break;
             }
         }
@@ -668,7 +738,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $http.post("/api/Shipments", dataModel)
         .success(function (data, status) {
             if (data.status == "SUCCESS") {
-                $scope.shipmentItem = angular.copy(data.objParam1);
+                $scope.shipmentItem.Id = angular.copy(data.objParam1.Id);
                 $scope.shipmentGridOptions.data.push($scope.shipmentItem);
                 $scope.selectedTab = $scope.tabPages[1];
                 spinner.stop();
@@ -702,7 +772,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $http.put("/api/Shipments" + "/" + id, dataModel)
         .success(function (data, status) {
             if (data.status = "SUCCESS") {
-                $scope.shipmentItem = angular.copy(data.objParam1);
+                //$scope.shipmentItem = angular.copy(data.objParam1);
+                console.log($scope.shipmentItem);
                 $scope.shipmentGridOptions.data[$scope.selectedShipmentIndex] = angular.copy($scope.shipmentItem);
                 $scope.selectedTab = $scope.tabPages[1];
                 spinner.stop();
@@ -796,7 +867,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
 
     //Check if input contains letter only
     $('#consigneename').keypress(function (key) {
-        if ((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45)) return false;
+        if ((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)) return false;
     });
 
     //Initialize needed functions during page load
