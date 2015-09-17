@@ -1,0 +1,467 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+
+<!-- General -->
+@section tab1Content{
+    @*Column 1*@
+    <div class="col-lg-6">
+        <form class="form-horizontal" role="form">
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Trucking No</label>
+                <div class="col-md-4">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="System Generated"
+                           ng-model="truckingItem.Id"
+                           ng-disabled="true"/>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Dispatch Date</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='dtPicker'
+                                   class="form-control"
+                                   ng-model="truckingItem.DispatchDate"
+                                   ng-disabled="viewonly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Dispatch Time</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id="tmPicker"
+                               class="form-control"
+                               ng-model="truckingItem.DispatchTime"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Truck Plate No</label>
+                <div class="col-md-4">
+                    <input type="hidden"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.TruckId"/>
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.Trucks.PlateNo"
+                           ng-click="showModal('#truck-list-modal')"/>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Trucker Name</label>
+                <div class="col-md-8">
+                    <input type="hidden"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.TruckerId" />
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.Trucker.Name">
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Driver Name</label>
+                <div class="col-md-8">
+                    <input type="hidden"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.DriverId" />
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.Drivers.Name"
+                           ng-click="showModal('#driver-list-modal')" />
+                </div>
+            </div>
+        </form>
+
+    </div>
+    @*Column 2*@
+    <div class="col-lg-6">
+        <form class="form-horizontal" role="form" style="padding-top:44px;">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Origin</label>
+                    <div class="col-md-8">
+                        <input type="hidden"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckingItem.OriginServiceableAreaId" />
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckingItem.OriginServiceableAreaName"
+                               ng-click="showModal('#originBusinnessUnit-list-modal')" />
+                    </div>
+                </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Destination</label>
+                <div class="col-md-8">
+                    <input type="hidden"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="DestinationServiceableAreaId">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.DestinationServiceableAreaName"
+                           ng-click="showModal('#destinationBusinnessUnit-list-modal')" />
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Trucker Cost</label>
+                <div class="col-md-4">
+                    <input type="text"
+                           class="form-control"
+                           placeholder=""
+                           ng-model="truckingItem.TruckerCost">
+
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Truck Call Date</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='dtPickerCallDt'
+                               class="form-control"
+                               ng-model="truckingItem.TruckCallDate"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Truck Call Time</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id="tmPickerCallTm"
+                               class="form-control"
+                               ng-model="truckingItem.TruckCallTime"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+                </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Completed Date</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id="tmPickerCompletedDt"
+                               class="form-control"
+                               ng-model="truckingItem.CompletedDate"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-3 control-label small">Completed Time</label>
+                <div class="col-md-4">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id="tmPickerCompletedTm"
+                               class="form-control"
+                               ng-model="truckingItem.CompletedTime"
+                               ng-disabled="viewonly" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+                </div>
+           </form>
+
+        
+        <script type="text/javascript">
+        $(function () {
+            $('#dtPicker').datetimepicker({
+                format: 'MM-DD-YYYY',
+                sideBySide: false,
+                pickTime: false,
+            })
+            $('#dtPickerCallDt').datetimepicker({
+                format: 'MM-DD-YYYY',
+                sideBySide: false,
+                pickTime: false,
+            })
+            $('#tmPickerCompletedDt').datetimepicker({
+                format: 'MM-DD-YYYY',
+                sideBySide: false,
+                pickTime: false,
+            })
+            $('#tmPicker').datetimepicker({
+                format: 'HH:mm',
+                sideBySide: false,
+                pickDate: false
+            })
+            $('#tmPickerCallTm').datetimepicker({
+                format: 'HH:mm',
+                sideBySide: false,
+                pickDate: false
+            })
+            $('#tmPickerCompletedTm').datetimepicker({
+                format: 'HH:mm',
+                sideBySide: false,
+                pickDate: false
+            })
+        });
+        </script>
+
+    </div>
+    <div class="col-lg-12" context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl">
+    <div ui-grid="gridOptTrkgDtl" ui-grid-edit ui-grid-cellnav ui-grid-exporter class="grid"></div>
+</div>
+   
+}
+<!-- List -->
+@section tab2Content{
+    @*<div ui-grid="seafreightGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>*@<br />
+}
+<div id="truck-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Truck List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-seqno small">Plate No</th>
+                                <th class="myTableCell cell-10 small text-center">Truck Type</th>
+                                <th class="myTableCell cell-10 small text-center">Trucker Name</th>
+                                <th class="myTableCell cell-10 small text-center">Weight Capacity</th>
+                                <th class="myTableCell cell-10 small text-center">Volume Capacity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="truck in truckList"
+                                ng-click="closeModalTruck(truck)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{truck.PlateNo}}</td>
+                                <td class="myTableCell cell-10 small">{{truck.TruckType.Type}}</td>
+                                <td class="myTableCell cell-10 small">{{truck.Trucker.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(truck.WeightCapacity)}}</td>
+                                <td class="myTableCell cell-10 small">{{(truck.VolumeCapacity)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModalTruck(truck)">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="driver-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Driver List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-seqno small">First Name</th>
+                                <th class="myTableCell cell-10 small text-center">Middle Name</th>
+                                <th class="myTableCell cell-10 small text-center">Last Name</th>
+                                <th class="myTableCell cell-10 small text-center">License No</th>
+                                <th class="myTableCell cell-10 small text-center">License Expiry</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="driver in driverList"
+                                ng-click="closeModalDriver(driver)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{driver.FirstName}}</td>
+                                <td class="myTableCell cell-10 small">{{driver.MiddleName}}</td>
+                                <td class="myTableCell cell-10 small">{{driver.LastName}}</td>
+                                <td class="myTableCell cell-10 small">{{(driver.LicenseNo)}}</td>
+                                <td class="myTableCell cell-10 small">{{(driver.LicenseExpiry)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModalDriver(driver)">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="originBusinnessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Code</th>
+                                <th class="myTableCell cell-10 small text-center">Name</th>
+                                <th class="myTableCell cell-10 small text-center">Operating Site?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Airport?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Seaport?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="bu in businessUnitList"
+                                ng-click="closeModalBusinessUnit(bu)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{bu.Code}}</td>
+                                <td class="myTableCell cell-10 small">{{bu.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.isOperatingSite == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasAirPort == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasSeaPort == true ? 'Yes' : 'No')}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModalBusinessUnit(bu)">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="destinationBusinnessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Code</th>
+                                <th class="myTableCell cell-10 small text-center">Name</th>
+                                <th class="myTableCell cell-10 small text-center">Operating Site?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Airport?</th>
+                                <th class="myTableCell cell-10 small text-center">Has Seaport?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="bu in businessUnitList"
+                                ng-click="closeModalBusinessUnitDestination(bu)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{bu.Code}}</td>
+                                <td class="myTableCell cell-10 small">{{bu.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.isOperatingSite == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasAirPort == true ? 'Yes' : 'No')}}</td>
+                                <td class="myTableCell cell-10 small">{{(bu.hasSeaPort == true ? 'Yes' : 'No')}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModalBusinessUnitDestination(bu)">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Booking List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-seqno small">Shipment No</th>
+                                <th class="myTableCell cell-10 small text-center">Pickup Date</th>
+                                <th class="myTableCell cell-10 small text-center">Pickup Time</th>
+                                <th class="myTableCell cell-10 small text-center">Pickup Address</th>
+                                <th class="myTableCell cell-10 small text-center">Shipment Date</th>
+                                <th class="myTableCell cell-10 small text-center">Shipment Time</th>
+                                <th class="myTableCell cell-10 small text-center">Customer</th>
+                                <th class="myTableCell cell-10 small text-center">Consignee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="shipment in shipmentList"
+                                ng-click="closeShipment(shipment.Id)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{shipment.Id}}</td>
+                                <td class="myTableCell cell-10 small">{{shipment.PickUpDate}}</td>
+                                <td class="myTableCell cell-10 small">{{shipment.PickUpTime}}</td>
+                                <td class="myTableCell cell-10 small">{{(shipment.OriginAddress)}}</td>
+                                <td class="myTableCell cell-10 small">{{(shipment.OriginAddress)}}</td>
+                                <td class="myTableCell cell-10 small">{{(shipment.Customer.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(shipment.DeliverTo)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeShipment(shipment.Id)">OK</button>
+        </div>
+    </div>
+</div>
