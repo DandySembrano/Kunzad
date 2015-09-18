@@ -816,7 +816,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
 
     //Check if input contains letter only
     $('#consigneename').keypress(function (key) {
-        if ((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)) return false;
+        if (!((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)))
+            return true;
+        //for back space
+        else if (key.charCode == 0)
+            return true;
     });
 
     //Initialize needed functions during page load

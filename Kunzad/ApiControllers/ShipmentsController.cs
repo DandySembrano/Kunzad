@@ -20,7 +20,59 @@ namespace Kunzad.ApiControllers
         // GET: api/Shipments
         public IQueryable<Shipment> GetShipments()
         {
-            return db.Shipments;
+            var shipment = db.Shipments
+                            .Include(s => s.BusinessUnit)
+                            .Include(s => s.Service)
+                            .Include(s => s.ShipmentType)
+                            .Include(s => s.Customer)
+                            .Include(s => s.Customer.CustomerAddresses)
+                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                            .Include(s => s.Customer.CustomerContacts)
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones));
+            foreach (var s in shipment)
+            {
+                s.BusinessUnit.AirFreights = null;
+                s.BusinessUnit.AirFreights1 = null;
+                s.BusinessUnit.BusinessUnitContacts = null;
+                s.BusinessUnit.BusinessUnitType = null;
+                s.BusinessUnit.CourierTransactions = null;
+                s.BusinessUnit.SeaFreights = null;
+                s.BusinessUnit.SeaFreights1 = null;
+                s.BusinessUnit.Shipments = null;
+                s.Service.ServiceCategory = null;
+                s.Service.ServiceCharges = null;
+                s.Service.Shipments = null;
+                s.ShipmentType.Shipments = null;
+                s.Customer.CustomerGroup = null;
+                s.Customer.Industry = null;
+                s.Customer.Shipments = null;
+                s.Customer.TruckingDeliveries = null;
+
+                s.Customer.CustomerContacts = s.Customer.CustomerContacts.Where(cc => cc.Id == s.CustomerContactId).ToArray();
+                foreach (var cc in s.Customer.CustomerContacts)
+                {
+                    cc.Customer = null;
+                    cc.Contact.BusinessUnitContacts = null;
+                    cc.Contact.CustomerContacts = null;
+                    cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == s.CustomerContactPhoneId).ToArray();
+                    foreach (var ccp in cc.Contact.ContactPhones)
+                    {
+                        ccp.Contact = null;
+                        ccp.ContactNumberType = null;
+                    }
+                }
+
+                s.Customer.CustomerAddresses = s.Customer.CustomerAddresses.Where(ca => ca.Id == s.CustomerAddressId).ToArray();
+                foreach (var ca in s.Customer.CustomerAddresses)
+                {
+                    ca.CityMunicipality.Couriers = null;
+                    ca.CityMunicipality.CustomerAddresses = null;
+                    ca.CityMunicipality.ServiceableAreas = null;
+                    ca.CityMunicipality.StateProvince = null;
+                }
+            }
+            return shipment;
         }
 
         // GET: api/Shipments?page=1
@@ -74,7 +126,7 @@ namespace Kunzad.ApiControllers
                     }
                 }
 
-                //shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId).ToArray();
+                shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId).ToArray();
                 foreach (var ca in shipment[i].Customer.CustomerAddresses)
                 {
                     ca.CityMunicipality.Couriers = null;
