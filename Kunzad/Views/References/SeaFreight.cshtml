@@ -10,21 +10,22 @@
         <strong>ERROR!</strong>{{errorMessage}}
     </div>
     @*Column 1*@
-    <div class="col-lg-6">
-        <form class="form-horizontal" role="form">
-            @*seafreight No*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Freight No</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder="System Generated"
-                           ng-model="seafreightItem.Id"
-                           ng-disabled="true">
+
+    <fieldset class="scheduler-border">
+        <legend class="scheduler-border">Sea Freight Information</legend>
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                @*seafreight No*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Transaction No</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="System Generated"
+                               ng-model="seafreightItem.Id"
+                               ng-disabled="true">
+                    </div>
                 </div>
-            </div>
-            <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Bill of Lading Information</legend>
                 @*Bill of Lading Number*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">BL Number</label>
@@ -51,14 +52,12 @@
                         </div>
                     </div>
                 </div>
-            </fieldset>
-            <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Route Information</legend>
                 @*Origin*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Origin</label>
                     <div class="col-md-8">
                         <input type="text"
+                               id="origin"
                                class="form-control"
                                placeholder=""
                                ng-model="seafreightItem.BusinessUnit1.Name"
@@ -71,6 +70,7 @@
                     <label class="col-md-3 control-label small">Destination</label>
                     <div class="col-md-8">
                         <input type="text"
+                               id="destination"
                                class="form-control"
                                placeholder=""
                                ng-model="seafreightItem.BusinessUnit.Name"
@@ -78,58 +78,43 @@
                                ng-click="showModal('#destination-business-unit-list-modal')">
                     </div>
                 </div>
-            </fieldset>
 
-
-            @*Freight Cost*@
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Freight Cost</label>
-                <div class="col-md-8">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="seafreightItem.FreightCost">
+                @*Freight Cost*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Freight Cost</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="seafreightItem.FreightCost">
+                    </div>
                 </div>
-            </div>
+            </form>
+            <script type="text/javascript">
+                $(function () {
+                    $('#bldate').datetimepicker({
+                        format: 'MM-DD-YYYY',
+                        sideBySide: false,
+                        pickTime: false,
+                        //minDate: moment()
+                    })
+                });
+            </script>
 
+        </div>
 
-        </form>
-        <script type="text/javascript">
-            $(function () {
-                $('#bldate').datetimepicker({
-                    format: 'MM-DD-YYYY',
-                    sideBySide: false,
-                    pickTime: false,
-                    //minDate: moment()
-                })
-            });
-        </script>
-
-    </div>
-
-    @*Column 2*@
-    <div class="col-lg-6">
-        <form class="form-horizontal" role="form" style="padding-top:44px;">
-            <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Voyage Information</legend>
+        @*Column 2*@
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label">Voyage No</label>
                     <div class="col-md-8">
                         <input type="text"
+                               id="voyageNo"
                                class="form-control"
                                placeholder=""
                                ng-model="seafreightItem.VesselVoyageId"
-                               ng-click="showModal('#vessel-voyage-modal')">
-                    </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Vessel Name</label>
-                    <div class="col-md-8">
-                        <input type="text"
-                               class="form-control"
-                               placeholder=""
-                               ng-model="seafreightItem.VesselName"
-                               ng-disabled="true">
+                               ng-click="showModal('#shippingline-modal')">
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
@@ -138,7 +123,17 @@
                         <input type="text"
                                class="form-control"
                                placeholder=""
-                               ng-model="seafreightItem.ShippingLine"
+                               ng-model="seafreightItem.VesselVoyage.Vessel.ShippingLine.Name"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Vessel Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="seafreightItem.VesselVoyage.Vessel.Name"
                                ng-disabled="true">
                     </div>
                 </div>
@@ -172,30 +167,63 @@
                         </div>
                     </div>
                 </div>
-            </fieldset>
-        </form>
-    </div>
-    <!--End of Master-->
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Arrival Date</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='voyage_ArrDate'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.ArrivalDate"
+                                   ng-disabled="true" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Arrival Time</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='voyage_ArrTime'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.ArrivalTime"
+                                   ng-disabled="true" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+    <!--End of Master-->    
     <!--Detail-->
     <div class="col-lg-12">
-        <div class="row">
+        @*<div class="row">
             <div class="padding-right-30">
                 <button class="btn btn-sm pull-right"
-                        ng-click="openSeaFreightShipmentForm('Create')">
+                        ng-click="addSeaFreightShipmentItem()">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </div>
-        </div><br />
-        <div ui-grid="SeaFreightShipmentGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
-        <div class="myTableContainter" ng-show="paginatedTrucks.length > 0">
+        </div><br/>*@
+        <div class="col-lg-12" context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl">
+            <div ui-grid="SeaFreightShipmentGridOptions" class="grid" ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
+        </div>
+        <br />
+        <div class="myTableContainter" ng-show="paginatedseaFreightShipments.length > 0">
             <div class="myTableContent">
                 <div class="myTableRow-no-border text-right">
                     <div class="btn-group btn-group-sm">
                         <div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
-                                    ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage - 1), '')"
-                                    ng-disabled="!previousPageTrucks">
+                                    ng-click="procesSeaFreightShipmentPagination(seaFreightShipmentCurrentPage = (seaFreightShipmentCurrentPage - 1), '')"
+                                    ng-disabled="!previousPageseaFreightShipments">
                                 Previous
                             </button>
                         </div>
@@ -203,14 +231,14 @@
                             <button class="btn btn-default btn-sm"
                                     type="button"
                                     ng-disabled="true">
-                                {{ truckCurrentPage }}
+                                {{ seaFreightShipmentCurrentPage }}
                             </button>
                         </div>
                         <div class="myTableCell-no-padding text-right small">
                             <button class="btn btn-primary btn-sm"
                                     type="button"
-                                    ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage + 1), '')"
-                                    ng-disabled="!nextPageTrucks">
+                                    ng-click="processseaFreightShipmentPagination(seaFreightShipmentCurrentPage = (seaFreightShipmentCurrentPage + 1), '')"
+                                    ng-disabled="!nextPageseaFreightShipments">
                                 Next
                             </button>
                         </div>
@@ -318,8 +346,82 @@
     </div>
 </div>
 <!--End of Business Unit List Modal -->
+<!-- Shippingline List Modal -->
+<div id="shippingline-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shippingline List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Shippingline Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="s in shippingLineList"
+                                ng-click="closeShippinglineList(s)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{s.Name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeShippinglineList(s)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Shippingline List Modal -->
+<!-- Vessel List Modal -->
+<div id="vessels-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{$scope.seafreightItem.VesselVoyage.Vessel.ShippingLine.Name}}'s Vessel List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Vessel Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="v in vesselList"
+                                ng-click="closeVesselList(v)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{v.Name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeVesselList(v)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Vessel List Modal -->
 <!-- Vessel Voyage List Modal -->
-<div id="vessel-voyage-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -334,9 +436,8 @@
                             <tr class="myTableRow-header text-dark small">
                                 <th class="myTableCell cell-seqno small">No</th>
                                 <th class="myTableCell cell-10 small text-center">Voyage No.</th>
-                                @*<th class="myTableCell cell-10 small text-center">Vessel Name</th>
-    <th class="myTableCell cell-10 small text-center">Origin</th>
-    <th class="myTableCell cell-10 small text-center">Destination</th>*@
+                                <th class="myTableCell cell-10 small text-center">Origin</th>
+                                <th class="myTableCell cell-10 small text-center">Destination</th>
                                 <th class="myTableCell cell-10 small text-center">Departure Date</th>
                                 <th class="myTableCell cell-10 small text-center">Departure Time</th>
                                 <th class="myTableCell cell-10 small text-center">Arrival Date</th>
@@ -345,13 +446,12 @@
                         </thead>
                         <tbody>
                             <tr class="myTableRow"
-                                ng-repeat="vv in VesselVoyageList"
+                                ng-repeat="vv in vesselVoyageList"
                                 ng-click="closeVesselVoyageList(vv)">
                                 <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
                                 <td class="myTableCell cell-10 small">{{vv.Id}}</td>
-                                @*<td class="myTableCell cell-10 small">{{vv.Name}}</td>
-    <td class="myTableCell cell-10 small">{{(vv.BusinessUnitNameOrigin)}}</td>
-    <td class="myTableCell cell-10 small">{{(vv.BusinessUnitNameDestination)}}</td>*@
+                                <td class="myTableCell cell-10 small">{{(seafreightItem.VesselVoyage.OriginBusinessUnit.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(seafreightItem.VesselVoyage.DestinationBusinessUnit.Name)}}</td>
                                 <td class="myTableCell cell-10 small">{{(vv.DepartureDate)}}</td>
                                 <td class="myTableCell cell-10 small">{{(vv.DepartureTime)}}</td>
                                 <td class="myTableCell cell-10 small">{{(vv.ArrivalDate)}}</td>
@@ -364,8 +464,55 @@
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeOriginBusinessUnitList(bu)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeVesselVoyageList(vv)">Cancel</button>
         </div>
     </div>
 </div>
 <!--End of Vessel Voyage List Modal -->
+<!-- Shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-10 small text-center">Shipment ID</th>
+                                <th class="myTableCell cell-10 small text-center">BusinessUnit</th>
+                                <th class="myTableCell cell-10 small text-center">Service</th>
+                                <th class="myTableCell cell-10 small text-center">Shipment Type</th>
+                                <th class="myTableCell cell-10 small text-center">Customer Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="s in ShipmentList"
+                                ng-click="closeShipmentList(s.Id)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{s.Id}}</td>
+                                <td class="myTableCell cell-10 small">{{s.BusinessUnit.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.Service.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.ShipmentType.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.Customer.Name)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeShipmentList(s)">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Shipment List Modal -->
+<!--detail contextmenu-->
+@RenderPage("~/Views/Shared/_ContextMenuShipmentDtl.cshtml")

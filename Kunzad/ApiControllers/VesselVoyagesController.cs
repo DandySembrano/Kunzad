@@ -22,6 +22,15 @@ namespace Kunzad.ApiControllers
             return db.VesselVoyages;
         }
 
+        // GET: api/VesselVoyages?vesselId=1
+        public IHttpActionResult GetVesselsVoyages(int vesselId)
+        {
+            var vesselVoyages = db.VesselVoyages.Where(vv => vv.VesselId == vesselId).ToArray();
+            if (vesselVoyages.Length == 0)
+                return Ok();
+            return Ok(vesselVoyages);
+        }
+
         // GET: api/VesselVoyages?shippingLineId=1
         public IHttpActionResult GetVesselVoyages(int shippingLineId)
         {

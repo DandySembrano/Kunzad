@@ -23,6 +23,15 @@ namespace Kunzad.ApiControllers
             return db.BusinessUnits.OrderBy(bu => bu.Name);
         }
 
+        // GET: api/BusinessUnits?businessUnitId=1
+        public IHttpActionResult GetBusinessUnits(int businessUnitId,string dummy)
+        {
+            var businessUnit = db.BusinessUnits.Where(bu => bu.Id == businessUnitId).ToArray();
+            if (businessUnit.Length == 0)
+                return Ok();
+            return Ok(businessUnit);
+        }
+
         // GET: api/GetBusinessUnits?page=1
         public IQueryable<BusinessUnit> GetBusinessUnits(int page)
         {

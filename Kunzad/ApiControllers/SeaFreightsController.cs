@@ -13,8 +13,9 @@ using Kunzad.Models;
 namespace Kunzad.ApiControllers
 {
     public class SeaFreightsController : ApiController
-    {
+    {   
         private KunzadDbEntities db = new KunzadDbEntities();
+        private Response response = new Response();
         private int pageSize = 20;
         // GET: api/SeaFreights
         public IQueryable<SeaFreight> GetSeaFreights()
@@ -25,15 +26,45 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult GetSeafreights(int page)
         {
 
-            var seafreight = db.SeaFreights.ToArray();
-            db.Entry(seafreight[0]).Reference(s => s.BusinessUnit).Load();
-            db.Entry(seafreight[0]).Reference(s => s.BusinessUnit1).Load();
-            db.Entry(seafreight[0]).Reference(s => s.VesselVoyage).Load();
+            var seafreight = db.SeaFreights
+                            .Include(s => s.BusinessUnit)
+                            .Include(s => s.VesselVoyage)
+                            .Include(s => s.VesselVoyage.Vessel.ShippingLine)
+                            .ToArray();
+            if (seafreight.Length == 0)
+                return Ok(seafreight);
+            for (int i = 0; i < seafreight.Length; i++)
+            {
+                seafreight[i].BusinessUnit.AirFreights = null;
+                seafreight[i].BusinessUnit.AirFreights1 = null;
+                seafreight[i].BusinessUnit.BusinessUnitContacts = null;
+                seafreight[i].BusinessUnit.BusinessUnitType = null;
+                seafreight[i].BusinessUnit.CourierTransactions = null;
+                seafreight[i].BusinessUnit.Shipments = null;
+                seafreight[i].BusinessUnit.SeaFreights = null;
+                seafreight[i].BusinessUnit.SeaFreights1 = null;
+                seafreight[i].VesselVoyage.SeaFreights = null;
+                seafreight[i].VesselVoyage.Vessel.VesselVoyages = null;
+                seafreight[i].VesselVoyage.Vessel.ShippingLine.Vessels = null;
 
+            }
             if (page > 1)
                 return Ok(seafreight.Skip((page - 1) * pageSize).Take(pageSize));
             else
                 return Ok(seafreight.Take(pageSize));
+            //var seafreight = db.SeaFreights.ToArray();
+            //if (seafreight.Length <= 0)
+            //{
+            //    return Ok(seafreight);
+            //}
+            //db.Entry(seafreight[0]).Reference(s => s.BusinessUnit).Load();
+            //db.Entry(seafreight[0]).Reference(s => s.BusinessUnit1).Load();
+            //db.Entry(seafreight[0]).Reference(s => s.VesselVoyage).Load();
+
+            //if (page > 1)
+            //    return Ok(seafreight.Skip((page - 1) * pageSize).Take(pageSize));
+            //else
+            //    return Ok(seafreight.Take(pageSize));
         }
         // GET: api/SeaFreights/5
         [ResponseType(typeof(SeaFreight))]
@@ -89,15 +120,40 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(SeaFreight))]
         public IHttpActionResult PostSeaFreight(SeaFreight seaFreight)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
+            try
+            {
+                foreach (SeaFreightShipment sfs in seaFreight.SeaFreightShipments)
+                {
+                    sfs.CreatedDate = DateTime.Now;
+                    db.SeaFreightShipments.Add(sfs);
+                }
+                seaFreight.CreatedDate = DateTime.Now;
+                db.SeaFreights.Add(seaFreight);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                
+                response.objParam1 = seaFreight;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
-            db.SeaFreights.Add(seaFreight);
-            db.SaveChanges();
+            //db.SeaFreights.Add(seaFreight);
+            //db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = seaFreight.Id }, seaFreight);
+            //return CreatedAtRoute("DefaultApi", new { id = seaFreight.Id }, seaFreight);
         }
 
         // DELETE: api/SeaFreights/5
