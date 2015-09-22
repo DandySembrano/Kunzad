@@ -18,7 +18,7 @@ namespace Kunzad.ApiControllers
 
         // GET: api/Truckings
         public IQueryable<Trucking> GetTruckings()
-        {
+        { 
             return db.Truckings
                 .Include(t => t.Driver)
                 .Include(t=>t.Truck)

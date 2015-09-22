@@ -239,7 +239,7 @@
 }
 <!-- List -->
 @section tab2Content{
-    @*<div ui-grid="seafreightGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>*@<br />
+    <div ui-grid="gridOptTrkList" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
 }
 <div id="truck-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -465,3 +465,4 @@
         </div>
     </div>
 </div>
+@RenderPage("~/Views/Shared/_ContextMenuShipmentDtl.cshtml")

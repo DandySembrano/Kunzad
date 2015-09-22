@@ -91,7 +91,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         "ShipmentId": null,
         "CustomerId": null,
         "Customer": { "Id": null, "Name": null },
-        "CustomerDocumentNo": null,
         "Quantity": null,
         "CBM": null,
         "Description": null,
@@ -112,7 +111,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         enableSorting: true,
         enableCellEditOnFocus: true,
         rowTemplate: '<div>' +
-                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl"  ng-click="grid.appScope.showModalShipment(row.entity.No)" ></div>' +
+                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl" ng-click="grid.appScope.showModalShipment(row.Entity.No)" ></div>' +
                     '</div>',
         columnDefs: [
           {
@@ -121,7 +120,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
           },
         { name: 'Shipment', field: 'ShipmentId' },
         { name: 'Customer', field: 'Customer.Name', enableCellEdit: false },
-        { name: 'CustomerDocumentNo', field: 'CustomerDocumentNo', enableCellEdit: false },
         { name: 'Quantity', field: 'Quantity', enableCellEdit: false },
         { name: 'CBM', field: 'CBM', enableCellEdit: false },
         { name: 'Description', field: 'Description', enableCellEdit: false },
@@ -160,6 +158,62 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         }
     }
 
+    $scope.gridOptTrkList = {
+        data: [],
+        enableSorting: true,
+        enableCellEditOnFocus: true,
+        rowTemplate: '<div>' +
+                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell    ></div>' +
+                    '</div>',
+        columnDefs: [
+          {
+              name: 'No', enableCellEdit: false,
+              cellTemplate: '<div class="ui-grid-cell-contents text-center" >{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
+          },
+        { name: 'Trucking', field: 'Id' },
+        { name: 'DispatchDate', field: 'DispatchDate' },
+        { name: 'DispatchTime', field: 'DispatchTime' },
+        { name: 'PlateNo', field: 'Trucks.PlateNo' },
+        { name: 'Trucker', field: 'Trucker.Name' },
+        { name: 'Driver', field: 'Drivers.Name' },
+        { name: 'Origin', field: 'OriginServiceableAreaName' },
+         { name: 'Origin', field: 'DestinationServiceableAreaName' },
+        { name: 'TruckerCost', field: 'TruckerCost' },
+        { name: 'TruckCallDate', field: 'TruckCallDate' },
+        { name: 'TruckCallTime', field: 'TruckCallTime' },
+        { name: 'CompletedDate', field: 'CompletedDate' },
+        { name: 'CompletedTime', field: 'CompletedTime' },
+        ],
+
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        },
+        enableColumnResizing: true,
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterCsvFilename: 'myFile.csv',
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
+        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
+        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
+        exporterPdfFooter: function (currentPage, pageCount) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'landscape',
+        exporterPdfPageSize: 'a4',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+
+        }
+    }
+
     $scope.setSelected = function (id) {
         for (var j = 0; j <= $scope.shipmentList.length; j++) {
             if (id == $scope.shipmentList[j].Id) {
@@ -170,40 +224,25 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     }
 
     $scope.showModalShipment = function (id) {
-        $scope.ShipmentRow = id;
-        var rowCol = $scope.gridApi.cellNav.getFocusedCell();
-        if (rowCol !== null) {
-            $scope.currentFocused =  rowCol.col.colDef.name;
-        }
-        if ($scope.currentFocused == 'Shipment') {
-            openModalPanel('#shipment-list-modal');
-        }
+
+        $scope.ShipmentRow = 1;
+        openModalPanel('#shipment-list-modal');
+        //alert(id.grid.cellNav.focusedCells.Object.GridColumn.field);
+        ////var rowCol = $scope.gridApi.cellNav.getFocusedCell();
+        ////if (rowCol !== null) {
+        ////    $scope.currentFocused = rowCol.col.colDef.name;
+        ////} else {
+        ////}
+        ////if ($scope.currentFocused == 'Shipment') {
+        ////    openModalPanel('#shipment-list-modal');
+        ////}
         
     }
 
     $scope.actionFormDtl = function (action) {
         switch (action) {
             case "Create":
-                $scope.trkgDeliveryList.push([{
-                    "Id": -1,
-                    "TruckingId": "x",
-                    "ShipmentId": "x",
-                    "CustomerId": "x",
-                    "Customer": { "Id": "x", "Name": "x" },
-                    "CustomerDocumentNo": "x",
-                    "Quantity": "x",
-                    "CBM": "x",
-                    "Description": "x",
-                    "DeliverTo": "x",
-                    "DeliveryAddressId": "x",
-                    "DeliveryDate": "x",
-                    "DeliveryTime": "x",
-                    "CostAllocation": "x",
-                    "CreatedDate": "x",
-                    "LastUpdatedDate": "x",
-                    "CreatedByUserId": "x",
-                    "LastUpdatedByUserId": "x"
-                }]);
+                $scope.trkgDeliveryList.push($scope.trkgDeliveryItem)
                 break;
             case "Edit":
     
@@ -299,7 +338,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
 
 
     $scope.closeShipment = function (id) {
-        alert(id);
         var selected = 0;
         for (var j = 0; j <= $scope.shipmentList.length; j++) {
             if (id == $scope.shipmentList[j].Id) {
@@ -307,11 +345,23 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
                 break;
             }
         }
-       
-        $scope.trkgDeliveryList[$scope.ShipmentRow-1].ShipmentId = $scope.shipmentList[selected].Id;
+
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].ShipmentId = $scope.shipmentList[selected].Id;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].CustomerId = $scope.shipmentList[selected].CustomerId;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].Customer.Name = $scope.shipmentList[selected].Customer.Name;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].Quantity = $scope.shipmentList[selected].Quantity;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].CBM = $scope.shipmentList[selected].CBM;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliverTo = $scope.shipmentList[selected].DeliverTo;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliveryAddressId = $scope.shipmentList[selected].DeliveryAddressId;
+        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliveryDate = $scope.shipmentList[selected].DeliveryDate;
         jQuery.magnificPopup.close();
     };
 
+    $scope.setSelectedTab = function (tab) {
+        $scope.isError = false;
+        $scope.errorMessage = "";
+        $scope.selectedTab = tab;
+    };
 
     $scope.apiCreate = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -327,7 +377,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         .success(function (data, status) {
             $scope.truckingItem.Id = angular.copy(data.Id);
             spinner.stop();
-            alert("Successfully Saved.");
         })
         .error(function (error, status) {
             spinner.stop();
