@@ -13,6 +13,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.viewOnly = false;
     $scope.isError = false;
     $scope.errorMessage = "";
+    $scope.isErrorAddress = false;
+    $scope.errorMessageAddress = "";
     $scope.submitButtonText = "Submit";
     $scope.tabPages = ["Information", "List"];
     $scope.selectedTab = "Information";
@@ -20,20 +22,33 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.selectedShipmentIndex = 0;
     $scope.controlNoHolder = 0;
     $scope.modalType = null;
+    $scope.cityMunicipalities = null;
     var pageSize = 20;
 
     $interval(function () { }, 100);
 
     //Displays Modal
     $scope.showModal = function (panel, type) {
-        openModalPanel(panel);
+        if (type == "Pickup") {
+            if ($scope.shipmentItem.Address1.Line1 != null)
+                $scope.addressItem = angular.copy($scope.shipmentItem.Address1);
+            else
+                $scope.initAddressItem();
+        }
+        else if (type == "Consignee") {
+            if ($scope.shipmentItem.Address.Line1 != null)
+                $scope.addressItem = angular.copy($scope.shipmentItem.Address);
+            else
+                $scope.initAddressItem();
+        }
+        else { }
         $scope.modalType = type;
+        openModalPanel(panel);
     };
 
     //Show Customer Contacts List
     $scope.showCustomerContacts = function (customerId) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        console.log(spinner);
         $http.get("/api/CustomerContacts?customerId=" + customerId)
        .success(function (data, status) {
            $scope.customerContactList = [];
@@ -85,11 +100,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Close Business Unit List Modal
     $scope.closeBusinessUnitList = function (bu) {
         if (angular.isDefined(bu)) {
-            $scope.shipmentItem.BusinessUnitId = bu.Id;
-            $scope.shipmentItem.BusinessUnit.Name = bu.Name;
+            $scope.shipmentItem.PickUpBussinessUnitId = bu.Id;
+            $scope.shipmentItem.BusinessUnit1.Name = bu.Name;
         }
-        else
-            $scope.shipmentItem.BusinessUnitId = null;
+        else {
+            $scope.shipmentItem.PickUpBussinessUnitId = null;
+            $scope.shipmentItem.BusinessUnit1.Name = null;
+        }
         jQuery.magnificPopup.close();
     };
 
@@ -217,11 +234,65 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         }
     };
 
+    //Close address form
+    $scope.closeAddressForm = function (addressItem) {
+        if ($scope.validateAddressItem(addressItem)) {
+            if ($scope.modalType == "Pickup")
+                $scope.shipmentItem.Address1 = angular.copy(addressItem);
+            else 
+                $scope.shipmentItem.Address = angular.copy(addressItem);
+
+            $scope.isErrorAddress = false;
+            $scope.errorMessageAddress = "";
+            $scope.initializeAddressField(addressItem, $scope.modalType)
+            jQuery.magnificPopup.close();
+        }
+    }
+
+    //Validate Address Item
+    $scope.validateAddressItem = function (addressItem) {
+        if (addressItem.Line1 == null || addressItem.Line1 == " ") {
+            $scope.isErrorAddress = true;
+            $scope.errorMessageAddress = "Street address line 1 is required.";
+            return false;
+        }
+        else if (addressItem.CityMunicipalityId == null) {
+            $scope.isErrorAddress = true;
+            $scope.errorMessageAddress = "City/Municipality required.";
+            return false;
+        }
+        else if (addressItem.PostalCode == null) {
+            $scope.isErrorAddress = true;
+            $scope.errorMessageAddress = "Postal Code required.";
+            return false;
+        }
+        else
+            return true;
+    };
+
+    //Initialize address field
+    $scope.initializeAddressField = function (addressItem, type) {
+        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + addressItem.CityMunicipality.StateProvince.Name + ", " + addressItem.PostalCode;
+        if ($scope.modalType == "Pickup")
+            $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
+        else if ($scope.modalType == "Consignee")
+            $scope.shipmentItem.DeliveryAddress = $scope.formattedAddress;
+        //MasterList Display
+        else {//MasterList Display
+            return $scope.formattedAddress;
+        }
+
+        
+    };
+
     //Initialize Business Unit List for Modal
     $scope.initBusinessUnitList = function () {
-        $http.get("/api/BusinessUnits")
+        $http.get("/api/BusinessUnits?parentBusinessUnitId=" + $scope.shipmentItem.BusinessUnit.Id)
         .success(function (data, status) {
             $scope.businessUnitList = data;
+            if ($scope.businessUnitList.length == 0)
+                $scope.shipmentItem.BusinessUnit1 = angular.copy($scope.shipmentItem.BusinessUnit);
         })
     };
 
@@ -260,12 +331,50 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         })
     };
 
+    //Initialize AddressItem for Address Modal
+    $scope.initAddressItem = function () {
+        $scope.addressItem = {
+            "Id": null,
+            "Line1": null,
+            "Line2": null,
+            "CityMunicipalityId": null,
+            "CityMunicipality": {
+                "Id": null,
+                "Name": null,
+                "StateProvince": {
+                    "Id": null,
+                    "Name": null
+                }
+            },
+            "PostalCode": null,
+            "CreatedDate": null,
+            "LastUpdatedDate": null,
+            "CreatedByUserId": null,
+            "LastUpdatedByUserId": null
+        }
+    };
+
     //Initialized shipment item to it's default value
     $scope.initializeShipmentItem = function () {
         $scope.shipmentItem = {
             "Id": null,
             "BusinessUnitId": null,
             "BusinessUnit": {
+                "Id": null,
+                "Code": null,
+                "Name": null,
+                "BusinessUnitTypeId": null,
+                "ParentBusinessUnitId": null,
+                "isOperatingSite": null,
+                "hasAirPort": null,
+                "hasSeaPort": null,
+                "CreatedDate": null,
+                "LastUpdatedDate": null,
+                "CreatedByUserId": null,
+                "LastUpdatedByUserId": null
+            },
+            "PickUpBussinessUnitId": null,
+            "BusinessUnit1": {
                 "Id": null,
                 "Code": null,
                 "Name": null,
@@ -322,7 +431,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                     "PostalCode": null,
                     "CityMunicipality": {
                         "Id": null,
-                        "Name": null
+                        "Name": null,
+                        "StateProvince": {
+                            "Id": null,
+                            "Name": null
+                        }
                     },
                 }],
                 "CustomerContacts": [{
@@ -334,34 +447,88 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 }],
             },
             "DeliverTo": null,
-            "DeliveryAddressId": null,
-            "DeliveryAddress": null,
+            "DeliveryAddressId": -1,
+            "DeliveryAddress":null,
+            //DeliveryAddress
+            "Address": {
+                "Id": null,
+                "Line1": null,
+                "Line2": null,
+                "CityMunicipalityId": null,
+                "CityMunicipality": {
+                    "Id": null,
+                    "Name": null,
+                    "StateProvince": {
+                        "Id": null,
+                        "Name": null
+                    }
+                },
+                "PostalCode": null,
+                "CreatedDate": null,
+                "LastUpdatedDate": null,
+                "CreatedByUserId": null,
+                "LastUpdatedByUserId": null
+            },
             "DeliverToContactNo": null,
             "Description": null,
-            "OriginAddressId": null,
+            "OriginAddressId": -1,
             "OriginAddress": null,
+            //OriginAddress
+            "Address1": {
+                "Id": null,
+                "Line1": null,
+                "Line2": null,
+                "CityMunicipalityId": null,
+                "CityMunicipality": {
+                    "Id": null,
+                    "Name": null
+                },
+                "PostalCode": null,
+                "CreatedDate": null,
+                "LastUpdatedDate": null,
+                "CreatedByUserId": null,
+                "LastUpdatedByUserId": null
+            },
             "Quantity": 0,
             "TotalCBM": 0,
             "Description": null,
             "BookingRemarks": null,
             "PickupDate": null,
             "PickupTime": null,
+            "TransportStatusId": null,
+            "TransportStatusRemarks": null,
             "CreatedDate": null,
             "LastUpdatedDate": null,
             "CreatedByUserId": null,
             "LastUpdatedByUserId": null
         };
-
+        //Temporary set BusinessUnit
+        $scope.shipmentItem.BusinessUnit = {
+            "Id": 17,
+            "Code": "BU0007",
+            "Name": "Manila",
+            "BusinessUnitTypeId": 1,
+            "ParentBusinessUnitId": null,
+            "isOperatingSite": 1,
+            "hasAirPort": 0,
+            "hasSeaPort": 1,
+            "CreatedDate": "2015-09-22 17:53:26.650",
+            "LastUpdatedDate": "2015-09-22 17:53:38.597",
+            "CreatedByUserId": null,
+            "LastUpdatedByUserId": null
+        };
+        $scope.shipmentItem.BusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
+        $scope.initBusinessUnitList();
     };
 
     //initialized shipment gridoption
     $scope.initShipmentGridOptions = function () {
         var columns = [];
-        $scope.shipmentHeader = ['Shipment No', 'Booking Date', 'Business Unit',        'Service',      'Shipment Type',        'Payment Mode', 'Booking Remarks',  'Qty',      'Total CBM',    'Cargo Description',    'Target Pickup Date',   'Target Pickup Time',   'Customer',         'Customer Address',                     'Customer Contact No',                                                  'Consignee', 'Consignee Address',       'Consignee Contact No', 'No'];
-        $scope.shipmentKeys =   ['Id',          'CreatedDate',  'BusinessUnit.Name',    'Service.Name', 'ShipmentType.Name',    'PaymentMode',  'BookingRemarks',   'Quantity', 'TotalCBM',     'Description',          'PickupDate',           'PickupTime',           'Customer.Name',    'Customer.CustomerAddresses[0].Line1',  'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber',  'DeliverTo', 'CustomerAddress.Line1',   'DeliverToContactNo'];
-        $scope.KeyType =        ['ControlNo',   'Date',         'String',               'String',       'String',               'PaymentMode',  'String',           'Number',   'Decimal',      'String',               'Date',                 'Time',                 'String',           'String',                               'Default',                                                              'String',    'String',                  'Default'];
-        $scope.colWidth =       [150,           150,            150,                    100,            150,                    150,            200,                100,        150,            200,                    150,                    150,                    200,                200,                                    200,                                                                    200,         200,                       200];
-        $scope.RequiredFields = ['BusinessUnitId-Business Unit', 'ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'CustomerId-Customer', 'PaymentMode-Payment Mode'];
+        $scope.shipmentHeader = ['Shipment No', 'Booking Date', 'Business Unit',        'Service',      'Shipment Type',        'Payment Mode', 'Booking Remarks',  'Qty',      'Total CBM',    'Cargo Description',    'Pickup Address',   'Target Pickup Date',   'Target Pickup Time',   'Customer',         'Customer Address',                     'Customer Contact No',                                                  'Consignee', 'Consignee Address',       'Consignee Contact No', 'No'];
+        $scope.shipmentKeys =   ['Id',          'CreatedDate',  'BusinessUnit.Name',    'Service.Name', 'ShipmentType.Name',    'PaymentMode',  'BookingRemarks',   'Quantity', 'TotalCBM',     'Description',          'OriginAddress',    'PickupDate',           'PickupTime',           'Customer.Name',    'Customer.CustomerAddresses[0].Line1',  'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber',  'DeliverTo', 'DeliveryAddress',   'DeliverToContactNo'];
+        $scope.KeyType =        ['ControlNo',   'Date',         'String',               'String',       'String',               'PaymentMode',  'String',           'Number',   'Decimal',      'String',               'String',           'Date',                 'Time',                 'String',           'String',                               'Default',                                                              'String',    'String',                  'Default'];
+        $scope.colWidth =       [150,           150,            150,                    100,            150,                    150,            200,                100,        150,            200,                    300,                150,                    150,                    200,                200,                                    200,                                                                    200,         300,                       200];
+        $scope.RequiredFields = ['ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'CustomerId-Customer', 'PaymentMode-Payment Mode', 'DeliveryAddressId-Consignee address', 'OriginAddressId-Pickup address'];
         //Initialize Number Listing
         var columnProperties = {};
         columnProperties.name = $scope.shipmentHeader[$scope.shipmentHeader.length - 1];
@@ -443,6 +610,15 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 //        promise = undefined;
                 //    }
                 //}, 100);
+
+                for (var i = 0; i < $scope.shipmentGridOptions.data.length; i++)
+                {
+                    //Initialize Pickup Address
+                    $scope.shipmentGridOptions.data[i].OriginAddress =  $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address1, 'MasterList');
+                    //Initalize Consignee Address
+                    $scope.shipmentGridOptions.data[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address, 'MasterList');
+                }
+
                 $scope.currentPage = page;
                 if (page <= 1) {
                     $scope.isPrevPage = false;
@@ -617,7 +793,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
             case "Delete":
                 $scope.onEDV();
                 $scope.viewOnly = true;
-                $scope.submitButtonText = "Delete";
+                $scope.submitButtonText = "Cancel";
                 break;
             case "View":
                 $scope.onEDV();
@@ -679,12 +855,18 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var dataModel = angular.copy($scope.shipmentItem);
         delete dataModel.Id;
+        delete dataModel.TransportStatusId;
         delete dataModel.DeliveryAddressId;
         delete dataModel.OriginAddressId;
         delete dataModel.BusinessUnit;
+        delete dataModel.BusinessUnit1;
         delete dataModel.Service;
         delete dataModel.ShipmentType;
         delete dataModel.Customer;
+        delete dataModel.Address.Id;
+        delete dataModel.Address1.Id;
+        delete dataModel.Address.CityMunicipality;
+        delete dataModel.Address1.CityMunicipality;
         $http.post("/api/Shipments", dataModel)
         .success(function (data, status) {
             if (data.status == "SUCCESS") {
@@ -693,6 +875,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 $scope.shipmentGridOptions.data.push($scope.shipmentItem);
                 $scope.selectedTab = $scope.tabPages[1];
                 spinner.stop();
+                $scope.onEDV();
+                alert("Successfully Saved.");
                 return true;
             }
             else {
@@ -714,18 +898,21 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.apiUpdate = function (id) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var dataModel = angular.copy($scope.shipmentItem);
-        delete dataModel.DeliveryAddressId;
-        delete dataModel.OriginAddressId;
         delete dataModel.BusinessUnit;
+        delete dataModel.BusinessUnit1;
         delete dataModel.Service;
         delete dataModel.ShipmentType;
         delete dataModel.Customer;
+        delete dataModel.Address.CityMunicipality;
+        delete dataModel.Address1.CityMunicipality;
         $http.put("/api/Shipments" + "/" + id, dataModel)
         .success(function (data, status) {
             if (data.status = "SUCCESS") {
                 $scope.shipmentGridOptions.data[$scope.selectedShipmentIndex] = angular.copy($scope.shipmentItem);
                 $scope.selectedTab = $scope.tabPages[1];
+                $scope.onEDV();
                 spinner.stop();
+                alert("Successfully Updated.");
             }
             else {
                 spinner.stop();
@@ -746,10 +933,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         $http.delete("/api/Shipments" + "/" + id)
         .success(function (data, status) {
             if (data.status = "SUCCESS") {
-                $scope.shipmentGridOptions.data.splice($scope.selectedShipmentIndex, 1);
+                //$scope.shipmentGridOptions.data.splice($scope.selectedShipmentIndex, 1);
                 $scope.initializeShipmentItem();
                 $scope.selectedTab = $scope.tabPages[1];
                 spinner.stop();
+                alert("Successfully Cancelled.");
             }
             else {
                 spinner.stop();
@@ -771,20 +959,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         });
     };
 
-    // Initialization routines
-    var init = function () {
-        // Call function to load data during content load
-        $scope.focusOnTop();
-        $scope.initializeShipmentItem();
-        $scope.loadData($scope.currentPage);
-        $scope.initShipmentGridOptions();
-        $scope.initCustomerList();
-        $scope.initBusinessUnitList();
-        $scope.initPaymentModeList();
-        $scope.initServiceList();
-        $scope.initShipmentTypeList();
-    };
-
     //Find specific character
     $scope.findCharacter = function (v, c) {
         for (var i = 0; i < v.length; i++)
@@ -794,6 +968,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         }
         return false;
     };
+
+    //Disable typing
+    $('#OriginAddress,#DeliveryAddress,#BusinessUnit').keypress(function (key) {
+        return false;
+    });
 
     //Check if input is whole number
     $('#consigneecontactno,#quantity').keypress(function (key) {
@@ -822,6 +1001,39 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         else if (key.charCode == 0)
             return true;
     });
+
+    //---------------------------Code if using typeahead in city/municipality-------------------
+    //Get cityMunicipalities
+    var promise = $interval(function () {
+
+        if ($scope.cityMunicipalities != null) {
+            $interval.cancel(promise);
+            promise = undefined;
+        }
+
+        $scope.country = $rootScope.country;
+        $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
+    }, 100);
+    $scope.onSelectCity = function ($item, $model, $label) {
+        $scope.addressItem.CityMunicipalityId = $item.Id;
+        $scope.addressItem.CityMunicipality.Name = $item.Name;
+        $scope.addressItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+    };
+    //---------------------------End of typeahead-----------------------------------------------
+
+    // Initialization routines
+    var init = function () {
+        // Call function to load data during content load
+        $scope.focusOnTop();
+        $scope.initializeShipmentItem();
+        $scope.loadData($scope.currentPage);
+        $scope.initShipmentGridOptions();
+        $scope.initCustomerList();
+        $scope.initPaymentModeList();
+        $scope.initServiceList();
+        $scope.initShipmentTypeList();
+        $scope.initAddressItem();
+    };
 
     //Initialize needed functions during page load
     init();

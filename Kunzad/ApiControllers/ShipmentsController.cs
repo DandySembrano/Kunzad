@@ -79,8 +79,19 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult GetShipments(int page)
         {
+            int skip;
+            if (page > 1)
+                skip = (page - 1) * pageSize;
+            else
+                skip = 0;
+
             var shipment = db.Shipments
+                            .Include(s => s.Address)
+                            .Include(s => s.Address.CityMunicipality.StateProvince)
+                            .Include(s => s.Address1)
+                            .Include(s => s.Address1.CityMunicipality.StateProvince)
                             .Include(s => s.BusinessUnit)
+                            .Include(s => s.BusinessUnit1)
                             .Include(s => s.Service)
                             .Include(s => s.ShipmentType)
                             .Include(s => s.Customer)
@@ -89,12 +100,29 @@ namespace Kunzad.ApiControllers
                             .Include(s => s.Customer.CustomerContacts)
                             .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
                             .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                            .ToArray();
+                            .OrderByDescending(s => s.CreatedDate)
+                            .Skip(skip).Take(pageSize).ToArray();
+
             if (shipment.Length == 0)
                 return Ok(shipment);
             for (int i = 0; i < shipment.Length; i++)
             {
-
+                shipment[i].Address.Shipments = null;
+                shipment[i].Address.Shipments1 = null;
+                shipment[i].Address.CityMunicipality.Addresses = null;
+                shipment[i].Address.CityMunicipality.CustomerAddresses = null;
+                shipment[i].Address.CityMunicipality.Addresses = null;
+                shipment[i].Address.CityMunicipality.ServiceableAreas = null;
+                shipment[i].Address.CityMunicipality.Truckers = null;
+                shipment[i].Address.CityMunicipality.StateProvince.CityMunicipalities = null;
+                shipment[i].Address1.Shipments = null;
+                shipment[i].Address1.Shipments1 = null;
+                shipment[i].Address1.CityMunicipality.Addresses = null;
+                shipment[i].Address1.CityMunicipality.CustomerAddresses = null;
+                shipment[i].Address1.CityMunicipality.Addresses = null;
+                shipment[i].Address1.CityMunicipality.ServiceableAreas = null;
+                shipment[i].Address1.CityMunicipality.Truckers = null;
+                shipment[i].Address1.CityMunicipality.StateProvince.CityMunicipalities = null;
                 shipment[i].BusinessUnit.AirFreights = null;
                 shipment[i].BusinessUnit.AirFreights1 = null;
                 shipment[i].BusinessUnit.BusinessUnitContacts = null;
@@ -103,6 +131,14 @@ namespace Kunzad.ApiControllers
                 shipment[i].BusinessUnit.SeaFreights = null;
                 shipment[i].BusinessUnit.SeaFreights1 = null;
                 shipment[i].BusinessUnit.Shipments = null;
+                shipment[i].BusinessUnit1.AirFreights = null;
+                shipment[i].BusinessUnit1.AirFreights1 = null;
+                shipment[i].BusinessUnit1.BusinessUnitContacts = null;
+                shipment[i].BusinessUnit1.BusinessUnitType = null;
+                shipment[i].BusinessUnit1.CourierTransactions = null;
+                shipment[i].BusinessUnit1.SeaFreights = null;
+                shipment[i].BusinessUnit1.SeaFreights1 = null;
+                shipment[i].BusinessUnit1.Shipments = null;
                 shipment[i].Service.ServiceCategory = null;
                 shipment[i].Service.ServiceCharges = null;
                 shipment[i].Service.Shipments = null;
@@ -136,10 +172,7 @@ namespace Kunzad.ApiControllers
                 }
 
             }
-                if (page > 1)
-                    return Ok(shipment.Skip((page - 1) * pageSize).Take(pageSize));
-                else
-                    return Ok(shipment.Take(pageSize));
+            return Ok(shipment);
         }
 
         // GET: api/Shipments/5
@@ -172,12 +205,14 @@ namespace Kunzad.ApiControllers
             }
 
             db.Entry(shipment).State = EntityState.Modified;
-
+            db.Entry(shipment.Address).State = EntityState.Modified;
+            db.Entry(shipment.Address1).State = EntityState.Modified;
             try
             {
-                shipment.OriginAddressId = shipment.CustomerAddressId;
-                shipment.DeliveryAddressId = 1;
+                
                 shipment.LastUpdatedDate = DateTime.Now;
+                shipment.Address.LastUpdatedDate = DateTime.Now;
+                shipment.Address1.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
                 response.status = "SUCCESS";
                 response.objParam1 = shipment;
@@ -209,9 +244,14 @@ namespace Kunzad.ApiControllers
             }
             try
             {
-                shipment.OriginAddressId = shipment.CustomerAddressId;
-                shipment.DeliveryAddressId = 1;
                 shipment.CreatedDate = DateTime.Now;
+                shipment.Address.CreatedDate = DateTime.Now;
+                shipment.Address1.CreatedDate = DateTime.Now;
+                shipment.TransportStatusId = (int)Status.TransportStatus.Open;
+                shipment.TransportStatusRemarks = "For pickup from customer";
+
+                db.Addresses.Add(shipment.Address);
+                db.Addresses.Add(shipment.Address1);
                 db.Shipments.Add(shipment);
                 db.SaveChanges();
                 response.status = "SUCCESS";
@@ -230,6 +270,9 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult DeleteShipment(int id)
         {
             Shipment shipment = db.Shipments.Find(id);
+            Shipment shipmentEdited = db.Shipments.Find(id);
+
+            shipmentEdited.TransportStatusId = (int)Status.TransportStatus.Cancel;
             response.status = "FAILURE";
             if (shipment == null)
             {
@@ -238,7 +281,8 @@ namespace Kunzad.ApiControllers
             }
             try
             {
-                db.Shipments.Remove(shipment);
+                db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+                db.Entry(shipment).State = EntityState.Modified;
                 db.SaveChanges();
                 response.status = "SUCCESS";
             }

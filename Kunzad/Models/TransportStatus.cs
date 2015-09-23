@@ -8,7 +8,7 @@ namespace Kunzad.Models
      static class Status
     {
 
-         public enum TransportStatus
+         public enum TransportStatus : int
          {
              Open = 10,
              Partial = 20,

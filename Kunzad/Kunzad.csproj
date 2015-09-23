@@ -380,6 +380,7 @@
     <Content Include="Scripts\app\shipmenttype-ctrl.js" />
     <Content Include="Scripts\app\shippinglines-ctrl.js" />
     <Content Include="Scripts\app\trucker-ctrl.js" />
+    <Content Include="Scripts\app\trucking-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
     <Content Include="Scripts\directive\dataGrid1.js" />
     <Content Include="Scripts\filter\filter.js" />
@@ -2380,8 +2381,10 @@
     <Compile Include="ApiControllers\ShippingLinesController.cs" />
     <Compile Include="ApiControllers\StateProvincesController.cs" />
     <Compile Include="ApiControllers\TruckersController.cs" />
+    <Compile Include="ApiControllers\TruckingsController.cs" />
     <Compile Include="ApiControllers\TrucksController.cs" />
     <Compile Include="ApiControllers\TruckTypesController.cs" />
+    <Compile Include="ApiControllers\VesselsController.cs" />
     <Compile Include="ApiControllers\VesselVoyagesController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -2392,6 +2395,9 @@
     <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Address.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AirFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
@@ -2509,6 +2515,7 @@
     <Compile Include="Models\StateProvince.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\TransportStatus.cs" />
     <Compile Include="Models\Truck.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2947,7 +2954,6 @@
     <Content Include="Views\References\Customers.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout2.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout3.cshtml" />
-    <Content Include="Views\Shared\_ContextMenu1.cshtml" />
     <Content Include="Views\References\Airlines.cshtml" />
     <Content Include="Views\References\Truckers.cshtml" />
     <Content Include="Views\References\TruckType.cshtml" />
@@ -2993,6 +2999,9 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
+    <Content Include="Views\References\Trucking.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
