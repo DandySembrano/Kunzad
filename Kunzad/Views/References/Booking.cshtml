@@ -4,6 +4,7 @@
 
 <!-- General -->
 @section tab1Content{
+    <div context-menu="formContextMenu()" data-target="FormMenu">
     <div class="alert alert-danger alert-sm" ng-show="isError">
         <i class="fa fa-remove pr10"></i>
         <strong>ERROR!</strong>{{errorMessage}}
@@ -29,12 +30,12 @@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Business Unit</label>
                     <div class="col-md-8">
-                        <input type="text"
+                        <input id="BusinessUnit"
+                               type="text"
                                class="form-control"
                                placeholder=""
                                ng-model="shipmentItem.BusinessUnit.Name"
-                               ng-disabled="viewOnly"
-                               ng-click="showModal('#business-unit-list-modal')">
+                               ng-disabled="true">
                     </div>
                 </div>
                 @*Service*@
@@ -94,11 +95,11 @@
     <div class="row">
         <form class="form-horizontal" role="form">
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Customer/Consignee Information</legend>
+                <legend class="scheduler-border">Shipper/Consignee Information</legend>
                 @*col1*@
                 <div class="col-lg-6">
                     <div class="form-group form-group-sm">
-                        <label class="col-md-12 control-label small  text-left"><strong>Customer Information</strong></label>
+                        <label class="col-md-12 control-label small  text-left"><strong>Shipper Information</strong></label>
                     </div>
                     @*Customer Code*@
                     <div class="form-group form-group-sm">
@@ -179,10 +180,12 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Address</label>
                         <div class="col-md-8">
-                            <textarea rows="3" style="height:auto;"
+                            <textarea id="DeliveryAddress"
+                                      rows="3" style="height:auto;"
                                       class="form-control"
                                       placeholder=""
                                       ng-model="shipmentItem.DeliveryAddress"
+                                      ng-click="showModal('#address-modal', 'Consignee')"
                                       ng-disabled="viewOnly"></textarea>
                         </div>
                     </div>
@@ -233,6 +236,19 @@
                 </div>
                 @*col2*@
                 <div class="col-lg-6">
+                    @*Pickup Business Unit*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Operation Site</label>
+                        <div class="col-md-8">
+                            <input id="BusinessUnit"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="shipmentItem.BusinessUnit1.Name"
+                                   ng-disabled="viewOnly"
+                                   ng-click="showModal('#business-unit-list-modal')">
+                        </div>
+                    </div>
                     @*Pick Up Date*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Pickup Date</label>
@@ -242,7 +258,7 @@
                                        id='pickupdate'
                                        class="form-control"
                                        ng-model="shipmentItem.PickupDate"
-                                       ng-disabled="viewonly" />
+                                       ng-disabled="viewOnly" />
                                 <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                     <span class=" glyphicon glyphicon-remove-circle"></span>
                                 </span>
@@ -258,7 +274,7 @@
                                        id='pickuptime'
                                        class="form-control"
                                        ng-model="shipmentItem.PickupTime"
-                                       ng-disabled="viewonly" />
+                                       ng-disabled="viewOnly" />
                                 <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                     <span class=" glyphicon glyphicon-remove-circle"></span>
                                 </span>
@@ -269,11 +285,13 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Pickup Address</label>
                         <div class="col-md-8">
-                            <textarea rows="3" style="height:auto;"
+                            <textarea id="OriginAddress"
+                                      rows="3" style="height:auto;"
                                       class="form-control"
                                       placeholder=""
                                       ng-model="shipmentItem.OriginAddress"
-                                      ng-disabled="viewonly"></textarea>
+                                      ng-click="showModal('#address-modal', 'Pickup')"
+                                      ng-disabled="viewOnly"></textarea>
                         </div>
                     </div>
                 </div>
@@ -295,6 +313,7 @@
             </script>
         </form>
     </div>
+</div>
 }
 <!-- List -->
 @section tab2Content{
@@ -380,6 +399,7 @@
     </div>
 </div>
 <!--End of Customer Contacts List Modal -->
+
 <!-- Customer Contact Phone List Modal -->
 <div id="customer-contact-phones-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -417,6 +437,7 @@
     </div>
 </div>
 <!--End of Customer Contact Phone List Modal -->
+
 <!-- Customer Address List Modal -->
 <div id="customer-address-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -464,6 +485,7 @@
     </div>
 </div>
 <!--End of Customer List Modal -->
+
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -507,3 +529,100 @@
     </div>
 </div>
 <!--End of Business Unit List Modal -->
+
+<!-- Address Modal-->
+<div id="address-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- This is the template use for City/Municpality Typeahead -->
+    <script type="text/ng-template" id="customTemplate.html">
+        <a>
+            <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+            <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
+        </a>
+    </script>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{(actionMode == 'Create' ? "Enter" : actionMode) + " " + modalType}} Address</span>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorAddress">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageAddress}}
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Street Address</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Street address line 1"
+                                       ng-model="addressItem.Line1" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small"></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Street address line 2"
+                                       ng-model="addressItem.Line2" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">City/Municipality</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="" ng-disabled="viewOnly"
+                                       ng-model="addressItem.CityMunicipality.Name" typeahead-editable="false"
+                                       typeahead-on-select="onSelectCity($item, $model, $label)"
+                                       typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
+                                       typeahead-template-url="customTemplate.html">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Province/State</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="addressItem.CityMunicipality.StateProvince.Name" ng-disabled="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Postal Code</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="addressItem.PostalCode" ng-disabled="viewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Country</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="country.Name" ng-disabled="true">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="closeAddressForm(addressItem)">
+                {{actionMode === 'Create' ? 'Add' : actionMode}}
+            </button>
+        </div>
+    </div>
+</div>
+
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="actionForm('Create')">New</a>
+        </li>
+        <li ng-show ="shipmentItem.Id == null || actionMode == 'Delete' ? false : true">
+            <a class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Delete')">Cancel</a>
+        </li>
+    </ul>
+</div>
