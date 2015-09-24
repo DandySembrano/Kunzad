@@ -57,7 +57,8 @@ namespace Kunzad
                         "~/Scripts/app/country-ctrl.js",
                         "~/Scripts/app/shippinglines-ctrl.js",
                         "~/Scripts/app/businessunit-ctrl.js",
-                        "~/Scripts/app/serviceablearea-ctrl.js"
+                        "~/Scripts/app/serviceablearea-ctrl.js",
+                        "~/Scripts/app/truckingwb-ctrl.js"
                         ));
         }
     }

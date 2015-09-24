@@ -118,6 +118,11 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
                 controller: 'SeaFreightController'
             })
 
+            .when('/truckingwb', {
+                templateUrl: '/References/TruckingWB',
+                controller: 'TruckingsWBController'
+            })
+
             .otherwise({
                 redirectTo: '/home'
             });
