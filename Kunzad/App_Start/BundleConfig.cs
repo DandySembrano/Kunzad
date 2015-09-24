@@ -47,6 +47,7 @@ namespace Kunzad
                         "~/Scripts/app/courier-ctrl.js",
                         "~/Scripts/app/airline-ctrl.js",
                         "~/Scripts/app/trucker-ctrl.js",
+                        "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js",
                         "~/Scripts/app/industry-ctrl.js",
                         "~/Scripts/app/businessunittype-ctrl.js",
