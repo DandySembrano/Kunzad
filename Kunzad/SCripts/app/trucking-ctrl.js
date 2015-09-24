@@ -1,7 +1,7 @@
 ﻿
 kunzadApp.controller("TruckingController", TruckingController);
 function TruckingController($scope, $http, $interval, $filter, $rootScope) {
-    $scope.modelName = "Trucking";
+    $scope.modelName = "Dispatching";
     $scope.modelhref = "#/trucking";
     $scope.isPrevPage = false;
     $scope.isNextPage = true;
@@ -20,6 +20,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.businessUnitList = [];
     $scope.shipmentList = [];
     $scope.trkgDeliveryList = [];
+    $scope.truckingTypeList = [];
     var pageSize = 20;
 
     $scope.loadData = function (page) {
@@ -71,7 +72,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
             "DestinationServiceableAreaId": null,
             "DestinationServiceableAreaName": null,
             "TruckerCost": null,
-            "TruckingStatusId": 1,
+            "TruckingStatusId": null,
+            "TruckingStatusRemarks": null,
             "TruckCallDate": null,
             "TruckCallTime": null,
             "DispatchDate": null,
@@ -85,79 +87,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         }
     }
 
-    $scope.trkgDeliveryItem = {
-        "Id": -1,
-        "TruckingId": null,
-        "ShipmentId": null,
-        "CustomerId": null,
-        "Customer": { "Id": null, "Name": null },
-        "Quantity": null,
-        "CBM": null,
-        "Description": null,
-        "DeliverTo": null,
-        "DeliveryAddressId": null,
-        "DeliveryDate": null,
-        "DeliveryTime": null,
-        "CostAllocation": null,
-        "CreatedDate": null,
-        "LastUpdatedDate": null,
-        "CreatedByUserId": null,
-        "LastUpdatedByUserId": null
-    }
-    $scope.trkgDeliveryList.push($scope.trkgDeliveryItem)
+    $scope.truckingTypeList = $rootScope.getTruckingTypeList();
    
-    $scope.gridOptTrkgDtl = {
-        data: 'trkgDeliveryList',
-        enableSorting: true,
-        enableCellEditOnFocus: true,
-        rowTemplate: '<div>' +
-                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl" ng-click="grid.appScope.showModalShipment(row.Entity.No)" ></div>' +
-                    '</div>',
-        columnDefs: [
-          {
-              name: 'No', enableCellEdit: false,
-              cellTemplate: '<div class="ui-grid-cell-contents text-center" >{{row.entity.No = (grid.appScope.currentPage == 1 ? (grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) : ((grid.renderContainers.body.visibleRowCache.indexOf(row) + 1) + ((grid.appScope.currentPage - 1) * grid.appScope.pageSize)))}}</div>'
-          },
-        { name: 'Shipment', field: 'ShipmentId' },
-        { name: 'Customer', field: 'Customer.Name', enableCellEdit: false },
-        { name: 'Quantity', field: 'Quantity', enableCellEdit: false },
-        { name: 'CBM', field: 'CBM', enableCellEdit: false },
-        { name: 'Description', field: 'Description', enableCellEdit: false },
-        { name: 'DeliverTo', field: 'DeliverTo', enableCellEdit: false },
-        { name: 'DeliveryDate', field: 'DeliveryDate', enableCellEdit: false },
-        { name: 'DeliveryTime', field: 'DeliveryTime', enableCellEdit: false },
-        { name: 'CostAllocation', field: 'CostAllocation', enableCellEdit: false }
-        ],
-
-        onRegisterApi: function (gridApi) {
-            $scope.grid1Api = gridApi;
-        },
-        enableColumnResizing: true,
-        enableGridMenu: true,
-        enableSelectAll: true,
-        exporterCsvFilename: 'myFile.csv',
-        exporterPdfDefaultStyle: { fontSize: 9 },
-        exporterPdfTableStyle: { margin: [0, 0, 0, 0] },
-        exporterPdfTableHeaderStyle: { fontSize: 12, bold: true, italics: true, color: 'black' },
-        exporterPdfHeader: { text: "Fast Cargo", style: 'headerStyle' },
-        exporterPdfFooter: function (currentPage, pageCount) {
-            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-        },
-        exporterPdfCustomFormatter: function (docDefinition) {
-            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-            docDefinition.styles.footerStyle = { fontSize: 22, bold: true };
-            return docDefinition;
-        },
-        exporterPdfOrientation: 'landscape',
-        exporterPdfPageSize: 'a4',
-        exporterPdfMaxGridWidth: 500,
-        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-        onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-         
-        }
-    }
-
     $scope.gridOptTrkList = {
         data: [],
         enableSorting: true,
@@ -177,7 +108,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         { name: 'Trucker', field: 'Trucker.Name' },
         { name: 'Driver', field: 'Drivers.Name' },
         { name: 'Origin', field: 'OriginServiceableAreaName' },
-         { name: 'Origin', field: 'DestinationServiceableAreaName' },
+        { name: 'Origin', field: 'DestinationServiceableAreaName' },
         { name: 'TruckerCost', field: 'TruckerCost' },
         { name: 'TruckCallDate', field: 'TruckCallDate' },
         { name: 'TruckCallTime', field: 'TruckCallTime' },
@@ -223,10 +154,10 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         }
     }
 
-    $scope.showModalShipment = function (id) {
-
-        $scope.ShipmentRow = 1;
+    $scope.showModalShipment = function (index) {
+        $scope.ShipmentRow = index;
         openModalPanel('#shipment-list-modal');
+
         //alert(id.grid.cellNav.focusedCells.Object.GridColumn.field);
         ////var rowCol = $scope.gridApi.cellNav.getFocusedCell();
         ////if (rowCol !== null) {
@@ -238,27 +169,109 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         ////}
         
     }
-
-    $scope.actionFormDtl = function (action) {
-        switch (action) {
-            case "Create":
-                $scope.trkgDeliveryList.push($scope.trkgDeliveryItem)
-                break;
-            case "Edit":
     
-                break;
-            case "Delete":
- 
-                break;
-            case "View":
+    $scope.addNewBooking = function () {
+        $scope.trkgDeliveryList.push(
+             {
+                Id: -1,
+                TruckingId: null,
+                ShipmentId: null,
+                Shipment: {
+                    Id: null,
+                    BusinessUnitId: null,
+                    ServiceId: null,
+                    Service: {
+                        Id: null,
+                        Name: null
+                    },
+                    ShipmentTypeId: null,
+                    ShipmentType: {
+                        Id: null,
+                        Name: null
+                    },
+                    PaymentMode: null,
+                    CustomerId: null,
+                    Customer: {
+                        Id: null,
+                        Name: null
+                    },
+                    Quantity: null,
+                    TotalCBM: null,
+                    Description: null,
+                    DeliverTo: null,
+                    DeliveryAddressId: null,
+                    DeliveryAddress: null,
+                    Address1 : {
+                        Id: null,
+                        Line1: null,
+                        Line2: null,
+                        CityMunicipalityId: null,
+                        CityMunicipality: {
+                            Id: null,
+                            Name: null,
+                            StateProvince: {
+                                Id: null,
+                                Name: null,
+                                CountryId : null,
+                                Country: {
+                                    Id: null,
+                                    Name : null
+                                }
+                            }
 
-                break;
-        }
-    }
+                        },
+                        PostalCode: null
+                    }
+                },
+                CustomerId: null,
+                Customer: { Id: null, Name: null },
+                Quantity: null,
+                CBM: null,
+                Description: null,
+                DeliverTo: null,
+                DeliveryAddressId: null,
+                DeliveryAddress: null,
+                Address1: {
+                    Id: null,
+                    Line1: null,
+                    Line2: null,
+                    CityMunicipalityId: null,
+                    CityMunicipality: {
+                        Id: null,
+                        Name: null,
+                        StateProvince: {
+                            Id: null,
+                            Name: null,
+                            CountryId: null,
+                            Country: {
+                                Id: null,
+                                Name: null
+                            }
+                        }
+
+                    },
+                    PostalCode: null
+                },
+                DeliveryDate: null,
+                DeliveryTime: null,
+                CostAllocation: null,
+                CreatedDate: null,
+                LastUpdatedDate: null,
+                CreatedByUserId: null,
+                LastUpdatedByUserId: null
+            }
+        );
+    };
     
- 
+    $scope.removeBooking = function (index) {
+        if ($scope.trkgDeliveryList.length == 1)
+            alert('Unable to delete, At least 1 detail is required.');
+        else
+            $scope.trkgDeliveryList.splice(index, 1);
+    };
+
     $scope.initTruck = function () {
-        $http.get("/api/Trucks")
+        $http.get("/api/Trucks?page=1")
             .success(function (data, status) {
                 $scope.truckList = data;
             });
@@ -279,9 +292,11 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     }
 
     $scope.initShipment = function () {
-        $http.get("/api/Shipments")
+        $http.get("/api/Shipments?page=1")
         .success(function (data, status) {
             $scope.shipmentList = data;
+
+            console.log($scope.shipmentList);
         });
     }
 
@@ -346,14 +361,19 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
             }
         }
 
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].ShipmentId = $scope.shipmentList[selected].Id;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].CustomerId = $scope.shipmentList[selected].CustomerId;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].Customer.Name = $scope.shipmentList[selected].Customer.Name;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].Quantity = $scope.shipmentList[selected].Quantity;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].CBM = $scope.shipmentList[selected].CBM;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliverTo = $scope.shipmentList[selected].DeliverTo;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliveryAddressId = $scope.shipmentList[selected].DeliveryAddressId;
-        $scope.trkgDeliveryList[$scope.ShipmentRow - 1].DeliveryDate = $scope.shipmentList[selected].DeliveryDate;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].ShipmentId = $scope.shipmentList[selected].Id;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].CustomerId = $scope.shipmentList[selected].CustomerId;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].Customer.Code = $scope.shipmentList[selected].Customer.Code;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].Customer.Name = $scope.shipmentList[selected].Customer.Name;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].Quantity = $scope.shipmentList[selected].Quantity;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].CBM = $scope.shipmentList[selected].TotalCBM;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].Description = $scope.shipmentList[selected].Description;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].DeliverTo = $scope.shipmentList[selected].DeliverTo;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].Shipment.DeliverToContactNo = $scope.shipmentList[selected].DeliverToContactNo;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].DeliveryAddressId = $scope.shipmentList[selected].DeliveryAddressId;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].DeliveryAddress = $scope.shipmentList[selected].Address1.Line1 + ", " + $scope.shipmentList[selected].Address1.Line2 + ", " + $scope.shipmentList[selected].Address1.CityMunicipality.Name +  ", " + $scope.shipmentList[selected].Address1.PostalCode;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].DeliveryDate = $scope.shipmentList[selected].DeliveryDate;
+        $scope.trkgDeliveryList[$scope.ShipmentRow].DeliveryTime = $scope.shipmentList[selected].DeliveryTime;
         jQuery.magnificPopup.close();
     };
 
@@ -367,6 +387,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var dataModel = angular.copy($scope.truckingItem); //subject for changes
         delete dataModel.Id;
+        delete dataModel.TruckingStatusId;
         delete dataModel.Trucks;
         delete dataModel.Drivers;
         delete dataModel.OriginServiceableAreaName;
@@ -401,6 +422,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         $scope.initDriver();
         $scope.initBusinessUnit();
         $scope.initShipment();
+        $scope.addNewBooking();
     };
 
     init();

@@ -22,6 +22,35 @@ namespace Kunzad.ApiControllers
             return db.Trucks;
         }
 
+        // GET: api/Trucks?page=1
+        public IHttpActionResult GetTrucks(int page)
+        {
+            int skip;
+            if (page > 1)
+                skip = (page - 1) * pageSize;
+            else
+                skip = 0;
+
+            var truck = db.Trucks
+                            .Include(t => t.Trucker)
+                            .Include(t => t.TruckType)
+                            .ToArray();
+            if (truck.Length == 0)
+                return Ok(truck);
+            for (int i = 0; i < truck.Length; i++)
+            {
+                truck[i].Trucker.CityMunicipality = null;
+                truck[i].Trucker.Truckings = null;
+                truck[i].Trucker.Trucks = null;
+                truck[i].TruckType.Trucks = null;
+
+            }
+            if (page > 1)
+                return Ok(truck.Skip((page - 1) * pageSize).Take(pageSize));
+            else
+                return Ok(truck.Take(pageSize));
+           
+        }
 
         // GET: api/Trucks/5
         [ResponseType(typeof(Truck))]
