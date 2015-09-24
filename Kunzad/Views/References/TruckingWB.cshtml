@@ -1,0 +1,170 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+
+<!-- General -->
+@section tab1Content{
+    @*Column 1*@
+<form class="form-horizontal" role="form">
+    <div class="alert alert-danger alert-sm" ng-show="isError">
+        <i class="fa fa-remove pr10"></i>
+        <strong>ERROR!</strong>{{errorMessage}}
+    </div>
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="row">&nbsp;</div>
+            <div class="row form-group form-group-sm">
+                <label class="col-sm-3">Document no</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control"
+                           ng-model="truckingItem.DocumentNo"
+                           ng-disabled="ViewOnly" />
+                </div>
+
+                <label class="col-sm-1">Date</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control"
+                           ng-model="truckingItem.CreatedDate"
+                           ng-disabled="true" />
+                </div>
+            </div>
+            @*<div class="row form-group form-group-sm">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <label class="col-sm-3">Trucking Mode</label>
+                            <div class="col-sm-3"><input type="text" /></div>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="row form-group form-group-sm">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <label class="col-sm-3">Origin</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.OriginServiceableAreaName"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group form-group-sm">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <label class="col-sm-3">Destination</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.DestinationServiceableAreaName"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Dispatch Information</legend>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <label class="col-sm-4">Dispatch No</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.Id"
+                                   ng-disabled="true" />
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-sm pull-right" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
+                                <span class="glyphicons glyphicons-zoom_in">
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <label class="col-sm-4">Trucker</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.Trucker.Name"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <label class="col-sm-4">Plate No</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.Truck.PlateNo"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="row">
+                        <label class="col-sm-4">Driver</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.Driver.Name"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</form>
+}
+
+<!-- Trucking List -->
+@section tab2Content{
+    <div ng-show="selectedTab === tabPages[1]">
+        <div ui-grid="gridOptionsTruckings" ui-grid-exporter class="grid"></div>
+    </div>
+}
+
+<div id="trucking-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Trucking List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="myTableContainter ">
+                    <table class="myTableContent table-bordered">
+                        <thead>
+                            <tr class="myTableRow-header text-dark small">
+                                <th class="myTableCell cell-seqno small">No</th>
+                                <th class="myTableCell cell-seqno small">Document No</th>
+                                <th class="myTableCell cell-10 small text-center">Trucker</th>
+                                <th class="myTableCell cell-10 small text-center">Truck</th>
+                                <th class="myTableCell cell-10 small text-center">Driver</th>
+                                @*<th class="myTableCell cell-10 small text-center">Origin</th>
+                                <th class="myTableCell cell-10 small text-center">Destination</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="myTableRow"
+                                ng-repeat="trucking in truckingList"
+                                ng-click="closeModalTrucking(trucking)">
+                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
+                                <td class="myTableCell cell-10 small">{{trucking.DocumentNo}}</td>
+                                <td class="myTableCell cell-10 small">{{trucking.Trucker.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{trucking.Truck.PlateNo}}</td>
+                                <td class="myTableCell cell-10 small">{{trucking.Driver.Name}}</td>
+                                @*<td class="myTableCell cell-10 small">{{(trucking.WeightCapacity)}}</td>
+                                <td class="myTableCell cell-10 small">{{(trucking.VolumeCapacity)}}</td>*@
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModalTrucking(trucking)">OK</button>
+        </div>
+    </div>
+</div>

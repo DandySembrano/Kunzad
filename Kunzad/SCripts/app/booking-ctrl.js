@@ -273,7 +273,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
     //Initialize address field
     $scope.initializeAddressField = function (addressItem, type) {
         $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
-        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + addressItem.CityMunicipality.StateProvince.Name + ", " + addressItem.PostalCode;
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + addressItem.CityMunicipality.StateProvince.Name + "\n";
+        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
         if ($scope.modalType == "Pickup")
             $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
         else if ($scope.modalType == "Consignee")
@@ -611,13 +612,31 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
                 //    }
                 //}, 100);
 
-                for (var i = 0; i < $scope.shipmentGridOptions.data.length; i++)
-                {
-                    //Initialize Pickup Address
-                    $scope.shipmentGridOptions.data[i].OriginAddress =  $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address1, 'MasterList');
-                    //Initalize Consignee Address
-                    $scope.shipmentGridOptions.data[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address, 'MasterList');
-                }
+
+                //---------------------------Code if using typeahead in city/municipality-------------------
+                //Get cityMunicipalities
+                var promise = $interval(function () {
+
+                    if ($scope.cityMunicipalities != null) {
+                        for (var i = 0; i < $scope.shipmentGridOptions.data.length; i++) {
+                            //Initialize Pickup Address
+                            $scope.shipmentGridOptions.data[i].OriginAddress = $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address1, 'MasterList');
+                            //Initalize Consignee Address
+                            $scope.shipmentGridOptions.data[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentGridOptions.data[i].Address, 'MasterList');
+                        }
+                        $interval.cancel(promise);
+                        promise = undefined;
+                    }
+
+                    $scope.country = $rootScope.country;
+                    $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
+                }, 100);
+                $scope.onSelectCity = function ($item, $model, $label) {
+                    $scope.addressItem.CityMunicipalityId = $item.Id;
+                    $scope.addressItem.CityMunicipality.Name = $item.Name;
+                    $scope.addressItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+                };
+                //---------------------------End of typeahead-----------------------------------------------
 
                 $scope.currentPage = page;
                 if (page <= 1) {
@@ -1001,25 +1020,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope) {
         else if (key.charCode == 0)
             return true;
     });
-
-    //---------------------------Code if using typeahead in city/municipality-------------------
-    //Get cityMunicipalities
-    var promise = $interval(function () {
-
-        if ($scope.cityMunicipalities != null) {
-            $interval.cancel(promise);
-            promise = undefined;
-        }
-
-        $scope.country = $rootScope.country;
-        $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
-    }, 100);
-    $scope.onSelectCity = function ($item, $model, $label) {
-        $scope.addressItem.CityMunicipalityId = $item.Id;
-        $scope.addressItem.CityMunicipality.Name = $item.Name;
-        $scope.addressItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
-    };
-    //---------------------------End of typeahead-----------------------------------------------
 
     // Initialization routines
     var init = function () {
