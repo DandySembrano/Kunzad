@@ -1,139 +1,151 @@
 ﻿// app.js
 
-var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav']);
-    kunzadApp.run(function ($rootScope) {
-        //Triggers before actionForm function
-        $rootScope.formatControlNo = function (prefix, length, value) {
-            var formattedValue = prefix + value.toString();
-            while (formattedValue.length < length) {
-                formattedValue = "0" + formattedValue;
-            }
-            return formattedValue;
-        };
-        $rootScope.getTruckingTypeList = function () {
-            return  [
-                { "Id": 10, "Name": "Pick up" },
-                { "Id": 20, "Name": "Trucking Delivery" }
-            ]
-        };
+var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav','LocalForageModule']);
 
-    })
-    kunzadApp.config(['$routeProvider', function ($routeProvider) {
-        //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
-        $routeProvider
+kunzadApp.run(function ($rootScope) {
+    //Triggers before actionForm function
+    $rootScope.formatControlNo = function (prefix, length, value) {
+        var formattedValue = prefix + value.toString();
+        while (formattedValue.length < length) {
+            formattedValue = "0" + formattedValue;
+        }
+        return formattedValue;
+    };
+    $rootScope.getTruckingTypeList = function () {
+        return  [
+            { "Id": 10, "Name": "Pick up" },
+            { "Id": 20, "Name": "Trucking Delivery" }
+        ]
+    };
 
-            .when('/home', {
-                templateUrl: '/Home/Main'
-            })
+})
+.config(['$routeProvider', function ($routeProvider) {
+    //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
+    $routeProvider
 
-            .when('/booking', {
-                templateUrl: '/References/booking',
-                controller: 'BookingController'
-            })
-            .when('/seafreight', {
-                templateUrl: '/References/SeaFreight',
-                controller: 'SeaFreightController'
-            })
+        .when('/home', {
+            templateUrl: '/Home/Main'
+        })
 
-            .when('/customers', {
-                templateUrl: '/References/Customers',
-                controller: 'CustomerController'
-            })
+        .when('/booking', {
+            templateUrl: '/References/booking',
+            controller: 'BookingController'
+        })
+        .when('/seafreight', {
+            templateUrl: '/References/SeaFreight',
+            controller: 'SeaFreightController'
+        })
 
-            .when('/customergroups', {
-                templateUrl: '/References/CustomerGroups',
-                controller: 'CustomerGroupController'
-            })
+        .when('/customers', {
+            templateUrl: '/References/Customers',
+            controller: 'CustomerController'
+        })
 
-            .when('/airlines', {
-                templateUrl: '/References/Airlines',
-                controller: 'AirlineController'
-            })
+        .when('/customergroups', {
+            templateUrl: '/References/CustomerGroups',
+            controller: 'CustomerGroupController'
+        })
 
-            .when('/courier', {
-                templateUrl: '/References/Courier',
-                controller: 'CourierController'
-            })
+        .when('/airlines', {
+            templateUrl: '/References/Airlines',
+            controller: 'AirlineController'
+        })
 
-            .when('/truckers', {
-                templateUrl: '/References/Truckers',
-                controller: 'TruckerController'
-            })
+        .when('/courier', {
+            templateUrl: '/References/Courier',
+            controller: 'CourierController'
+        })
 
-            .when('/trucktype', {
-                templateUrl: '/References/TruckType',
-                controller: 'TruckTypeController'
-            })
+        .when('/truckers', {
+            templateUrl: '/References/Truckers',
+            controller: 'TruckerController'
+        })
 
-            .when('/industry', {
-                templateUrl: '/References/Industry',
-                controller: 'IndustryController'
-            })
+        .when('/trucktype', {
+            templateUrl: '/References/TruckType',
+            controller: 'TruckTypeController'
+        })
 
-            .when('/businessunittype', {
-                templateUrl: '/References/BusinessUnitType',
-                controller: 'BusinessUnitTypeController'
-            })
+        .when('/industry', {
+            templateUrl: '/References/Industry',
+            controller: 'IndustryController'
+        })
 
-            .when('/shipmenttype', {
-                templateUrl: '/References/ShipmentType',
-                controller: 'ShipmentTypeController'
-            })
+        .when('/businessunittype', {
+            templateUrl: '/References/BusinessUnitType',
+            controller: 'BusinessUnitTypeController'
+        })
+
+        .when('/shipmenttype', {
+            templateUrl: '/References/ShipmentType',
+            controller: 'ShipmentTypeController'
+        })
     
-            .when('/servicecategory', {
-                templateUrl: '/References/ServiceCategory',
-                controller: 'ServiceCategoryController'
-            })
+        .when('/servicecategory', {
+            templateUrl: '/References/ServiceCategory',
+            controller: 'ServiceCategoryController'
+        })
 
-            .when('/contactnotype', {
-                templateUrl: '/References/ContactnoType',
-                controller: 'ContactnoTypeController'
-            })
+        .when('/contactnotype', {
+            templateUrl: '/References/ContactnoType',
+            controller: 'ContactnoTypeController'
+        })
 
-            .when('/driver', {
-                templateUrl: '/References/Driver',
-                controller: 'DriverController'
-            })
+        .when('/driver', {
+            templateUrl: '/References/Driver',
+            controller: 'DriverController'
+        })
 
-            .when('/country', {
-                templateUrl: '/References/Country',
-                controller: 'CountryController'
-            })
+        .when('/country', {
+            templateUrl: '/References/Country',
+            controller: 'CountryController'
+        })
 
-            .when('/shippinglines', {
-                templateUrl: '/References/ShippingLines',
-                controller: 'ShippingLinesController'
-            })
+        .when('/shippinglines', {
+            templateUrl: '/References/ShippingLines',
+            controller: 'ShippingLinesController'
+        })
 
-            .when('/businessunit', {
-                templateUrl: '/References/BusinessUnit',
-                controller: 'BusinessUnitController'
-            })
+        .when('/businessunit', {
+            templateUrl: '/References/BusinessUnit',
+            controller: 'BusinessUnitController'
+        })
 
-            .when('/serviceablearea', {
-                templateUrl: '/References/ServiceableArea',
-                controller: 'ServiceableAreaController'
-            })
+        .when('/serviceablearea', {
+            templateUrl: '/References/ServiceableArea',
+            controller: 'ServiceableAreaController'
+        })
 
-            .when('/trucking', {
-                templateUrl: '/References/Trucking',
-                controller: 'TruckingController'
-            })
+        .when('/trucking', {
+            templateUrl: '/References/Trucking',
+            controller: 'TruckingController'
+        })
 
-            .when('/seafreight', {
-                templateUrl: '/References/SeaFreight',
-                controller: 'SeaFreightController'
-            })
+        .when('/seafreight', {
+            templateUrl: '/References/SeaFreight',
+            controller: 'SeaFreightController'
+        })
 
-            .when('/truckingwb', {
-                templateUrl: '/References/TruckingWB',
-                controller: 'TruckingsWBController'
-            })
+        .when('/truckingwb', {
+            templateUrl: '/References/TruckingWB',
+            controller: 'TruckingsWBController'
+        })
 
-            .otherwise({
-                redirectTo: '/home'
-            });
-    }])
+        .otherwise({
+            redirectTo: '/home'
+        });
+
+
+}])
+
+.config(['$localForageProvider', function($localForageProvider){
+    $localForageProvider.config({
+        name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
+        version     : 1.0, // version of the database, you shouldn't have to use this
+        storeName   : 'keyvaluepairs', // name of the table
+        description : 'some description'
+    })
+}])
 
         .controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
             function ($rootScope, $scope, $route, $routeParams, $location, $http) {
@@ -155,7 +167,6 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
 
                 // Get List of CityMunicipalities
                 var getCityMunicipalitiesFromApi = function () {
-                    //alert("get");
                     $http.get("/api/CityMunicipalities?countryId=" + $rootScope.country.Id)
                         .success(function (data, status) {
                             cityMunicipalities = data;

@@ -10,14 +10,18 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
 using System.Reflection;
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class CustomersController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 5;
 
         // GET: api/Customers
+
+        [CacheOutput(ClientTimeSpan = 600, ServerTimeSpan = 600)]
         public IQueryable<Customer> GetCustomers()
         {
             return db.Customers;

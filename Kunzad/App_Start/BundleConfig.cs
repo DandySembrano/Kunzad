@@ -22,7 +22,9 @@ namespace Kunzad
                         "~/Scripts/angular.js",
                         "~/Scripts/angular-route.js",
                         "~/Scripts/angular-ng-grid.js",
-                        "~/Scripts/angular-resource.js"
+                        "~/Scripts/angular-resource.js",
+                        "~/Scripts/localforage.min.js",
+                        "~/Scripts/angular-localForage.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/utils").Include(
