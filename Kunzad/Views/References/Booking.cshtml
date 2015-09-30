@@ -4,320 +4,330 @@
 
 <!-- General -->
 @section tab1Content{
-    <div context-menu="formContextMenu()" data-target="FormMenu">
-    <div class="alert alert-danger alert-sm" ng-show="isError">
-        <i class="fa fa-remove pr10"></i>
-        <strong>ERROR!</strong>{{errorMessage}}
-    </div>
+    <div context-menu="" data-target="FormMenu">
+        <div class="alert alert-danger alert-sm" ng-show="shipmentIsError">
+            <i class="fa fa-remove pr10"></i>
+            <strong>ERROR!</strong>{{shipmentErrorMessage}}
+        </div>
 
-    @*row1*@
-    <div class="row">
-        <form class="form-horizontal" role="form">
-            @*col1*@
-            <div class="col-lg-6">
-                @*Shipment No*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Shipment No</label>
-                    <div class="col-md-8">
-                        <input type="text"
-                               class="form-control"
-                               placeholder="System Generated"
-                               ng-model="shipmentItem.Id"
-                               ng-disabled="true">
-                    </div>
-                </div>
-                @*Business Unit*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Business Unit</label>
-                    <div class="col-md-8">
-                        <input id="BusinessUnit"
-                               type="text"
-                               class="form-control"
-                               placeholder=""
-                               ng-model="shipmentItem.BusinessUnit.Name"
-                               ng-disabled="true">
-                    </div>
-                </div>
-                @*Service*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Service</label>
-                    <div class="col-md-8">
-                        <select class="form-control"
-                                placeholder=""
-                                ng-click="setServiceType(shipmentItem.ServiceId)"
-                                ng-disabled="viewOnly"
-                                ng-model="shipmentItem.ServiceId"
-                                ng-options="item.Id as item.Name for item in serviceList"></select>
-                    </div>
-                </div>
-                @*Shipment Type*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Shipment Type</label>
-                    <div class="col-md-8">
-                        <select class="form-control"
-                                placeholder=""
-                                ng-disabled="viewOnly"
-                                ng-click="setShipmentType(shipmentItem.ShipmentTypeId)"
-                                ng-model="shipmentItem.ShipmentTypeId"
-                                ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
-                    </div>
-                </div>
-            </div>
-            @*col2*@
-            <div class="col-lg-6">
-                @*Payment Mode*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Payment Mode</label>
-                    <div class="col-md-8">
-                        <select class="form-control"
-                                placeholder=""
-                                ng-disabled="viewOnly"
-                                ng-model="shipmentItem.PaymentMode"
-                                ng-options="item.Id as item.Name for item in paymentModeList"></select>
-                    </div>
-                </div>
-                @*Booking Remarks*@
-                <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Booking Remarks</label>
-                    <div class="col-md-8">
-                        <textarea rows="6" style="height:auto;"
-                                  class="form-control"
-                                  placeholder=""
-                                  ng-model="shipmentItem.BookingRemarks"
-                                  ng-disabled="viewOnly"></textarea>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    @*row2*@
-    <div class="row">
-        <form class="form-horizontal" role="form">
-            <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Shipper/Consignee Information</legend>
+        @*row1*@
+        <div class="row">
+            <form class="form-horizontal" role="form">
                 @*col1*@
                 <div class="col-lg-6">
+                    @*Shipment No*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-12 control-label small  text-left"><strong>Shipper Information</strong></label>
-                    </div>
-                    @*Customer Code*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Code</label>
+                        <label class="col-md-3 control-label small">Shipment No</label>
                         <div class="col-md-8">
                             <input type="text"
                                    class="form-control"
-                                   placeholder=""
-                                   ng-model="shipmentItem.Customer.Code"
-                                   ng-disabled="viewOnly"
-                                   ng-click="showModal('#customer-list-modal', 'customer')">
-                        </div>
-                    </div>
-                    @*Customer Name*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Name</label>
-                        <div class="col-md-8">
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="shipmentItem.Customer.Name"
+                                   placeholder="System Generated"
+                                   ng-model="shipmentItem.Id"
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Customer Contact No*@
+                    @*Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Contact No</label>
-                        <div class="col-md-8">
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    @*Customer Address*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Address</label>
-                        <div class="col-md-8">
-                            <textarea rows="3" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="shipmentItem.CustomerAddress"
-                                      ng-disabled="true"></textarea>
-                        </div>
-                    </div>
-                </div>
-                @*col2*@
-                <div class="col-lg-6">
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-12 control-label small  text-left"><strong>Consignee Information</strong></label>
-                    </div>
-                    @*Consginee*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Name</label>
-                        <div class="col-md-8">
-                            <input id="consigneename"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="shipmentItem.DeliverTo"
-                                   ng-disabled="viewOnly">
-                        </div>
-                    </div>
-                    @*Consignee Contact No*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Contact No</label>
-                        <div class="col-md-8">
-                            <input id="consigneecontactno"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="shipmentItem.DeliverToContactNo"
-                                   ng-disabled="viewOnly">
-                        </div>
-                    </div>
-                    @*Consignee Address*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Address</label>
-                        <div class="col-md-8">
-                            <textarea id="DeliveryAddress"
-                                      rows="3" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="shipmentItem.DeliveryAddress"
-                                      ng-click="showModal('#address-modal', 'Consignee')"
-                                      ng-disabled="viewOnly"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-
-    @*row3*@
-    <div class="row">
-        <form class="form-horizontal" role="form">
-            <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Cargo Details</legend>
-                @*col1*@
-                <div class="col-lg-6">
-                    @*Quantity*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Total Qty</label>
-                        <div class="col-md-8">
-                            <input id="quantity"
-                                   type="text"
-                                   class="form-control"
-                                   ng-model="shipmentItem.Quantity"
-                                   ng-disabled="viewOnly">
-                        </div>
-                    </div>
-                    @*Total CBM*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Total CBM</label>
-                        <div class="col-md-8">
-                            <input id="cbm"
-                                   type="text"
-                                   class="form-control"
-                                   ng-model="shipmentItem.TotalCBM"
-                                   ng-disabled="viewOnly">
-                        </div>
-                    </div>
-                    @*Cargo Description*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Description</label>
-                        <div class="col-md-8">
-                            <textarea rows="3" style="height:auto;"
-                                      class="form-control"
-                                      ng-model="shipmentItem.Description"
-                                      ng-disabled="viewOnly"></textarea>
-                        </div>
-                    </div>
-                </div>
-                @*col2*@
-                <div class="col-lg-6">
-                    @*Pickup Business Unit*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Operation Site</label>
+                        <label class="col-md-3 control-label small">Business Unit</label>
                         <div class="col-md-8">
                             <input id="BusinessUnit"
                                    type="text"
                                    class="form-control"
                                    placeholder=""
-                                   ng-model="shipmentItem.BusinessUnit1.Name"
-                                   ng-disabled="viewOnly"
-                                   ng-click="showModal('#business-unit-list-modal')">
+                                   ng-model="shipmentItem.BusinessUnit.Name"
+                                   ng-disabled="true">
                         </div>
                     </div>
-                    @*Pick Up Date*@
+                    @*Service*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Pickup Date</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id='pickupdate'
-                                       class="form-control"
-                                       ng-model="shipmentItem.PickupDate"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    @*Pick Up Time*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Pickup Time</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id='pickuptime'
-                                       class="form-control"
-                                       ng-model="shipmentItem.PickupTime"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    @*Pick Up Address*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Pickup Address</label>
+                        <label class="col-md-3 control-label small">Service</label>
                         <div class="col-md-8">
-                            <textarea id="OriginAddress"
-                                      rows="3" style="height:auto;"
+                            <select class="form-control"
+                                    placeholder=""
+                                    ng-click="setServiceType(shipmentItem.ServiceId)"
+                                    ng-disabled="viewOnly"
+                                    ng-model="shipmentItem.ServiceId"
+                                    ng-options="item.Id as item.Name for item in serviceList"></select>
+                        </div>
+                    </div>
+                    @*Shipment Type*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Shipment Type</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    placeholder=""
+                                    ng-disabled="viewOnly"
+                                    ng-click="setShipmentType(shipmentItem.ShipmentTypeId)"
+                                    ng-model="shipmentItem.ShipmentTypeId"
+                                    ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
+                        </div>
+                    </div>
+                </div>
+                @*col2*@
+                <div class="col-lg-6">
+                    @*Payment Mode*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Payment Mode</label>
+                        <div class="col-md-8">
+                            <select class="form-control"
+                                    placeholder=""
+                                    ng-disabled="viewOnly"
+                                    ng-model="shipmentItem.PaymentMode"
+                                    ng-options="item.Id as item.Name for item in paymentModeList"></select>
+                        </div>
+                    </div>
+                    @*Booking Remarks*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Booking Remarks</label>
+                        <div class="col-md-8">
+                            <textarea rows="6" style="height:auto;"
                                       class="form-control"
                                       placeholder=""
-                                      ng-model="shipmentItem.OriginAddress"
-                                      ng-click="showModal('#address-modal', 'Pickup')"
+                                      ng-model="shipmentItem.BookingRemarks"
                                       ng-disabled="viewOnly"></textarea>
                         </div>
                     </div>
                 </div>
-            </fieldset>
-            <script type="text/javascript">
-                $(function () {
-                    $('#pickupdate').datetimepicker({
-                        format: 'MM-DD-YYYY',
-                        sideBySide: false,
-                        pickTime: false,
-                        //minDate: moment()
-                    })
-                    $('#pickuptime').datetimepicker({
-                        format: 'HH:mm',
-                        sideBySide: false,
-                        pickDate: false
-                    })
-                });
-            </script>
-        </form>
+            </form>
+        </div>
+
+        @*row2*@
+        <div class="row">
+            <form class="form-horizontal" role="form">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Shipper/Consignee Information</legend>
+                    @*col1*@
+                    <div class="col-lg-6">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-12 control-label small  text-left"><strong>Shipper Information</strong></label>
+                        </div>
+                        @*Customer Code*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Code</label>
+                            <div class="col-md-8">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.Customer.Code"
+                                       ng-disabled="viewOnly"
+                                       ng-click="showModal('#customer-list-modal', 'customer')">
+                            </div>
+                        </div>
+                        @*Customer Name*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Name</label>
+                            <div class="col-md-8">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.Customer.Name"
+                                       ng-disabled="true">
+                            </div>
+                        </div>
+                        @*Customer Contact No*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Contact No</label>
+                            <div class="col-md-8">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber"
+                                       ng-disabled="true">
+                            </div>
+                        </div>
+                        @*Customer Address*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Address</label>
+                            <div class="col-md-8">
+                                <textarea rows="3" style="height:auto;"
+                                          class="form-control"
+                                          placeholder=""
+                                          ng-model="shipmentItem.CustomerAddress"
+                                          ng-disabled="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @*col2*@
+                    <div class="col-lg-6">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-12 control-label small  text-left"><strong>Consignee Information</strong></label>
+                        </div>
+                        @*Consginee*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Name</label>
+                            <div class="col-md-8">
+                                <input id="consigneename"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.DeliverTo"
+                                       ng-disabled="viewOnly">
+                            </div>
+                        </div>
+                        @*Consignee Contact No*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Contact No</label>
+                            <div class="col-md-8">
+                                <input id="consigneecontactno"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.DeliverToContactNo"
+                                       ng-disabled="viewOnly">
+                            </div>
+                        </div>
+                        @*Consignee Address*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Address</label>
+                            <div class="col-md-7">
+                                <textarea id="DeliveryAddress"
+                                          rows="5" style="height:auto;"
+                                          class="form-control"
+                                          placeholder=""
+                                          ng-model="shipmentItem.DeliveryAddress"
+                                          ng-disabled="true"></textarea>
+                            </div>
+                            <div class="col-md-1" ng-disabled="viewOnly" ng-click="showDeliveryAddress = true">
+                                <span class="glyphicon glyphicon-edit" style="font-size: 20px; color:#4a89dc"></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        @*row3*@
+        <div class="row">
+            <form class="form-horizontal" role="form">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Cargo Details</legend>
+                    @*col1*@
+                    <div class="col-lg-6">
+                        @*Quantity*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Total Qty</label>
+                            <div class="col-md-8">
+                                <input id="quantity"
+                                       type="text"
+                                       class="form-control"
+                                       ng-model="shipmentItem.Quantity"
+                                       ng-disabled="viewOnly">
+                            </div>
+                        </div>
+                        @*Total CBM*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Total CBM</label>
+                            <div class="col-md-8">
+                                <input id="cbm"
+                                       type="text"
+                                       class="form-control"
+                                       ng-model="shipmentItem.TotalCBM"
+                                       ng-disabled="viewOnly">
+                            </div>
+                        </div>
+                        @*Cargo Description*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Description</label>
+                            <div class="col-md-8">
+                                <textarea rows="3" style="height:auto;"
+                                          class="form-control"
+                                          ng-model="shipmentItem.Description"
+                                          ng-disabled="viewOnly"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @*col2*@
+                    <div class="col-lg-6">
+                        @*Pickup Business Unit*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Operation Site</label>
+                            <div class="col-md-8">
+                                <input id="BusinessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="shipmentItem.BusinessUnit1.Name"
+                                       ng-disabled="viewOnly"
+                                       ng-click="showModal('#business-unit-list-modal')">
+                            </div>
+                        </div>
+                        @*Pick Up Date*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Pickup Date</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id='pickupdate'
+                                           class="form-control"
+                                           ng-model="shipmentItem.PickupDate"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @*Pick Up Time*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Pickup Time</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id='pickuptime'
+                                           class="form-control"
+                                           ng-model="shipmentItem.PickupTime"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @*Pick Up Address*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Pickup Address</label>
+                            <div class="col-md-7">
+                                <textarea id="OriginAddress"
+                                          rows="5" style="height:auto;"
+                                          class="form-control"
+                                          placeholder=""
+                                          ng-model="shipmentItem.OriginAddress"
+                                          ng-disabled="true"></textarea>
+                            </div>
+                            <div class="col-md-1" ng-disabled="viewOnly" ng-click="showPickupAddress = true">
+                                <span class="glyphicon glyphicon-edit" style="font-size: 20px; color:#4a89dc"></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#pickupdate').datetimepicker({
+                            format: 'MM-DD-YYYY',
+                            sideBySide: false,
+                            pickTime: false,
+                            //minDate: moment()
+                        })
+                        $('#pickuptime').datetimepicker({
+                            format: 'HH:mm',
+                            sideBySide: false,
+                            pickDate: false
+                        })
+                    });
+                </script>
+            </form>
+        </div>
     </div>
-</div>
 }
 <!-- List -->
 @section tab2Content{
-    <div ui-grid="shipmentGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+    <div style="padding:0px 10px 0px 10px">
+        <div class="text-right toggle-hide" ng-click="hideShipmentToggle()" ng-show="shipmentToggle">Hide</div>
+        <div id="shipmentToggle">
+            <div id="filterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="shipmentContainer"></div>
+    </div>
 }
 
 <!-- Customer List Modal -->
@@ -443,7 +453,7 @@
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Addresses List</span>
         </div>
         <!--Modal Body-->
         <div class="panel-body" style="height:400px; max-height:100%">
@@ -530,99 +540,44 @@
 </div>
 <!--End of Business Unit List Modal -->
 
-<!-- Address Modal-->
-<div id="address-modal" class="popup-basic bg-none mfp-with-anim mfp-hide">
-    <!-- This is the template use for City/Municpality Typeahead -->
-    <script type="text/ng-template" id="customTemplate.html">
-        <a>
-            <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
-            <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
-        </a>
-    </script>
+@*Directive if module has address input*@
+<dir-address datadefinition="deliveryAddressDataDefinition" showmodal="showDeliveryAddress" otheractions="otherActionsDeliveryAddress(action)"></dir-address>
+<dir-address datadefinition="pickupAddressDataDefinition" showmodal="showPickupAddress" otheractions="otherActionsPickupAddress(action)"></dir-address>
+
+@*Filter Modal*@
+@*<div id="filter-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:60%;">
     <div class="panel">
+        <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{(actionMode == 'Create' ? "Enter" : actionMode) + " " + modalType}} Address</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Filter Criteria</span>
         </div>
-        <div class="panel-body">
-            <div class="alert alert-danger alert-sm" ng-show="isErrorAddress">
-                <i class="fa fa-remove pr10"></i>
-                <strong>ERROR!</strong>    {{errorMessageAddress}}
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <form class="form-horizontal" role="form">
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Street Address</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Street address line 1"
-                                       ng-model="addressItem.Line1" ng-disabled="viewOnly">
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small"></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Street address line 2"
-                                       ng-model="addressItem.Line2" ng-disabled="viewOnly">
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">City/Municipality</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="" ng-disabled="viewOnly"
-                                       ng-model="addressItem.CityMunicipality.Name" typeahead-editable="false"
-                                       typeahead-on-select="onSelectCity($item, $model, $label)"
-                                       typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
-                                       typeahead-template-url="customTemplate.html">
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Province/State</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder=""
-                                       ng-model="addressItem.CityMunicipality.StateProvince.Name" ng-disabled="true">
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Postal Code</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder=""
-                                       ng-model="addressItem.PostalCode" ng-disabled="viewOnly">
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Country</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder=""
-                                       ng-model="country.Name" ng-disabled="true">
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="height:400px; max-height:100%">
+            <div class="myTableContainter" style="height:400px; max-height: 100%">
+                <div id="filterContainter" style="padding-left:40px;"></div>
             </div>
         </div>
+        <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn btn-primary" type="submit"
-                    ng-click="closeAddressForm(addressItem)">
-                {{actionMode === 'Create' ? 'Add' : actionMode}}
-            </button>
+            <button class="btn" type="submit" ng-click="closeFilterModal()">Close</button>
         </div>
     </div>
-</div>
+</div>*@
 
 @*Form Context-Menu*@
 <div class="dropdown position-fixed" id="FormMenu">
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="actionForm('Create')">New</a>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>
         </li>
-        <li ng-show ="shipmentItem.Id == null || actionMode == 'Delete' ? false : true">
-            <a class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Delete')">Cancel</a>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="shipmentOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{shipmentItem.Id != null && shipmentSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="shipmentOtheractions(shipmentItem.Id != null && shipmentSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{shipmentItem.Id != null && shipmentSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="shipmentOtheractions(shipmentItem.Id != null && shipmentSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>

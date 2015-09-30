@@ -1,7 +1,4 @@
-﻿// app.js
-
-var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav','LocalForageModule']);
-
+﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav']);
 kunzadApp.run(function ($rootScope) {
     //Triggers before actionForm function
     $rootScope.formatControlNo = function (prefix, length, value) {
@@ -11,15 +8,168 @@ kunzadApp.run(function ($rootScope) {
         }
         return formattedValue;
     };
+
+    //Reusable object for filtering shipment/booking so that other module can directly access
+    $rootScope.shipmentObj = function () {
+        return {
+            "Id": null,
+            "CreatedDate": null,
+            "CustomerId": null,
+            "BusinessUnitId": null,
+            "ServiceId": null,
+            "ShipmentTypeId": null,
+            "PaymentMode": null,
+            "PickupDate": null,
+            "PickUpBussinessUnitId": null,
+            "TransportStatusId": null
+        };
+    };
+
+    //Payment Mode List
+    $rootScope.getPaymentModeList = function () {
+        return [{ "Id": "A", "Name": "Account" },
+                { "Id": "P", "Name": "Prepaid" },
+                { "Id": "C", "Name": "Collect Account" },
+                { "Id": "D", "Name": "Cash On Delivery" }
+        ];
+    };
+
+    //Transport Status List
+    $rootScope.getTransportStatusList = function () {
+        return [{ "Id": "10", "Name": "Open" },
+                { "Id": "20", "Name": "Partial" },
+                { "Id": "30", "Name": "Dispatch" },
+                { "Id": "40", "Name": "Close" },
+                { "Id": "50", "Name": "Cancel" }
+        ];
+    };
+
+    //Remove unnecessary 
+    $rootScope.formatShipment = function (shipments) {
+        for (var i = 0; i < shipments.length; i++) {
+            var holder = {};
+
+            //Format Address
+            holder = shipments[i].Address;
+            holder1 = shipments[i].Address.CityMunicipality;
+            holder2 = shipments[i].Address.CityMunicipality.StateProvince;
+            shipments[i].Address = {};
+            shipments[i].Address = {
+                "Id": holder.Id,
+                "Line1": holder.Line1,
+                "Line2": holder.Line2,
+                "PostalCode": holder.PostalCode,
+                "CityMunicipalityId": holder.CityMunicipalityId,
+                "CityMunicipality": {
+                    "Name": holder1.Name,
+                    "StateProvince": {
+                        "Name": holder2.Name
+                    }
+                }
+            }
+
+            //Format Address
+            holder = shipments[i].Address1;
+            holder1 = shipments[i].Address1.CityMunicipality;
+            holder2 = shipments[i].Address1.CityMunicipality.StateProvince;
+            shipments[i].Address1 = {};
+            shipments[i].Address1 = {
+                "Id": holder.Id,
+                "Line1": holder.Line1,
+                "Line2": holder.Line2,
+                "PostalCode": holder.PostalCode,
+                "CityMunicipalityId": holder.CityMunicipalityId,
+                "CityMunicipality": {
+                    "Name": holder1.Name,
+                    "StateProvince": {
+                        "Name": holder2.Name
+                    }
+                }
+            }
+
+            //BusinessUnit
+            holder = shipments[i].BusinessUnit;
+            shipments[i].BusinessUnit = {};
+            shipments[i].BusinessUnit = {
+                "Name": holder.Name
+            }
+
+            //BusinessUnit1
+            holder = shipments[i].BusinessUnit1;
+            shipments[i].BusinessUnit1 = {};
+            shipments[i].BusinessUnit1 = {
+                "Name": holder.Name
+            }
+
+            //Service
+            holder = shipments[i].Service;
+            shipments[i].Service = {};
+            shipments[i].Service = {
+                "Name": holder.Name
+            }
+
+            //ShipmentType
+            holder = shipments[i].ShipmentType;
+            shipments[i].ShipmentType = {};
+            shipments[i].ShipmentType = {
+                "Name": holder.Name
+            }
+
+            //Customer
+            holder = shipments[i].Customer;
+            holder1 = shipments[i].Customer.CustomerAddresses;
+            holder2 = shipments[i].Customer.CustomerContacts[0].Contact;
+            holder3 = shipments[i].Customer.CustomerContacts[0].Contact.ContactPhones;
+            shipments[i].Customer = {};
+
+            shipments[i].Customer = {
+                "Id": holder.Id,
+                "Code": holder.Code,
+                "Name": holder.Name,
+                //CustomerAddresses
+                "CustomerAddresses": [{
+                    "Id": holder1[0].Id,
+                    "Line1": holder1[0].Line1,
+                    "Line2": holder1[0].Line2,
+                    "PostalCode": holder1[0].PostalCode,
+                    "CityMunicipality": {
+                        "Name": holder1[0].CityMunicipality.Name,
+                        "StateProvince": {
+                            "Name": holder1[0].CityMunicipality.StateProvince.Name
+                        }
+                    }
+                }],
+                //CustomerContacts
+                "CustomerContacts": [{
+                    "Contact": {
+                        "Email": holder2.Email,
+                        "Name": holder2.Name,
+                        "Title": holder2.Title,
+                        //ContactPhones
+                        "ContactPhones": [{
+                            "ContactNumber": holder3[0].ContactNumber
+                        }]
+                    }
+                }]
+            }
+            delete shipments[i].SeaFreightShipments;
+            delete shipments[i].ShipmentCharges;
+            delete shipments[i].ShipmentDimensions;
+            delete shipments[i].TruckingDeliveries;
+            delete shipments[i].AirFreightShipments;
+            delete shipments[i].CourierTransactionDetails;
+        }
+        return shipments;
+    };
+
     $rootScope.getTruckingTypeList = function () {
-        return  [
+        return [
             { "Id": 10, "Name": "Pick up" },
             { "Id": 20, "Name": "Trucking Delivery" }
         ]
     };
-
-})
-.config(['$routeProvider', function ($routeProvider) {
+});
+kunzadApp.config(['$routeProvider', function ($routeProvider) {
     //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
     $routeProvider
 
@@ -134,54 +284,52 @@ kunzadApp.run(function ($rootScope) {
         .otherwise({
             redirectTo: '/home'
         });
+    }])
 
+    .config(['$localForageProvider', function($localForageProvider){
+        $localForageProvider.config({
+            name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
+            version     : 1.0, // version of the database, you shouldn't have to use this
+            storeName   : 'keyvaluepairs', // name of the table
+            description : 'some description'
+        })
+    }])
 
-}])
+    .controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
+        function ($rootScope, $scope, $route, $routeParams, $location, $http) {
 
-.config(['$localForageProvider', function($localForageProvider){
-    $localForageProvider.config({
-        name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
-        version     : 1.0, // version of the database, you shouldn't have to use this
-        storeName   : 'keyvaluepairs', // name of the table
-        description : 'some description'
-    })
-}])
+            $scope.$on('$routeChangeSuccess', function (e, current, previous) {
+                $scope.activeViewPath = $location.path();
+            });
 
-        .controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
-            function ($rootScope, $scope, $route, $routeParams, $location, $http) {
-
-                $scope.$on('$routeChangeSuccess', function (e, current, previous) {
-                    $scope.activeViewPath = $location.path();
-                });
-
-                // Temporary - support one country only (Philippines)
-                $rootScope.country = {
-                    "Id": 1,
-                    "Name": "Philippines",
-                }
+            // Temporary - support one country only (Philippines)
+            $rootScope.country = {
+                "Id": 1,
+                "Name": "Philippines",
+            }
             
-                var cityMunicipalities = [];
-                $rootScope.getCityMunicipalities = function () {
-                    return cityMunicipalities;
-                }
+            var cityMunicipalities = [];
+            $rootScope.getCityMunicipalities = function () {
+                return cityMunicipalities;
+            }
 
-                // Get List of CityMunicipalities
-                var getCityMunicipalitiesFromApi = function () {
-                    $http.get("/api/CityMunicipalities?countryId=" + $rootScope.country.Id)
-                        .success(function (data, status) {
-                            cityMunicipalities = data;
-                        })
-                        .error(function (data, status) {
-                        });
-                }
+            // Get List of CityMunicipalities
+            var getCityMunicipalitiesFromApi = function () {
+                $http.get("/api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+                    .success(function (data, status) {
+                        cityMunicipalities = data;
+                    })
+                    .error(function (data, status) {
+                    });
+            }
 
-                function init() {
-                    getCityMunicipalitiesFromApi();
-                }
+            function init() {
+                getCityMunicipalitiesFromApi();
+            }
 
-                init();
+            init();
 
-            }]);
+        }]);
 
 
     // -------------------------------------------------------------------------//
@@ -217,7 +365,7 @@ kunzadApp.run(function ($rootScope) {
         color: '#000', // #rgb or #rrggbb or array of colors
         speed: 1, // Rounds per second
         trail: 46, // Afterglow percentage
-        shadow: false, // Whether to render a shadow
+        shadow: true, // Whether to render a shadow
         hwaccel: false, // Whether to use hardware acceleration
         className: 'spinner', // The CSS class to assign to the spinner
         zIndex: 2e9, // The z-index (defaults to 2000000000)

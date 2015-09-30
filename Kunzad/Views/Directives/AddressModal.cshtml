@@ -1,0 +1,83 @@
+﻿<div id="{{datadefinition.ModalId}}" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- This is the template use for City/Municpality Typeahead -->
+    <script type="text/ng-template" id="customTemplate.html">
+        <a>
+            <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+            <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
+        </a>
+    </script>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{(datadefinition.ActionMode == 'Create' ? "Enter" : datadefinition.ActionMode ) + " " + datadefinition.Header}} Address</span>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorAddress">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageAddress}}
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal" role="form">
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Street Address</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Street address line 1"
+                                       ng-model="datadefinition.DataItem.Line1" ng-disabled="datadefinition.ViewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small"></label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Street address line 2"
+                                       ng-model="datadefinition.DataItem.Line2" ng-disabled="datadefinition.ViewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">City/Municipality</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="" ng-disabled="datadefinition.ViewOnly"
+                                       ng-model="datadefinition.DataItem.CityMunicipality.Name" typeahead-editable="false"
+                                       typeahead-on-select="onSelectCity($item, $model, $label)"
+                                       typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
+                                       typeahead-template-url="customTemplate.html">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Province/State</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="datadefinition.DataItem.CityMunicipality.StateProvince.Name" ng-disabled="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Postal Code</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="datadefinition.DataItem.PostalCode" ng-disabled="datadefinition.ViewOnly">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Country</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder=""
+                                       ng-model="country.Name" ng-disabled="true">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="closeAddressForm(datadefinition.DataItem)">
+                {{datadefinition.ActionMode === 'Create' ? 'Done' : (datadefinition.ActionMode === 'View' ? 'Close' : datadefinition.ActionMode)}}
+            </button>
+        </div>
+    </div>
+</div>
