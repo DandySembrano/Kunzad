@@ -14,8 +14,11 @@ namespace Kunzad
                         "~/vendor/plugins/magnific/jquery.magnific-popup.js",
                         //for datetime picker---------------------------------------------
                         "~/vendor/plugins/moment/moment.js",
-                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"
+                        "~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js",
                         //----------------------------------------------------------------
+                        // for textfield price formatting --------------------------------
+                        "~/vendor/plugins/priceFormat/price_format.js"
+                        // ---------------------------------------------------------------
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
@@ -54,7 +57,6 @@ namespace Kunzad
                         "~/Scripts/app/airline-ctrl.js",
                         "~/Scripts/app/trucker-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js", 
-                        "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js",
                         "~/Scripts/app/industry-ctrl.js",
