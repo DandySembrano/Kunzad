@@ -17,5 +17,18 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult DataGrid2()
+        {
+            return View();
+        }
+        public ActionResult DataFiltering()
+        {
+            return View();
+        }
+
+        public ActionResult AddressModal()
+        {
+            return View();
+        }
     }
 }

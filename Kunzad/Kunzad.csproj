@@ -382,7 +382,11 @@
     <Content Include="Scripts\app\trucker-ctrl.js" />
     <Content Include="Scripts\app\trucking-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
+    <Content Include="Scripts\directive\addressModal.js" />
+    <Content Include="Scripts\directive\dataFiltering.js" />
     <Content Include="Scripts\directive\dataGrid1.js" />
+    <Content Include="Scripts\directive\dataGrid2.js" />
+    <Content Include="Scripts\directive\scrollableContainer.js" />
     <Content Include="Scripts\filter\filter.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
@@ -2357,6 +2361,7 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="WebAPI.OutputCache.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiControllers\AirLinesController.cs" />
@@ -2373,6 +2378,7 @@
     <Compile Include="ApiControllers\DriversController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
     <Compile Include="ApiControllers\SeaFreightsController.cs" />
+    <Compile Include="ApiControllers\SeaFreightShipmentsController.cs" />
     <Compile Include="ApiControllers\ServiceableAreasController.cs" />
     <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
     <Compile Include="ApiControllers\ServicesController.cs" />
@@ -3002,6 +3008,9 @@
     <Content Include="Views\References\Trucking.cshtml" />
     <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
     <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
+    <Content Include="Views\Directives\DataFiltering.cshtml" />
+    <Content Include="Views\Directives\DataGrid2.cshtml" />
+    <Content Include="Views\Directives\AddressModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
