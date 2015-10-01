@@ -17,6 +17,15 @@ var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.b
             ]
         };
 
+        $rootScope.getTruckingStatusList = function () {
+            return [
+                { "Id": 10, "Name": "Dispatch" },
+                { "Id": 20, "Name": "Waybill" },
+                { "Id": 30, "Name": "DeliveryUpdate" },
+                { "Id": 40, "Name": "Cancelled" }
+            ]
+        };
+
     })
     kunzadApp.config(['$routeProvider', function ($routeProvider) {
         //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)

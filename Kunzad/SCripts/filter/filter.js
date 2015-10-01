@@ -96,3 +96,27 @@ kunzadApp.filter('PaymentMode', function ($filter) {
         }
     }
 });
+kunzadApp.filter('TruckingType', function ($filter, $rootScope) {
+    return function (value) {
+        if (value == "" || value == null)
+            return "";
+        var truckingType = $rootScope.getTruckingTypeList();
+        for (var i = 0; i < truckingType.length; i++) {
+            if (value == truckingType[i].Id)
+                return truckingType[i].Name;
+        }
+    }
+});
+
+kunzadApp.filter('TruckingStatus', function ($filter, $rootScope) {
+    return function (value) {
+        if (value == "" || value == null)
+            return "";
+        var truckingStatus = $rootScope.getTruckingStatusList();
+        for (var i = 0; i < truckingStatus.length; i++) {
+            if (value == truckingStatus[i].Id) {
+                return truckingStatus[i].Name;
+            }
+        }
+    }
+});
