@@ -2373,6 +2373,7 @@
     <Compile Include="ApiControllers\DriversController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
     <Compile Include="ApiControllers\SeaFreightsController.cs" />
+    <Compile Include="ApiControllers\SeaFreightShipmentsController.cs" />
     <Compile Include="ApiControllers\ServiceableAreasController.cs" />
     <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
     <Compile Include="ApiControllers\ServicesController.cs" />
@@ -2381,6 +2382,7 @@
     <Compile Include="ApiControllers\ShippingLinesController.cs" />
     <Compile Include="ApiControllers\StateProvincesController.cs" />
     <Compile Include="ApiControllers\TruckersController.cs" />
+    <Compile Include="ApiControllers\TruckingDeliveriesController.cs" />
     <Compile Include="ApiControllers\TruckingsController.cs" />
     <Compile Include="ApiControllers\TrucksController.cs" />
     <Compile Include="ApiControllers\TruckTypesController.cs" />
@@ -2982,6 +2984,9 @@
     <Content Include="Views\References\Booking.cshtml" />
     <Content Include="Views\Shared\_TransactionLayout.cshtml" />
     <Content Include="Views\References\SeaFreight.cshtml" />
+    <Content Include="Views\References\Trucking.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
     <EntityDeploy Include="Models\ModelKunzadDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
@@ -2999,9 +3004,6 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\References\Trucking.cshtml" />
-    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
-    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
