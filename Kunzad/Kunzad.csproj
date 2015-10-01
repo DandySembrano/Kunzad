@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Kunzad</RootNamespace>
     <AssemblyName>Kunzad</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -356,6 +356,7 @@
     <Content Include="Scripts\angular-csp.css" />
     <Content Include="Scripts\angular-loader.js" />
     <Content Include="Scripts\angular-loader.min.js" />
+    <Content Include="Scripts\angular-localForage.js" />
     <Content Include="Scripts\angular-messages.js" />
     <Content Include="Scripts\angular-messages.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
@@ -389,8 +390,13 @@
     <Content Include="Scripts\app\shippinglines-ctrl.js" />
     <Content Include="Scripts\app\trucker-ctrl.js" />
     <Content Include="Scripts\app\trucking-ctrl.js" />
+    <Content Include="Scripts\app\truckingwb-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
+    <Content Include="Scripts\directive\addressModal.js" />
+    <Content Include="Scripts\directive\dataFiltering.js" />
     <Content Include="Scripts\directive\dataGrid1.js" />
+    <Content Include="Scripts\directive\dataGrid2.js" />
+    <Content Include="Scripts\directive\scrollableContainer.js" />
     <Content Include="Scripts\filter\filter.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
@@ -1135,6 +1141,7 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <Content Include="Scripts\localforage.min.js" />
     <Content Include="Scripts\ng-context-menu.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
@@ -2390,8 +2397,8 @@
     <Compile Include="ApiControllers\ShippingLinesController.cs" />
     <Compile Include="ApiControllers\StateProvincesController.cs" />
     <Compile Include="ApiControllers\TruckersController.cs" />
-    <Compile Include="ApiControllers\TruckingDeliveriesController.cs" />
     <Compile Include="ApiControllers\TruckingsController.cs" />
+    <Compile Include="ApiControllers\TruckingsWBController.cs" />
     <Compile Include="ApiControllers\TrucksController.cs" />
     <Compile Include="ApiControllers\TruckTypesController.cs" />
     <Compile Include="ApiControllers\VesselsController.cs" />
@@ -2992,9 +2999,6 @@
     <Content Include="Views\References\Booking.cshtml" />
     <Content Include="Views\Shared\_TransactionLayout.cshtml" />
     <Content Include="Views\References\SeaFreight.cshtml" />
-    <Content Include="Views\References\Trucking.cshtml" />
-    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
-    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
     <EntityDeploy Include="Models\ModelKunzadDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
@@ -3012,6 +3016,13 @@
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
+    <Content Include="Views\References\Trucking.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
+    <Content Include="Views\Directives\DataFiltering.cshtml" />
+    <Content Include="Views\Directives\DataGrid2.cshtml" />
+    <Content Include="Views\Directives\AddressModal.cshtml" />
+    <Content Include="Views\References\TruckingWB.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
