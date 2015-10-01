@@ -21,6 +21,20 @@ namespace Kunzad.ApiControllers
         // GET: api/ServiceableAreas
         public IQueryable<ServiceableArea> GetServiceableAreas()
         {
+            var serviceableAreas = db.ServiceableAreas
+                                    .Include(sa => sa.CityMunicipality);
+
+            foreach (var sa in serviceableAreas)
+            {
+                sa.CityMunicipality.Addresses = null;
+                sa.CityMunicipality.Truckers = null;
+                sa.CityMunicipality.Couriers = null;
+                sa.CityMunicipality.CustomerAddresses = null;
+                sa.CityMunicipality.StateProvince = null;
+                sa.CityMunicipality.ServiceableAreas = null;
+            }
+
+
             return db.ServiceableAreas;
         }
 
