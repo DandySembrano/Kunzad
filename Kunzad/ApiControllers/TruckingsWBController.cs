@@ -15,16 +15,41 @@ namespace Kunzad.ApiControllers
     public class TruckingsWBController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
+        private int pageSize = 20;
 
         // GET: api/TruckingsWB
-        public IQueryable<Trucking> GetTruckings()
+        public IHttpActionResult GetTruckings()
         {
-            return db.Truckings
+            var truckings = db.Truckings
                 .Include(t => t.Trucker)
                 .Include(t => t.Truck)
                 .Include(t => t.Driver)
                 .Include(t => t.TruckingDeliveries)
-                .Where(t => t.TruckingStatusId == '0');
+                .Include(t => t.TruckingDeliveries.Select(s => s.Shipment.Customer))
+                .Include(t => t.TruckingDeliveries.Select(s => s.Shipment.Address))
+                .Include(t => t.TruckingDeliveries.Select(s => s.Shipment.Address.CityMunicipality))
+                .Include(t => t.TruckingDeliveries.Select(s => s.Shipment.Address.CityMunicipality.StateProvince))
+                .Where(t => t.TruckingStatusId == 10)
+                .OrderByDescending(t => t.Id).ToArray();
+            return Ok(truckings);
+        }
+
+        // GET: api/TruckingsWB/p=1&status=1
+        public IQueryable<Trucking> GetTruckings(int p, int status)
+        {
+            int skip;
+            if (p > 1)
+                skip = (p - 1) * pageSize;
+            else
+                skip = 0;
+
+            return db.Truckings
+                .Include(t => t.Trucker)
+                .Include(t => t.Truck)
+                .Include(t => t.Driver)
+                .Where(t => t.TruckingStatusId == status)
+                .OrderByDescending(t => t.Id)
+                .Skip(skip).Take(pageSize);
         }
 
         // GET: api/TruckingsWB/5
@@ -32,6 +57,8 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult GetTrucking(int id)
         {
             Trucking trucking = db.Truckings.Find(id);
+            db.Entry(trucking).Reference(t => t.TruckingDeliveries).Load();
+
             if (trucking == null)
             {
                 return NotFound();
@@ -58,8 +85,8 @@ namespace Kunzad.ApiControllers
 
             try
             {
-                trucking.TruckingStatusId = '1';
-                trucking.LastUpdatedDate = DateTime.Now;
+                //trucking.TruckingStatusId = '1';
+                //trucking.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
