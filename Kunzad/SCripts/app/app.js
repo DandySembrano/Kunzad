@@ -1,4 +1,4 @@
-﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav']);
+﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
 kunzadApp.run(function ($rootScope) {
     //Triggers before actionForm function
     $rootScope.formatControlNo = function (prefix, length, value) {
@@ -286,7 +286,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         });
     }])
 
-    .config(['$localForageProvider', function($localForageProvider){
+   .config(['$localForageProvider', function($localForageProvider){
         $localForageProvider.config({
             name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
             version     : 1.0, // version of the database, you shouldn't have to use this
