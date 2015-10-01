@@ -22,7 +22,9 @@ namespace Kunzad
                         "~/Scripts/angular.js",
                         "~/Scripts/angular-route.js",
                         "~/Scripts/angular-ng-grid.js",
-                        "~/Scripts/angular-resource.js"
+                        "~/Scripts/angular-resource.js",
+                        "~/Scripts/localforage.min.js",
+                        "~/Scripts/angular-localForage.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/utils").Include(
@@ -38,7 +40,11 @@ namespace Kunzad
                         "~/vendor/plugins/uigrid/js/vfs_fonts.js",
                         "~/Scripts/app/app.js",
                         "~/Scripts/filter/filter.js",
+                        "~/Scripts/directive/scrollableContainer.js",
+                        "~/Scripts/directive/dataFiltering.js",
+                        "~/Scripts/directive/addressModal.js",
                         "~/Scripts/directive/dataGrid1.js",
+                        "~/Scripts/directive/dataGrid2.js",
                         "~/Scripts/directive/dataExport.js",
                         "~/Scripts/app/booking-ctrl.js",
                         "~/Scripts/app/seafreight-ctrl.js",
@@ -47,6 +53,8 @@ namespace Kunzad
                         "~/Scripts/app/courier-ctrl.js",
                         "~/Scripts/app/airline-ctrl.js",
                         "~/Scripts/app/trucker-ctrl.js",
+                        "~/Scripts/app/trucktype-ctrl.js", 
+                        "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js",
                         "~/Scripts/app/industry-ctrl.js",
