@@ -22,6 +22,143 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.shipmentToggle = false;
     $scope.withDirective = true;
 
+    //function that will be called during submit
+    $scope.submit = function () {
+        $scope.shipmentIsError = false;
+        $scope.shipmentErrorMessage = "";
+        $scope.shipmentSubmitDefinition.Submit = true;
+    }
+
+    //Function that will trigger during Edit,Delete and View Action
+    $scope.onEDV = function () {
+        $scope.shipmentItem = [];
+        $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
+        console.log($scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality);
+        $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
+        $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
+        $scope.controlNoHolder = $scope.shipmentItem.Id;
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+    };
+
+    //Displays Modal
+    $scope.showModal = function (panel, type) {
+        $scope.modalType = type;
+        openModalPanel(panel);
+    };
+
+    $scope.closeModal = function () {
+        jQuery.magnificPopup.close();
+    };
+
+    //Initialize address field
+    $scope.initializeAddressField = function (addressItem, type) {
+        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
+        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+        if ($scope.modalType == "Pickup")
+            $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
+        else if ($scope.modalType == "Consignee")
+            $scope.shipmentItem.DeliveryAddress = $scope.formattedAddress;
+        else {//MasterList Display
+            return $scope.formattedAddress;
+        }
+
+
+    };
+
+    //Initialize Payment Mode List for DropDown
+    $scope.initPaymentModeList = function () {
+        $scope.paymentModeList = $rootScope.getPaymentModeList();
+    };
+
+    //Initialize Service List for DropDown
+    $scope.initServiceList = function () {
+        $http.get("/api/Services")
+        .success(function (data, status) {
+            $scope.serviceList = data;
+        })
+    };
+
+    //Initialize Shipment Type List for DropDown
+    $scope.initShipmentTypeList = function () {
+        $http.get("/api/ShipmentTypes")
+        .success(function (data, status) {
+            $scope.shipmentTypeList = [];
+            $scope.shipmentTypeList = data;
+        })
+    };
+
+    //function that will be invoked when user click tab
+    $scope.setSelectedTab = function (tab) {
+        $scope.shipmentIsError = false;
+        $scope.shipmentErrorMessage = "";
+        $scope.selectedTab = tab;
+    };
+
+    //Initialize service type
+    $scope.setServiceType = function (id) {
+        for (var i = 0; i < $scope.serviceList.length; i++) {
+            if (id == $scope.serviceList[i].Id) {
+                $scope.shipmentItem.Service = $scope.serviceList[i];
+                return true;
+            }
+        }
+    };
+
+    //Initialize shipment type
+    $scope.setShipmentType = function (id) {
+        for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
+            if (id == $scope.serviceList[i].Id) {
+                $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
+                return true;
+            }
+        }
+    }
+
+    //Find specific character
+    $scope.findCharacter = function (v, c) {
+        for (var i = 0; i < v.length; i++) {
+            if (v.charAt(i) == c)
+                return true;
+        }
+        return false;
+    };
+
+    //Disable typing
+    $('#OriginAddress,#DeliveryAddress,#BusinessUnit, #customerCode, #pickupdate, #pickuptime').keypress(function (key) {
+        return false;
+    });
+
+    //Check if input is whole number
+    $('#consigneecontactno,#quantity').keypress(function (key) {
+        if (key.charCode < 48 || key.charCode > 57) return false;
+    });
+
+    //Check if input is decimal number only
+    $('#taxamount,#taxpercentage,#revenue,#cbm').keypress(function (key) {
+        if (key.charCode == 46) {
+            if ($scope.findCharacter(this.value, '.'))
+                return false;
+            else
+                return true;
+        }
+        else if (key.charCode < 48 || key.charCode > 57)
+            return false;
+        else
+            return true;
+    });
+
+    //Check if input contains letter only
+    $('#consigneename').keypress(function (key) {
+        if (!((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)))
+            return true;
+            //for back space
+        else if (key.charCode == 0)
+            return true;
+        else
+            return false;
+    });
+
     //====================================SHIPMENT FILTERING AND DATAGRID==========================
     //Load shipment datagrid for compiling
     $scope.loadShipmentDataGrid = function () {
@@ -145,13 +282,21 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1.CityMunicipality;
                     return true;
                 case "PostSave":
+                    var addressHolder = $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Id = addressHolder[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name = addressHolder[0].Name;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = addressHolder[0].StateProvince.Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = addressHolder[0].StateProvince.Name;
+                    addressHolder = {};
+                    $scope.shipmentItem.Id = $scope.shipmentSubmitDefinition.DataItem.Id;
+                    $scope.shipmentItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
+                    $scope.shipmentItem.DeliveryAddressId = $scope.shipmentSubmitDefinition.DataItem.DeliveryAddressId;
+                    $scope.shipmentItem.OriginAddressId = $scope.shipmentSubmitDefinition.DataItem.OriginAddressId;
+                    $scope.shipmentItem.Address.Id = $scope.shipmentSubmitDefinition.DataItem.Address.Id;
+                    $scope.shipmentItem.Address1.Id = $scope.shipmentSubmitDefinition.DataItem.Address1.Id;
                     $scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
-                    $scope.shipmentDataDefinition.DataItem.Id = $scope.shipmentSubmitDefinition.DataItem.Id;
-                    $scope.shipmentDataDefinition.DataItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
-                    $scope.shipmentDataDefinition.DataItem.DeliveryAddressId = $scope.shipmentSubmitDefinition.DataItem.DeliveryAddressId;
-                    $scope.shipmentDataDefinition.DataItem.OriginAddressId = $scope.shipmentSubmitDefinition.DataItem.OriginAddressId;
-                    $scope.shipmentDataDefinition.DataItem.Address.Id = $scope.shipmentSubmitDefinition.DataItem.Address.Id;
-                    $scope.shipmentDataDefinition.DataItem.Address1.Id = $scope.shipmentSubmitDefinition.DataItem.Address1.Id;
                     alert("Successfully Saved.");
                     $scope.onEDV();
                     $scope.submitButtonText = "Submit";
@@ -1310,7 +1455,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.initializeCustomerAddressDataDefinition = function () {
             $scope.customerAddressDataDefinition = {
                 "Header": ['Street Address Line 1', 'Street Address Line 2', 'City/Municipality', 'State/Province', 'Postal Code', 'Is Billing Address', 'Is Delivery Address', 'Is Pickup Address', 'No.'],
-                "Keys": ['Line1', 'Line2', 'CityMunicipality[0].Name', 'StateProvince[0].Name', 'PostalCode', 'IsBillingAddress', 'IsDeliveryAddress', 'IsPickupAddress'],
+                "Keys": ['Line1', 'Line2', 'CityMunicipality[0].Name', 'CityMunicipality[0].StateProvince[0].Name', 'PostalCode', 'IsBillingAddress', 'IsDeliveryAddress', 'IsPickupAddress'],
                 "Type": ['ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'Bit', 'Bit', 'Bit'],
                 "ColWidth": [250, 250, 200, 150, 150, 150, 150, 150],
                 "DataList": [],
@@ -1341,6 +1486,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.shipmentItem.CustomerAddressId = $scope.customerAddressDataDefinition.DataItem.Id;
                     $scope.shipmentItem.CustomerAddress = $scope.customerAddressDataDefinition.DataItem.Line1 + ", " + $scope.customerAddressDataDefinition.DataItem.Line2 + ", " + $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Name + ", " + $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Name + ", " + $scope.customerAddressDataDefinition.DataItem.PostalCode;
                     $scope.shipmentItem.Customer.CustomerAddresses[0] = $scope.customerAddressDataDefinition.DataItem;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Id = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Name;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Name;
                     $scope.closeModal();
                     var promise = $interval(function () {
                         $interval.cancel(promise);
@@ -1417,143 +1567,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         };
     };
     //==================================END OF PICKUP ADDRESS MODAL=========================================
-
-    //function that will be called during submit
-    $scope.submit = function () {
-        $scope.shipmentIsError = false;
-        $scope.shipmentErrorMessage = "";
-        $scope.shipmentSubmitDefinition.Submit = true;
-    }
-
-    //Function that will trigger during Edit,Delete and View Action
-    $scope.onEDV = function () {
-        $scope.shipmentItem = [];
-        $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
-        $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality[0].Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality[0].StateProvince[0].Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
-        $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
-        $scope.controlNoHolder = $scope.shipmentItem.Id;
-        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
-    };
-
-    //Displays Modal
-    $scope.showModal = function (panel, type) {
-        $scope.modalType = type;
-        openModalPanel(panel);
-    };
-
-    $scope.closeModal = function () {
-        jQuery.magnificPopup.close();
-    };
-
-    //Initialize address field
-    $scope.initializeAddressField = function (addressItem, type) {
-        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
-        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
-        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
-        if ($scope.modalType == "Pickup")
-            $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
-        else if ($scope.modalType == "Consignee")
-            $scope.shipmentItem.DeliveryAddress = $scope.formattedAddress;
-            //MasterList Display
-        else {//MasterList Display
-            return $scope.formattedAddress;
-        }
-
-
-    };
-
-    //Initialize Payment Mode List for DropDown
-    $scope.initPaymentModeList = function () {
-        $scope.paymentModeList = $rootScope.getPaymentModeList();
-    };
-
-    //Initialize Service List for DropDown
-    $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
-    };
-
-    //Initialize Shipment Type List for DropDown
-    $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
-    };
-
-    //function that will be invoked when user click tab
-    $scope.setSelectedTab = function (tab) {
-        $scope.shipmentIsError = false;
-        $scope.shipmentErrorMessage = "";
-        $scope.selectedTab = tab;
-    };
-
-    //Initialize service type
-    $scope.setServiceType = function (id) {
-        for (var i = 0; i < $scope.serviceList.length; i++) {
-            if (id == $scope.serviceList[i].Id) {
-                $scope.shipmentItem.Service = $scope.serviceList[i];
-                return true;
-            }
-        }
-    };
-
-    //Initialize shipment type
-    $scope.setShipmentType = function (id) {
-        for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
-            if (id == $scope.serviceList[i].Id) {
-                $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
-                return true;
-            }
-        }
-    }
-
-    //Find specific character
-    $scope.findCharacter = function (v, c) {
-        for (var i = 0; i < v.length; i++) {
-            if (v.charAt(i) == c)
-                return true;
-        }
-        return false;
-    };
-
-    //Disable typing
-    $('#OriginAddress,#DeliveryAddress,#BusinessUnit, #customerCode, #pickupdate, #pickuptime').keypress(function (key) {
-        return false;
-    });
-
-    //Check if input is whole number
-    $('#consigneecontactno,#quantity').keypress(function (key) {
-        if (key.charCode < 48 || key.charCode > 57) return false;
-    });
-
-    //Check if input is decimal number only
-    $('#taxamount,#taxpercentage,#revenue,#cbm').keypress(function (key) {
-        if (key.charCode == 46) {
-            if ($scope.findCharacter(this.value, '.'))
-                return false;
-            else
-                return true;
-        }
-        else if (key.charCode < 48 || key.charCode > 57)
-            return false;
-        else
-            return true;
-    });
-
-    //Check if input contains letter only
-    $('#consigneename').keypress(function (key) {
-        if (!((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)))
-            return true;
-            //for back space
-        else if (key.charCode == 0)
-            return true;
-        else
-            return false;
-    });
 
     // Initialization routines
     var init = function () {
