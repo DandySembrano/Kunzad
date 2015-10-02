@@ -95,7 +95,7 @@ namespace Kunzad.ApiControllers
 
             try
             {
-                bool flag;
+                bool flag,flag1;
                 var currentDeliveries = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == trucking.Id);
 
                 //delete truckingDelivery
@@ -110,7 +110,7 @@ namespace Kunzad.ApiControllers
                             break;
                         }
                     }
-
+                    //remove truckig delivery then set the shipment transprotStatus back to Open
                     if (!flag)
                     {
                         var truckingDeliveryShipment = db.Shipments.Where(s => s.Id == td.ShipmentId);
@@ -121,7 +121,6 @@ namespace Kunzad.ApiControllers
                             db.Entry(shipmentHolder).CurrentValues.SetValues(shipment);
                         }
                         db.TruckingDeliveries.Remove(td);
-
                     }
 
                 }
@@ -129,29 +128,71 @@ namespace Kunzad.ApiControllers
                 //insert truckingDelivery and update truckingDelivery
                 foreach (TruckingDelivery td in trucking.TruckingDeliveries)
                 {
-                    //insert
-                    if (td.Id == -1)
+                    flag = false;
+                    foreach (TruckingDelivery td1 in currentDeliveries)
+                    {
+                        if(td.Id == td1.Id)
+                        {
+                            flag = true;
+                            var tdHolder = db.TruckingDeliveries.Find(td.Id);
+                            td.LastUpdatedDate = DateTime.Now;
+                            db.Entry(tdHolder).CurrentValues.SetValues(td);
+                            db.Entry(tdHolder).State = EntityState.Modified;
+
+                            var currentTDShipment = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == td.TruckingId);
+                            //check if shipment was replaced
+                            foreach (TruckingDelivery tds in currentTDShipment)
+                            {
+                                flag1 = false;
+
+                                foreach(TruckingDelivery tds1 in trucking.TruckingDeliveries)
+                                {
+                                    if(tds.ShipmentId == tds1.ShipmentId)
+                                    {
+                                        flag1 = true;
+                                        //change shipment transportStatus to DISPATCH 
+                                        Shipment shipmentHolder = db.Shipments.Find(tds1.ShipmentId);
+
+                                        if (shipmentHolder.TransportStatusId == (int)Status.TransportStatus.Open)
+                                        {
+                                            shipmentHolder.TransportStatusId = (int)Status.TransportStatus.Dispatch;
+                                            db.Entry(shipmentHolder).CurrentValues.SetValues(shipmentHolder);
+                                            db.Entry(shipmentHolder).State = EntityState.Modified;
+                                        }
+                                        break;
+                                    }
+                                }
+                                //change shipment transportStatus back to OPEN
+                                if(!flag1)
+                                {
+                                    Shipment shipmentHolder = db.Shipments.Find(tds.ShipmentId);
+                                    shipmentHolder.TransportStatusId = (int)Status.TransportStatus.Open;
+                                    db.Entry(shipmentHolder).CurrentValues.SetValues(shipmentHolder);
+
+                                    db.Entry(shipmentHolder).State = EntityState.Modified;
+                                }
+                            }
+                            break;
+                        }
+
+                    }
+                    //new trucking delivery
+                    if(!flag)
                     {
                         td.CreatedDate = DateTime.Now;
+                        td.TruckingId = trucking.Id;
                         db.TruckingDeliveries.Add(td);
 
-                        Shipment shipmentHolder = db.Shipments.Find(td.Shipment.Id);
-                        td.Shipment.TransportStatusId = (int)Status.TransportStatus.Dispatch;
-                        db.Entry(shipmentHolder).CurrentValues.SetValues(td.Shipment);
+                        Shipment shipmentHolder = db.Shipments.Find(td.ShipmentId);
+                        Shipment shipmentHolder1 = db.Shipments.Find(td.ShipmentId);
+                        shipmentHolder1.TransportStatusId = (int)Status.TransportStatus.Dispatch;
+                        db.Entry(shipmentHolder).CurrentValues.SetValues(shipmentHolder1);
 
                         db.Entry(shipmentHolder).State = EntityState.Modified;
                     }
-                    //update
-                    else
-                    {
-                        TruckingDelivery tdHolder = db.TruckingDeliveries.Find(td.Id);
-                        td.LastUpdatedDate = DateTime.Now;
-                        db.Entry(tdHolder).CurrentValues.SetValues(td);
-                        db.Entry(tdHolder).State = EntityState.Modified;
-                    }
-                       
                 }
-                Trucking truckingHolder = db.Truckings.Find(trucking.Id);
+                var truckingHolder = db.Truckings.Find(trucking.Id);
+                trucking.TruckerCost = 0;
                 trucking.LastUpdatedDate = DateTime.Now;
                 db.Entry(truckingHolder).CurrentValues.SetValues(trucking);
                 db.Entry(truckingHolder).State = EntityState.Modified;

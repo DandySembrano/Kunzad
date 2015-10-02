@@ -43,6 +43,14 @@ kunzadApp.run(function ($rootScope) {
                 { "Id": "50", "Name": "Cancel" }
         ];
     };
+    //Trucking Status List
+    $rootScope.getTruckingStatusList = function () {
+        return [{ "Id": "10", "Name": "Dispatch" },
+                { "Id": "20", "Name": "Waybill" },
+                { "Id": "30", "Name": "DeliveryUpdate" },
+                { "Id": "40", "Name": "Cancelled" },
+        ];
+    };
 
     //Remove unnecessary 
     $rootScope.formatShipment = function (shipments) {

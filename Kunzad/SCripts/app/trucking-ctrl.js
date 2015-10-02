@@ -21,6 +21,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.shipmentList = [];
     $scope.trkgDeliveryList = [];
     $scope.truckingTypeList = [];
+    $scope.filterShipmentsStatusOpen = [];
     var pageSize = 20;
 
     $scope.loadData = function (page) {
@@ -80,9 +81,15 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
                 "Name": null
             },
             "OriginServiceableAreaId": null,
-            "OriginServiceableAreaName": null,
+            "ServiceableArea1": {
+                "Id": null,
+                "Name": null
+            },
             "DestinationServiceableAreaId": null,
-            "DestinationServiceableAreaName": null,
+            "ServiceableArea": {
+                "Id": null,
+                "Name": null
+            },
             "TruckerCost": null,
             "TruckingStatusId": null,
             "TruckingStatusRemarks": null,
@@ -335,6 +342,16 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         .success(function (data, status) {
             $scope.shipmentList = data;
         });
+
+        //object to be used to filter shipments with OPEN transportStatus 
+        //$scope.filterShipmentsStatusOpen = [{
+        //    "TransportStatusId": 10
+        //}];
+        //console.log($scope.filterShipmentsStatusOpen);
+        //$http.put("/api/Shipments?type=paginate&param1=" + $scope.filterShipmentsStatusOpen.length)
+        //.success(function (data, status) {
+        //    $scope.shipmentList = data;
+        //});
     }
 
     //Set the focus on top of the page during load
@@ -374,7 +391,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.closeModalOriginServiceableArea = function (serviceableArea) {
         if (angular.isDefined(serviceableArea)) {
             $scope.truckingItem.OriginServiceableAreaId = serviceableArea.Id;
-            $scope.truckingItem.OriginServiceableAreaName = serviceableArea.Name;
+            $scope.truckingItem.ServiceableArea1.Name = serviceableArea.Name;
         }
         jQuery.magnificPopup.close();
     };
@@ -383,7 +400,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     $scope.closeModalDestinationServiceableArea = function (serviceableArea) {
         if (angular.isDefined(serviceableArea)) {
             $scope.truckingItem.DestinationServiceableAreaId = serviceableArea.Id;
-            $scope.truckingItem.DestinationServiceableAreaName = serviceableArea.Name;
+            $scope.truckingItem.ServiceableArea.Name = serviceableArea.Name;
         }
         jQuery.magnificPopup.close();
     };
@@ -476,7 +493,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
             delete dataModel1[i].Shipment;
             delete dataModel1[i].Address;
             delete dataModel1[i].Customer;
-            delete dataModel1[i].Shipment;
             delete dataModel1[i].Id;
             delete dataModel1[i].CostAllocation;
             delete dataModel1[i].TruckingId;
@@ -491,7 +507,10 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         delete dataModel.Driver;
         delete dataModel.Trucker;
         delete dataModel.TruckerCost;
+        delete dataModel.ServiceableArea;
+        delete dataModel.ServiceableArea1;
 
+        console.log(dataModel);
 
         $http.post("/api/Truckings", dataModel)
         .success(function (data, status) {
@@ -499,6 +518,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
             $scope.gridOptTrkList.data.push($scope.truckingItem);
             for (var i = 0; i < $scope.trkgDeliveryList.length; i++)
                 $scope.trkgDeliveryList[i].Id = data.objParam1.TruckingDeliveries[i].Id;
+            $scope.selectedTab = $scope.tabPages[1];
             spinner.stop();
         })
         .error(function (error, status) {
@@ -517,11 +537,13 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
             if (dataModel1[i].Id == -1)
             {
                 delete dataModel1[i].Id;
+                delete dataModel1[i].TruckingId;
             }
-                
+            delete dataModel1[i].Shipment;
             delete dataModel1[i].Address;
             delete dataModel1[i].Customer;
             delete dataModel1[i].CostAllocation;
+
 
         }
 
@@ -530,6 +552,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
         delete dataModel.Driver;
         delete dataModel.Trucker;
         delete dataModel.TruckerCost;
+        delete dataModel.ServiceableArea;
+        delete dataModel.ServiceableArea1;
 
         console.log(dataModel);
 
@@ -688,4 +712,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope) {
     };
 
     init();
+
+    $interval(function () { }, 100);
 };
