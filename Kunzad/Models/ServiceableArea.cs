@@ -14,6 +14,12 @@ namespace Kunzad.Models
     
     public partial class ServiceableArea
     {
+        public ServiceableArea()
+        {
+            this.Truckings = new HashSet<Trucking>();
+            this.Truckings1 = new HashSet<Trucking>();
+        }
+    
         public int Id { get; set; }
         public string Name { get; set; }
         public int CityMunicipalityId { get; set; }
@@ -26,5 +32,7 @@ namespace Kunzad.Models
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
         public virtual CityMunicipality CityMunicipality { get; set; }
+        public virtual ICollection<Trucking> Truckings { get; set; }
+        public virtual ICollection<Trucking> Truckings1 { get; set; }
     }
 }

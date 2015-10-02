@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="64f04c5e-157c-4484-9042-cd19ec61d514" ChangeDateTime="08/28/2015 05:39:13">
+    <Property Name="ElementName" Value="[dbo].[Shipment].[TargetPickupDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Shipment]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PickupDate" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9ff04b16-dd75-4221-a737-e21b48fc1cac" ChangeDateTime="08/28/2015 05:39:19">
+    <Property Name="ElementName" Value="[dbo].[Shipment].[TargetPickupTime]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Shipment]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PickupTime" />
+  </Operation>
+</Operations>

@@ -1,0 +1,1758 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="KunzadDbModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+  <EntityContainer Name="KunzadDbEntities" annotation:LazyLoadingEnabled="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+    <EntitySet Name="Addresses" EntityType="KunzadDbModel.Address" />
+    <EntitySet Name="AirFreights" EntityType="KunzadDbModel.AirFreight" />
+    <EntitySet Name="AirFreightShipments" EntityType="KunzadDbModel.AirFreightShipment" />
+    <EntitySet Name="AirLines" EntityType="KunzadDbModel.AirLine" />
+    <EntitySet Name="BusinessUnits" EntityType="KunzadDbModel.BusinessUnit" />
+    <EntitySet Name="BusinessUnitContacts" EntityType="KunzadDbModel.BusinessUnitContact" />
+    <EntitySet Name="BusinessUnitTypes" EntityType="KunzadDbModel.BusinessUnitType" />
+    <EntitySet Name="Charges" EntityType="KunzadDbModel.Charge" />
+    <EntitySet Name="CityMunicipalities" EntityType="KunzadDbModel.CityMunicipality" />
+    <EntitySet Name="Contacts" EntityType="KunzadDbModel.Contact" />
+    <EntitySet Name="ContactNumberTypes" EntityType="KunzadDbModel.ContactNumberType" />
+    <EntitySet Name="ContactPhones" EntityType="KunzadDbModel.ContactPhone" />
+    <EntitySet Name="Countries" EntityType="KunzadDbModel.Country" />
+    <EntitySet Name="Couriers" EntityType="KunzadDbModel.Courier" />
+    <EntitySet Name="CourierTransactions" EntityType="KunzadDbModel.CourierTransaction" />
+    <EntitySet Name="CourierTransactionDetails" EntityType="KunzadDbModel.CourierTransactionDetail" />
+    <EntitySet Name="Customers" EntityType="KunzadDbModel.Customer" />
+    <EntitySet Name="CustomerAddresses" EntityType="KunzadDbModel.CustomerAddress" />
+    <EntitySet Name="CustomerContacts" EntityType="KunzadDbModel.CustomerContact" />
+    <EntitySet Name="CustomerGroups" EntityType="KunzadDbModel.CustomerGroup" />
+    <EntitySet Name="Drivers" EntityType="KunzadDbModel.Driver" />
+    <EntitySet Name="Industries" EntityType="KunzadDbModel.Industry" />
+    <EntitySet Name="SeaFreights" EntityType="KunzadDbModel.SeaFreight" />
+    <EntitySet Name="SeaFreightShipments" EntityType="KunzadDbModel.SeaFreightShipment" />
+    <EntitySet Name="Services" EntityType="KunzadDbModel.Service" />
+    <EntitySet Name="ServiceableAreas" EntityType="KunzadDbModel.ServiceableArea" />
+    <EntitySet Name="ServiceCategories" EntityType="KunzadDbModel.ServiceCategory" />
+    <EntitySet Name="ServiceCharges" EntityType="KunzadDbModel.ServiceCharge" />
+    <EntitySet Name="Shipments" EntityType="KunzadDbModel.Shipment" />
+    <EntitySet Name="ShipmentCharges" EntityType="KunzadDbModel.ShipmentCharge" />
+    <EntitySet Name="ShipmentDimensions" EntityType="KunzadDbModel.ShipmentDimension" />
+    <EntitySet Name="ShipmentTypes" EntityType="KunzadDbModel.ShipmentType" />
+    <EntitySet Name="ShippingLines" EntityType="KunzadDbModel.ShippingLine" />
+    <EntitySet Name="StateProvinces" EntityType="KunzadDbModel.StateProvince" />
+    <EntitySet Name="Trucks" EntityType="KunzadDbModel.Truck" />
+    <EntitySet Name="Truckers" EntityType="KunzadDbModel.Trucker" />
+    <EntitySet Name="Truckings" EntityType="KunzadDbModel.Trucking" />
+    <EntitySet Name="TruckingDeliveries" EntityType="KunzadDbModel.TruckingDelivery" />
+    <EntitySet Name="TruckTypes" EntityType="KunzadDbModel.TruckType" />
+    <EntitySet Name="Users" EntityType="KunzadDbModel.User" />
+    <EntitySet Name="Vessels" EntityType="KunzadDbModel.Vessel" />
+    <EntitySet Name="VesselVoyages" EntityType="KunzadDbModel.VesselVoyage" />
+    <AssociationSet Name="FK_Address_CityMunicipality" Association="KunzadDbModel.FK_Address_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="Address" EntitySet="Addresses" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_DeliveryAddressId" Association="KunzadDbModel.FK_Shipment_DeliveryAddressId">
+      <End Role="Address" EntitySet="Addresses" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_OriginAddressId" Association="KunzadDbModel.FK_Shipment_OriginAddressId">
+      <End Role="Address" EntitySet="Addresses" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_DeliveryAddress" Association="KunzadDbModel.FK_TruckingDelivery_DeliveryAddress">
+      <End Role="Address" EntitySet="Addresses" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDeliveries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreight_AirLine" Association="KunzadDbModel.FK_AirFreight_AirLine">
+      <End Role="AirLine" EntitySet="AirLines" />
+      <End Role="AirFreight" EntitySet="AirFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreight_DestinationBusinessUnit" Association="KunzadDbModel.FK_AirFreight_DestinationBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="AirFreight" EntitySet="AirFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreight_OriginBusinessUnit" Association="KunzadDbModel.FK_AirFreight_OriginBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="AirFreight" EntitySet="AirFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreightShipment_AirFreight" Association="KunzadDbModel.FK_AirFreightShipment_AirFreight">
+      <End Role="AirFreight" EntitySet="AirFreights" />
+      <End Role="AirFreightShipment" EntitySet="AirFreightShipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AirFreightShipment_Shipment" Association="KunzadDbModel.FK_AirFreightShipment_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="AirFreightShipment" EntitySet="AirFreightShipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnit_BusinessUnitType" Association="KunzadDbModel.FK_BusinessUnit_BusinessUnitType">
+      <End Role="BusinessUnitType" EntitySet="BusinessUnitTypes" />
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnitContact_BusiessUnit" Association="KunzadDbModel.FK_BusinessUnitContact_BusiessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="BusinessUnitContact" EntitySet="BusinessUnitContacts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierService_BusinessUnit" Association="KunzadDbModel.FK_CourierService_BusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="CourierTransaction" EntitySet="CourierTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_DestinationBusinessUnit" Association="KunzadDbModel.FK_SeaFreight_DestinationBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="SeaFreight" EntitySet="SeaFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_OriginBusinessUnit" Association="KunzadDbModel.FK_SeaFreight_OriginBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="SeaFreight" EntitySet="SeaFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_BusinessUnit" Association="KunzadDbModel.FK_Shipment_BusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_PickupBusinessUnit" Association="KunzadDbModel.FK_Shipment_PickupBusinessUnit">
+      <End Role="BusinessUnit" EntitySet="BusinessUnits" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BusinessUnitContact_Contact" Association="KunzadDbModel.FK_BusinessUnitContact_Contact">
+      <End Role="Contact" EntitySet="Contacts" />
+      <End Role="BusinessUnitContact" EntitySet="BusinessUnitContacts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceCharge_Charge" Association="KunzadDbModel.FK_ServiceCharge_Charge">
+      <End Role="Charge" EntitySet="Charges" />
+      <End Role="ServiceCharge" EntitySet="ServiceCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CityMunicipality_Trucker" Association="KunzadDbModel.FK_CityMunicipality_Trucker">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="Trucker" EntitySet="Truckers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CityTown_StateProvince" Association="KunzadDbModel.FK_CityTown_StateProvince">
+      <End Role="StateProvince" EntitySet="StateProvinces" />
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Courier_CityMunicipality" Association="KunzadDbModel.FK_Courier_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="Courier" EntitySet="Couriers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_CityMunicipality" Association="KunzadDbModel.FK_CustomerAddress_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceableArea_CityMunicipality" Association="KunzadDbModel.FK_ServiceableArea_CityMunicipality">
+      <End Role="CityMunicipality" EntitySet="CityMunicipalities" />
+      <End Role="ServiceableArea" EntitySet="ServiceableAreas" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ContactPhone_Contact" Association="KunzadDbModel.FK_ContactPhone_Contact">
+      <End Role="Contact" EntitySet="Contacts" />
+      <End Role="ContactPhone" EntitySet="ContactPhones" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerContact_Contact" Association="KunzadDbModel.FK_CustomerContact_Contact">
+      <End Role="Contact" EntitySet="Contacts" />
+      <End Role="CustomerContact" EntitySet="CustomerContacts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ContactPhone_ContactNumberType" Association="KunzadDbModel.FK_ContactPhone_ContactNumberType">
+      <End Role="ContactNumberType" EntitySet="ContactNumberTypes" />
+      <End Role="ContactPhone" EntitySet="ContactPhones" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StateProvince_Country" Association="KunzadDbModel.FK_StateProvince_Country">
+      <End Role="Country" EntitySet="Countries" />
+      <End Role="StateProvince" EntitySet="StateProvinces" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierService_Courier" Association="KunzadDbModel.FK_CourierService_Courier">
+      <End Role="Courier" EntitySet="Couriers" />
+      <End Role="CourierTransaction" EntitySet="CourierTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierTransactionDetails_CourierTransaction" Association="KunzadDbModel.FK_CourierTransactionDetails_CourierTransaction">
+      <End Role="CourierTransaction" EntitySet="CourierTransactions" />
+      <End Role="CourierTransactionDetail" EntitySet="CourierTransactionDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CourierTransactionDetails_Shipment" Association="KunzadDbModel.FK_CourierTransactionDetails_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="CourierTransactionDetail" EntitySet="CourierTransactionDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Customer_CustomerGroup" Association="KunzadDbModel.FK_Customer_CustomerGroup">
+      <End Role="CustomerGroup" EntitySet="CustomerGroups" />
+      <End Role="Customer" EntitySet="Customers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Customer_Industry" Association="KunzadDbModel.FK_Customer_Industry">
+      <End Role="Industry" EntitySet="Industries" />
+      <End Role="Customer" EntitySet="Customers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerAddress_Customer" Association="KunzadDbModel.FK_CustomerAddress_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="CustomerAddress" EntitySet="CustomerAddresses" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CustomerContact_Customer" Association="KunzadDbModel.FK_CustomerContact_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="CustomerContact" EntitySet="CustomerContacts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_Customer" Association="KunzadDbModel.FK_Shipment_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Customer" Association="KunzadDbModel.FK_TruckingDelivery_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDeliveries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Driver" Association="KunzadDbModel.FK_Trucking_Driver">
+      <End Role="Driver" EntitySet="Drivers" />
+      <End Role="Trucking" EntitySet="Truckings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreight_VesselVoyage" Association="KunzadDbModel.FK_SeaFreight_VesselVoyage">
+      <End Role="VesselVoyage" EntitySet="VesselVoyages" />
+      <End Role="SeaFreight" EntitySet="SeaFreights" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreightShipment_SeaFreight" Association="KunzadDbModel.FK_SeaFreightShipment_SeaFreight">
+      <End Role="SeaFreight" EntitySet="SeaFreights" />
+      <End Role="SeaFreightShipment" EntitySet="SeaFreightShipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SeaFreightShipment_Shipment" Association="KunzadDbModel.FK_SeaFreightShipment_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="SeaFreightShipment" EntitySet="SeaFreightShipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Service_ServiceCategory" Association="KunzadDbModel.FK_Service_ServiceCategory">
+      <End Role="ServiceCategory" EntitySet="ServiceCategories" />
+      <End Role="Service" EntitySet="Services" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceCharge_Service" Association="KunzadDbModel.FK_ServiceCharge_Service">
+      <End Role="Service" EntitySet="Services" />
+      <End Role="ServiceCharge" EntitySet="ServiceCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_Service" Association="KunzadDbModel.FK_Shipment_Service">
+      <End Role="Service" EntitySet="Services" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_DestinationServiceableArea" Association="KunzadDbModel.FK_Trucking_DestinationServiceableArea">
+      <End Role="ServiceableArea" EntitySet="ServiceableAreas" />
+      <End Role="Trucking" EntitySet="Truckings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_OriginServiceableArea" Association="KunzadDbModel.FK_Trucking_OriginServiceableArea">
+      <End Role="ServiceableArea" EntitySet="ServiceableAreas" />
+      <End Role="Trucking" EntitySet="Truckings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentCharges_ServiceCharge" Association="KunzadDbModel.FK_ShipmentCharges_ServiceCharge">
+      <End Role="ServiceCharge" EntitySet="ServiceCharges" />
+      <End Role="ShipmentCharge" EntitySet="ShipmentCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Shipment_ShipmentType" Association="KunzadDbModel.FK_Shipment_ShipmentType">
+      <End Role="ShipmentType" EntitySet="ShipmentTypes" />
+      <End Role="Shipment" EntitySet="Shipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentCharges_Shipment" Association="KunzadDbModel.FK_ShipmentCharges_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="ShipmentCharge" EntitySet="ShipmentCharges" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ShipmentDimension_Shipment" Association="KunzadDbModel.FK_ShipmentDimension_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="ShipmentDimension" EntitySet="ShipmentDimensions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Shipment" Association="KunzadDbModel.FK_TruckingDelivery_Shipment">
+      <End Role="Shipment" EntitySet="Shipments" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDeliveries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Vessel_ShippingLine" Association="KunzadDbModel.FK_Vessel_ShippingLine">
+      <End Role="ShippingLine" EntitySet="ShippingLines" />
+      <End Role="Vessel" EntitySet="Vessels" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Truck_Trucker" Association="KunzadDbModel.FK_Truck_Trucker">
+      <End Role="Trucker" EntitySet="Truckers" />
+      <End Role="Truck" EntitySet="Trucks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Truck_TruckType" Association="KunzadDbModel.FK_Truck_TruckType">
+      <End Role="TruckType" EntitySet="TruckTypes" />
+      <End Role="Truck" EntitySet="Trucks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Truck" Association="KunzadDbModel.FK_Trucking_Truck">
+      <End Role="Truck" EntitySet="Trucks" />
+      <End Role="Trucking" EntitySet="Truckings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Trucking_Trucker" Association="KunzadDbModel.FK_Trucking_Trucker">
+      <End Role="Trucker" EntitySet="Truckers" />
+      <End Role="Trucking" EntitySet="Truckings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TruckingDelivery_Trucking" Association="KunzadDbModel.FK_TruckingDelivery_Trucking">
+      <End Role="Trucking" EntitySet="Truckings" />
+      <End Role="TruckingDelivery" EntitySet="TruckingDeliveries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_User_Created" Association="KunzadDbModel.FK_User_User_Created">
+      <End Role="User" EntitySet="Users" />
+      <End Role="User1" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_User_Updated" Association="KunzadDbModel.FK_User_User_Updated">
+      <End Role="User" EntitySet="Users" />
+      <End Role="User1" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VesselVoyage_Vessel" Association="KunzadDbModel.FK_VesselVoyage_Vessel">
+      <End Role="Vessel" EntitySet="Vessels" />
+      <End Role="VesselVoyage" EntitySet="VesselVoyages" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Address">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_Address_CityMunicipality" FromRole="Address" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Shipments" Relationship="KunzadDbModel.FK_Shipment_DeliveryAddressId" FromRole="Address" ToRole="Shipment" />
+    <NavigationProperty Name="Shipments1" Relationship="KunzadDbModel.FK_Shipment_OriginAddressId" FromRole="Address" ToRole="Shipment" />
+    <NavigationProperty Name="TruckingDeliveries" Relationship="KunzadDbModel.FK_TruckingDelivery_DeliveryAddress" FromRole="Address" ToRole="TruckingDelivery" />
+  </EntityType>
+  <EntityType Name="AirFreight">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AirLineId" Type="Int32" Nullable="false" />
+    <Property Name="AirWaybillNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="AirWaybillDate" Type="DateTime" Precision="3" />
+    <Property Name="EstimatedDepartureDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="EstimatedDepartureTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="EstimatedArrivalDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="EstimatedArrivalTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="OriginBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="DepartureDate" Type="DateTime" Precision="3" />
+    <Property Name="DepartureTime" Type="Time" Precision="7" />
+    <Property Name="ArrivalDate" Type="DateTime" Precision="3" />
+    <Property Name="ArrivalTime" Type="Time" Precision="7" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="AirLine" Relationship="KunzadDbModel.FK_AirFreight_AirLine" FromRole="AirFreight" ToRole="AirLine" />
+    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_AirFreight_DestinationBusinessUnit" FromRole="AirFreight" ToRole="BusinessUnit" />
+    <NavigationProperty Name="BusinessUnit1" Relationship="KunzadDbModel.FK_AirFreight_OriginBusinessUnit" FromRole="AirFreight" ToRole="BusinessUnit" />
+    <NavigationProperty Name="AirFreightShipments" Relationship="KunzadDbModel.FK_AirFreightShipment_AirFreight" FromRole="AirFreight" ToRole="AirFreightShipment" />
+  </EntityType>
+  <EntityType Name="AirFreightShipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AirFreightId" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="CostAllocation" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="AirFreight" Relationship="KunzadDbModel.FK_AirFreightShipment_AirFreight" FromRole="AirFreightShipment" ToRole="AirFreight" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_AirFreightShipment_Shipment" FromRole="AirFreightShipment" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="AirLine">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="AirFreights" Relationship="KunzadDbModel.FK_AirFreight_AirLine" FromRole="AirLine" ToRole="AirFreight" />
+  </EntityType>
+  <EntityType Name="BusinessUnit">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="BusinessUnitTypeId" Type="Int32" Nullable="false" />
+    <Property Name="ParentBusinessUnitId" Type="Int32" />
+    <Property Name="isOperatingSite" Type="Boolean" Nullable="false" />
+    <Property Name="hasAirPort" Type="Boolean" Nullable="false" />
+    <Property Name="hasSeaPort" Type="Boolean" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="AirFreights" Relationship="KunzadDbModel.FK_AirFreight_DestinationBusinessUnit" FromRole="BusinessUnit" ToRole="AirFreight" />
+    <NavigationProperty Name="AirFreights1" Relationship="KunzadDbModel.FK_AirFreight_OriginBusinessUnit" FromRole="BusinessUnit" ToRole="AirFreight" />
+    <NavigationProperty Name="BusinessUnitType" Relationship="KunzadDbModel.FK_BusinessUnit_BusinessUnitType" FromRole="BusinessUnit" ToRole="BusinessUnitType" />
+    <NavigationProperty Name="BusinessUnitContacts" Relationship="KunzadDbModel.FK_BusinessUnitContact_BusiessUnit" FromRole="BusinessUnit" ToRole="BusinessUnitContact" />
+    <NavigationProperty Name="CourierTransactions" Relationship="KunzadDbModel.FK_CourierService_BusinessUnit" FromRole="BusinessUnit" ToRole="CourierTransaction" />
+    <NavigationProperty Name="SeaFreights" Relationship="KunzadDbModel.FK_SeaFreight_DestinationBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
+    <NavigationProperty Name="SeaFreights1" Relationship="KunzadDbModel.FK_SeaFreight_OriginBusinessUnit" FromRole="BusinessUnit" ToRole="SeaFreight" />
+    <NavigationProperty Name="Shipments" Relationship="KunzadDbModel.FK_Shipment_BusinessUnit" FromRole="BusinessUnit" ToRole="Shipment" />
+    <NavigationProperty Name="Shipments1" Relationship="KunzadDbModel.FK_Shipment_PickupBusinessUnit" FromRole="BusinessUnit" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="BusinessUnitContact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="ContactId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_BusinessUnitContact_BusiessUnit" FromRole="BusinessUnitContact" ToRole="BusinessUnit" />
+    <NavigationProperty Name="Contact" Relationship="KunzadDbModel.FK_BusinessUnitContact_Contact" FromRole="BusinessUnitContact" ToRole="Contact" />
+  </EntityType>
+  <EntityType Name="BusinessUnitType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="BusinessUnits" Relationship="KunzadDbModel.FK_BusinessUnit_BusinessUnitType" FromRole="BusinessUnitType" ToRole="BusinessUnit" />
+  </EntityType>
+  <EntityType Name="Charge">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="ServiceCharges" Relationship="KunzadDbModel.FK_ServiceCharge_Charge" FromRole="Charge" ToRole="ServiceCharge" />
+  </EntityType>
+  <EntityType Name="CityMunicipality">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="StateProvinceId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Addresses" Relationship="KunzadDbModel.FK_Address_CityMunicipality" FromRole="CityMunicipality" ToRole="Address" />
+    <NavigationProperty Name="Truckers" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="CityMunicipality" ToRole="Trucker" />
+    <NavigationProperty Name="StateProvince" Relationship="KunzadDbModel.FK_CityTown_StateProvince" FromRole="CityMunicipality" ToRole="StateProvince" />
+    <NavigationProperty Name="Couriers" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="CityMunicipality" ToRole="Courier" />
+    <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CityMunicipality" ToRole="CustomerAddress" />
+    <NavigationProperty Name="ServiceableAreas" Relationship="KunzadDbModel.FK_ServiceableArea_CityMunicipality" FromRole="CityMunicipality" ToRole="ServiceableArea" />
+  </EntityType>
+  <EntityType Name="Contact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Title" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="AlternateEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="BusinessUnitContacts" Relationship="KunzadDbModel.FK_BusinessUnitContact_Contact" FromRole="Contact" ToRole="BusinessUnitContact" />
+    <NavigationProperty Name="ContactPhones" Relationship="KunzadDbModel.FK_ContactPhone_Contact" FromRole="Contact" ToRole="ContactPhone" />
+    <NavigationProperty Name="CustomerContacts" Relationship="KunzadDbModel.FK_CustomerContact_Contact" FromRole="Contact" ToRole="CustomerContact" />
+  </EntityType>
+  <EntityType Name="ContactNumberType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Type" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="ContactPhones" Relationship="KunzadDbModel.FK_ContactPhone_ContactNumberType" FromRole="ContactNumberType" ToRole="ContactPhone" />
+  </EntityType>
+  <EntityType Name="ContactPhone">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ContactId" Type="Int32" Nullable="false" />
+    <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="ContactNumberTypeId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Contact" Relationship="KunzadDbModel.FK_ContactPhone_Contact" FromRole="ContactPhone" ToRole="Contact" />
+    <NavigationProperty Name="ContactNumberType" Relationship="KunzadDbModel.FK_ContactPhone_ContactNumberType" FromRole="ContactPhone" ToRole="ContactNumberType" />
+  </EntityType>
+  <EntityType Name="Country">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="StateProvinces" Relationship="KunzadDbModel.FK_StateProvince_Country" FromRole="Country" ToRole="StateProvince" />
+  </EntityType>
+  <EntityType Name="Courier">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_Courier_CityMunicipality" FromRole="Courier" ToRole="CityMunicipality" />
+    <NavigationProperty Name="CourierTransactions" Relationship="KunzadDbModel.FK_CourierService_Courier" FromRole="Courier" ToRole="CourierTransaction" />
+  </EntityType>
+  <EntityType Name="CourierTransaction">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CourierId" Type="Int32" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="CourierCost" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CallDate" Type="DateTime" Precision="3" />
+    <Property Name="CallTime" Type="Time" Precision="7" />
+    <Property Name="CompletedDate" Type="DateTime" Precision="0" />
+    <Property Name="CompletedTime" Type="Time" Precision="7" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_CourierService_BusinessUnit" FromRole="CourierTransaction" ToRole="BusinessUnit" />
+    <NavigationProperty Name="Courier" Relationship="KunzadDbModel.FK_CourierService_Courier" FromRole="CourierTransaction" ToRole="Courier" />
+    <NavigationProperty Name="CourierTransactionDetails" Relationship="KunzadDbModel.FK_CourierTransactionDetails_CourierTransaction" FromRole="CourierTransaction" ToRole="CourierTransactionDetail" />
+  </EntityType>
+  <EntityType Name="CourierTransactionDetail">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CourierTransactionId" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="CostAllocation" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CourierTransaction" Relationship="KunzadDbModel.FK_CourierTransactionDetails_CourierTransaction" FromRole="CourierTransactionDetail" ToRole="CourierTransaction" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_CourierTransactionDetails_Shipment" FromRole="CourierTransactionDetail" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerGroupId" Type="Int32" Nullable="false" />
+    <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="IndustryId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CustomerGroup" Relationship="KunzadDbModel.FK_Customer_CustomerGroup" FromRole="Customer" ToRole="CustomerGroup" />
+    <NavigationProperty Name="Industry" Relationship="KunzadDbModel.FK_Customer_Industry" FromRole="Customer" ToRole="Industry" />
+    <NavigationProperty Name="CustomerAddresses" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="Customer" ToRole="CustomerAddress" />
+    <NavigationProperty Name="CustomerContacts" Relationship="KunzadDbModel.FK_CustomerContact_Customer" FromRole="Customer" ToRole="CustomerContact" />
+    <NavigationProperty Name="Shipments" Relationship="KunzadDbModel.FK_Shipment_Customer" FromRole="Customer" ToRole="Shipment" />
+    <NavigationProperty Name="TruckingDeliveries" Relationship="KunzadDbModel.FK_TruckingDelivery_Customer" FromRole="Customer" ToRole="TruckingDelivery" />
+  </EntityType>
+  <EntityType Name="CustomerAddress">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <Property Name="Line1" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="IsBillingAddress" Type="Boolean" Nullable="false" />
+    <Property Name="IsDeliveryAddress" Type="Boolean" Nullable="false" />
+    <Property Name="IsPickupAddress" Type="Boolean" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CustomerAddress_CityMunicipality" FromRole="CustomerAddress" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_CustomerAddress_Customer" FromRole="CustomerAddress" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="CustomerContact">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <Property Name="ContactId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Contact" Relationship="KunzadDbModel.FK_CustomerContact_Contact" FromRole="CustomerContact" ToRole="Contact" />
+    <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_CustomerContact_Customer" FromRole="CustomerContact" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="CustomerGroup">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Customers" Relationship="KunzadDbModel.FK_Customer_CustomerGroup" FromRole="CustomerGroup" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="Driver">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="MiddleName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="LastName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="LicenseNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LicenseExpiry" Type="DateTime" Precision="3" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Truckings" Relationship="KunzadDbModel.FK_Trucking_Driver" FromRole="Driver" ToRole="Trucking" />
+  </EntityType>
+  <EntityType Name="Industry">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Customers" Relationship="KunzadDbModel.FK_Customer_Industry" FromRole="Industry" ToRole="Customer" />
+  </EntityType>
+  <EntityType Name="SeaFreight">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BLNumber" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="BLDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="VesselVoyageId" Type="Int32" Nullable="false" />
+    <Property Name="OriginBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="FreightCost" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_SeaFreight_DestinationBusinessUnit" FromRole="SeaFreight" ToRole="BusinessUnit" />
+    <NavigationProperty Name="BusinessUnit1" Relationship="KunzadDbModel.FK_SeaFreight_OriginBusinessUnit" FromRole="SeaFreight" ToRole="BusinessUnit" />
+    <NavigationProperty Name="VesselVoyage" Relationship="KunzadDbModel.FK_SeaFreight_VesselVoyage" FromRole="SeaFreight" ToRole="VesselVoyage" />
+    <NavigationProperty Name="SeaFreightShipments" Relationship="KunzadDbModel.FK_SeaFreightShipment_SeaFreight" FromRole="SeaFreight" ToRole="SeaFreightShipment" />
+  </EntityType>
+  <EntityType Name="SeaFreightShipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SeaFreightId" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="CostAllocation" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="SeaFreight" Relationship="KunzadDbModel.FK_SeaFreightShipment_SeaFreight" FromRole="SeaFreightShipment" ToRole="SeaFreight" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_SeaFreightShipment_Shipment" FromRole="SeaFreightShipment" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="Service">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ServiceCategoryId" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="IsMultimodal" Type="Boolean" Nullable="false" />
+    <Property Name="Length" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Width" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Height" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="MaxWeight" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="DeliveryWorkingDays" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="ServiceCategory" Relationship="KunzadDbModel.FK_Service_ServiceCategory" FromRole="Service" ToRole="ServiceCategory" />
+    <NavigationProperty Name="ServiceCharges" Relationship="KunzadDbModel.FK_ServiceCharge_Service" FromRole="Service" ToRole="ServiceCharge" />
+    <NavigationProperty Name="Shipments" Relationship="KunzadDbModel.FK_Shipment_Service" FromRole="Service" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="ServiceableArea">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" Nullable="false" />
+    <Property Name="PostalCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="IsServiceable" Type="Boolean" Nullable="false" />
+    <Property Name="BusinessUnitId" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_ServiceableArea_CityMunicipality" FromRole="ServiceableArea" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Truckings" Relationship="KunzadDbModel.FK_Trucking_DestinationServiceableArea" FromRole="ServiceableArea" ToRole="Trucking" />
+    <NavigationProperty Name="Truckings1" Relationship="KunzadDbModel.FK_Trucking_OriginServiceableArea" FromRole="ServiceableArea" ToRole="Trucking" />
+  </EntityType>
+  <EntityType Name="ServiceCategory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Services" Relationship="KunzadDbModel.FK_Service_ServiceCategory" FromRole="ServiceCategory" ToRole="Service" />
+  </EntityType>
+  <EntityType Name="ServiceCharge">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="ServiceId" Type="Int32" Nullable="false" />
+    <Property Name="ChargeId" Type="Int32" Nullable="false" />
+    <Property Name="ChargeName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="IsTaxInclusive" Type="Boolean" Nullable="false" />
+    <Property Name="TaxPercentage" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Charge" Relationship="KunzadDbModel.FK_ServiceCharge_Charge" FromRole="ServiceCharge" ToRole="Charge" />
+    <NavigationProperty Name="Service" Relationship="KunzadDbModel.FK_ServiceCharge_Service" FromRole="ServiceCharge" ToRole="Service" />
+    <NavigationProperty Name="ShipmentCharges" Relationship="KunzadDbModel.FK_ShipmentCharges_ServiceCharge" FromRole="ServiceCharge" ToRole="ShipmentCharge" />
+  </EntityType>
+  <EntityType Name="Shipment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="ServiceId" Type="Int32" Nullable="false" />
+    <Property Name="DocumentNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="DocumentDate" Type="DateTime" Precision="3" />
+    <Property Name="ShipmentTypeId" Type="Int32" Nullable="false" />
+    <Property Name="PaymentMode" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <Property Name="CustomerAddressId" Type="Int32" />
+    <Property Name="CustomerContactId" Type="Int32" Nullable="false" />
+    <Property Name="CustomerContactPhoneId" Type="Int32" />
+    <Property Name="BillToCustomerId" Type="Int32" Nullable="false" />
+    <Property Name="BillToCustomerAddressId" Type="Int32" />
+    <Property Name="BillToCustomerContactId" Type="Int32" Nullable="false" />
+    <Property Name="BillToCustomerContactPhoneId" Type="Int32" />
+    <Property Name="Quantity" Type="Int16" Nullable="false" />
+    <Property Name="TotalCBM" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+    <Property Name="IsRevenue" Type="Boolean" Nullable="false" />
+    <Property Name="Revenue" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="IsTaxInclusive" Type="Boolean" Nullable="false" />
+    <Property Name="TaxAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="TaxPercentage" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+    <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="BookingRemarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DeliverTo" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="DeliveryAddressId" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
+    <Property Name="DeliveryTime" Type="Time" Precision="7" />
+    <Property Name="ReceivedByName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="PickUpBussinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="PickupDate" Type="DateTime" Precision="0" />
+    <Property Name="PickupTime" Type="Time" Precision="7" />
+    <Property Name="DeliverToContactNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="OriginAddressId" Type="Int32" />
+    <Property Name="ParentShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="IsConsolidation" Type="Boolean" Nullable="false" />
+    <Property Name="IsMultipleDelivery" Type="Boolean" Nullable="false" />
+    <Property Name="TransportStatusId" Type="Int32" Nullable="false" />
+    <Property Name="TransportStatusRemarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Address" Relationship="KunzadDbModel.FK_Shipment_DeliveryAddressId" FromRole="Shipment" ToRole="Address" />
+    <NavigationProperty Name="Address1" Relationship="KunzadDbModel.FK_Shipment_OriginAddressId" FromRole="Shipment" ToRole="Address" />
+    <NavigationProperty Name="AirFreightShipments" Relationship="KunzadDbModel.FK_AirFreightShipment_Shipment" FromRole="Shipment" ToRole="AirFreightShipment" />
+    <NavigationProperty Name="BusinessUnit" Relationship="KunzadDbModel.FK_Shipment_BusinessUnit" FromRole="Shipment" ToRole="BusinessUnit" />
+    <NavigationProperty Name="BusinessUnit1" Relationship="KunzadDbModel.FK_Shipment_PickupBusinessUnit" FromRole="Shipment" ToRole="BusinessUnit" />
+    <NavigationProperty Name="CourierTransactionDetails" Relationship="KunzadDbModel.FK_CourierTransactionDetails_Shipment" FromRole="Shipment" ToRole="CourierTransactionDetail" />
+    <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_Shipment_Customer" FromRole="Shipment" ToRole="Customer" />
+    <NavigationProperty Name="SeaFreightShipments" Relationship="KunzadDbModel.FK_SeaFreightShipment_Shipment" FromRole="Shipment" ToRole="SeaFreightShipment" />
+    <NavigationProperty Name="Service" Relationship="KunzadDbModel.FK_Shipment_Service" FromRole="Shipment" ToRole="Service" />
+    <NavigationProperty Name="ShipmentType" Relationship="KunzadDbModel.FK_Shipment_ShipmentType" FromRole="Shipment" ToRole="ShipmentType" />
+    <NavigationProperty Name="ShipmentCharges" Relationship="KunzadDbModel.FK_ShipmentCharges_Shipment" FromRole="Shipment" ToRole="ShipmentCharge" />
+    <NavigationProperty Name="ShipmentDimensions" Relationship="KunzadDbModel.FK_ShipmentDimension_Shipment" FromRole="Shipment" ToRole="ShipmentDimension" />
+    <NavigationProperty Name="TruckingDeliveries" Relationship="KunzadDbModel.FK_TruckingDelivery_Shipment" FromRole="Shipment" ToRole="TruckingDelivery" />
+  </EntityType>
+  <EntityType Name="ShipmentCharge">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="ServiceChargeId" Type="Int32" Nullable="false" />
+    <Property Name="ServiceChargeName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="IsTaxInclusive" Type="Boolean" Nullable="false" />
+    <Property Name="TaxAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="TaxPercentage" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="ServiceCharge" Relationship="KunzadDbModel.FK_ShipmentCharges_ServiceCharge" FromRole="ShipmentCharge" ToRole="ServiceCharge" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_ShipmentCharges_Shipment" FromRole="ShipmentCharge" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="ShipmentDimension">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="Length" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Width" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Height" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="VolumetricWeight" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Quantity" Type="Int16" Nullable="false" />
+    <Property Name="TotalCBM" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_ShipmentDimension_Shipment" FromRole="ShipmentDimension" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="ShipmentType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Shipments" Relationship="KunzadDbModel.FK_Shipment_ShipmentType" FromRole="ShipmentType" ToRole="Shipment" />
+  </EntityType>
+  <EntityType Name="ShippingLine">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Vessels" Relationship="KunzadDbModel.FK_Vessel_ShippingLine" FromRole="ShippingLine" ToRole="Vessel" />
+  </EntityType>
+  <EntityType Name="StateProvince">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CountryId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipalities" Relationship="KunzadDbModel.FK_CityTown_StateProvince" FromRole="StateProvince" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Country" Relationship="KunzadDbModel.FK_StateProvince_Country" FromRole="StateProvince" ToRole="Country" />
+  </EntityType>
+  <EntityType Name="Truck">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PlateNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TruckTypeId" Type="Int32" Nullable="false" />
+    <Property Name="TruckerId" Type="Int32" Nullable="false" />
+    <Property Name="WeightCapacity" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="VolumeCapacity" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Trucker" Relationship="KunzadDbModel.FK_Truck_Trucker" FromRole="Truck" ToRole="Trucker" />
+    <NavigationProperty Name="TruckType" Relationship="KunzadDbModel.FK_Truck_TruckType" FromRole="Truck" ToRole="TruckType" />
+    <NavigationProperty Name="Truckings" Relationship="KunzadDbModel.FK_Trucking_Truck" FromRole="Truck" ToRole="Trucking" />
+  </EntityType>
+  <EntityType Name="Trucker">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="TIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Line1" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Line2" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CityMunicipalityId" Type="Int32" />
+    <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="CityMunicipality" Relationship="KunzadDbModel.FK_CityMunicipality_Trucker" FromRole="Trucker" ToRole="CityMunicipality" />
+    <NavigationProperty Name="Trucks" Relationship="KunzadDbModel.FK_Truck_Trucker" FromRole="Trucker" ToRole="Truck" />
+    <NavigationProperty Name="Truckings" Relationship="KunzadDbModel.FK_Trucking_Trucker" FromRole="Trucker" ToRole="Trucking" />
+  </EntityType>
+  <EntityType Name="Trucking">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DocumentNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="TruckerId" Type="Int32" Nullable="false" />
+    <Property Name="TruckId" Type="Int32" Nullable="false" />
+    <Property Name="DriverId" Type="Int32" Nullable="false" />
+    <Property Name="TruckingTypeId" Type="Int32" />
+    <Property Name="OriginServiceableAreaId" Type="Int32" Nullable="false" />
+    <Property Name="DestinationServiceableAreaId" Type="Int32" Nullable="false" />
+    <Property Name="TruckerCost" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="TruckingStatusId" Type="Int32" Nullable="false" />
+    <Property Name="TruckCallDate" Type="DateTime" Precision="3" />
+    <Property Name="TruckCallTime" Type="Time" Precision="7" />
+    <Property Name="DispatchDate" Type="DateTime" Precision="0" />
+    <Property Name="DispatchTime" Type="Time" Precision="7" />
+    <Property Name="CompletedDate" Type="DateTime" Precision="0" />
+    <Property Name="CompletedTime" Type="Time" Precision="7" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Driver" Relationship="KunzadDbModel.FK_Trucking_Driver" FromRole="Trucking" ToRole="Driver" />
+    <NavigationProperty Name="ServiceableArea" Relationship="KunzadDbModel.FK_Trucking_DestinationServiceableArea" FromRole="Trucking" ToRole="ServiceableArea" />
+    <NavigationProperty Name="ServiceableArea1" Relationship="KunzadDbModel.FK_Trucking_OriginServiceableArea" FromRole="Trucking" ToRole="ServiceableArea" />
+    <NavigationProperty Name="Truck" Relationship="KunzadDbModel.FK_Trucking_Truck" FromRole="Trucking" ToRole="Truck" />
+    <NavigationProperty Name="Trucker" Relationship="KunzadDbModel.FK_Trucking_Trucker" FromRole="Trucking" ToRole="Trucker" />
+    <NavigationProperty Name="TruckingDeliveries" Relationship="KunzadDbModel.FK_TruckingDelivery_Trucking" FromRole="Trucking" ToRole="TruckingDelivery" />
+  </EntityType>
+  <EntityType Name="TruckingDelivery">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TruckingId" Type="Int32" Nullable="false" />
+    <Property Name="ShipmentId" Type="Int32" Nullable="false" />
+    <Property Name="CustomerId" Type="Int32" Nullable="false" />
+    <Property Name="CustomerDocumentNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Quantity" Type="Int16" Nullable="false" />
+    <Property Name="CBM" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DeliverTo" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="DeliveryAddressId" Type="Int32" />
+    <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
+    <Property Name="DeliveryTime" Type="Time" Precision="7" />
+    <Property Name="CostAllocation" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Address" Relationship="KunzadDbModel.FK_TruckingDelivery_DeliveryAddress" FromRole="TruckingDelivery" ToRole="Address" />
+    <NavigationProperty Name="Customer" Relationship="KunzadDbModel.FK_TruckingDelivery_Customer" FromRole="TruckingDelivery" ToRole="Customer" />
+    <NavigationProperty Name="Shipment" Relationship="KunzadDbModel.FK_TruckingDelivery_Shipment" FromRole="TruckingDelivery" ToRole="Shipment" />
+    <NavigationProperty Name="Trucking" Relationship="KunzadDbModel.FK_TruckingDelivery_Trucking" FromRole="TruckingDelivery" ToRole="Trucking" />
+  </EntityType>
+  <EntityType Name="TruckType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="WeightCapacity" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="VolumeCapacity" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="Trucks" Relationship="KunzadDbModel.FK_Truck_TruckType" FromRole="TruckType" ToRole="Truck" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LoginName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" Nullable="false" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="User1" Relationship="KunzadDbModel.FK_User_User_Created" FromRole="User" ToRole="User1" />
+    <NavigationProperty Name="User2" Relationship="KunzadDbModel.FK_User_User_Created" FromRole="User1" ToRole="User" />
+    <NavigationProperty Name="User11" Relationship="KunzadDbModel.FK_User_User_Updated" FromRole="User" ToRole="User1" />
+    <NavigationProperty Name="User3" Relationship="KunzadDbModel.FK_User_User_Updated" FromRole="User1" ToRole="User" />
+  </EntityType>
+  <EntityType Name="Vessel">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ShippingLineId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="ShippingLine" Relationship="KunzadDbModel.FK_Vessel_ShippingLine" FromRole="Vessel" ToRole="ShippingLine" />
+    <NavigationProperty Name="VesselVoyages" Relationship="KunzadDbModel.FK_VesselVoyage_Vessel" FromRole="Vessel" ToRole="VesselVoyage" />
+  </EntityType>
+  <EntityType Name="VesselVoyage">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="VesselId" Type="Int32" Nullable="false" />
+    <Property Name="VoyageNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="EstimatedDepartureDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="EstimatedDepartureTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="EstimatedArrivalDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="EstimatedArrivalTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="OriginBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="DestinationBusinessUnitId" Type="Int32" Nullable="false" />
+    <Property Name="DepartureDate" Type="DateTime" Precision="3" />
+    <Property Name="DepartureTime" Type="Time" Precision="7" />
+    <Property Name="ArrivalDate" Type="DateTime" Precision="3" />
+    <Property Name="ArrivalTime" Type="Time" Precision="7" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="LastUpdatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CreatedByUserId" Type="Int32" />
+    <Property Name="LastUpdatedByUserId" Type="Int32" />
+    <NavigationProperty Name="SeaFreights" Relationship="KunzadDbModel.FK_SeaFreight_VesselVoyage" FromRole="VesselVoyage" ToRole="SeaFreight" />
+    <NavigationProperty Name="Vessel" Relationship="KunzadDbModel.FK_VesselVoyage_Vessel" FromRole="VesselVoyage" ToRole="Vessel" />
+  </EntityType>
+  <Association Name="FK_Address_CityMunicipality">
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+    <End Type="KunzadDbModel.Address" Role="Address" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Address">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_DeliveryAddressId">
+    <End Type="KunzadDbModel.Address" Role="Address" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Address">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="DeliveryAddressId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_OriginAddressId">
+    <End Type="KunzadDbModel.Address" Role="Address" Multiplicity="0..1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Address">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="OriginAddressId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_DeliveryAddress">
+    <End Type="KunzadDbModel.Address" Role="Address" Multiplicity="0..1" />
+    <End Type="KunzadDbModel.TruckingDelivery" Role="TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Address">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="DeliveryAddressId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreight_AirLine">
+    <End Type="KunzadDbModel.AirLine" Role="AirLine" Multiplicity="1" />
+    <End Type="KunzadDbModel.AirFreight" Role="AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AirLine">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="AirLineId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreight_DestinationBusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.AirFreight" Role="AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="DestinationBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreight_OriginBusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.AirFreight" Role="AirFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreight">
+        <PropertyRef Name="OriginBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreightShipment_AirFreight">
+    <End Type="KunzadDbModel.AirFreight" Role="AirFreight" Multiplicity="1" />
+    <End Type="KunzadDbModel.AirFreightShipment" Role="AirFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AirFreight">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreightShipment">
+        <PropertyRef Name="AirFreightId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AirFreightShipment_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.AirFreightShipment" Role="AirFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AirFreightShipment">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnit_BusinessUnitType">
+    <End Type="KunzadDbModel.BusinessUnitType" Role="BusinessUnitType" Multiplicity="1" />
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnitType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnit">
+        <PropertyRef Name="BusinessUnitTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnitContact_BusiessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.BusinessUnitContact" Role="BusinessUnitContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnitContact">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierService_BusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.CourierTransaction" Role="CourierTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransaction">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_DestinationBusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.SeaFreight" Role="SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="DestinationBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_OriginBusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.SeaFreight" Role="SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="OriginBusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_BusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="BusinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_PickupBusinessUnit">
+    <End Type="KunzadDbModel.BusinessUnit" Role="BusinessUnit" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BusinessUnit">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="PickUpBussinessUnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BusinessUnitContact_Contact">
+    <End Type="KunzadDbModel.Contact" Role="Contact" Multiplicity="1" />
+    <End Type="KunzadDbModel.BusinessUnitContact" Role="BusinessUnitContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BusinessUnitContact">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceCharge_Charge">
+    <End Type="KunzadDbModel.Charge" Role="Charge" Multiplicity="1" />
+    <End Type="KunzadDbModel.ServiceCharge" Role="ServiceCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Charge">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceCharge">
+        <PropertyRef Name="ChargeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CityMunicipality_Trucker">
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="0..1" />
+    <End Type="KunzadDbModel.Trucker" Role="Trucker" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucker">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CityTown_StateProvince">
+    <End Type="KunzadDbModel.StateProvince" Role="StateProvince" Multiplicity="1" />
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StateProvince">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CityMunicipality">
+        <PropertyRef Name="StateProvinceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Courier_CityMunicipality">
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+    <End Type="KunzadDbModel.Courier" Role="Courier" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Courier">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_CityMunicipality">
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+    <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceableArea_CityMunicipality">
+    <End Type="KunzadDbModel.CityMunicipality" Role="CityMunicipality" Multiplicity="1" />
+    <End Type="KunzadDbModel.ServiceableArea" Role="ServiceableArea" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CityMunicipality">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceableArea">
+        <PropertyRef Name="CityMunicipalityId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ContactPhone_Contact">
+    <End Type="KunzadDbModel.Contact" Role="Contact" Multiplicity="1" />
+    <End Type="KunzadDbModel.ContactPhone" Role="ContactPhone" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ContactPhone">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerContact_Contact">
+    <End Type="KunzadDbModel.Contact" Role="Contact" Multiplicity="1" />
+    <End Type="KunzadDbModel.CustomerContact" Role="CustomerContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Contact">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerContact">
+        <PropertyRef Name="ContactId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ContactPhone_ContactNumberType">
+    <End Type="KunzadDbModel.ContactNumberType" Role="ContactNumberType" Multiplicity="1" />
+    <End Type="KunzadDbModel.ContactPhone" Role="ContactPhone" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ContactNumberType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ContactPhone">
+        <PropertyRef Name="ContactNumberTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StateProvince_Country">
+    <End Type="KunzadDbModel.Country" Role="Country" Multiplicity="1" />
+    <End Type="KunzadDbModel.StateProvince" Role="StateProvince" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Country">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="StateProvince">
+        <PropertyRef Name="CountryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierService_Courier">
+    <End Type="KunzadDbModel.Courier" Role="Courier" Multiplicity="1" />
+    <End Type="KunzadDbModel.CourierTransaction" Role="CourierTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Courier">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransaction">
+        <PropertyRef Name="CourierId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierTransactionDetails_CourierTransaction">
+    <End Type="KunzadDbModel.CourierTransaction" Role="CourierTransaction" Multiplicity="1" />
+    <End Type="KunzadDbModel.CourierTransactionDetail" Role="CourierTransactionDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CourierTransaction">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransactionDetail">
+        <PropertyRef Name="CourierTransactionId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CourierTransactionDetails_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.CourierTransactionDetail" Role="CourierTransactionDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CourierTransactionDetail">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Customer_CustomerGroup">
+    <End Type="KunzadDbModel.CustomerGroup" Role="CustomerGroup" Multiplicity="1" />
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CustomerGroup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Customer">
+        <PropertyRef Name="CustomerGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Customer_Industry">
+    <End Type="KunzadDbModel.Industry" Role="Industry" Multiplicity="1" />
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Industry">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Customer">
+        <PropertyRef Name="IndustryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerAddress_Customer">
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
+    <End Type="KunzadDbModel.CustomerAddress" Role="CustomerAddress" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerAddress">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CustomerContact_Customer">
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
+    <End Type="KunzadDbModel.CustomerContact" Role="CustomerContact" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="CustomerContact">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_Customer">
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Customer">
+    <End Type="KunzadDbModel.Customer" Role="Customer" Multiplicity="1" />
+    <End Type="KunzadDbModel.TruckingDelivery" Role="TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Driver">
+    <End Type="KunzadDbModel.Driver" Role="Driver" Multiplicity="1" />
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Driver">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="DriverId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreight_VesselVoyage">
+    <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="1" />
+    <End Type="KunzadDbModel.SeaFreight" Role="SeaFreight" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="VesselVoyage">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreight">
+        <PropertyRef Name="VesselVoyageId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreightShipment_SeaFreight">
+    <End Type="KunzadDbModel.SeaFreight" Role="SeaFreight" Multiplicity="1" />
+    <End Type="KunzadDbModel.SeaFreightShipment" Role="SeaFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SeaFreight">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreightShipment">
+        <PropertyRef Name="SeaFreightId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SeaFreightShipment_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.SeaFreightShipment" Role="SeaFreightShipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SeaFreightShipment">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Service_ServiceCategory">
+    <End Type="KunzadDbModel.ServiceCategory" Role="ServiceCategory" Multiplicity="1" />
+    <End Type="KunzadDbModel.Service" Role="Service" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceCategory">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Service">
+        <PropertyRef Name="ServiceCategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceCharge_Service">
+    <End Type="KunzadDbModel.Service" Role="Service" Multiplicity="1" />
+    <End Type="KunzadDbModel.ServiceCharge" Role="ServiceCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ServiceCharge">
+        <PropertyRef Name="ServiceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_Service">
+    <End Type="KunzadDbModel.Service" Role="Service" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="ServiceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_DestinationServiceableArea">
+    <End Type="KunzadDbModel.ServiceableArea" Role="ServiceableArea" Multiplicity="1" />
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceableArea">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="DestinationServiceableAreaId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_OriginServiceableArea">
+    <End Type="KunzadDbModel.ServiceableArea" Role="ServiceableArea" Multiplicity="1" />
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceableArea">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="OriginServiceableAreaId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentCharges_ServiceCharge">
+    <End Type="KunzadDbModel.ServiceCharge" Role="ServiceCharge" Multiplicity="1" />
+    <End Type="KunzadDbModel.ShipmentCharge" Role="ShipmentCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ServiceCharge">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentCharge">
+        <PropertyRef Name="ServiceChargeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Shipment_ShipmentType">
+    <End Type="KunzadDbModel.ShipmentType" Role="ShipmentType" Multiplicity="1" />
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShipmentType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Shipment">
+        <PropertyRef Name="ShipmentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentCharges_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.ShipmentCharge" Role="ShipmentCharge" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentCharge">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ShipmentDimension_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.ShipmentDimension" Role="ShipmentDimension" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ShipmentDimension">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Shipment">
+    <End Type="KunzadDbModel.Shipment" Role="Shipment" Multiplicity="1" />
+    <End Type="KunzadDbModel.TruckingDelivery" Role="TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Shipment">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="ShipmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Vessel_ShippingLine">
+    <End Type="KunzadDbModel.ShippingLine" Role="ShippingLine" Multiplicity="1" />
+    <End Type="KunzadDbModel.Vessel" Role="Vessel" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ShippingLine">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Vessel">
+        <PropertyRef Name="ShippingLineId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Truck_Trucker">
+    <End Type="KunzadDbModel.Trucker" Role="Trucker" Multiplicity="1" />
+    <End Type="KunzadDbModel.Truck" Role="Truck" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucker">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Truck">
+        <PropertyRef Name="TruckerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Truck_TruckType">
+    <End Type="KunzadDbModel.TruckType" Role="TruckType" Multiplicity="1" />
+    <End Type="KunzadDbModel.Truck" Role="Truck" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TruckType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Truck">
+        <PropertyRef Name="TruckTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Truck">
+    <End Type="KunzadDbModel.Truck" Role="Truck" Multiplicity="1" />
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Truck">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="TruckId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Trucking_Trucker">
+    <End Type="KunzadDbModel.Trucker" Role="Trucker" Multiplicity="1" />
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucker">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Trucking">
+        <PropertyRef Name="TruckerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TruckingDelivery_Trucking">
+    <End Type="KunzadDbModel.Trucking" Role="Trucking" Multiplicity="1" />
+    <End Type="KunzadDbModel.TruckingDelivery" Role="TruckingDelivery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Trucking">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TruckingDelivery">
+        <PropertyRef Name="TruckingId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_User_Created">
+    <End Type="KunzadDbModel.User" Role="User" Multiplicity="1" />
+    <End Type="KunzadDbModel.User" Role="User1" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="CreatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_User_Updated">
+    <End Type="KunzadDbModel.User" Role="User" Multiplicity="0..1" />
+    <End Type="KunzadDbModel.User" Role="User1" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="User1">
+        <PropertyRef Name="LastUpdatedByUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VesselVoyage_Vessel">
+    <End Type="KunzadDbModel.Vessel" Role="Vessel" Multiplicity="1" />
+    <End Type="KunzadDbModel.VesselVoyage" Role="VesselVoyage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Vessel">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VesselVoyage">
+        <PropertyRef Name="VesselId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

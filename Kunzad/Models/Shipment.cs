@@ -27,10 +27,18 @@ namespace Kunzad.Models
         public int Id { get; set; }
         public int BusinessUnitId { get; set; }
         public int ServiceId { get; set; }
+        public string DocumentNo { get; set; }
+        public Nullable<System.DateTime> DocumentDate { get; set; }
         public int ShipmentTypeId { get; set; }
         public string PaymentMode { get; set; }
         public int CustomerId { get; set; }
-        public Nullable<int> BillToCustomerId { get; set; }
+        public Nullable<int> CustomerAddressId { get; set; }
+        public int CustomerContactId { get; set; }
+        public Nullable<int> CustomerContactPhoneId { get; set; }
+        public int BillToCustomerId { get; set; }
+        public Nullable<int> BillToCustomerAddressId { get; set; }
+        public int BillToCustomerContactId { get; set; }
+        public Nullable<int> BillToCustomerContactPhoneId { get; set; }
         public short Quantity { get; set; }
         public decimal TotalCBM { get; set; }
         public bool IsRevenue { get; set; }
@@ -39,25 +47,32 @@ namespace Kunzad.Models
         public decimal TaxAmount { get; set; }
         public decimal TaxPercentage { get; set; }
         public string Description { get; set; }
+        public string BookingRemarks { get; set; }
         public string DeliverTo { get; set; }
         public int DeliveryAddressId { get; set; }
         public Nullable<System.DateTime> DeliveryDate { get; set; }
         public Nullable<System.TimeSpan> DeliveryTime { get; set; }
         public string ReceivedByName { get; set; }
+        public int PickUpBussinessUnitId { get; set; }
+        public Nullable<System.DateTime> PickupDate { get; set; }
+        public Nullable<System.TimeSpan> PickupTime { get; set; }
+        public string DeliverToContactNo { get; set; }
+        public Nullable<int> OriginAddressId { get; set; }
         public int ParentShipmentId { get; set; }
         public bool IsConsolidation { get; set; }
         public bool IsMultipleDelivery { get; set; }
+        public int TransportStatusId { get; set; }
+        public string TransportStatusRemarks { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
-        public Nullable<System.DateTime> PickUpDate { get; set; }
-        public Nullable<System.TimeSpan> PickUpTime { get; set; }
-        public string DeliverToContactNumber { get; set; }
-        public string Origin { get; set; }
     
+        public virtual Address Address { get; set; }
+        public virtual Address Address1 { get; set; }
         public virtual ICollection<AirFreightShipment> AirFreightShipments { get; set; }
         public virtual BusinessUnit BusinessUnit { get; set; }
+        public virtual BusinessUnit BusinessUnit1 { get; set; }
         public virtual ICollection<CourierTransactionDetail> CourierTransactionDetails { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<SeaFreightShipment> SeaFreightShipments { get; set; }

@@ -21,11 +21,11 @@ namespace Kunzad.Models
     
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Remarks { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
-        public string Remarks { get; set; }
     
         public virtual ICollection<Customer> Customers { get; set; }
     }

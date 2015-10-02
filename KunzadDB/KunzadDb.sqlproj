@@ -107,4 +107,7 @@
     <None Include="KunzadDb.publish.xml" />
     <None Include="Table Definitions.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="KunzadDb.refactorlog" />
+  </ItemGroup>
 </Project>

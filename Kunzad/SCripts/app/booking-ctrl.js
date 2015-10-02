@@ -33,7 +33,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.onEDV = function () {
         $scope.shipmentItem = [];
         $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
-        console.log($scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality);
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
         $scope.controlNoHolder = $scope.shipmentItem.Id;
@@ -325,8 +324,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 case "PostDelete":
                     $scope.shipmentItem.TrasportStatusId = $scope.shipmentSubmitDefinition.DataItem.TrasportStatusId;
                     if ($scope.shipmentSubmitDefinition.Index != -1)
-                        $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index] = $scope.shipmentItem;
-                    $scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
+                        $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index].TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
+                    $scope.shipmentDataDefinition.DataItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
                     $scope.onEDV();
                     $scope.viewOnly = true;
                     alert("Successfully Cancelled.");

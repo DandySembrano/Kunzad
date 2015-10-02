@@ -2309,6 +2309,7 @@
     <Content Include="vendor\plugins\nestable\jquery.nestable.js" />
     <Content Include="vendor\plugins\nestable\nestable.css" />
     <Content Include="vendor\plugins\pnotify\pnotify.js" />
+    <Content Include="vendor\plugins\priceFormat\price_format.js" />
     <Content Include="vendor\plugins\raphael\raphael.js" />
     <Content Include="vendor\plugins\scrollto\demo\css\style.css" />
     <Content Include="vendor\plugins\scrollto\demo\css\style.old.css" />

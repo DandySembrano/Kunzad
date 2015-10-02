@@ -98,7 +98,7 @@ kunzadApp.run(function ($rootScope) {
                 { "Id": "20", "Name": "Waybill" },
                 { "Id": "30", "Name": "DeliveryUpdate" },
                 { "Id": "40", "Name": "Cancelled" },
-        ];
+        ]; 
     };
 
     //Remove unnecessary 
