@@ -1,16 +1,9 @@
-﻿kunzadApp.directive('dirDataGrid2', function () {
-    /*---------------------------------------------------------------------------------//
-     Directive Name: dirDataGrid1
-     Author: Kenneth Ybañez
-     Note: If this is used more than once in a page, the other instance should be resetted.
-     Functionalities:
-     1. CRUD
-     2. Pagination
-     3. Sorting
-     4. Context-Menu
-     5. Overriding and Overloading by using otherActions scope predefined actions
-     7. Validate required fields
-    ---------------------------------------------------------------------------------*/
+﻿/*---------------------------------------------------------------------------------//
+ Directive Name: dirDataGrid1
+ Author: Kenneth Ybañez
+ Description: Dynamic datagrid directive that can communicate  with dirFiltering directive
+---------------------------------------------------------------------------------*/
+kunzadApp.directive('dirDataGrid2', function () {
     return {
         restrict: 'E',
         scope: {
@@ -156,7 +149,7 @@
                 $scope.gridOptions.gridHeight = $scope.height;
             }
 
-            $scope.getTemplate = function(){
+            $scope.getTemplate = function () {
                 if($scope.datadefinition.RowTemplate == "Default")
                     return $scope.defaultRowTemplate();
                 else
@@ -279,6 +272,7 @@
                                 break;
                         }
                         $scope.otheractions({ action: 'PostAction' });
+                        $scope.focusOnTop();
                     }
                 }
             };
@@ -449,10 +443,11 @@
                 }
 
                 //Invoke $scope.submit($scope.submitdefinition.Type);
-                if ($scope.submitdefinition.Submit)
-                {
-                    $scope.submitdefinition.Submit = false;
-                    $scope.submitDataGrid($scope.submitdefinition.Type);
+                if (angular.isDefined($scope.submitdefinition)) {
+                    if ($scope.submitdefinition.Submit) {
+                        $scope.submitdefinition.Submit = false;
+                        $scope.submitDataGrid($scope.submitdefinition.Type);
+                    }
                 }
                 if(angular.isUndefined($scope.flag))
                     $scope.createContextMenu();

@@ -25,6 +25,55 @@ kunzadApp.run(function ($rootScope) {
         };
     };
 
+    //Reusable object for filtering business unit so that other module can directly access
+    $rootScope.businessUnitObj = function () {
+        return {
+            "Name": null,
+            "Code": null
+        };
+    };
+
+    //Reusable object for filtering customer so that other module can directly access
+    $rootScope.customerObj = function () {
+        return {
+            "Name": null,
+            "Title": null,
+        };
+    };
+
+    //Reusable object for filtering customer contacts so that other module can directly access
+    $rootScope.customerContactsObj = function () {
+        return {
+            "Contact": {
+                "Name": null,
+                "Title": null
+            }
+        }
+    };
+    
+    //Reusable object for filtering customer contacts so that other module can directly access
+    $rootScope.customerContactPhonesObj = function () {
+        return {
+            "ContactNumber": null,
+            "ContactId": null
+        }
+    };
+
+    //Reusable object for filtering customer addresses so that other module can directly access
+    $rootScope.customerAddressObj = function () {
+        return {
+            "Line1": null,
+            "Line2": null,
+            "CityMunicipality": {
+                "Name": null
+            },
+            "PostalCode": null,
+            "IsBillingAddress": null,
+            "IsDeliveryAddress": null,
+            "IsPickupAddress": null
+        }
+    };
+
     //Payment Mode List
     $rootScope.getPaymentModeList = function () {
         return [{ "Id": "A", "Name": "Account" },
@@ -91,6 +140,7 @@ kunzadApp.run(function ($rootScope) {
             holder = shipments[i].BusinessUnit;
             shipments[i].BusinessUnit = {};
             shipments[i].BusinessUnit = {
+                "Id": holder.Id,
                 "Name": holder.Name
             }
 
@@ -98,6 +148,7 @@ kunzadApp.run(function ($rootScope) {
             holder = shipments[i].BusinessUnit1;
             shipments[i].BusinessUnit1 = {};
             shipments[i].BusinessUnit1 = {
+                "Id": holder.Id,
                 "Name": holder.Name
             }
 
@@ -105,6 +156,7 @@ kunzadApp.run(function ($rootScope) {
             holder = shipments[i].Service;
             shipments[i].Service = {};
             shipments[i].Service = {
+                "Id": holder.Id,
                 "Name": holder.Name
             }
 
@@ -112,6 +164,7 @@ kunzadApp.run(function ($rootScope) {
             holder = shipments[i].ShipmentType;
             shipments[i].ShipmentType = {};
             shipments[i].ShipmentType = {
+                "Id": holder.Id,
                 "Name": holder.Name
             }
 
@@ -133,6 +186,7 @@ kunzadApp.run(function ($rootScope) {
                     "Line2": holder1[0].Line2,
                     "PostalCode": holder1[0].PostalCode,
                     "CityMunicipality": {
+                        "Id": holder1[0].Id,
                         "Name": holder1[0].CityMunicipality.Name,
                         "StateProvince": {
                             "Name": holder1[0].CityMunicipality.StateProvince.Name
@@ -142,11 +196,13 @@ kunzadApp.run(function ($rootScope) {
                 //CustomerContacts
                 "CustomerContacts": [{
                     "Contact": {
+                        "Id": holder2.Id,
                         "Email": holder2.Email,
                         "Name": holder2.Name,
                         "Title": holder2.Title,
                         //ContactPhones
                         "ContactPhones": [{
+                            "Id": holder3[0].Id,
                             "ContactNumber": holder3[0].ContactNumber
                         }]
                     }

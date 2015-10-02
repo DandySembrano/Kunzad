@@ -1,4 +1,9 @@
-﻿kunzadApp.directive('dirFiltering', function () {
+﻿/*---------------------------------------------------------------------------------//
+ Directive Name: dirAddress
+ Author: Kenneth Ybañez
+ Desription: Dynamic filtering directive
+---------------------------------------------------------------------------------*/
+kunzadApp.directive('dirFiltering', function () {
     return {
         restrict: 'E',
         scope: {
@@ -12,6 +17,7 @@
                                             Multiple    - if filtering can add criteria set it to true, else false
                                             AutoLoad    - true if load data after compiling to DOM
                                             ClearData   - true if reset ui-grid datalist, else false
+                                            SetSourceToNull - false by default, for modal
                                         */
             filterlistener: '=',        //listens if search button was clicked
             otheractions: '&'          /*
@@ -27,7 +33,12 @@
             $scope.retrieving = false;
             $scope.isErrorFiltering = false;
             $scope.errorMessageFiltering = false;
-            $scope.lastSelectedCriteriaIndex = 0;
+            $scope.unfilteredDataList = [];
+
+            //$scope.fitlerOnChange = function () {
+            //    var tempSenderMsg = filterFilter($scope.getchatMsg, { toId: $scope.userId, fromId: $scope.setcontactId });
+            //}
+
             //Set the filter variables default value
             $scope.setFilterVariables = function () {
                 $scope.filteredData = { "Definition": $scope.filterdefinition.Source[0] };
@@ -69,12 +80,7 @@
             $scope.addToFilteredList = function () {
                 if (angular.isDefined($scope.filteredData.Definition)) {
                     $scope.filterdefinition.ClearData = true;
-                    if ($scope.filterdefinition.Multiple == false && $scope.countFilteredCriteria > 0) {
-                        $scope.filterdefinition.Source[$scope.lastSelectedCriteriaIndex].From = null;
-                        $scope.filterdefinition.Source[$scope.lastSelectedCriteriaIndex].To = null;
-                    }
                     var index = $scope.filteredData.Definition.Index;
-                    $scope.lastSelectedCriteriaIndex = index;
                     $scope.isErrorFiltering = false;
                     $scope.errorMessageFiltering = false;
                     switch ($scope.filteredData.Definition.Type) {
@@ -85,9 +91,6 @@
                                 $scope.filterdefinition.Source[index].From = fromDate;
                                 $scope.filterdefinition.Source[index].To = toDate;
                                 $scope.countFilteredCriteria++;
-                                $scope.fromDate = $filter('Date')(new Date());
-                                $scope.toDate = $filter('Date')(new Date());
-                                $scope.filteredData.Definition = undefined;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -99,8 +102,6 @@
                                 $scope.filterdefinition.Source[index].From = $scope.dropDownValueObject.Id;
                                 $scope.filterdefinition.Source[index].To = $scope.dropDownValueObject.Name;
                                 $scope.countFilteredCriteria++;
-                                $scope.dropDownValue = "";
-                                $scope.filteredData.Definition = undefined;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -111,7 +112,6 @@
                             if ($scope.filteredData.Definition.To != null) {
                                 $scope.filterdefinition.Source[index].From = $scope.filterdefinition.Source[index].Values[1];
                                 $scope.countFilteredCriteria++;
-                                $scope.filteredData.Definition = undefined;
                             } else {
                                 $scope.isErrorFiltering = true;
                                 $scope.errorMessageFiltering = $scope.filteredData.Definition.Label + " is required.";
@@ -122,8 +122,6 @@
                             if ($scope.searchValue != "") {
                                 $scope.filterdefinition.Source[index].From = $scope.searchValue;
                                 $scope.countFilteredCriteria++;
-                                $scope.searchValue = "";
-                                $scope.filteredData.Definition = undefined;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -131,6 +129,13 @@
                             }
                             break;
                     }
+                }
+            };
+
+            $scope.setSourceToNull = function () {
+                for (var i = 0; i < $scope.filterdefinition.Source.length; i++) {
+                    $scope.filterdefinition.Source[i].From = null;
+                    $scope.filterdefinition.Source[i].To = null;
                 }
             };
 
@@ -151,6 +156,17 @@
                 if ($scope.search == true) {
                     $scope.search = false;
                     $scope.filterdefinition.ClearData = true;
+
+                    if ($scope.filterdefinition.Multiple == false) {
+                        $scope.setSourceToNull();
+                        $scope.addToFilteredList();
+                    }
+                }
+
+                if ($scope.filterdefinition.SetSourceToNull == true) {
+                    $scope.filterdefinition.SetSourceToNull = false;
+                    $scope.setSourceToNull();
+                    $scope.setFilterVariables();
                 }
                 if ($scope.otheractions({ action: 'PreFilterData' })) {
                     $scope.url = $scope.filterdefinition.Url;
@@ -171,6 +187,8 @@
                     .success(function (data, status) {
                         $scope.filterdefinition.DataList = angular.copy(data);
                         $scope.otheractions({ action: 'PostFilterData' });
+                        //Code to Fix angular ui-grid bug after scrolling
+                        $scope.forceScroll();
                         $scope.retrieving = false;
                         $scope.filterdefinition.ClearData = false;
                         spinner.stop();
@@ -188,6 +206,21 @@
                     spinner.stop();
                 }
             }
+
+            //function that will force scroll the datagrid
+            $scope.forceScroll = function () {
+                $(document).ready(function () {
+                    var element = $("div.ui-grid-viewport")[0];
+                    var element1 = $("div.ui-grid-viewport");
+                    if (element.scrollTop != 0) {
+                        var promise = $interval(function () {
+                            element1.scrollTop(element.scrollTop + 10);
+                            $interval.cancel(promise);
+                            promise = undefined;
+                        }, 100)
+                    }
+                });
+            };
 
             //Disable user from typing
             $('#fromDate,#toDate,#modal').keypress(function (key) {

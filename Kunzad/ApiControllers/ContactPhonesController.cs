@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class ContactPhonesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        private int pageSize = 20;
         // GET: api/ContactPhones
         public IQueryable<ContactPhone> GetContactPhones()
         {
@@ -81,6 +81,19 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPut]
+        //Dynamic filtering
+        public IHttpActionResult PutContactPhone(string type, int param1, List<ContactPhone> contactPhone)
+        {
+            Object[] contactPhones = new Object[pageSize];
+            this.filterRecord(param1, type, contactPhone.ElementAt(0), contactPhone.ElementAt(1), ref contactPhones);
+
+            if (contactPhones != null)
+                return Ok(contactPhones);
+            else
+                return Ok();
+        }
+
         // POST: api/ContactPhones
         [ResponseType(typeof(ContactPhone))]
         public IHttpActionResult PostContactPhone(ContactPhone contactPhone)
@@ -124,6 +137,38 @@ namespace Kunzad.ApiControllers
         private bool ContactPhoneExists(int id)
         {
             return db.ContactPhones.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, ContactPhone contactPhone, ContactPhone contactPhone1, ref Object[] contactPhones)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredContactPhones = (from cp in db.ContactPhones
+                                         where contactPhone.Id == null || contactPhone.Id == 0 ? true : cp.Id == contactPhone.Id
+                                         where contactPhone.ContactId == null || contactPhone.ContactId == 0 ? true : cp.ContactId == contactPhone.ContactId
+                                         where contactPhone.ContactNumber == null ? !contactPhone.ContactNumber.Equals("") : (cp.ContactNumber.ToLower().Equals(contactPhone.ContactNumber) || cp.ContactNumber.ToLower().Contains(contactPhone.ContactNumber))
+                                         select new
+                                         {
+                                             cp.Id,
+                                             cp.ContactNumber,
+                                             ContactNumberType = (from cnt in db.ContactNumberTypes where cnt.Id == cp.ContactNumberTypeId select new { cnt.Id, cnt.Type})
+                                         })
+                                        .OrderBy(cc => cc.Id)
+                                        .Skip(skip).Take(pageSize).ToArray();
+            contactPhones = filteredContactPhones;
         }
     }
 }

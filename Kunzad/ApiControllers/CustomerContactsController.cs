@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class CustomerContactsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        private int pageSize = 20;
         // GET: api/CustomerContacts
         public IQueryable<CustomerContact> GetCustomerContacts()
         {
@@ -81,6 +81,19 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPut]
+        //Dynamic filtering
+        public IHttpActionResult PutCustomerContact(string type, int param1, List<CustomerContact> customerContact)
+        {
+            Object[] customerContacts = new Object[pageSize];
+            this.filterRecord(param1, type, customerContact.ElementAt(0), customerContact.ElementAt(1), ref customerContacts);
+
+            if (customerContacts != null)
+                return Ok(customerContacts);
+            else
+                return Ok();
+        }
+
         // POST: api/CustomerContacts
         [ResponseType(typeof(CustomerContact))]
         public IHttpActionResult PostCustomerContact(CustomerContact customerContact)
@@ -124,6 +137,42 @@ namespace Kunzad.ApiControllers
         private bool CustomerContactExists(int id)
         {
             return db.CustomerContacts.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, CustomerContact customercontact, CustomerContact customercontact1, ref Object[] customercontacts)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredCustomerContacts = (from cc in db.CustomerContacts
+                                            where customercontact.Id == null || customercontact.Id == 0 ? true : cc.Id == customercontact.Id
+                                            where customercontact.CustomerId == null || customercontact.CustomerId == 0 ? true : cc.CustomerId == customercontact.CustomerId
+                                            where customercontact.Contact.Name == null ? !customercontact.Contact.Name.Equals("") : (cc.Contact.Name.ToLower().Equals(customercontact.Contact.Name) || cc.Contact.Name.ToLower().Contains(customercontact.Contact.Name))
+                                            where customercontact.Contact.Title == null ? !customercontact.Contact.Title.Equals("") : (cc.Contact.Title.ToLower().Equals(customercontact.Contact.Title) || cc.Contact.Title.ToLower().Contains(customercontact.Contact.Title))
+                                            select new
+                                            {
+                                                cc.Id,
+                                                cc.CustomerId,
+                                                cc.ContactId,
+                                                Contact = (from c in db.Contacts 
+                                                        where c.Id == cc.ContactId 
+                                                        select new { c.Id, c.Name, c.Title, c.Email, c.AlternateEmail }),
+                                            })
+                                        .OrderBy(cc => cc.Id)
+                                        .Skip(skip).Take(pageSize).ToArray(); 
+            customercontacts = filteredCustomerContacts;
         }
     }
 }
