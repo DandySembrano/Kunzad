@@ -213,7 +213,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
           { name: 'Trucker', field: 'Trucker.Name' },
           { name: 'Truck', field: 'Truck.PlateNo' },
           { name: 'Driver', field: 'Driver.Name' }
-          
+
         ],
         rowTemplate: '<div>' +
         ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedDispatch(row.entity.Id)"  context-menu="grid.appScope.setSelectedDispatch(row.entity.Id)" data-target= "DataTableMenu"></div>' +
@@ -334,8 +334,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
         $scope.errorMessage = "";
         switch ($scope.actionMode) {
             case "Create":
-                    $scope.viewOnly = false;
-                    $scope.submitButtonText = "Submit";
+                $scope.viewOnly = false;
+                $scope.submitButtonText = "Submit";
                 break;
         }
     };
@@ -343,8 +343,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
     $scope.submit = function () {
         switch ($scope.actionMode) {
             case "Create":
-                    $scope.focusOnTop();
-                    $scope.apiUpdateTruckingWB();
+                $scope.focusOnTop();
+                $scope.apiUpdateTruckingWB();
                 break;
         }
     }
@@ -353,7 +353,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
     $scope.apiUpdateTruckingWB = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var dataModel = angular.copy($scope.truckingItem);
-        
+
         delete dataModel.Trucker;
         delete dataModel.Truck;
         delete dataModel.Driver;
@@ -370,8 +370,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
                  $scope.setSelectedTab("List");
              })
              .error(function (data, status) {
-                $scope.showFormError("Error: " + status);
-                spinner.stop();
+                 $scope.showFormError("Error: " + status);
+                 spinner.stop();
              })
     };
 

@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 using Kunzad.Models;
 
 namespace Kunzad.ApiControllers
-{
+{ 
     public class TruckingsWBController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();

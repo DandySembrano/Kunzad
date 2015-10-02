@@ -5,341 +5,341 @@
 <!-- General -->
 @section tab1Content{
     @*Column 1*@
-<div class="row" ng-show="selectedTab === tabPages[0]">
-    <form class="form-horizontal" role="form">
-        <div class="alert alert-danger alert-sm" ng-show="isError">
-            <i class="fa fa-remove pr10"></i>
-            <strong>ERROR!</strong>{{errorMessage}}
-        </div>
-        <div class="row">
-            <div class="col-lg-7">
-                <div class="row">&nbsp;</div>
-                <div class="row form-group form-group-sm">
-                    <label class="col-sm-3">Document no</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control"
-                               ng-model="truckingItem.DocumentNo"
-                               ng-disabled="ViewOnly" />
-                    </div>
+    <div class="row" ng-show="selectedTab === tabPages[0]">
+        <form class="form-horizontal" role="form">
+            <div class="alert alert-danger alert-sm" ng-show="isError">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>{{errorMessage}}
+            </div>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">&nbsp;</div>
+                    <div class="row form-group form-group-sm">
+                        <label class="col-sm-3">Document no</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.DocumentNo"
+                                   ng-disabled="ViewOnly" />
+                        </div>
 
-                    <label class="col-sm-1">Date</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control"
-                               ng-model="truckingItem.CreatedDateDesc"
-                               ng-disabled="true" />
+                        <label class="col-sm-1">Date</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.CreatedDateDesc"
+                                   ng-disabled="true" />
+                        </div>
                     </div>
-                </div>
-                @*<div class="row form-group form-group-sm">
+                    @*<div class="row form-group form-group-sm">
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <label class="col-sm-3">Trucking Mode</label>
+                                    <div class="col-sm-3"><input type="text" /></div>
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="row form-group form-group-sm">
                         <div class="col-lg-12">
                             <div class="row">
-                                <label class="col-sm-3">Trucking Mode</label>
-                                <div class="col-sm-3"><input type="text" /></div>
-                            </div>
-                        </div>
-                    </div>*@
-                <div class="row form-group form-group-sm">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <label class="col-sm-3">Origin</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.OriginServiceableAreaName"
-                                       ng-disabled="true" />
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Origin" ng-click="showModal('#businessUnitOrigin-list-modal')">
-                                    <span class="glyphicons glyphicons-zoom_in">
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row form-group form-group-sm">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <label class="col-sm-3">Destination</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.DestinationServiceableAreaName"
-                                       ng-disabled="true" />
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Destination" ng-click="showModal('#businessUnitDestination-list-modal')">
-                                    <span class="glyphicons glyphicons-zoom_in">
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row form-group form-group-sm">
-                    <label class="col-sm-3">Cost Allocation</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control"
-                               ng-model="truckingItem.DocumentNo"
-                               ng-disabled="ViewOnly" />
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-5">
-                <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Dispatch Information</legend>
-                    <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Dispatch No</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Id"
-                                       ng-disabled="true" />
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
-                                    <span class="glyphicons glyphicons-zoom_in">
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Trucker</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Trucker.Name"
-                                       ng-disabled="true" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Plate No</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Truck.PlateNo"
-                                       ng-disabled="true" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Driver</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Driver.Name"
-                                       ng-disabled="true" />
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    </form>
-    @*<div class="col-lg-12">
-        <div ui-grid="truckingShipmentGridOptions" class="grid" ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
-    </div>*@
-</div>
-@*Detail*@
-<fieldset class="scheduler-border">
-    <legend class="scheduler-border">Dispatching Details</legend>
-    <div id="trckngDlvry" ng-repeat="trkgdlvryList in trkgDeliveryList">
-        <fieldset class="scheduler-border">
-            <legend class="scheduler-border">Detail No {{$index+1}}</legend>
-            <div class="col-md-12">
-                <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
-                    <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
-                </span>
-            </div><br />
-            <!-------form------->
-            @*row1*@
-            <div class="row">
-                <form class="form-horizontal" role="form">
-                    @*col1*@
-                    <div class="col-lg-6">
-                        @*Shipment No*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Shipment No</label>
-                            <div class="col-md-8">
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.Id"
-                                       ng-disabled="viewOnly"
-                                       ng-click="showModalShipment($index)">
-                            </div>
-                        </div>
-                        @*Customer Code*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Shipper Code</label>
-                            <div class="col-md-8">
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.Customer.Code"
-                                       ng-disabled="true"
-                                       ng-click="showModal('#customer-list-modal', 'customer')">
-                            </div>
-                        </div>
-                        @*Customer Name*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Shipper Name</label>
-                            <div class="col-md-8">
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.Customer.Name"
-                                       ng-disabled="true">
-                            </div>
-                        </div>
-
-                        @*Consginee*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Consignee Name</label>
-                            <div class="col-md-8">
-                                <input id="consigneename"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.DeliverTo"
-                                       ng-disabled="true">
-                            </div>
-                        </div>
-                        @*Consignee Contact No*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Consignee Contact No</label>
-                            <div class="col-md-8">
-                                <input id="consigneecontactno"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.DeliverToContactNo"
-                                       ng-disabled="true">
-                            </div>
-                        </div>
-                        @*Consignee Address*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Consignee Address</label>
-                            <div class="col-md-8">
-                                <textarea rows="3" style="height:auto;"
-                                          class="form-control"
-                                          placeholder=""
-                                          ng-model="trkgdlvryList.Shipment.Address.Line1"
-                                          ng-disabled="true"></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-                    @*col2*@
-                    <div class="col-lg-6">
-                        @*Cargo Description*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Cargo Description</label>
-                            <div class="col-md-8">
-                                <textarea rows="3" style="height:auto;"
-                                          class="form-control"
-                                          placeholder=""
-                                          ng-model="trkgdlvryList.Description"
-                                          ng-disabled="true"></textarea>
-                            </div>
-                        </div>
-                        @*Quantity*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Quantity</label>
-                            <div class="col-md-8">
-                                <input id="quantity"
-                                       type="text"
-                                       class="form-control"
-                                       ng-model="trkgdlvryList.Quantity"
-                                       ng-disabled="viewOnly">
-                            </div>
-                        </div>
-                        @*Total CBM*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Total CBM</label>
-                            <div class="col-md-8">
-                                <input id="cbm"
-                                       type="text"
-                                       class="form-control"
-                                       ng-model="trkgdlvryList.CBM"
-                                       ng-disabled="viewOnly">
-                            </div>
-                        </div>
-                        @*Delivery Date*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Delivery Date</label>
-                            <div class="col-md-4">
-                                <div class='input-group date'>
-                                    <input type='text'
-                                           id='deliverydate'
-                                           class="form-control"
-                                           ng-model="trkgdlvryList.DeliveryDate"
-                                           ng-disabled="viewOnly" />
-                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                        <span class=" glyphicon glyphicon-remove-circle"></span>
-                                    </span>
+                                <label class="col-sm-3">Origin</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.OriginServiceableAreaName"
+                                           ng-disabled="true" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-sm pull-right" title="Search Origin" ng-click="showModal('#businessUnitOrigin-list-modal')">
+                                        <span class="glyphicons glyphicons-zoom_in">
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        @*Delivery Time*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Delivery Time</label>
-                            <div class="col-md-4">
-                                <div class='input-group date'>
-                                    <input type='text'
-                                           id='deliverytime'
-                                           class="form-control"
-                                           ng-model="trkgdlvryList.DeliveryTime"
-                                           ng-disabled="viewOnly" />
-                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                        <span class=" glyphicon glyphicon-remove-circle"></span>
-                                    </span>
+                    </div>
+                    <div class="row form-group form-group-sm">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <label class="col-sm-3">Destination</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.DestinationServiceableAreaName"
+                                           ng-disabled="true" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-sm pull-right" title="Search Destination" ng-click="showModal('#businessUnitDestination-list-modal')">
+                                        <span class="glyphicons glyphicons-zoom_in">
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        @*Cost Allocation*@
-                        <div class="form-group form-group-sm">
-                            <label class="col-md-3 control-label small">Cost Allocation</label>
-                            <div class="col-md-8">
-                                <input id="cbm"
-                                       type="text"
-                                       class="form-control"
-                                       ng-model="trkgdlvryList.CostAllocation"
-                                       ng-disabled="viewOnly">
-                            </div>
+                    </div>
+                    <div class="row form-group form-group-sm">
+                        <label class="col-sm-3">Cost Allocation</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control"
+                                   ng-model="truckingItem.DocumentNo"
+                                   ng-disabled="ViewOnly" />
                         </div>
                     </div>
-                    <script type="text/javascript">
-                        $(function () {
-                            $('#deliverydate').datetimepicker({
-                                format: 'MM-DD-YYYY',
-                                sideBySide: false,
-                                pickTime: false,
-                                //minDate: moment()
-                            })
-                            $('#deliverytime').datetimepicker({
-                                format: 'HH:mm',
-                                sideBySide: false,
-                                pickDate: false
-                            })
-                        });
-                    </script>
+                </div>
 
-                </form>
+                <div class="col-lg-5">
+                    <fieldset class="scheduler-border">
+                        <legend class="scheduler-border">Dispatch Information</legend>
+                        <div class="form-group form-group-sm">
+                            <div class="row">
+                                <label class="col-sm-4">Dispatch No</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.Id"
+                                           ng-disabled="true" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-sm pull-right" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
+                                        <span class="glyphicons glyphicons-zoom_in">
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="row">
+                                <label class="col-sm-4">Trucker</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.Trucker.Name"
+                                           ng-disabled="true" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="row">
+                                <label class="col-sm-4">Plate No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.Truck.PlateNo"
+                                           ng-disabled="true" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="row">
+                                <label class="col-sm-4">Driver</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           ng-model="truckingItem.Driver.Name"
+                                           ng-disabled="true" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
-
-            <!--end sa form-->
-        </fieldset>
+        </form>
+        @*<div class="col-lg-12">
+                <div ui-grid="truckingShipmentGridOptions" class="grid" ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
+            </div>*@
     </div>
+    @*Detail*@
+    <fieldset class="scheduler-border">
+        <legend class="scheduler-border">Dispatching Details</legend>
+        <div id="trckngDlvry" ng-repeat="trkgdlvryList in trkgDeliveryList">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Detail No {{$index+1}}</legend>
+                <div class="col-md-12">
+                    <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
+                        <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
+                    </span>
+                </div><br />
+                <!-------form------->
+                @*row1*@
+                <div class="row">
+                    <form class="form-horizontal" role="form">
+                        @*col1*@
+                        <div class="col-lg-6">
+                            @*Shipment No*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Shipment No</label>
+                                <div class="col-md-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="trkgdlvryList.Id"
+                                           ng-disabled="viewOnly"
+                                           ng-click="showModalShipment($index)">
+                                </div>
+                            </div>
+                            @*Customer Code*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Shipper Code</label>
+                                <div class="col-md-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="trkgdlvryList.Shipment.Customer.Code"
+                                           ng-disabled="true"
+                                           ng-click="showModal('#customer-list-modal', 'customer')">
+                                </div>
+                            </div>
+                            @*Customer Name*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Shipper Name</label>
+                                <div class="col-md-8">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="trkgdlvryList.Shipment.Customer.Name"
+                                           ng-disabled="true">
+                                </div>
+                            </div>
 
-    @*<div class="row text-right">
-        <div class="col-md-12">
-            <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewBooking()">
-                Add Shipment from Booking
-            </button>
+                            @*Consginee*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Consignee Name</label>
+                                <div class="col-md-8">
+                                    <input id="consigneename"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="trkgdlvryList.DeliverTo"
+                                           ng-disabled="true">
+                                </div>
+                            </div>
+                            @*Consignee Contact No*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Consignee Contact No</label>
+                                <div class="col-md-8">
+                                    <input id="consigneecontactno"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="trkgdlvryList.Shipment.DeliverToContactNo"
+                                           ng-disabled="true">
+                                </div>
+                            </div>
+                            @*Consignee Address*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Consignee Address</label>
+                                <div class="col-md-8">
+                                    <textarea rows="3" style="height:auto;"
+                                              class="form-control"
+                                              placeholder=""
+                                              ng-model="trkgdlvryList.Shipment.Address.Line1"
+                                              ng-disabled="true"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        @*col2*@
+                        <div class="col-lg-6">
+                            @*Cargo Description*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Cargo Description</label>
+                                <div class="col-md-8">
+                                    <textarea rows="3" style="height:auto;"
+                                              class="form-control"
+                                              placeholder=""
+                                              ng-model="trkgdlvryList.Description"
+                                              ng-disabled="true"></textarea>
+                                </div>
+                            </div>
+                            @*Quantity*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Quantity</label>
+                                <div class="col-md-8">
+                                    <input id="quantity"
+                                           type="text"
+                                           class="form-control"
+                                           ng-model="trkgdlvryList.Quantity"
+                                           ng-disabled="viewOnly">
+                                </div>
+                            </div>
+                            @*Total CBM*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Total CBM</label>
+                                <div class="col-md-8">
+                                    <input id="cbm"
+                                           type="text"
+                                           class="form-control"
+                                           ng-model="trkgdlvryList.CBM"
+                                           ng-disabled="viewOnly">
+                                </div>
+                            </div>
+                            @*Delivery Date*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Delivery Date</label>
+                                <div class="col-md-4">
+                                    <div class='input-group date'>
+                                        <input type='text'
+                                               id='deliverydate'
+                                               class="form-control"
+                                               ng-model="trkgdlvryList.DeliveryDate"
+                                               ng-disabled="viewOnly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @*Delivery Time*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Delivery Time</label>
+                                <div class="col-md-4">
+                                    <div class='input-group date'>
+                                        <input type='text'
+                                               id='deliverytime'
+                                               class="form-control"
+                                               ng-model="trkgdlvryList.DeliveryTime"
+                                               ng-disabled="viewOnly" />
+                                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @*Cost Allocation*@
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small">Cost Allocation</label>
+                                <div class="col-md-8">
+                                    <input id="cbm"
+                                           type="text"
+                                           class="form-control"
+                                           ng-model="trkgdlvryList.CostAllocation"
+                                           ng-disabled="viewOnly">
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $('#deliverydate').datetimepicker({
+                                    format: 'MM-DD-YYYY',
+                                    sideBySide: false,
+                                    pickTime: false,
+                                    //minDate: moment()
+                                })
+                                $('#deliverytime').datetimepicker({
+                                    format: 'HH:mm',
+                                    sideBySide: false,
+                                    pickDate: false
+                                })
+                            });
+                        </script>
+
+                    </form>
+                </div>
+
+                <!--end sa form-->
+            </fieldset>
         </div>
-    </div>*@
-</fieldset>
+
+        @*<div class="row text-right">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewBooking()">
+                        Add Shipment from Booking
+                    </button>
+                </div>
+            </div>*@
+    </fieldset>
 }
 
 <!-- Trucking List -->
