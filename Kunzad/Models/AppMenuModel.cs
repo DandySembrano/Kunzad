@@ -27,8 +27,6 @@ namespace Kunzad.Models
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
             m.MenuItems.Add(new MenuItem("Create New", "glyphicons glyphicons-circle_plus", "#/booking"));
-            m.MenuItems.Add(new MenuItem("Outbound", "glyphicons glyphicons-inbox_out", "#"));
-            m.MenuItems.Add(new MenuItem("Inbound", "glyphicons glyphicons-inbox_in", "#"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Transport
@@ -38,8 +36,8 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Trucking", "glyphicons glyphicons-truck", "#/trucking"));
-            m.MenuItems.Add(new MenuItem("Trucking", "glyphicons glyphicons-truck", "#"));
+            m.MenuItems.Add(new MenuItem("Dispatching", "glyphicons glyphicons-truck", "#/trucking"));
+            m.MenuItems.Add(new MenuItem("Waybill Processing", "glyphicons glyphicons-truck", "#/truckingwb"));
             m.MenuItems.Add(new MenuItem("Sea Freight", "glyphicons glyphicons-boat", "#/seafreight"));
             m.MenuItems.Add(new MenuItem("Air Freight", "glyphicons glyphicons-airplane", "#"));
             menuGroup.MenuGroupItems.Add(m);
