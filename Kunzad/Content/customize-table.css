@@ -2,7 +2,8 @@
 .myTableContainter {
     max-width: inherit;
     width:100%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x:hidden;
 }
 .myTableContent {
     padding-left:10px;

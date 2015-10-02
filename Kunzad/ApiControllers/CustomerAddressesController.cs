@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class CustomerAddressesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        private int pageSize = 20;
         // GET: api/CustomerAddresses
         public IQueryable<CustomerAddress> GetCustomerAddresses()
         {
@@ -83,6 +83,19 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPut]
+        //Dynamic filtering
+        public IHttpActionResult PutCustomerAddress(string type, int param1, List<CustomerAddress> customerAddress)
+        {
+            Object[] customerAddresses = new Object[pageSize];
+            this.filterRecord(param1, type, customerAddress.ElementAt(0), customerAddress.ElementAt(1), ref customerAddresses);
+
+            if (customerAddresses != null)
+                return Ok(customerAddresses);
+            else
+                return Ok();
+        }
+
         // POST: api/CustomerAddresses
         [ResponseType(typeof(CustomerAddress))]
         public IHttpActionResult PostCustomerAddress(CustomerAddress customerAddress)
@@ -127,6 +140,58 @@ namespace Kunzad.ApiControllers
         private bool CustomerAddressExists(int id)
         {
             return db.CustomerAddresses.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, CustomerAddress customerAddress, CustomerAddress customerAddress1, ref Object[] customerAddresses)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredCustomerAddresses = (from ca in db.CustomerAddresses
+                                             where customerAddress.Id == null || customerAddress.Id == 0 ? true : ca.Id == customerAddress.Id
+                                             where customerAddress.CustomerId == null || customerAddress.CustomerId == 0 ? true : ca.CustomerId == customerAddress.CustomerId
+                                             where customerAddress.Line1 == null ? !customerAddress.Line1.Equals("") : (ca.Line1.ToLower().Equals(customerAddress.Line1) || ca.Line1.ToLower().Contains(customerAddress.Line1))
+                                             where customerAddress.Line2 == null ? !customerAddress.Line1.Equals("") : (ca.Line2.ToLower().Equals(customerAddress.Line2) || ca.Line2.ToLower().Contains(customerAddress.Line2))
+                                             where customerAddress.PostalCode == null ? !customerAddress.PostalCode.Equals("") : (ca.PostalCode.ToLower().Equals(customerAddress.PostalCode) || ca.PostalCode.ToLower().Contains(customerAddress.PostalCode))
+                                             where customerAddress.CityMunicipality.Name == null ? !customerAddress.CityMunicipality.Name.Equals("") : (ca.CityMunicipality.Name.ToLower().Equals(customerAddress.CityMunicipality.Name) || ca.CityMunicipality.Name.ToLower().Contains(customerAddress.CityMunicipality.Name))
+                                             select new
+                                            {
+                                                ca.Id,
+                                                ca.Line1,
+                                                ca.Line2,
+                                                ca.PostalCode,
+                                                ca.IsBillingAddress,
+                                                ca.IsDeliveryAddress,
+                                                ca.IsPickupAddress,
+                                                CityMunicipality = (from cm in db.CityMunicipalities
+                                                                    where cm.Id == ca.CityMunicipalityId
+                                                                    select new
+                                                                    {
+                                                                        cm.Id,
+                                                                        cm.Name,
+                                                                        StateProvince = (from sp in db.StateProvinces
+                                                                                         where sp.Id == cm.StateProvinceId
+                                                                                         select new { 
+                                                                                            sp.Id,
+                                                                                            sp.Name
+                                                                                         })
+                                                                    })
+                                            })
+                                        .OrderBy(cc => cc.Id)
+                                        .Skip(skip).Take(pageSize).ToArray();
+            customerAddresses = filteredCustomerAddresses;
         }
     }
 }

@@ -40,7 +40,7 @@
                                     @RenderSection("tab2Content", false)
                                 </div>
                                 <!-- Panel Footer -->
-                                @*<div class="panel-footer">
+                                <div class="panel-footer" ng-show="!withDirective">
                                     <div class="row">
                                         <div class="col-md-6" align="left">
                                             <button class="btn btn-sm btn-primary" type="button" ng-click="actionForm('Create')">Create</button>
@@ -53,7 +53,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>*@
+                                </div>
                             </div>
                         </div>
                     </div>

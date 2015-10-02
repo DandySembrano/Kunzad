@@ -1,14 +1,19 @@
-﻿kunzadApp.directive('dirAddress', function () {
+﻿/*---------------------------------------------------------------------------------//
+ Directive Name: dirAddress
+ Author: Kenneth Ybañez
+ Desription: Used if module needs address information
+---------------------------------------------------------------------------------*/
+kunzadApp.directive('dirAddress', function () {
     return {
         restrict: 'E',
         scope: {
             datadefinition: "=", /*
-                                    ModalId
+                                    ModalId  - Id for the modal that will be used for showing the address modal
                                     DataItem - Address object
                                     ViewOnly
-                                    ActionMode
-                                    Header
-                                    Container
+                                    ActionMode- Used 
+                                    Header    - Header of the address modal
+                                    Container - Contains the formatted address
                                 */
             showmodal: "=",
             otheractions: "&"

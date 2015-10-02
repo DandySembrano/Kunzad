@@ -104,13 +104,18 @@
                         @*Customer Code*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Code</label>
-                            <div class="col-md-8">
-                                <input type="text"
+                            <div class="col-md-7">
+                                <input id="customerCode"
+                                       type="text"
                                        class="form-control"
                                        placeholder=""
                                        ng-model="shipmentItem.Customer.Code"
-                                       ng-disabled="viewOnly"
-                                       ng-click="showModal('#customer-list-modal', 'customer')">
+                                       ng-disabled="viewOnly">
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Search Shipper" ng-click="showCustomer()">
+                                    <span class="glyphicons glyphicons-zoom_in" style="color:#4a89dc"></span>
+                                </button>
                             </div>
                         </div>
                         @*Customer Name*@
@@ -187,8 +192,10 @@
                                           ng-model="shipmentItem.DeliveryAddress"
                                           ng-disabled="true"></textarea>
                             </div>
-                            <div class="col-md-1" ng-disabled="viewOnly" ng-click="showDeliveryAddress = true">
-                                <span class="glyphicon glyphicon-edit" style="font-size: 20px; color:#4a89dc"></span>
+                            <div class="col-sm-1">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly"  title="Input address here" ng-click="showDeliveryAddress = true">
+                                    <span class="glyphicon glyphicon-edit" style="color:#4a89dc"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -241,14 +248,18 @@
                         @*Pickup Business Unit*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Operation Site</label>
-                            <div class="col-md-8">
+                            <div class="col-md-7">
                                 <input id="BusinessUnit"
                                        type="text"
                                        class="form-control"
                                        placeholder=""
                                        ng-model="shipmentItem.BusinessUnit1.Name"
-                                       ng-disabled="viewOnly"
-                                       ng-click="showModal('#business-unit-list-modal')">
+                                       ng-disabled="viewOnly">
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Search Operation Site" ng-click="showBusinessUnit()">
+                                    <span class="glyphicons glyphicons-zoom_in" style="color:#4a89dc"></span>
+                                </button>
                             </div>
                         </div>
                         @*Pick Up Date*@
@@ -261,7 +272,7 @@
                                            class="form-control"
                                            ng-model="shipmentItem.PickupDate"
                                            ng-disabled="viewOnly" />
-                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
                                 </div>
@@ -277,7 +288,7 @@
                                            class="form-control"
                                            ng-model="shipmentItem.PickupTime"
                                            ng-disabled="viewOnly" />
-                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class="input-group-addon" ng-disabled="viewOnly"  title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
                                 </div>
@@ -294,8 +305,10 @@
                                           ng-model="shipmentItem.OriginAddress"
                                           ng-disabled="true"></textarea>
                             </div>
-                            <div class="col-md-1" ng-disabled="viewOnly" ng-click="showPickupAddress = true">
-                                <span class="glyphicon glyphicon-edit" style="font-size: 20px; color:#4a89dc"></span>
+                            <div class="col-sm-1">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly"  title="Input address here" ng-click="showPickupAddress = true">
+                                    <span class="glyphicon glyphicon-edit" style="color:#4a89dc"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -324,11 +337,15 @@
     <div style="padding:0px 10px 0px 10px">
         <div class="text-right toggle-hide" ng-click="hideShipmentToggle()" ng-show="shipmentToggle">Hide</div>
         <div id="shipmentToggle">
-            <div id="filterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
         </div><br>
         <div id="shipmentContainer"></div>
     </div>
 }
+
+@*Directive if module has address input*@
+<dir-address datadefinition="deliveryAddressDataDefinition" showmodal="showDeliveryAddress" otheractions="otherActionsDeliveryAddress(action)"></dir-address>
+<dir-address datadefinition="pickupAddressDataDefinition" showmodal="showPickupAddress" otheractions="otherActionsPickupAddress(action)"></dir-address>
 
 <!-- Customer List Modal -->
 <div id="customer-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
@@ -338,163 +355,77 @@
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:300px; max-height: 100%">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Code</th>
-                            <th class="myTableCell cell-10 small text-center">Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="c in customerList"
-                            ng-click="closeCustomerList(c)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{c.Code}}</td>
-                            <td class="myTableCell cell-10 small">{{c.Name}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+                <div id="customerFilterContainter" style="padding-left:10px;"></div>
+                <div id="customerContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeCustomerList(c)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
-<!--End of Customer List Modal
+<!--End of Customer List Modal -->
 
 <!-- Customer Contacts List Modal -->
-<div id="customer-contacts-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<div id="customerContacts-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Contact List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Contacts List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:300px; max-height: 100%">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Name</th>
-                            <th class="myTableCell cell-10 small text-center">Title</th>
-                            <th class="myTableCell cell-10 small text-center">Email</th>
-                            <th class="myTableCell cell-10 small text-center">Alternate Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="cc in customerContactList"
-                            ng-click="closeCustomerContacts(cc)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{cc.Contact.Name}}</td>
-                            <td class="myTableCell cell-10 small">{{cc.Contact.Title}}</td>
-                            <td class="myTableCell cell-10 small">{{cc.Contact.Email}}</td>
-                            <td class="myTableCell cell-10 small">{{cc.Contact.AlternateEmail}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="customerContactsFilterContainter" style="padding-left:10px;"></div>
+            <div id="customerContactsContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeCustomerContacts(cc)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
 <!--End of Customer Contacts List Modal -->
 
-<!-- Customer Contact Phone List Modal -->
-<div id="customer-contact-phones-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<!-- Customer ContactPhones List Modal -->
+<div id="customerContactPhones-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Contact Phone List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer ContactPhones List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:300px; max-height: 100%">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Contact Number</th>
-                            <th class="myTableCell cell-10 small text-center">Contact Number Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="ccp in customerContactPhoneList"
-                            ng-click="closeCustomerContactPhones(ccp)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{ccp.ContactNumber}}</td>
-                            <td class="myTableCell cell-10 small">{{ccp.ContactNumberType.Type}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="customerContactPhonesFilterContainter" style="padding-left:10px;"></div>
+            <div id="customerContactPhonesContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeCustomerContactPhones(ccp)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
-<!--End of Customer Contact Phone List Modal -->
+<!--End of Customer ContactPhones List Modal -->
 
-<!-- Customer Address List Modal -->
-<div id="customer-address-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<!-- Customer Addresses List Modal -->
+<div id="customerAddresses-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Customer Addresses List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:300px; max-height: 100%">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Line 1</th>
-                            <th class="myTableCell cell-10 small text-center">Line 2</th>
-                            <th class="myTableCell cell-10 small text-center">City/Municipality</th>
-                            <th class="myTableCell cell-10 small text-center">Postal Code</th>
-                            <th class="myTableCell cell-10 small text-center">Is Billing Address?</th>
-                            <th class="myTableCell cell-10 small text-center">Is Delivery Address?</th>
-                            <th class="myTableCell cell-10 small text-center">Is Pickup Address?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="ca in customerAddressList"
-                            ng-click="closeCustomerAddressList(ca)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{ca.Line1}}</td>
-                            <td class="myTableCell cell-10 small">{{ca.Line2}}</td>
-                            <td class="myTableCell cell-10 small">{{ca.CityMunicipality.Name}}</td>
-                            <td class="myTableCell cell-10 small">{{ca.PostalCode}}</td>
-                            <td class="myTableCell cell-10 small">{{(ca.IsBillingAddress == true ? "Yes" : "No")}}</td>
-                            <td class="myTableCell cell-10 small">{{(ca.IsDeliveryAddress == true ? "Yes" : "No")}}</td>
-                            <td class="myTableCell cell-10 small">{{(ca.IsPickupAddress == true ? "Yes" : "No")}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="customerAddressFilterContainter" style="padding-left:10px;"></div>
+            <div id="customerAddressContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeCustomerAddressList(ca)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
-<!--End of Customer List Modal -->
+<!--End of Customer Addresses List Modal -->
 
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
@@ -504,68 +435,20 @@
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:300px; max-height: 100%">
-                <table class="myTableContent table-bordered">
-                    <thead>
-                        <tr class="myTableRow-header text-dark small">
-                            <th class="myTableCell cell-seqno small">No</th>
-                            <th class="myTableCell cell-10 small text-center">Code</th>
-                            <th class="myTableCell cell-10 small text-center">Name</th>
-                            <th class="myTableCell cell-10 small text-center">Operating Site?</th>
-                            <th class="myTableCell cell-10 small text-center">Has Airport?</th>
-                            <th class="myTableCell cell-10 small text-center">Has Seaport?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="myTableRow"
-                            ng-repeat="bu in businessUnitList"
-                            ng-click="closeBusinessUnitList(bu)">
-                            <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                            <td class="myTableCell cell-10 small">{{bu.Code}}</td>
-                            <td class="myTableCell cell-10 small">{{bu.Name}}</td>
-                            <td class="myTableCell cell-10 small">{{(bu.isOperatingSite == true ? 'Yes' : 'No')}}</td>
-                            <td class="myTableCell cell-10 small">{{(bu.hasAirPort == true ? 'Yes' : 'No')}}</td>
-                            <td class="myTableCell cell-10 small">{{(bu.hasSeaPort == true ? 'Yes' : 'No')}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeBusinessUnitList(bu)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
 <!--End of Business Unit List Modal -->
 
-@*Directive if module has address input*@
-<dir-address datadefinition="deliveryAddressDataDefinition" showmodal="showDeliveryAddress" otheractions="otherActionsDeliveryAddress(action)"></dir-address>
-<dir-address datadefinition="pickupAddressDataDefinition" showmodal="showPickupAddress" otheractions="otherActionsPickupAddress(action)"></dir-address>
-
-@*Filter Modal*@
-@*<div id="filter-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:60%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Filter Criteria</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body" style="height:400px; max-height:100%">
-            <div class="myTableContainter" style="height:400px; max-height: 100%">
-                <div id="filterContainter" style="padding-left:40px;"></div>
-            </div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeFilterModal()">Close</button>
-        </div>
-    </div>
-</div>*@
-
 @*Form Context-Menu*@
-<div class="dropdown position-fixed" id="FormMenu">
+<div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown">
     <ul class="dropdown-menu" role="menu">
         <li>
             <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>

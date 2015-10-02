@@ -91,6 +91,19 @@ namespace Kunzad.ApiControllers
             return Ok(customer);
         }
 
+        [HttpPut]
+        //Dynamic filtering
+        public IHttpActionResult PutCustomer(string type, int param1, List<Customer> customer)
+        {
+            Object[] customers = new Object[pageSize];
+            this.filterRecord(param1, type, customer.ElementAt(0), customer.ElementAt(1), ref customers);
+
+            if (customers != null)
+                return Ok(customers);
+            else
+                return Ok();
+        }
+
         // PUT: api/Customers/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCustomer(int id, Customer customer)
@@ -330,6 +343,41 @@ namespace Kunzad.ApiControllers
         private bool CustomerExists(int id)
         {
             return db.Customers.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, Customer customer, Customer customer1, ref Object[] customers)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredCustomers = (from c in db.Customers
+                                         select new
+                                         {
+                                             c.Id,
+                                             c.Code,
+                                             c.Name,
+                                             c.TIN,
+                                             CustomerGroup = (from cg in db.CustomerGroups where cg.Id == c.CustomerGroupId select new { cg.Id, cg.Name }),
+                                             Industry = (from i in db.Industries where i.Id == c.IndustryId select new { i.Id, i.Name })
+                                         })
+                                            .Where(c => customer.Id == null || customer.Id == 0 ? true : c.Id == customer.Id)
+                                            .Where(c => customer.Code == null ? !customer.Code.Equals("") : (c.Code.ToLower().Equals(customer.Code)))
+                                            .Where(c => customer.Name == null ? !customer.Name.Equals("") : (c.Name.ToLower().Equals(customer.Name) || c.Name.ToLower().Contains(customer.Name)))
+                                            .OrderBy(c => c.Id)
+                                            .Skip(skip).Take(pageSize).ToArray();
+            customers = filteredCustomers;
         }
     }
 }

@@ -2,6 +2,7 @@
 function BookingController($scope, $http, $interval, $filter, $rootScope, $compile) {
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
+    $scope.modalStyle = "";
     $scope.shipmentGridOptions = {};
     $scope.shipmentGridOptions.data = [];
     $scope.shipmentItem = {};
@@ -19,6 +20,146 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.serviceList = [];
     $scope.shipmentTypeList = [];
     $scope.shipmentToggle = false;
+    $scope.withDirective = true;
+
+    //function that will be called during submit
+    $scope.submit = function () {
+        $scope.shipmentIsError = false;
+        $scope.shipmentErrorMessage = "";
+        $scope.shipmentSubmitDefinition.Submit = true;
+    }
+
+    //Function that will trigger during Edit,Delete and View Action
+    $scope.onEDV = function () {
+        $scope.shipmentItem = [];
+        $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
+        console.log($scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality);
+        $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
+        $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
+        $scope.controlNoHolder = $scope.shipmentItem.Id;
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+    };
+
+    //Displays Modal
+    $scope.showModal = function (panel, type) {
+        $scope.modalType = type;
+        openModalPanel(panel);
+    };
+
+    $scope.closeModal = function () {
+        jQuery.magnificPopup.close();
+    };
+
+    //Initialize address field
+    $scope.initializeAddressField = function (addressItem, type) {
+        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
+        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+        if ($scope.modalType == "Pickup")
+            $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
+        else if ($scope.modalType == "Consignee")
+            $scope.shipmentItem.DeliveryAddress = $scope.formattedAddress;
+        else {//MasterList Display
+            return $scope.formattedAddress;
+        }
+
+
+    };
+
+    //Initialize Payment Mode List for DropDown
+    $scope.initPaymentModeList = function () {
+        $scope.paymentModeList = $rootScope.getPaymentModeList();
+    };
+
+    //Initialize Service List for DropDown
+    $scope.initServiceList = function () {
+        $http.get("/api/Services")
+        .success(function (data, status) {
+            $scope.serviceList = data;
+        })
+    };
+
+    //Initialize Shipment Type List for DropDown
+    $scope.initShipmentTypeList = function () {
+        $http.get("/api/ShipmentTypes")
+        .success(function (data, status) {
+            $scope.shipmentTypeList = [];
+            $scope.shipmentTypeList = data;
+        })
+    };
+
+    //function that will be invoked when user click tab
+    $scope.setSelectedTab = function (tab) {
+        $scope.shipmentIsError = false;
+        $scope.shipmentErrorMessage = "";
+        $scope.selectedTab = tab;
+    };
+
+    //Initialize service type
+    $scope.setServiceType = function (id) {
+        for (var i = 0; i < $scope.serviceList.length; i++) {
+            if (id == $scope.serviceList[i].Id) {
+                $scope.shipmentItem.Service = $scope.serviceList[i];
+                return true;
+            }
+        }
+    };
+
+    //Initialize shipment type
+    $scope.setShipmentType = function (id) {
+        for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
+            if (id == $scope.serviceList[i].Id) {
+                $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
+                return true;
+            }
+        }
+    }
+
+    //Find specific character
+    $scope.findCharacter = function (v, c) {
+        for (var i = 0; i < v.length; i++) {
+            if (v.charAt(i) == c)
+                return true;
+        }
+        return false;
+    };
+
+    //Disable typing
+    $('#OriginAddress,#DeliveryAddress,#BusinessUnit, #customerCode, #pickupdate, #pickuptime').keypress(function (key) {
+        return false;
+    });
+
+    //Check if input is whole number
+    $('#consigneecontactno,#quantity').keypress(function (key) {
+        if (key.charCode < 48 || key.charCode > 57) return false;
+    });
+
+    //Check if input is decimal number only
+    $('#taxamount,#taxpercentage,#revenue,#cbm').keypress(function (key) {
+        if (key.charCode == 46) {
+            if ($scope.findCharacter(this.value, '.'))
+                return false;
+            else
+                return true;
+        }
+        else if (key.charCode < 48 || key.charCode > 57)
+            return false;
+        else
+            return true;
+    });
+
+    //Check if input contains letter only
+    $('#consigneename').keypress(function (key) {
+        if (!((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)))
+            return true;
+            //for back space
+        else if (key.charCode == 0)
+            return true;
+        else
+            return false;
+    });
+
+    //====================================SHIPMENT FILTERING AND DATAGRID==========================
     //Load shipment datagrid for compiling
     $scope.loadShipmentDataGrid = function () {
         $scope.initShipmentDataGrid();
@@ -37,8 +178,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "RequiredFields": ['ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'CustomerId-Customer', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'PaymentMode-Payment Mode', 'DeliverTo-Consignee', 'DeliveryAddress-Consignee address', 'PickUpBussinessUnitId-Operation Site', 'OriginAddress-Pickup address'],
                 "CellTemplate": ["None"],
                 "RowTemplate": "Default",
-                "EnableScroll": false,
-                "EnablePagination": true,
+                "EnableScroll": true,
+                "EnablePagination": false,
                 "CurrentPage": 1, //By default
                 "PageSize": 20, //Should be the same in back-end
                 "DoPagination": false, //By default
@@ -47,8 +188,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "DataTarget": "ShipmentMenu",
                 "ShowCreate": true,
                 "ShowContextMenu": true,
-                "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find']
+                "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
             }
         };
 
@@ -60,7 +201,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "DataItem": {},
                 "Index": -1 //By Default
             }
-        }
+        };
 
         $scope.shipmentOtheractions = function (action) {
             switch (action) {
@@ -141,13 +282,21 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1.CityMunicipality;
                     return true;
                 case "PostSave":
+                    var addressHolder = $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Id = addressHolder[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name = addressHolder[0].Name;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = addressHolder[0].StateProvince.Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = addressHolder[0].StateProvince.Name;
+                    addressHolder = {};
+                    $scope.shipmentItem.Id = $scope.shipmentSubmitDefinition.DataItem.Id;
+                    $scope.shipmentItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
+                    $scope.shipmentItem.DeliveryAddressId = $scope.shipmentSubmitDefinition.DataItem.DeliveryAddressId;
+                    $scope.shipmentItem.OriginAddressId = $scope.shipmentSubmitDefinition.DataItem.OriginAddressId;
+                    $scope.shipmentItem.Address.Id = $scope.shipmentSubmitDefinition.DataItem.Address.Id;
+                    $scope.shipmentItem.Address1.Id = $scope.shipmentSubmitDefinition.DataItem.Address1.Id;
                     $scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
-                    $scope.shipmentDataDefinition.DataItem.Id = $scope.shipmentSubmitDefinition.DataItem.Id;
-                    $scope.shipmentDataDefinition.DataItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
-                    $scope.shipmentDataDefinition.DataItem.DeliveryAddressId = $scope.shipmentSubmitDefinition.DataItem.DeliveryAddressId;
-                    $scope.shipmentDataDefinition.DataItem.OriginAddressId = $scope.shipmentSubmitDefinition.DataItem.OriginAddressId;
-                    $scope.shipmentDataDefinition.DataItem.Address.Id = $scope.shipmentSubmitDefinition.DataItem.Address.Id;
-                    $scope.shipmentDataDefinition.DataItem.Address1.Id = $scope.shipmentSubmitDefinition.DataItem.Address1.Id;
                     alert("Successfully Saved.");
                     $scope.onEDV();
                     $scope.submitButtonText = "Submit";
@@ -197,10 +346,19 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         promise = undefined;
                     },200);
                     return true;
+                case "Clear":
+                    $scope.selectedTab = $scope.tabPages[1];
+                    $scope.shipmentDataDefinition.DataList = [];
+                    //Required if pagination is enabled
+                    if ($scope.shipmentDataDefinition.EnablePagination == true) {
+                        $scope.shipmentDataDefinition.CurrentPage = 1;
+                        $scope.shipmentDataDefinition.DoPagination = true;
+                    }
+                    return true;
                 default: return true;
             }
         };
-
+        
         $scope.shipmentResetData = function () {
             $scope.shipmentItem = {
                 "Id": null,
@@ -208,57 +366,23 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "BusinessUnit": {
                     "Id": null,
                     "Code": null,
-                    "Name": null,
-                    "BusinessUnitTypeId": null,
-                    "ParentBusinessUnitId": null,
-                    "isOperatingSite": null,
-                    "hasAirPort": null,
-                    "hasSeaPort": null,
-                    "CreatedDate": null,
-                    "LastUpdatedDate": null,
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
+                    "Name": null
                 },
                 "PickUpBussinessUnitId": null,
                 "BusinessUnit1": {
                     "Id": null,
                     "Code": null,
-                    "Name": null,
-                    "BusinessUnitTypeId": null,
-                    "ParentBusinessUnitId": null,
-                    "isOperatingSite": null,
-                    "hasAirPort": null,
-                    "hasSeaPort": null,
-                    "CreatedDate": null,
-                    "LastUpdatedDate": null,
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
+                    "Name": null
                 },
                 "ServiceId": null,
                 "Service": {
                     "Id": null,
-                    "Name": null,
-                    "ServiceCategoryId": null,
-                    "Description": null,
-                    "IsMultimodal": null,
-                    "Length": null,
-                    "Width": null,
-                    "Height": null,
-                    "MaxWeight": null,
-                    "DeliveryWorkingDays": null,
-                    "CreatedDate": null,
-                    "LastUpdatedDate": null,
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
+                    "Name": null
                 },
                 "ShipmentTypeId": null,
                 "ShipmentType": {
                     "Id": null,
-                    "Name": null,
-                    "CreatedDate": null,
-                    "LastUpdatedDate": null,
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
+                    "Name": null
                 },
                 "PaymentMode": null,
                 "CustomerId": null,
@@ -333,11 +457,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                             "Name": null
                         }
                     },
-                    "PostalCode": null,
-                    "CreatedDate": null,
-                    "LastUpdatedDate": null,
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
+                    "PostalCode": null
                 },
                 "Quantity": 0,
                 "TotalCBM": 0,
@@ -368,7 +488,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "LastUpdatedByUserId": null
             };
             $scope.shipmentItem.BusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
-            $scope.initBusinessUnitList();
         };
 
         $scope.shipmentShowFormError = function (error) {
@@ -385,7 +504,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         var html = '<dir-data-grid2 datadefinition      = "shipmentDataDefinition"' +
                                     'submitdefinition   = "shipmentSubmitDefinition"' +
                                     'otheractions       = "shipmentOtheractions(action)"' +
-                                    'resetdata          = "shipmentDataItem"' +
+                                    'resetdata          = "shipmentResetData()"' +
                                     'showformerror      = "shipmentShowFormError(error)">' +
                     '</dir-data-grid2>';
         $content = angular.element(document.querySelector('#shipmentContainer')).html(html);
@@ -405,7 +524,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                                 'filterlistener="shipmentDataDefinition.Retrieve"' +
                                 'otheractions="shipmentOtherActionsFiltering(action)"' +
                '</dir-filtering>';
-        $content = angular.element(document.querySelector('#filterContainter')).html(html);
+        $content = angular.element(document.querySelector('#shipmentFilterContainter')).html(html);
         $compile($content)($scope);
     };
 
@@ -421,7 +540,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 promise = undefined;
             }, 200)
         };
-        $scope.initFilteringDefinition = function () {
+        $scope.initShipmentFilteringDefinition = function () {
             $scope.shipmentFilteringDefinition = {
                 "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
@@ -441,7 +560,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
-                "ClearData": false
+                "ClearData": false,
+                "SetSourceToNull": false
             }
         };
 
@@ -450,17 +570,17 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 //Initialize DataItem1 and DataItem2 for data filtering
                 case 'PreFilterData':
                     $scope.selectedTab = $scope.tabPages[1];
-                    $scope.source = $scope.shipmentFilteringDefinition.Source;
+                    $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
-                    for (var i = 0; i < $scope.source.length; i++) {
-                        if ($scope.source[i].Type == "Date") {
-                            $scope.shipmentFilteringDefinition.DataItem1[$scope.source[i].Column] = $scope.source[i].From;
-                            $scope.shipmentFilteringDefinition.DataItem2[$scope.source[i].Column] = $scope.source[i].To;
+                    for (var i = 0; i < $scope.shipmentSource.length; i++) {
+                        if ($scope.shipmentSource[i].Type == "Date") {
+                            $scope.shipmentFilteringDefinition.DataItem1[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                            $scope.shipmentFilteringDefinition.DataItem2[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
                         }
                         else
-                            $scope.shipmentFilteringDefinition.DataItem1[$scope.source[i].Column] = $scope.source[i].From;
+                            $scope.shipmentFilteringDefinition.DataItem1[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                     }
-                    
+
                     if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                         $scope.shipmentDataDefinition.CurrentPage = 1;
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
@@ -469,9 +589,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         $scope.shipmentDataDefinition.DataList = [];
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
-                    //Scroll
+                        //Scroll
                     else {
-                        if ($scope.shipmentFilteringDefinition.ClearData) 
+                        if ($scope.shipmentFilteringDefinition.ClearData)
                             $scope.shipmentDataDefinition.DataList = [];
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
@@ -484,7 +604,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
-                            $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j])
+                            $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
                     }
 
                     if ($scope.shipmentDataDefinition.EnablePagination == true) {
@@ -500,7 +620,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         //Initalize Consignee Address
                         $scope.shipmentDataDefinition.DataList[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address, 'MasterList');
                     }
-                    if($scope.shipmentToggle == true)
+                    if ($scope.shipmentToggle == true)
                         $scope.hideShipmentToggle();
                     return true;
                 case 'GetBusinessList':
@@ -509,35 +629,893 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     return true;
                 default: return true;
             }
-        }
+        };
 
         $scope.initShipmentDataItems = function () {
             $scope.shipmentFilteringDefinition.DataItem1 = angular.copy($rootScope.shipmentObj());
             $scope.shipmentFilteringDefinition.DataItem2 = angular.copy($rootScope.shipmentObj());
         };
 
-        $scope.initFilteringDefinition();
+        $scope.initShipmentFilteringDefinition();
         $scope.initShipmentDataItems();
     };
+    //=====================================END OF SHIPMENT FILTERING AND DATAGRID===================
 
-    //function that will be called during submit
-    $scope.submit = function () {
-        $scope.shipmentIsError = false;
-        $scope.shipmentErrorMessage = "";
-        $scope.shipmentSubmitDefinition.Submit = true;
-    }
+    //=====================================BUSINESS UNIT MODAL======================================
+    $scope.showBusinessUnit = function () {
+        $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
+        $scope.businessUnitDataDefinition.Retrieve = true;
+        openModalPanel("#business-unit-list-modal");
 
-    //Function that will trigger during Edit,Delete and View Action
-    $scope.onEDV = function () {
-        $scope.shipmentItem = [];
-        $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
-        $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
-        $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
-        $scope.controlNoHolder = $scope.shipmentItem.Id;
-        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
     };
 
-    //Initialize Delivery Address Modal
+    //Load businessUnit filtering for compiling
+    $scope.loadBusinessUnitFiltering = function () {
+        $scope.initBusinessUnitFilteringParameters();
+        $scope.initBusinessUnitFilteringContainter();
+    };
+
+    //initialize businessUnit filtering parameters
+    $scope.initBusinessUnitFilteringContainter = function () {
+        html = '<dir-filtering  filterdefinition="businessUnitFilteringDefinition"' +
+                                'filterlistener="businessUnitDataDefinition.Retrieve"' +
+                                'otheractions="businessUnitOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#businessUnitFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initBusinessUnitFilteringParameters = function () {
+        $scope.initBusinessUnitFilteringDefinition = function () {
+            $scope.businessUnitFilteringDefinition = {
+                "Url": ($scope.businessUnitDataDefinition.EnablePagination == true ? 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage : 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
+                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "Source": [
+                            { "Index": 0, "Label": "Code", "Column": "Code", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.businessUnitOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.businessUnitSource = $scope.businessUnitFilteringDefinition.Source;
+                    //Optional in using this, can use switch if every source type has validation before filtering
+                    for (var i = 0; i < $scope.businessUnitSource.length; i++) {
+                        if ($scope.businessUnitSource[i].Type == "Date") {
+                            $scope.businessUnitFilteringDefinition.DataItem1[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                            $scope.businessUnitFilteringDefinition.DataItem2[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
+                        }
+                        else
+                            $scope.businessUnitFilteringDefinition.DataItem1[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                    }
+
+                    if ($scope.businessUnitDataDefinition.EnablePagination == true && $scope.businessUnitFilteringDefinition.ClearData) {
+                        $scope.businessUnitDataDefinition.CurrentPage = 1;
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.businessUnitDataDefinition.EnablePagination == true) {
+                        $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage;
+                    }
+                        //Scroll
+                    else {
+                        if ($scope.businessUnitFilteringDefinition.ClearData)
+                            $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length;
+                    }
+                    $scope.businessUnitFilteringDefinition.DataItem1.ParentBusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.businessUnitFilteringDefinition.DataList = $rootScope.formatBusinessUnit($scope.businessUnitFilteringDefinition.DataList);
+                    if ($scope.businessUnitDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.businessUnitFilteringDefinition.DataList.length; j++)
+                            $scope.businessUnitDataDefinition.DataList.push($scope.businessUnitFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.businessUnitDataDefinition.EnablePagination == true) {
+                        $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitDataDefinition.DataList = $scope.businessUnitFilteringDefinition.DataList;
+                        $scope.businessUnitDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initBusinessUnitDataItems = function () {
+            $scope.businessUnitFilteringDefinition.DataItem1 = angular.copy($rootScope.businessUnitObj());
+            $scope.businessUnitFilteringDefinition.DataItem2 = angular.copy($rootScope.businessUnitObj());
+        };
+
+        $scope.initBusinessUnitFilteringDefinition();
+        $scope.initBusinessUnitDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadBusinessUnitDataGrid = function () {
+        $scope.initBusinessUnitDataGrid();
+        $scope.compileBusinessUnitDataGrid();
+    };
+
+    //initialize businessUnit datagrid parameters
+    $scope.initBusinessUnitDataGrid = function () {
+        $scope.businessUnitSubmitDefinition = undefined;
+        $scope.initializeBusinessUnitDataDefinition = function () {
+            $scope.businessUnitDataDefinition = {
+                "Header": ['Code', 'Name', 'Main Business Unit', 'Business Unit Type', 'Is Operating Site?', 'Has Airport?', 'Has Seaport?', 'No.'],
+                "Keys": ['Code', 'Name', 'ParentBusinessUnit[0].Name', 'BusinessUnitType[0].Name', 'isOperatingSite', 'hasAirPort', 'hasSeaPort'],
+                "Type": ['Default', 'ProperCase', 'ProperCase', 'ProperCase', 'Bit', 'Bit', 'Bit'],
+                "ColWidth": [150, 200, 200, 200, 150, 150, 150],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "BusinessUnitMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+        $scope.businessUnitOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    $scope.shipmentItem.PickUpBussinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                    $scope.shipmentItem.BusinessUnit1.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                    $scope.closeModal();
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeBusinessUnitDataDefinition();
+    };
+
+    //function that will be invoked during compiling of businessUnit datagrid to DOM
+    $scope.compileBusinessUnitDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "businessUnitDataDefinition"' +
+                                    'submitdefinition   = "businessUnitSubmitDefinition"' +
+                                    'otheractions       = "businessUnitOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#businessUnitContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //=======================================END OF BUSINESS UNIT MODAL==============================
+
+    //=======================================CUSTOMER MODAL==========================================
+    $scope.showCustomer = function () {
+        $scope.customerFilteringDefinition.SetSourceToNull = true;
+        $scope.customerDataDefinition.Retrieve = true;
+        openModalPanel("#customer-list-modal");
+
+    };
+
+    //Load customer filtering for compiling
+    $scope.loadCustomerFiltering = function () {
+        $scope.initCustomerFilteringParameters();
+        $scope.initCustomerFilteringContainter();
+    };
+
+    //initialize customer filtering parameters
+    $scope.initCustomerFilteringContainter = function () {
+        html = '<dir-filtering  filterdefinition="customerFilteringDefinition"' +
+                                'filterlistener="customerDataDefinition.Retrieve"' +
+                                'otheractions="customerOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#customerFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initCustomerFilteringParameters = function () {
+        $scope.initCustomerFilteringDefinition = function () {
+            $scope.customerFilteringDefinition = {
+                "Url": ($scope.customerDataDefinition.EnablePagination == true ? 'api/Customers?type=paginate&param1=' + $scope.customerDataDefinition.CurrentPage : 'api/Customers?type=scroll&param1=' + $scope.customerDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
+                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "Source": [
+                            { "Index": 0, "Label": "Code", "Column": "Code", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.customerOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.customerSource = $scope.customerFilteringDefinition.Source;
+                    //Optional in using this, can use switch if every source type has validation before filtering
+                    for (var i = 0; i < $scope.customerSource.length; i++) {
+                        if ($scope.customerSource[i].Type == "Date") {
+                            $scope.customerFilteringDefinition.DataItem1[$scope.customerSource[i].Column] = $scope.customerSource[i].From;
+                            $scope.customerFilteringDefinition.DataItem2[$scope.customerSource[i].Column] = $scope.customerSource[i].To;
+                        }
+                        else
+                            $scope.customerFilteringDefinition.DataItem1[$scope.customerSource[i].Column] = $scope.customerSource[i].From;
+                    }
+
+                    if ($scope.customerDataDefinition.EnablePagination == true && $scope.customerFilteringDefinition.ClearData) {
+                        $scope.customerDataDefinition.CurrentPage = 1;
+                        $scope.customerFilteringDefinition.Url = 'api/Customers?type=paginate&param1=' + $scope.customerDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.customerDataDefinition.EnablePagination == true) {
+                        $scope.customerDataDefinition.DataList = [];
+                        $scope.customerFilteringDefinition.Url = 'api/Customers?type=paginate&param1=' + $scope.customerDataDefinition.CurrentPage;
+                    }
+                        //Scroll
+                    else {
+                        if ($scope.customerFilteringDefinition.ClearData)
+                            $scope.customerDataDefinition.DataList = [];
+                        $scope.customerFilteringDefinition.Url = 'api/Customers?type=scroll&param1=' + $scope.customerDataDefinition.DataList.length;
+                    }
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize customerDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.customerFilteringDefinition.DataList = $rootScope.formatCustomer($scope.customerFilteringDefinition.DataList);
+                    if ($scope.customerDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.customerFilteringDefinition.DataList.length; j++)
+                            $scope.customerDataDefinition.DataList.push($scope.customerFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.customerDataDefinition.EnablePagination == true) {
+                        $scope.customerDataDefinition.DataList = [];
+                        $scope.customerDataDefinition.DataList = $scope.customerFilteringDefinition.DataList;
+                        $scope.customerDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initCustomerDataItems = function () {
+            $scope.customerFilteringDefinition.DataItem1 = angular.copy($rootScope.customerObj());
+            $scope.customerFilteringDefinition.DataItem2 = angular.copy($rootScope.customerObj());
+        };
+
+        $scope.initCustomerFilteringDefinition();
+        $scope.initCustomerDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadCustomerDataGrid = function () {
+        $scope.initCustomerDataGrid();
+        $scope.compileCustomerDataGrid();
+    };
+
+    //initialize customer datagrid parameters
+    $scope.initCustomerDataGrid = function () {
+        $scope.customerSubmitDefinition = undefined;
+        $scope.initializeCustomerDataDefinition = function () {
+            $scope.customerDataDefinition = {
+                "Header": ['Code', 'Name', 'Customer Group', 'TIN', 'Industry', 'No.'],
+                "Keys": ['Code', 'Name', 'CustomerGroup[0].Name', 'TIN', 'Industry[0].Name'],
+                "Type": ['Default', 'ProperCase', 'ProperCase', 'Default', 'ProperCase'],
+                "ColWidth": [150, 300, 200, 140, 200],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "CustomerMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.customerDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+        $scope.customerOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    $scope.shipmentItem.CustomerId = $scope.customerDataDefinition.DataItem.Id;
+                    $scope.shipmentItem.Customer.Code = $scope.customerDataDefinition.DataItem.Code;
+                    $scope.shipmentItem.Customer.Name = $scope.customerDataDefinition.DataItem.Name;
+                    $scope.closeModal();
+                    var promise = $interval(function () {
+                        $interval.cancel(promise);
+                        promise = undefined;
+                        $scope.showCustomerContacts();
+                    }, 500);
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeCustomerDataDefinition();
+    };
+
+    //function that will be invoked during compiling of customer datagrid to DOM
+    $scope.compileCustomerDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "customerDataDefinition"' +
+                                    'submitdefinition   = "customerSubmitDefinition"' +
+                                    'otheractions       = "customerOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#customerContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //=====================================END OF CUSTOMER MODAL=======================================
+
+    //=====================================CUSTOMER CONTACTS MODAL=====================================
+    $scope.showCustomerContacts = function () {
+        $scope.customerContactsFilteringDefinition.SetSourceToNull = true;
+        $scope.customerContactsDataDefinition.Retrieve = true;
+        openModalPanel("#customerContacts-list-modal");
+
+    };
+
+    //Load customerContacts filtering for compiling
+    $scope.loadCustomerContactsFiltering = function () {
+        $scope.initCustomerContactsFilteringParameters();
+        $scope.initCustomerContactsFilteringContainter();
+    };
+
+    //initialize customerContacts filtering parameters
+    $scope.initCustomerContactsFilteringContainter = function () {
+        html = '<dir-filtering  filterdefinition="customerContactsFilteringDefinition"' +
+                                'filterlistener="customerContactsDataDefinition.Retrieve"' +
+                                'otheractions="customerContactsOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#customerContactsFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initCustomerContactsFilteringParameters = function () {
+        $scope.initCustomerContactsFilteringDefinition = function () {
+            $scope.customerContactsFilteringDefinition = {
+                "Url": ($scope.customerContactsDataDefinition.EnablePagination == true ? 'api/CustomerContacts?type=paginate&param1=' + $scope.customerContactsDataDefinition.CurrentPage : 'api/CustomerContacts?type=scroll&param1=' + $scope.customerContactsDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
+                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "Source": [
+                            { "Index": 0, "Label": "Name", "Column": "ContactName", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Title", "Column": "ContactTitle", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.customerContactsOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.customerContactsSource = $scope.customerContactsFilteringDefinition.Source;
+                    for (var i = 0; i < $scope.customerContactsSource.length; i++) {
+                        switch ($scope.customerContactsSource[i].Column) {
+                            case "ContactName":
+                                $scope.customerContactsFilteringDefinition.DataItem1.Contact.Name = $scope.customerContactsSource[i].From;
+                                $scope.customerContactsFilteringDefinition.DataItem2.Contact.Name = $scope.customerContactsSource[i].To;
+                                break;
+                            case "ContactTitle":
+                                $scope.customerContactsFilteringDefinition.DataItem1.Contact.Title = $scope.customerContactsSource[i].From;
+                                $scope.customerContactsFilteringDefinition.DataItem2.Contact.Title = $scope.customerContactsSource[i].To;
+                                break;
+                            default: break;
+                        }
+                    }
+
+                    if ($scope.customerContactsDataDefinition.EnablePagination == true && $scope.customerContactsFilteringDefinition.ClearData) {
+                        $scope.customerContactsDataDefinition.CurrentPage = 1;
+                        $scope.customerContactsFilteringDefinition.Url = 'api/CustomerContacts?type=paginate&param1=' + $scope.customerContactsDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.customerContactsDataDefinition.EnablePagination == true) {
+                        $scope.customerContactsDataDefinition.DataList = [];
+                        $scope.customerContactsFilteringDefinition.Url = 'api/CustomerContacts?type=paginate&param1=' + $scope.customerContactsDataDefinition.CurrentPage;
+                    }
+                        //Scroll
+                    else {
+                        if ($scope.customerContactsFilteringDefinition.ClearData)
+                            $scope.customerContactsDataDefinition.DataList = [];
+                        $scope.customerContactsFilteringDefinition.Url = 'api/CustomerContacts?type=scroll&param1=' + $scope.customerContactsDataDefinition.DataList.length;
+                    }
+
+                    $scope.customerContactsFilteringDefinition.DataItem1.CustomerId = $scope.shipmentItem.CustomerId;
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize customerContactsDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize customerContactsDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.customerContactsFilteringDefinition.DataList = $rootScope.formatCustomerContacts($scope.customerContactsFilteringDefinition.DataList);
+                    if ($scope.customerContactsDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.customerContactsFilteringDefinition.DataList.length; j++)
+                            $scope.customerContactsDataDefinition.DataList.push($scope.customerContactsFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.customerContactsDataDefinition.EnablePagination == true) {
+                        $scope.customerContactsDataDefinition.DataList = [];
+                        $scope.customerContactsDataDefinition.DataList = $scope.customerContactsFilteringDefinition.DataList;
+                        $scope.customerContactsDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initCustomerContactsDataItems = function () {
+            $scope.customerContactsFilteringDefinition.DataItem1 = angular.copy($rootScope.customerContactsObj());
+            $scope.customerContactsFilteringDefinition.DataItem2 = angular.copy($rootScope.customerContactsObj());
+        };
+
+        $scope.initCustomerContactsFilteringDefinition();
+        $scope.initCustomerContactsDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadCustomerContactsDataGrid = function () {
+        $scope.initCustomerContactsDataGrid();
+        $scope.compileCustomerContactsDataGrid();
+    };
+
+    //initialize customerContacts datagrid parameters
+    $scope.initCustomerContactsDataGrid = function () {
+        $scope.customerContactsSubmitDefinition = undefined;
+        $scope.initializeCustomerContactsDataDefinition = function () {
+            $scope.customerContactsDataDefinition = {
+                "Header": ['Name', 'Title', 'Email', 'Alternate Email','No.'],
+                "Keys": ['Contact[0].Name', 'Contact[0].Title', 'Contact[0].Email', 'Contact[0].AlternateEmail'],
+                "Type": ['ProperCase', 'Default', 'Default', 'Default'],
+                "ColWidth": [300, 300, 250, 250],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "CustomerContactsMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.customerContactsDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+        $scope.customerContactsOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    $scope.shipmentItem.CustomerContactId = $scope.customerContactsDataDefinition.DataItem.Id;
+                    $scope.closeModal();
+                    var promise = $interval(function () {
+                        $interval.cancel(promise);
+                        promise = undefined;
+                        $scope.showCustomerContactPhones();
+                    }, 500);
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeCustomerContactsDataDefinition();
+    };
+
+    //function that will be invoked during compiling of customerContacts datagrid to DOM
+    $scope.compileCustomerContactsDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "customerContactsDataDefinition"' +
+                                    'submitdefinition   = "customerContactsSubmitDefinition"' +
+                                    'otheractions       = "customerContactsOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#customerContactsContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //=====================================END OF CUSTOMER CONTACTS MODAL=================================
+
+    //=====================================CUSTOMER CONTACT PHONE MODAL===================================
+    $scope.showCustomerContactPhones = function () {
+        $scope.customerContactPhonesFilteringDefinition.SetSourceToNull = true;
+        $scope.customerContactPhonesDataDefinition.Retrieve = true;
+        openModalPanel("#customerContactPhones-list-modal");
+
+    };
+
+    //Load customerContactPhones filtering for compiling
+    $scope.loadCustomerContactPhonesFiltering = function () {
+        $scope.initCustomerContactPhonesFilteringParameters();
+        $scope.initCustomerContactPhonesFilteringContainter();
+    };
+
+    //initialize customerContactPhones filtering parameters
+    $scope.initCustomerContactPhonesFilteringContainter = function () {
+        html = '<dir-filtering  filterdefinition="customerContactPhonesFilteringDefinition"' +
+                                'filterlistener="customerContactPhonesDataDefinition.Retrieve"' +
+                                'otheractions="customerContactPhonesOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#customerContactPhonesFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initCustomerContactPhonesFilteringParameters = function () {
+        $scope.initCustomerContactPhonesFilteringDefinition = function () {
+            $scope.customerContactPhonesFilteringDefinition = {
+                "Url": ($scope.customerContactPhonesDataDefinition.EnablePagination == true ? 'api/ContactPhones?type=paginate&param1=' + $scope.customerContactPhonesDataDefinition.CurrentPage : 'api/ContactPhones?type=scroll&param1=' + $scope.customerContactPhonesDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
+                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "Source": [
+                            { "Index": 0, "Label": "Contact Number", "Column": "ContactNumber", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.customerContactPhonesOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.customerContactPhonesSource = $scope.customerContactPhonesFilteringDefinition.Source;
+                    for (var i = 0; i < $scope.customerContactPhonesSource.length; i++) {
+                        switch ($scope.customerContactPhonesSource[i].Column) {
+                            case "ContactNumber":
+                                $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactNumber = $scope.customerContactPhonesSource[i].From;
+                                $scope.customerContactPhonesFilteringDefinition.DataItem2.ContactNumber = $scope.customerContactPhonesSource[i].To;
+                                break;
+                            default: break;
+                        }
+                    }
+
+                    if ($scope.customerContactPhonesDataDefinition.EnablePagination == true && $scope.customerContactPhonesFilteringDefinition.ClearData) {
+                        $scope.customerContactPhonesDataDefinition.CurrentPage = 1;
+                        $scope.customerContactPhonesFilteringDefinition.Url = 'api/ContactPhones?type=paginate&param1=' + $scope.customerContactPhonesDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.customerContactPhonesDataDefinition.EnablePagination == true) {
+                        $scope.customerContactPhonesDataDefinition.DataList = [];
+                        $scope.customerContactPhonesFilteringDefinition.Url = 'api/ContactPhones?type=paginate&param1=' + $scope.customerContactPhonesDataDefinition.CurrentPage;
+                    }
+                    //Scroll
+                    else {
+                        if ($scope.customerContactPhonesFilteringDefinition.ClearData)
+                            $scope.customerContactPhonesDataDefinition.DataList = [];
+                        $scope.customerContactPhonesFilteringDefinition.Url = 'api/ContactPhones?type=scroll&param1=' + $scope.customerContactPhonesDataDefinition.DataList.length;
+                    }
+
+                    $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactId = $scope.shipmentItem.CustomerContactId;
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize customerContactPhonesDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize customerContactPhonesDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.customerContactPhonesFilteringDefinition.DataList = $rootScope.formatCustomerContactPhones($scope.customerContactPhonesFilteringDefinition.DataList);
+                    if ($scope.customerContactPhonesDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.customerContactPhonesFilteringDefinition.DataList.length; j++)
+                            $scope.customerContactPhonesDataDefinition.DataList.push($scope.customerContactPhonesFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.customerContactPhonesDataDefinition.EnablePagination == true) {
+                        $scope.customerContactPhonesDataDefinition.DataList = [];
+                        $scope.customerContactPhonesDataDefinition.DataList = $scope.customerContactPhonesFilteringDefinition.DataList;
+                        $scope.customerContactPhonesDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initCustomerContactPhonesDataItems = function () {
+            $scope.customerContactPhonesFilteringDefinition.DataItem1 = angular.copy($rootScope.customerContactPhonesObj());
+            $scope.customerContactPhonesFilteringDefinition.DataItem2 = angular.copy($rootScope.customerContactPhonesObj());
+        };
+
+        $scope.initCustomerContactPhonesFilteringDefinition();
+        $scope.initCustomerContactPhonesDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadCustomerContactPhonesDataGrid = function () {
+        $scope.initCustomerContactPhonesDataGrid();
+        $scope.compileCustomerContactPhonesDataGrid();
+    };
+
+    //initialize customerContactPhones datagrid parameters
+    $scope.initCustomerContactPhonesDataGrid = function () {
+        $scope.customerContactPhonesSubmitDefinition = undefined;
+        $scope.initializeCustomerContactPhonesDataDefinition = function () {
+            $scope.customerContactPhonesDataDefinition = {
+                "Header": ['Contact Number', 'Contact Type','No.'],
+                "Keys": ['ContactNumber', 'ContactNumberType[0].Type'],
+                "Type": ['Default'],
+                "ColWidth": [600, 400],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "CustomerContactPhonesMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.customerContactPhonesDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+
+        $scope.customerContactPhonesOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    $scope.shipmentItem.CustomerContactPhoneId = $scope.customerContactPhonesDataDefinition.DataItem.Id;
+                    $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber =  $scope.customerContactPhonesDataDefinition.DataItem.ContactNumber;
+                    $scope.closeModal();
+                    var promise = $interval(function () {
+                        $interval.cancel(promise);
+                        promise = undefined;
+                        $scope.showCustomerAddress();
+                    }, 500);
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeCustomerContactPhonesDataDefinition();
+    };
+
+    //function that will be invoked during compiling of customerContactPhones datagrid to DOM
+    $scope.compileCustomerContactPhonesDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "customerContactPhonesDataDefinition"' +
+                                    'submitdefinition   = "customerContactPhonesSubmitDefinition"' +
+                                    'otheractions       = "customerContactPhonesOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#customerContactPhonesContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //==================================END OF CUSTOMER CONTACT PHONE MODAL=================================
+
+    //=====================================CUSTOMER ADDRESS MODAL===================================
+    $scope.showCustomerAddress = function () {
+        $scope.customerAddressFilteringDefinition.SetSourceToNull = true;
+        $scope.customerAddressDataDefinition.Retrieve = true;
+        openModalPanel("#customerAddresses-list-modal");
+
+    };
+
+    //Load customerAddress filtering for compiling
+    $scope.loadCustomerAddressFiltering = function () {
+        $scope.initCustomerAddressFilteringParameters();
+        $scope.initCustomerAddressFilteringContainter();
+    };
+
+    //initialize customerAddress filtering parameters
+    $scope.initCustomerAddressFilteringContainter = function () {
+        html = '<dir-filtering  filterdefinition="customerAddressFilteringDefinition"' +
+                                'filterlistener="customerAddressDataDefinition.Retrieve"' +
+                                'otheractions="customerAddressOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#customerAddressFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initCustomerAddressFilteringParameters = function () {
+        $scope.initCustomerAddressFilteringDefinition = function () {
+            $scope.customerAddressFilteringDefinition = {
+                "Url": ($scope.customerAddressDataDefinition.EnablePagination == true ? 'api/CustomerAddresses?type=paginate&param1=' + $scope.customerAddressDataDefinition.CurrentPage : 'api/CustomerAddresses?type=scroll&param1=' + $scope.customerAddressDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
+                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "Source": [
+                            { "Index": 0, "Label": "Street Address Line 1", "Column": "Line1", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Street Address Line 2", "Column": "Line2", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 2, "Label": "City/Municipality", "Column": "CityMunicipality", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 3, "Label": "Postal Code", "Column": "PostalCode", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            //{ "Index": 3, "Label": "Is Billing Address?", "Column": "IsBillingAddress", "Values": [{ "Id": true, "Name": "Yes" }, { "Id": false, "Name": "No" }], "From": null, "To": null, "Type": "DropDown" },
+                            //{ "Index": 4, "Label": "Is Delivery Address?", "Column": "IsDeliveryAddress", "Values": [{ "Id": true, "Name": "Yes" }, { "Id": false, "Name": "No" }], "From": null, "To": null, "Type": "DropDown" },
+                            //{ "Index": 5, "Label": "Is Pickup Address?", "Column": "IsPickupAddress", "Values": [{ "Id": true, "Name": "Yes" }, { "Id": false, "Name": "No" }], "From": null, "To": null, "Type": "DropDown" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.customerAddressOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.customerAddressSource = $scope.customerAddressFilteringDefinition.Source;
+                    for (var i = 0; i < $scope.customerAddressSource.length; i++) {
+                        switch ($scope.customerAddressSource[i].Column) {
+                            case "Line1":
+                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                break;
+                            case "Line2":
+                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                break;
+                            case "CityMunicipality":
+                                $scope.customerAddressFilteringDefinition.DataItem1.CityMunicipality.Name = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem2.CityMunicipality.Name = $scope.customerAddressSource[i].To;
+                                break;
+                            case "PostalCode":
+                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                break;
+                            default: break;
+                        }
+                    }
+
+                    if ($scope.customerAddressDataDefinition.EnablePagination == true && $scope.customerAddressFilteringDefinition.ClearData) {
+                        $scope.customerAddressDataDefinition.CurrentPage = 1;
+                        $scope.customerAddressFilteringDefinition.Url = 'api/CustomerAddresses?type=paginate&param1=' + $scope.customerAddressDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.customerAddressDataDefinition.EnablePagination == true) {
+                        $scope.customerAddressDataDefinition.DataList = [];
+                        $scope.customerAddressFilteringDefinition.Url = 'api/CustomerAddresses?type=paginate&param1=' + $scope.customerAddressDataDefinition.CurrentPage;
+                    }
+                        //Scroll
+                    else {
+                        if ($scope.customerAddressFilteringDefinition.ClearData)
+                            $scope.customerAddressDataDefinition.DataList = [];
+                        $scope.customerAddressFilteringDefinition.Url = 'api/CustomerAddresses?type=scroll&param1=' + $scope.customerAddressDataDefinition.DataList.length;
+                    }
+
+                    $scope.customerAddressFilteringDefinition.DataItem1.CustomerId = $scope.shipmentItem.CustomerId;
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize customerAddressDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize customerAddressDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.customerAddressFilteringDefinition.DataList = $rootScope.formatCustomerAddress($scope.customerAddressFilteringDefinition.DataList);
+                    if ($scope.customerAddressDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.customerAddressFilteringDefinition.DataList.length; j++)
+                            $scope.customerAddressDataDefinition.DataList.push($scope.customerAddressFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.customerAddressDataDefinition.EnablePagination == true) {
+                        $scope.customerAddressDataDefinition.DataList = [];
+                        $scope.customerAddressDataDefinition.DataList = $scope.customerAddressFilteringDefinition.DataList;
+                        $scope.customerAddressDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initCustomerAddressDataItems = function () {
+            $scope.customerAddressFilteringDefinition.DataItem1 = angular.copy($rootScope.customerAddressObj());
+            $scope.customerAddressFilteringDefinition.DataItem2 = angular.copy($rootScope.customerAddressObj());
+        };
+
+        $scope.initCustomerAddressFilteringDefinition();
+        $scope.initCustomerAddressDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadCustomerAddressDataGrid = function () {
+        $scope.initCustomerAddressDataGrid();
+        $scope.compileCustomerAddressDataGrid();
+    };
+
+    //initialize customerAddress datagrid parameters
+    $scope.initCustomerAddressDataGrid = function () {
+        $scope.customerAddressSubmitDefinition = undefined;
+        $scope.initializeCustomerAddressDataDefinition = function () {
+            $scope.customerAddressDataDefinition = {
+                "Header": ['Street Address Line 1', 'Street Address Line 2', 'City/Municipality', 'State/Province', 'Postal Code', 'Is Billing Address', 'Is Delivery Address', 'Is Pickup Address', 'No.'],
+                "Keys": ['Line1', 'Line2', 'CityMunicipality[0].Name', 'CityMunicipality[0].StateProvince[0].Name', 'PostalCode', 'IsBillingAddress', 'IsDeliveryAddress', 'IsPickupAddress'],
+                "Type": ['ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'Bit', 'Bit', 'Bit'],
+                "ColWidth": [250, 250, 200, 150, 150, 150, 150, 150],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "CustomerAddressMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.customerAddressDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+
+        $scope.customerAddressOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    $scope.shipmentItem.CustomerAddressId = $scope.customerAddressDataDefinition.DataItem.Id;
+                    $scope.shipmentItem.CustomerAddress = $scope.customerAddressDataDefinition.DataItem.Line1 + ", " + $scope.customerAddressDataDefinition.DataItem.Line2 + ", " + $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Name + ", " + $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Name + ", " + $scope.customerAddressDataDefinition.DataItem.PostalCode;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0] = $scope.customerAddressDataDefinition.DataItem;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Id = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].Name;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince = {};
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Id;
+                    $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Name;
+                    $scope.closeModal();
+                    var promise = $interval(function () {
+                        $interval.cancel(promise);
+                        promise = undefined;
+                    }, 500);
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeCustomerAddressDataDefinition();
+    };
+
+    //function that will be invoked during compiling of customerAddress datagrid to DOM
+    $scope.compileCustomerAddressDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "customerAddressDataDefinition"' +
+                                    'submitdefinition   = "customerAddressSubmitDefinition"' +
+                                    'otheractions       = "customerAddressOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#customerAddressContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //==================================END OF CUSTOMER ADDRESS MODAL=================================
+
+    //==================================DELIVERY ADDRESS MODAL==============================================
     $scope.initDeliveryAddressModal = function () {
         $scope.showDeliveryAddress = false;
         $scope.deliveryAddressDataDefinition = {
@@ -562,8 +1540,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             }
         };
     };
+    //==================================END OF DELIVERY ADDRESS MODAL=======================================
 
-    //Initialize Pickup Address Modal
+    //==================================PICKUP ADDRESS MODAL================================================
     $scope.initPickupAddressModal = function () {
         $scope.showPickupAddress = false;
         $scope.pickupAddressDataDefinition = {
@@ -587,341 +1566,26 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             }
         };
     };
-
-    //Displays Modal
-    $scope.showModal = function (panel, type) {
-        $scope.modalType = type;
-        openModalPanel(panel);
-    };
-
-    //Show Customer Contacts List
-    $scope.showCustomerContacts = function (customerId) {
-        var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get("/api/CustomerContacts?customerId=" + customerId)
-       .success(function (data, status) {
-           $scope.customerContactList = [];
-           $scope.customerContactList = data;
-           spinner.stop();
-           $scope.showModal('#customer-contacts-list-modal', $scope.modalType);
-       })
-       .error(function (error, status) {
-           $scope.shipmentIsError = true;
-           $scope.shipmentErrorMessage = status;
-           spinner.stop();
-       });
-    };
-
-    //Show Customer Contact Phones List
-    $scope.showCustomerContactPhones = function (contactId) {
-        var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get("/api/ContactPhones?contactId=" + contactId)
-       .success(function (data, status) {
-           $scope.customerContactPhoneList = [];
-           $scope.customerContactPhoneList = data;
-           spinner.stop();
-           $scope.showModal('#customer-contact-phones-list-modal', $scope.modalType);
-       })
-       .error(function (error, status) {
-           $scope.shipmentIsError = true;
-           $scope.shipmentErrorMessage = status;
-           spinner.stop();
-       });
-    };
-
-    //Show Customer Addresses List
-    $scope.showCustomerAddressList = function (customerId) {
-        var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get("/api/CustomerAddresses?customerId=" + customerId)
-        .success(function (data, status) {
-            $scope.customerAddressList = [];
-            $scope.customerAddressList = data;
-            spinner.stop();
-            $scope.showModal('#customer-address-list-modal', $scope.modalType);
-        })
-        .error(function (error, status) {
-            $scope.shipmentIsError = true;
-            $scope.shipmentErrorMessage = status;
-            spinner.stop();
-        });
-    };
-
-    //Close Business Unit List Modal
-    $scope.closeBusinessUnitList = function (bu) {
-        if (angular.isDefined(bu)) {
-            $scope.shipmentItem.PickUpBussinessUnitId = bu.Id;
-            $scope.shipmentItem.BusinessUnit1.Name = bu.Name;
-        }
-        else {
-            $scope.shipmentItem.PickUpBussinessUnitId = null;
-            $scope.shipmentItem.BusinessUnit1.Name = null;
-        }
-        jQuery.magnificPopup.close();
-    };
-
-    //Close Customer List Modal
-    $scope.closeCustomerList = function (c) {
-        if (angular.isDefined(c)) {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerId = c.Id;
-                $scope.shipmentItem.Customer.Code = c.Code;
-                $scope.shipmentItem.Customer.Name = c.Name;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerId = c.Id;
-                $scope.shipmentItem.BillToCustomer[0].Code = c.Code;
-                $scope.shipmentItem.BillToCustomer[0].Name = c.Name;
-            }
-            jQuery.magnificPopup.close();
-            var promise = $interval(function () {
-                $interval.cancel(promise);
-                promise = undefined;
-                $scope.showCustomerContacts(c.Id);
-            }, 500);
-        }
-        else {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerId = null;
-                $scope.shipmentItem.Customer.Code = null;
-                $scope.shipmentItem.Customer.Name = null;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerId = null;
-                $scope.shipmentItem.BillToCustomer[0].Code = null;
-                $scope.shipmentItem.BillToCustomer[0].Name = null;
-            }
-            jQuery.magnificPopup.close();
-        }
-    };
-
-    //Close Customer Contact List Modal
-    $scope.closeCustomerContacts = function (cc) {
-        if (angular.isDefined(cc)) {
-            if ($scope.modalType == "customer")
-                $scope.shipmentItem.CustomerContactId = cc.Contact.Id;
-            else
-                $scope.shipmentItem.BillToCustomerContactId = cc.Contact.Id;
-
-            jQuery.magnificPopup.close();
-            var promise = $interval(function () {
-                $interval.cancel(promise);
-                promise = undefined;
-                $scope.showCustomerContactPhones(cc.Contact.Id);
-            }, 500);
-        }
-        else {
-            if ($scope.modalType == "customer")
-                $scope.shipmentItem.CustomerContactId = null;
-            else
-                $scope.shipmentItem.BillToCustomerContactId = null;
-
-            jQuery.magnificPopup.close();
-        }
-    };
-
-    //Close Customer Contact Phone List Modal
-    $scope.closeCustomerContactPhones = function (ccp) {
-        if (angular.isDefined(ccp)) {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerContactPhoneId = ccp.Id;
-                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = ccp.ContactNumber;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerContactPhoneId = ccp.Id;
-                $scope.shipmentItem.BillToCustomer[0].CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = ccp.ContactNumber;
-            }
-            jQuery.magnificPopup.close();
-            var promise = $interval(function () {
-                $interval.cancel(promise);
-                promise = undefined;
-                if ($scope.modalType == "customer")
-                    $scope.showCustomerAddressList($scope.shipmentItem.CustomerId);
-                else
-                    $scope.showCustomerAddressList($scope.shipmentItem.BillToCustomerId);
-            }, 500);
-        }
-        else {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerContactPhoneId = null;
-                $scope.shipmentItem.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = null;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerContactPhoneId = null;
-                $scope.shipmentItem.BillToCustomer[0].CustomerContacts[0].Contact.ContactPhones[0].ContactNumber = null;
-            }
-            jQuery.magnificPopup.close();
-        }
-    };
-
-    //Close Customer Address List Modal
-    $scope.closeCustomerAddressList = function (ca) {
-        if (angular.isDefined(ca)) {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerAddressId = ca.Id;
-                $scope.shipmentItem.CustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
-                $scope.shipmentItem.Customer.CustomerAddresses[0] = ca;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerAddressId = ca.Id;
-                $scope.shipmentItem.BillToCustomerAddress = ca.Line1 + ", " + ca.Line2 + ", " + ca.CityMunicipality.Name + ", " + ca.PostalCode;
-                $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0] = ca;
-            }
-            jQuery.magnificPopup.close();
-        }
-        else {
-            if ($scope.modalType == "customer") {
-                $scope.shipmentItem.CustomerAddressId = null;
-                $scope.shipmentItem.CustomerAddress = null;
-                $scope.shipmentItem.Customer.CustomerAddresses[0] = null;
-            }
-            else {
-                $scope.shipmentItem.BillToCustomerAddressId = null;
-                $scope.shipmentItem.BillToCustomerAddress = null;
-                $scope.shipmentItem.BillToCustomer[0].CustomerAddresses[0] = null;
-            }
-            jQuery.magnificPopup.close();
-        }
-    };
-
-    //Initialize address field
-    $scope.initializeAddressField = function (addressItem, type) {
-        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
-        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
-        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
-        if ($scope.modalType == "Pickup")
-            $scope.shipmentItem.OriginAddress = $scope.formattedAddress;
-        else if ($scope.modalType == "Consignee")
-            $scope.shipmentItem.DeliveryAddress = $scope.formattedAddress;
-            //MasterList Display
-        else {//MasterList Display
-            return $scope.formattedAddress;
-        }
-
-
-    };
-
-    //Initialize Business Unit List for Modal
-    $scope.initBusinessUnitList = function () {
-        $http.get("/api/BusinessUnits?parentBusinessUnitId=" + $scope.shipmentItem.BusinessUnit.Id)
-        .success(function (data, status) {
-            $scope.businessUnitList = data;
-            if ($scope.businessUnitList.length == 0)
-                $scope.shipmentItem.BusinessUnit1 = angular.copy($scope.shipmentItem.BusinessUnit);
-        })
-    };
-
-    //Initialize Customer List for Modal
-    $scope.initCustomerList = function () {
-        $http.get("/api/Customers")
-        .success(function (data, status) {
-            for (var i = 0; i < 100; i++)
-                $scope.customerList = data;
-
-        })
-    };
-
-    //Initialize Payment Mode List for DropDown
-    $scope.initPaymentModeList = function () {
-        $scope.paymentModeList = $rootScope.getPaymentModeList();
-    };
-
-    //Initialize Service List for DropDown
-    $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
-    };
-
-    //Initialize Shipment Type List for DropDown
-    $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
-    };
-
-    //function that will be invoked when user click tab
-    $scope.setSelectedTab = function (tab) {
-        $scope.shipmentIsError = false;
-        $scope.shipmentErrorMessage = "";
-        $scope.selectedTab = tab;
-    };
-
-    //Initialize service type
-    $scope.setServiceType = function (id) {
-        for (var i = 0; i < $scope.serviceList.length; i++) {
-            if (id == $scope.serviceList[i].Id) {
-                $scope.shipmentItem.Service = $scope.serviceList[i];
-                return true;
-            }
-        }
-    };
-
-    //Initialize shipment type
-    $scope.setShipmentType = function (id) {
-        for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
-            if (id == $scope.serviceList[i].Id) {
-                $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
-                return true;
-            }
-        }
-    }
-
-    //Find specific character
-    $scope.findCharacter = function (v, c) {
-        for (var i = 0; i < v.length; i++) {
-            if (v.charAt(i) == c)
-                return true;
-        }
-        return false;
-    };
-
-    //Disable typing
-    $('#OriginAddress,#DeliveryAddress,#BusinessUnit').keypress(function (key) {
-        return false;
-    });
-
-    //Check if input is whole number
-    $('#consigneecontactno,#quantity').keypress(function (key) {
-        if (key.charCode < 48 || key.charCode > 57) return false;
-    });
-
-    //Check if input is decimal number only
-    $('#taxamount,#taxpercentage,#revenue,#cbm').keypress(function (key) {
-        if (key.charCode == 46) {
-            if ($scope.findCharacter(this.value, '.'))
-                return false;
-            else
-                return true;
-        }
-        else if (key.charCode < 48 || key.charCode > 57)
-            return false;
-        else
-            return true;
-    });
-
-    //Check if input contains letter only
-    $('#consigneename').keypress(function (key) {
-        if (!((key.charCode < 97 || key.charCode > 122) && (key.charCode < 65 || key.charCode > 90) && (key.charCode != 45) && (key.charCode != 32)))
-            return true;
-            //for back space
-        else if (key.charCode == 0)
-            return true;
-        else
-            return false;
-    });
+    //==================================END OF PICKUP ADDRESS MODAL=========================================
 
     // Initialization routines
     var init = function () {
-        $scope.initCustomerList();
         $scope.initPaymentModeList();
         $scope.initServiceList();
         $scope.initShipmentTypeList();
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
+        $scope.loadBusinessUnitDataGrid();
+        $scope.loadBusinessUnitFiltering();
+        $scope.loadCustomerDataGrid();
+        $scope.loadCustomerFiltering();
+        $scope.loadCustomerContactsDataGrid();
+        $scope.loadCustomerContactsFiltering();
+        $scope.loadCustomerContactPhonesDataGrid();
+        $scope.loadCustomerContactPhonesFiltering();
+        $scope.loadCustomerAddressDataGrid();
+        $scope.loadCustomerAddressFiltering();
         $scope.shipmentResetData();
-        $scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
         //---------------------------Code if using typeahead in city/municipality-------------------
         //Get cityMunicipalities
         var promise = $interval(function () {
@@ -957,5 +1621,14 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //Initialize needed functions during page load
     init();  
-    $interval(function () {}, 100);
+    $interval(function () {
+        //For responsive modal
+        var width = window.innerWidth;
+        if (width < 1030) {
+            $scope.modalStyle = "height:520px; max-height:100%";
+        }
+        else {
+            $scope.modalStyle = "height:450px; max-height:100%";
+        }
+    }, 100);
 };

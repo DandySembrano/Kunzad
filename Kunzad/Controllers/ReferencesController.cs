@@ -96,5 +96,9 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult TruckingWB()
+        {
+            return View();
+        }
     }
 }

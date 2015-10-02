@@ -55,37 +55,6 @@ namespace Kunzad.ApiControllers
                     .OrderBy(bu => bu.Id).Take(pageSize);
             }
         }
-        //public IHttpActionResult GetBusinessUnits(int page)
-        //{
-        //    var q = (from bu in db.BusinessUnits
-        //             join but in db.BusinessUnitTypes on bu.BusinessUnitTypeId equals but.Id
-        //             select new
-        //             {
-        //                 bu.Id,
-        //                 bu.Code,
-        //                 bu.Name,
-        //                 bu.BusinessUnitTypeId,
-        //                 bu.ParentBusinessUnitId,
-        //                 bu.isOperatingSite,
-        //                 bu.hasAirPort,
-        //                 bu.hasSeaPort,
-        //                 bu.CreatedDate,
-        //                 bu.LastUpdatedDate,
-        //                 bu.CreatedByUserId,
-        //                 bu.LastUpdatedByUserId,
-        //                 BusinessUnitTypeName = but.Name,
-        //                 ParentBusinessUnitName = (from bu1 in db.BusinessUnits where bu1.Id == bu.ParentBusinessUnitId select new { bu1.Name })
-        //             });
-        //    if (page > 1)
-        //    {
-        //        q.ToList().Skip((page - 1) * pageSize).Take(pageSize);
-        //    }
-        //    else
-        //    {
-        //        q.ToList().Take(pageSize);
-        //    }
-        //    return Json(q);
-        //}
 
         // GET: api/BusinessUnits/5
         [ResponseType(typeof(BusinessUnit))]
@@ -100,6 +69,18 @@ namespace Kunzad.ApiControllers
             return Ok(businessUnit);
         }
 
+        [HttpPut]
+        //Dynamic filtering
+        public IHttpActionResult PutBusinessUnit(string type, int param1, List<BusinessUnit> businessUnit)
+        {
+            Object[] businessUnits = new Object[pageSize];
+            this.filterRecord(param1, type, businessUnit.ElementAt(0), businessUnit.ElementAt(1), ref businessUnits);
+
+            if (businessUnits != null)
+                return Ok(businessUnits);
+            else
+                return Ok();
+        }
         // PUT: api/BusinessUnits/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBusinessUnit(int id, BusinessUnit businessUnit)
@@ -203,6 +184,39 @@ namespace Kunzad.ApiControllers
         private bool BusinessUnitExists(int id)
         {
             return db.BusinessUnits.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, BusinessUnit businessUnit, BusinessUnit businessUnit1, ref Object[] businessUnits)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredBusinessUnits = (from bu in db.BusinessUnits
+                                            select new
+                                            {
+                                                bu.Id,bu.Code,bu.Name,bu.BusinessUnitTypeId,bu.ParentBusinessUnitId,bu.isOperatingSite,bu.hasAirPort,bu.hasSeaPort,
+                                                BusinessUnitType = (from but in db.BusinessUnits where but.Id == bu.BusinessUnitTypeId select new { but.Id, but.Name }),
+                                                ParentBusinessUnit = (from bu1 in db.BusinessUnits where bu1.Id == bu.ParentBusinessUnitId select new { bu1.Id, bu1.Code, bu1.Name })
+                                            })
+                                            .Where(bu => businessUnit.Id == null || businessUnit.Id == 0 ? true : bu.Id == businessUnit.Id)
+                                            .Where(bu => businessUnit.Code == null ? !businessUnit.Code.Equals("") : (bu.Code.ToLower().Equals(businessUnit.Code)))
+                                            .Where(bu => businessUnit.Name == null ? !businessUnit.Name.Equals("") : (bu.Name.ToLower().Equals(businessUnit.Name) || bu.Name.ToLower().Contains(businessUnit.Name)))
+                                            .Where(bu => businessUnit.ParentBusinessUnitId == null || businessUnit.ParentBusinessUnitId == 0 ? true : bu.ParentBusinessUnitId == businessUnit.ParentBusinessUnitId)
+                                            .OrderBy(bu => bu.Id)
+                                            .Skip(skip).Take(pageSize).ToArray();
+            businessUnits = filteredBusinessUnits;
         }
     }
 }
