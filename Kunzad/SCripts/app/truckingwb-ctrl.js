@@ -1,7 +1,7 @@
 ﻿
 kunzadApp.controller("TruckingsWBController", TruckingsWBController);
 function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
-    $scope.modelName = "Waybill Trucking";
+    $scope.modelName = "Trucking Waybill";
     $scope.modelhref = "#/truckingwb";
     $scope.isPrevPage = false;
     $scope.isNextPage = true;
@@ -213,7 +213,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
           { name: 'Trucker', field: 'Trucker.Name' },
           { name: 'Truck', field: 'Truck.PlateNo' },
           { name: 'Driver', field: 'Driver.Name' }
-
+          
         ],
         rowTemplate: '<div>' +
         ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelectedDispatch(row.entity.Id)"  context-menu="grid.appScope.setSelectedDispatch(row.entity.Id)" data-target= "DataTableMenu"></div>' +
@@ -334,8 +334,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
         $scope.errorMessage = "";
         switch ($scope.actionMode) {
             case "Create":
-                $scope.viewOnly = false;
-                $scope.submitButtonText = "Submit";
+                    $scope.viewOnly = false;
+                    $scope.submitButtonText = "Submit";
                 break;
         }
     };
@@ -343,8 +343,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
     $scope.submit = function () {
         switch ($scope.actionMode) {
             case "Create":
-                $scope.focusOnTop();
-                $scope.apiUpdateTruckingWB();
+                    $scope.focusOnTop();
+                    $scope.apiUpdateTruckingWB();
                 break;
         }
     }
@@ -353,15 +353,23 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
     $scope.apiUpdateTruckingWB = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var dataModel = angular.copy($scope.truckingItem);
-
+        
         delete dataModel.Trucker;
         delete dataModel.Truck;
         delete dataModel.Driver;
         delete dataModel.OriginServiceableAreaName;
         delete dataModel.DestinationServiceableAreaName;
-        delete dataModel.TruckingDeliveries;
+        //delete dataModel.TruckingDeliveries;
+
+        for (var i = 0; i < dataModel.TruckingDeliveries.length; i++) {
+            delete dataModel.TruckingDeliveries[i].Shipment;
+            delete dataModel.TruckingDeliveries[i].Address1;
+            delete dataModel.TruckingDeliveries[i].Customer;
+        }
+
         dataModel.DocumentNo = $scope.truckingItem.DocumentNo;
         dataModel.TruckingStatusId = 20;
+        console.log(dataModel);
 
         $http.put("/api/TruckingsWB/" + dataModel.Id, dataModel)
              .success(function (data, status) {
@@ -370,8 +378,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
                  $scope.setSelectedTab("List");
              })
              .error(function (data, status) {
-                 $scope.showFormError("Error: " + status);
-                 spinner.stop();
+                $scope.showFormError("Error: " + status);
+                spinner.stop();
              })
     };
 
