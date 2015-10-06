@@ -81,9 +81,9 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        [HttpPut]
+        [HttpGet]
         //Dynamic filtering
-        public IHttpActionResult PutContactPhone(string type, int param1, List<ContactPhone> contactPhone)
+        public IHttpActionResult GetContactPhone(string type, int param1, [FromUri]List<ContactPhone> contactPhone)
         {
             Object[] contactPhones = new Object[pageSize];
             this.filterRecord(param1, type, contactPhone.ElementAt(0), contactPhone.ElementAt(1), ref contactPhones);

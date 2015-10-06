@@ -95,6 +95,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                 columnProperties.enableColumnResizing = true;
                 columnProperties.enableColumnMenu = false;
                 columnProperties.enableColumnMoving = false;
+                columnProperties.enableCellEdit = false;
                 columns.push(columnProperties);
                 //Initialize column data
                 for (var i = 0; i < ($scope.datadefinition.Header.length - 1) ; i++) {
@@ -112,6 +113,8 @@ kunzadApp.directive('dirDataGrid2', function () {
                         if (i < $scope.datadefinition.IsEditable.length)
                             columnProperties.enableCellEdit = $scope.datadefinition.IsEditable[i];
                     }
+                    else
+                        columnProperties.enableCellEdit = false;
                     columns.push(columnProperties);
                 }
 

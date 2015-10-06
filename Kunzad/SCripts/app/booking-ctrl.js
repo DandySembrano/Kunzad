@@ -543,8 +543,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.shipmentFilteringDefinition = {
                 "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
-                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "DataItem1": $scope.DataItem1, //Contains the parameter value
                 "Source": [
                             { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
@@ -571,13 +570,21 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.selectedTab = $scope.tabPages[1];
                     $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
+
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
                         if ($scope.shipmentSource[i].Type == "Date") {
-                            $scope.shipmentFilteringDefinition.DataItem1[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                            $scope.shipmentFilteringDefinition.DataItem2[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
+                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
                         }
                         else
-                            $scope.shipmentFilteringDefinition.DataItem1[$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                    }
+                    //Delete keys that the value is null
+                    for (var i = 0; i < $scope.shipmentSource.length; i++) {
+                        if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {
+                            delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column];
+                            delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column];
+                        }
                     }
 
                     if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
@@ -588,7 +595,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         $scope.shipmentDataDefinition.DataList = [];
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
-                        //Scroll
+                    //Scroll
                     else {
                         if ($scope.shipmentFilteringDefinition.ClearData)
                             $scope.shipmentDataDefinition.DataList = [];
@@ -601,6 +608,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                       if scroll, initialize shipmentDataDefinition DataList by pushing each value of filterDefinition DataList*/
                     //Required
                     $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
@@ -632,9 +640,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
         $scope.initShipmentDataItems = function () {
             $scope.shipmentFilteringDefinition.DataItem1 = angular.copy($rootScope.shipmentObj());
-            $scope.shipmentFilteringDefinition.DataItem2 = angular.copy($rootScope.shipmentObj());
         };
-
         $scope.initShipmentFilteringDefinition();
         $scope.initShipmentDataItems();
     };
@@ -670,8 +676,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.businessUnitFilteringDefinition = {
                 "Url": ($scope.businessUnitDataDefinition.EnablePagination == true ? 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage : 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
-                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
                             { "Index": 0, "Label": "Code", "Column": "Code", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
@@ -691,12 +696,20 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.businessUnitSource.length; i++) {
                         if ($scope.businessUnitSource[i].Type == "Date") {
-                            $scope.businessUnitFilteringDefinition.DataItem1[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
-                            $scope.businessUnitFilteringDefinition.DataItem2[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[1][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
                         }
                         else
-                            $scope.businessUnitFilteringDefinition.DataItem1[$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
                     }
+
+                    ////Delete keys that the value is null
+                    //for (var i = 0; i < $scope.businessUnitSource.length; i++) {
+                    //    if ($scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] == null) {
+                    //        delete $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column];
+                    //        delete $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[1][$scope.businessUnitSource[i].Column];
+                    //    }
+                    //}
 
                     if ($scope.businessUnitDataDefinition.EnablePagination == true && $scope.businessUnitFilteringDefinition.ClearData) {
                         $scope.businessUnitDataDefinition.CurrentPage = 1;
@@ -712,7 +725,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                             $scope.businessUnitDataDefinition.DataList = [];
                         $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length;
                     }
-                    $scope.businessUnitFilteringDefinition.DataItem1.ParentBusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
+                    $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0].ParentBusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
+                    console.log($scope.businessUnitFilteringDefinition.DataItem1);
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -737,7 +751,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
         $scope.initBusinessUnitDataItems = function () {
             $scope.businessUnitFilteringDefinition.DataItem1 = angular.copy($rootScope.businessUnitObj());
-            $scope.businessUnitFilteringDefinition.DataItem2 = angular.copy($rootScope.businessUnitObj());
         };
 
         $scope.initBusinessUnitFilteringDefinition();
@@ -835,8 +848,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.customerFilteringDefinition = {
                 "Url": ($scope.customerDataDefinition.EnablePagination == true ? 'api/Customers?type=paginate&param1=' + $scope.customerDataDefinition.CurrentPage : 'api/Customers?type=scroll&param1=' + $scope.customerDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
-                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
                             { "Index": 0, "Label": "Code", "Column": "Code", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
@@ -856,11 +868,19 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.customerSource.length; i++) {
                         if ($scope.customerSource[i].Type == "Date") {
-                            $scope.customerFilteringDefinition.DataItem1[$scope.customerSource[i].Column] = $scope.customerSource[i].From;
-                            $scope.customerFilteringDefinition.DataItem2[$scope.customerSource[i].Column] = $scope.customerSource[i].To;
+                            $scope.customerFilteringDefinition.DataItem1.Customer[0][$scope.customerSource[i].Column] = $scope.customerSource[i].From;
+                            $scope.customerFilteringDefinition.DataItem1.Customer[1][$scope.customerSource[i].Column] = $scope.customerSource[i].To;
                         }
                         else
-                            $scope.customerFilteringDefinition.DataItem1[$scope.customerSource[i].Column] = $scope.customerSource[i].From;
+                            $scope.customerFilteringDefinition.DataItem1.Customer[0][$scope.customerSource[i].Column] = $scope.customerSource[i].From;
+                    }
+
+                    //Delete keys that the value is null
+                    for (var i = 0; i < $scope.customerSource.length; i++) {
+                        if ($scope.customerFilteringDefinition.DataItem1.Customer[0][$scope.customerSource[i].Column] == null) {
+                            delete $scope.customerFilteringDefinition.DataItem1.Customer[0][$scope.customerSource[i].Column];
+                            delete $scope.customerFilteringDefinition.DataItem1.Customer[1][$scope.customerSource[i].Column];
+                        }
                     }
 
                     if ($scope.customerDataDefinition.EnablePagination == true && $scope.customerFilteringDefinition.ClearData) {
@@ -901,7 +921,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
         $scope.initCustomerDataItems = function () {
             $scope.customerFilteringDefinition.DataItem1 = angular.copy($rootScope.customerObj());
-            $scope.customerFilteringDefinition.DataItem2 = angular.copy($rootScope.customerObj());
         };
 
         $scope.initCustomerFilteringDefinition();
@@ -1005,8 +1024,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.customerContactsFilteringDefinition = {
                 "Url": ($scope.customerContactsDataDefinition.EnablePagination == true ? 'api/CustomerContacts?type=paginate&param1=' + $scope.customerContactsDataDefinition.CurrentPage : 'api/CustomerContacts?type=scroll&param1=' + $scope.customerContactsDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
-                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
                             { "Index": 0, "Label": "Name", "Column": "ContactName", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Title", "Column": "ContactTitle", "Values": [], "From": null, "To": null, "Type": "Default" },
@@ -1026,12 +1044,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     for (var i = 0; i < $scope.customerContactsSource.length; i++) {
                         switch ($scope.customerContactsSource[i].Column) {
                             case "ContactName":
-                                $scope.customerContactsFilteringDefinition.DataItem1.Contact.Name = $scope.customerContactsSource[i].From;
-                                $scope.customerContactsFilteringDefinition.DataItem2.Contact.Name = $scope.customerContactsSource[i].To;
+                                $scope.customerContactsFilteringDefinition.DataItem1.CustomerContact[0].Contact.Name = $scope.customerContactsSource[i].From;
+                                $scope.customerContactsFilteringDefinition.DataItem1.CustomerContact[1].Contact.Name = $scope.customerContactsSource[i].To;
                                 break;
                             case "ContactTitle":
-                                $scope.customerContactsFilteringDefinition.DataItem1.Contact.Title = $scope.customerContactsSource[i].From;
-                                $scope.customerContactsFilteringDefinition.DataItem2.Contact.Title = $scope.customerContactsSource[i].To;
+                                $scope.customerContactsFilteringDefinition.DataItem1.CustomerContact[0].Contact.Title = $scope.customerContactsSource[i].From;
+                                $scope.customerContactsFilteringDefinition.DataItem1.CustomerContact[1].Contact.Title = $scope.customerContactsSource[i].To;
                                 break;
                             default: break;
                         }
@@ -1052,7 +1070,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         $scope.customerContactsFilteringDefinition.Url = 'api/CustomerContacts?type=scroll&param1=' + $scope.customerContactsDataDefinition.DataList.length;
                     }
 
-                    $scope.customerContactsFilteringDefinition.DataItem1.CustomerId = $scope.shipmentItem.CustomerId;
+                    $scope.customerContactsFilteringDefinition.DataItem1.CustomerContact[0].CustomerId = $scope.shipmentItem.CustomerId;
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize customerContactsDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -1077,7 +1095,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
         $scope.initCustomerContactsDataItems = function () {
             $scope.customerContactsFilteringDefinition.DataItem1 = angular.copy($rootScope.customerContactsObj());
-            $scope.customerContactsFilteringDefinition.DataItem2 = angular.copy($rootScope.customerContactsObj());
         };
 
         $scope.initCustomerContactsFilteringDefinition();
@@ -1179,8 +1196,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.customerContactPhonesFilteringDefinition = {
                 "Url": ($scope.customerContactPhonesDataDefinition.EnablePagination == true ? 'api/ContactPhones?type=paginate&param1=' + $scope.customerContactPhonesDataDefinition.CurrentPage : 'api/ContactPhones?type=scroll&param1=' + $scope.customerContactPhonesDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
-                "DataItem2": $scope.DataItem2, //Contains the parameter value index 1
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
                             { "Index": 0, "Label": "Contact Number", "Column": "ContactNumber", "Values": [], "From": null, "To": null, "Type": "Default" },
                 ],//Contains the Criteria definition
@@ -1199,8 +1215,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     for (var i = 0; i < $scope.customerContactPhonesSource.length; i++) {
                         switch ($scope.customerContactPhonesSource[i].Column) {
                             case "ContactNumber":
-                                $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactNumber = $scope.customerContactPhonesSource[i].From;
-                                $scope.customerContactPhonesFilteringDefinition.DataItem2.ContactNumber = $scope.customerContactPhonesSource[i].To;
+                                $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactPhone[0].ContactNumber = $scope.customerContactPhonesSource[i].From;
+                                $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactPhone[1].ContactNumber = $scope.customerContactPhonesSource[i].To;
                                 break;
                             default: break;
                         }
@@ -1221,7 +1237,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         $scope.customerContactPhonesFilteringDefinition.Url = 'api/ContactPhones?type=scroll&param1=' + $scope.customerContactPhonesDataDefinition.DataList.length;
                     }
 
-                    $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactId = $scope.shipmentItem.CustomerContactId;
+                    $scope.customerContactPhonesFilteringDefinition.DataItem1.ContactPhone[0].ContactId = $scope.shipmentItem.CustomerContactId;
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize customerContactPhonesDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -1246,7 +1262,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
         $scope.initCustomerContactPhonesDataItems = function () {
             $scope.customerContactPhonesFilteringDefinition.DataItem1 = angular.copy($rootScope.customerContactPhonesObj());
-            $scope.customerContactPhonesFilteringDefinition.DataItem2 = angular.copy($rootScope.customerContactPhonesObj());
         };
 
         $scope.initCustomerContactPhonesFilteringDefinition();
@@ -1376,25 +1391,32 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     for (var i = 0; i < $scope.customerAddressSource.length; i++) {
                         switch ($scope.customerAddressSource[i].Column) {
                             case "Line1":
-                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
-                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[1][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
                                 break;
                             case "Line2":
-                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
-                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[1][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
                                 break;
                             case "CityMunicipality":
-                                $scope.customerAddressFilteringDefinition.DataItem1.CityMunicipality.Name = $scope.customerAddressSource[i].From;
-                                $scope.customerAddressFilteringDefinition.DataItem2.CityMunicipality.Name = $scope.customerAddressSource[i].To;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0].CityMunicipality.Name = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[1].CityMunicipality.Name = $scope.customerAddressSource[i].To;
                                 break;
                             case "PostalCode":
-                                $scope.customerAddressFilteringDefinition.DataItem1[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
-                                $scope.customerAddressFilteringDefinition.DataItem2[$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].From;
+                                $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[1][$scope.customerAddressSource[i].Column] = $scope.customerAddressSource[i].To;
                                 break;
                             default: break;
                         }
                     }
 
+                    //Delete keys that the value is null
+                    for (var i = 0; i < $scope.customerAddressSource.length; i++) {
+                        if ($scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0][$scope.customerAddressSource[i].Column] == null) {
+                            delete $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[0][$scope.customerAddressSource[i].Column];
+                            delete $scope.customerAddressFilteringDefinition.DataItem1.CustomerAddress[1][$scope.customerAddressSource[i].Column];
+                        }
+                    }
                     if ($scope.customerAddressDataDefinition.EnablePagination == true && $scope.customerAddressFilteringDefinition.ClearData) {
                         $scope.customerAddressDataDefinition.CurrentPage = 1;
                         $scope.customerAddressFilteringDefinition.Url = 'api/CustomerAddresses?type=paginate&param1=' + $scope.customerAddressDataDefinition.CurrentPage;

@@ -91,9 +91,9 @@ namespace Kunzad.ApiControllers
             return Ok(customer);
         }
 
-        [HttpPut]
+        [HttpGet]
         //Dynamic filtering
-        public IHttpActionResult PutCustomer(string type, int param1, List<Customer> customer)
+        public IHttpActionResult GetCustomer(string type, int param1, [FromUri]List<Customer> customer)
         {
             Object[] customers = new Object[pageSize];
             this.filterRecord(param1, type, customer.ElementAt(0), customer.ElementAt(1), ref customers);

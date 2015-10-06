@@ -69,9 +69,9 @@ namespace Kunzad.ApiControllers
             return Ok(businessUnit);
         }
 
-        [HttpPut]
+        [HttpGet]
         //Dynamic filtering
-        public IHttpActionResult PutBusinessUnit(string type, int param1, List<BusinessUnit> businessUnit)
+        public IHttpActionResult GetBusinessUnit(string type, int param1, [FromUri]List<BusinessUnit> businessUnit)
         {
             Object[] businessUnits = new Object[pageSize];
             this.filterRecord(param1, type, businessUnit.ElementAt(0), businessUnit.ElementAt(1), ref businessUnits);

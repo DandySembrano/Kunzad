@@ -9,9 +9,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
+using WebAPI.OutputCache;
 
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class ShipmentsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
@@ -76,10 +78,11 @@ namespace Kunzad.ApiControllers
         }
         
         //Dynamic filtering api/Shipments?page=1
-        [HttpPut]
-        public IHttpActionResult PutShipment(string type, int param1, List<Shipment> shipment)
+        [HttpGet]
+        [CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        public IHttpActionResult GetShipment(int param1, string type, [FromUri]List<Shipment> shipment)
         {
-            Shipment [] shipments = new Shipment[pageSize];
+            Shipment[] shipments = new Shipment[pageSize];
             this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), ref shipments);
 
             if (shipments != null)
@@ -328,8 +331,11 @@ namespace Kunzad.ApiControllers
         public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, ref Shipment[] shipments)
         {
 
-            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
-              if integer value is not nullable in table equate to 0 else null*/
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
             DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
             int skip;
 

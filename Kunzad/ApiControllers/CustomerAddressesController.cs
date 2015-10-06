@@ -83,9 +83,9 @@ namespace Kunzad.ApiControllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        [HttpPut]
+        [HttpGet]
         //Dynamic filtering
-        public IHttpActionResult PutCustomerAddress(string type, int param1, List<CustomerAddress> customerAddress)
+        public IHttpActionResult GetCustomerAddress(string type, int param1, [FromUri]List<CustomerAddress> customerAddress)
         {
             Object[] customerAddresses = new Object[pageSize];
             this.filterRecord(param1, type, customerAddress.ElementAt(0), customerAddress.ElementAt(1), ref customerAddresses);

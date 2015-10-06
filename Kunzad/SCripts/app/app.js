@@ -12,65 +12,117 @@ kunzadApp.run(function ($rootScope) {
     //Reusable object for filtering shipment/booking so that other module can directly access
     $rootScope.shipmentObj = function () {
         return {
-            "Id": null,
-            "CreatedDate": null,
-            "CustomerId": null,
-            "BusinessUnitId": null,
-            "ServiceId": null,
-            "ShipmentTypeId": null,
-            "PaymentMode": null,
-            "PickupDate": null,
-            "PickUpBussinessUnitId": null,
-            "TransportStatusId": null
+            "Shipment": [{
+                "Id": null,
+                "CreatedDate": null,
+                "CustomerId": null,
+                "BusinessUnitId": null,
+                "ServiceId": null,
+                "ShipmentTypeId": null,
+                "PaymentMode": null,
+                "PickupDate": null,
+                "PickUpBussinessUnitId": null,
+                "TransportStatusId": null
+            },
+            {
+                "Id": null,
+                "CreatedDate": null,
+                "CustomerId": null,
+                "BusinessUnitId": null,
+                "ServiceId": null,
+                "ShipmentTypeId": null,
+                "PaymentMode": null,
+                "PickupDate": null,
+                "PickUpBussinessUnitId": null,
+                "TransportStatusId": null
+            }]
         };
     };
 
     //Reusable object for filtering business unit so that other module can directly access
     $rootScope.businessUnitObj = function () {
         return {
-            "Name": null,
-            "Code": null
+            "BusinessUnit": [{
+                "Name": null,
+                "Code": null,
+                "ParentBusinessUnitId": null
+            }, {
+                "Name": null,
+                "Code": null,
+                "ParentBusinessUnitId": null
+            }]
         };
     };
 
     //Reusable object for filtering customer so that other module can directly access
     $rootScope.customerObj = function () {
         return {
-            "Name": null,
-            "Title": null,
+            "Customer": [{
+                        "Name": null,
+                        "Title": null
+                        },
+                        {
+                            "Name": null,
+                            "Title": null
+                        }]
+            
         };
     };
 
     //Reusable object for filtering customer contacts so that other module can directly access
     $rootScope.customerContactsObj = function () {
         return {
-            "Contact": {
-                "Name": null,
-                "Title": null
-            }
+            "CustomerContact": [{
+                "Contact": {
+                    "Name": null,
+                    "Title": null
+                }
+            }, {
+                "Contact": {
+                    "Name": null,
+                    "Title": null
+                }
+            }]
         }
     };
     
     //Reusable object for filtering customer contacts so that other module can directly access
     $rootScope.customerContactPhonesObj = function () {
         return {
-            "ContactNumber": null,
-            "ContactId": null
+            "ContactPhone": [{
+                "ContactNumber": null,
+                "ContactId": null
+            }, {
+                "ContactNumber": null,
+                "ContactId": null
+            }]
         }
     };
 
     //Reusable object for filtering customer addresses so that other module can directly access
     $rootScope.customerAddressObj = function () {
         return {
-            "Line1": null,
-            "Line2": null,
-            "CityMunicipality": {
-                "Name": null
-            },
-            "PostalCode": null,
-            "IsBillingAddress": null,
-            "IsDeliveryAddress": null,
-            "IsPickupAddress": null
+            "CustomerAddress": [{
+                "Line1": null,
+                "Line2": null,
+                "CityMunicipality": {
+                    "Name": null
+                },
+                "PostalCode": null,
+                "IsBillingAddress": null,
+                "IsDeliveryAddress": null,
+                "IsPickupAddress": null
+            }, {
+                "Line1": null,
+                "Line2": null,
+                "CityMunicipality": {
+                    "Name": null
+                },
+                "PostalCode": null,
+                "IsBillingAddress": null,
+                "IsDeliveryAddress": null,
+                "IsPickupAddress": null
+            }]
         }
     };
 

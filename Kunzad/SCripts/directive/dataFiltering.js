@@ -11,7 +11,6 @@ kunzadApp.directive('dirFiltering', function () {
                                             Url         - Contains the API Url for Filter
                                             DataList    - Contains the data filtered from the server
                                             DataItem1   - Contains the data as parameter in filtering data to the server
-                                            DataItem2   - Contains the data as parameter in filtering data to the server
                                             Source      - Contains the data needed for filtering such as Label, Column, Values and Type
                                                           If Type is Default, include DataType like Integer or String
                                             Multiple    - if filtering can add criteria set it to true, else false
@@ -170,36 +169,24 @@ kunzadApp.directive('dirFiltering', function () {
                 }
                 if ($scope.otheractions({ action: 'PreFilterData' })) {
                     $scope.url = $scope.filterdefinition.Url;
-                    $scope.parameter = [];
                     var dataModel1 = $scope.filterdefinition.DataItem1;
-                    var dataModel2 = $scope.filterdefinition.DataItem2;
-                    //Delete Keys that are null except Id if autoload is true
-                    for (var i = ($scope.filterdefinition.AutoLoad == true ? 1 : 0) ; i < $scope.filterdefinition.Source.length; i++) {
-                        if ($scope.filterdefinition.DataItem1[$scope.filterdefinition.Source[i].Column] == null) {
-                            delete dataModel1[$scope.filterdefinition.Source[i].Column];
-                            delete dataModel2[$scope.filterdefinition.Source[i].Column];
+
+                    $.ajax($scope.url, {
+                        type: "GET",
+                        data: dataModel1,
+                        success: function (data) {
+                            $scope.filterdefinition.DataList = angular.copy(data);
+                            $scope.forceScroll();
+                            $scope.retrieving = false;
+                            $scope.filterdefinition.ClearData = false;
+                            $scope.otheractions({ action: 'PostFilterData' })
+                            spinner.stop();
+                        },
+                        error: function (jqXHR) {
+                            $scope.isErrorFiltering = true;
+                            $scope.errorMessageFiltering = jqXHR.status;
                         }
-                    }
-                    $scope.parameter.push(dataModel1);
-                    $scope.parameter.push(dataModel2);
-                    //Send http request to server
-                    $http.put($scope.url, $scope.parameter)
-                    .success(function (data, status) {
-                        $scope.filterdefinition.DataList = angular.copy(data);
-                        $scope.otheractions({ action: 'PostFilterData' });
-                        //Code to Fix angular ui-grid bug after scrolling
-                        $scope.forceScroll();
-                        $scope.retrieving = false;
-                        $scope.filterdefinition.ClearData = false;
-                        spinner.stop();
-                    })
-                    .error(function (err, status) {
-                        $scope.retrieving = false;
-                        $scope.filterdefinition.ClearData = false;
-                        $scope.isErrorFiltering = true;
-                        $scope.errorMessageFiltering = status
-                        spinner.stop();
-                    })
+                    });
                 }
                 else {
                     $scope.filterdefinition.ClearData = false;
