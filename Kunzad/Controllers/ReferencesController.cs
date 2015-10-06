@@ -100,5 +100,9 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult AirFreight()
+        {
+            return View();
+        }
     }
 }

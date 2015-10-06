@@ -397,6 +397,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'TruckingsWBController'
         })
 
+        .when('/airfreight', {
+            templateUrl: '/References/AirFreight',
+            controller: 'AirFreightsController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });
