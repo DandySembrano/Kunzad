@@ -6,8 +6,8 @@
 @section tab1Content{
     <div context-menu="" data-target="FormMenu">
         <div class="alert alert-danger alert-sm" ng-show="shipmentIsError">
-            <i class="fa fa-remove pr10"></i>
-            <strong>ERROR!</strong>{{shipmentErrorMessage}}
+            <i class="fa fa-remove pr10" ng-click="shipmentIsError=false;shipmentErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + shipmentErrorMessage}}
         </div>
 
         @*row1*@
@@ -104,18 +104,18 @@
                         @*Customer Code*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Code</label>
-                            <div class="col-md-7">
-                                <input id="customerCode"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="shipmentItem.Customer.Code"
-                                       ng-disabled="viewOnly">
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Search Shipper" ng-click="showCustomer()">
-                                    <span class="glyphicons glyphicons-zoom_in" style="color:#4a89dc"></span>
-                                </button>
+                            <div class="col-md-8">
+                                <div class="input-group date">
+                                    <input id="customerCode"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="shipmentItem.Customer.Code"
+                                           ng-disabled="viewOnly">
+                                    <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Shipper" ng-click="showCustomer()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         @*Customer Name*@
@@ -248,18 +248,18 @@
                         @*Pickup Business Unit*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Operation Site</label>
-                            <div class="col-md-7">
-                                <input id="BusinessUnit"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="shipmentItem.BusinessUnit1.Name"
-                                       ng-disabled="viewOnly">
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Search Operation Site" ng-click="showBusinessUnit()">
-                                    <span class="glyphicons glyphicons-zoom_in" style="color:#4a89dc"></span>
-                                </button>
+                            <div class="col-md-8">
+                                <div class="input-group date">
+                                    <input id="BusinessUnit"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="shipmentItem.BusinessUnit1.Name"
+                                           ng-disabled="viewOnly">
+                                    <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Operation Site" ng-click="showBusinessUnit()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         @*Pick Up Date*@

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="alert alert-danger alert-sm" ng-show="isErrorFiltering" style="padding-top:10px;">
-                <i class="fa fa-remove pr10"></i>
+                <i class="fa fa-remove pr10" ng-click="isErrorFiltering = false;errorMessageFiltering=''"></i>
                 <strong>ERROR!</strong>{{" " + errorMessageFiltering}}
             </div>
             <form class="form-horizontal" role="form">

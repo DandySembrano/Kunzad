@@ -14,6 +14,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                                             DataList            - Contains the List of data to be displayed in DataGrid
                                             RequiredFields      - Contains the required fields
                                             ColWidth            - Width of a column in the datagrid
+                                            IsEditable          - true if column in a row in datagrid is editable, else false
                                             CellTemplate        - Cell template per cell in ui-grid, array type if there is any else None in first index
                                             RowTemplate         - Row template per row in ui-grid, if value is Default defaultRowTemplate function will be invoked
                                             EnableScroll        - True if load data during scroll else false
@@ -107,6 +108,10 @@ kunzadApp.directive('dirDataGrid2', function () {
                     }
                     //format field value
                     columnProperties.cellFilter = $scope.datadefinition.Type[i];
+                    if (angular.isDefined($scope.datadefinition.IsEditable)) {
+                        if (i < $scope.datadefinition.IsEditable.length)
+                            columnProperties.enableCellEdit = $scope.datadefinition.IsEditable[i];
+                    }
                     columns.push(columnProperties);
                 }
 

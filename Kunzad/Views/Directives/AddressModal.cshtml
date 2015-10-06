@@ -12,7 +12,7 @@
         </div>
         <div class="panel-body">
             <div class="alert alert-danger alert-sm" ng-show="isErrorAddress">
-                <i class="fa fa-remove pr10"></i>
+                <i class="fa fa-remove pr10" ng-click="isErrorAddress = false; errorMessageAddress = ''"></i>
                 <strong>ERROR!</strong>    {{errorMessageAddress}}
             </div>
             <div class="row">
