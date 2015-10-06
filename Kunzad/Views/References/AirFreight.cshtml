@@ -11,132 +11,210 @@
             <i class="fa fa-remove pr10"></i>
             <strong>ERROR!</strong>{{errorMessage}}
         </div>
-        <div class="row">
-            <div class="col-lg-7">
-                <div class="row">&nbsp;</div>
-                <div class="row form-group form-group-sm">
-                    <label class="col-sm-3">Document no</label>
+        <div class="col-md-12">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border control-label small">Air Freight Info</legend>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">ID</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control"
-                               ng-model="truckingItem.DocumentNo"
-                               ng-disabled="ViewOnly" />
-                    </div>
-
-                    <label class="col-sm-1">Date</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control"
-                               ng-model="truckingItem.CreatedDateDesc"
+                        <input type="text" class="form-control" placeholder="[SYSTEM GENERATED]"
+                               ng-model="airFreightItem.Id"
                                ng-disabled="true" />
                     </div>
                 </div>
-                @*<div class="row form-group form-group-sm">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <label class="col-sm-3">Trucking Mode</label>
-                                <div class="col-sm-3"><input type="text" /></div>
-                            </div>
-                        </div>
-                    </div>*@
-                <div class="row form-group form-group-sm">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <label class="col-sm-3">Origin</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control input-group"
-                                       ng-model="truckingItem.OriginServiceableAreaName"
-                                       ng-disabled="true" />
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Origin" ng-click="showModal('#businessUnitOrigin-list-modal')">
-                                    <span class="glyphicons glyphicons-search">
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row form-group form-group-sm">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <label class="col-sm-3">Destination</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.DestinationServiceableAreaName"
-                                       ng-disabled="true" />
-                            </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Destination" ng-click="showModal('#businessUnitDestination-list-modal')">
-                                    <span class="glyphicons glyphicons-search">
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row form-group form-group-sm">
-                    <label class="col-sm-3">Trucker Cost</label>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Airline</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="truckerCost"
-                               ng-model="truckingItem.TruckerCost"
-                               ng-disabled="ViewOnly" />
+                        <input type="text" class="form-control"
+                               ng-model="airFreightItem.AirlineId"
+                               ng-disabled="viewOnly" />
                     </div>
                 </div>
-                <div class="row form-group form-group-sm">
-                    <label class="col-sm-3">Revenue</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="internalRevenue"
-                               ng-model="truckingItem.InternalRevenue"
-                               ng-disabled="ViewOnly" />
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Waybill No</label>
+                    <div class="col-md-4">
+                        <input type='text'
+                               class="form-control"
+                               ng-model="airFreightItem.AirWaybillNumber"
+                               ng-disabled="viewOnly" />
+                    </div>
+                    <label class="col-md-2 control-label small">Waybill Date</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id='airWaybillDate'
+                                   class="form-control"
+                                   ng-model="airFreightItem.AirWaybillDate"
+                                   ng-disabled="viewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-lg-5">
+                <div class="form-group form-group-sm">
+                    <label class="col-lg-2 text-right">Origin</label>
+                    <div class="col-lg-4">
+                        <div class='input-group'>
+                            <input type='text'
+                                   class="form-control"
+                                   ng-model="airFreightItem.OriginBusinessUnitName"
+                                   ng-disabled="true" />
+                            <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Origin" ng-click="showModal('#origin-list-modal')">
+                                <span class="glyphicons glyphicons-search"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <label class="col-lg-2 text-right">Destination</label>
+                    <div class="col-lg-4">
+                        <div class='input-group'>
+                            <input type='text'
+                                   class="form-control input-group"
+                                   ng-model="airFreightItem.DestinationBusinessUnitName"
+                                   ng-disabled="true" />
+                            <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#destination-list-modal')">
+                                <span class="glyphicons glyphicons-search"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-md-12 text-center">
+            <div class="col-md-6">
                 <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Dispatch Information</legend>
+                    <legend class="scheduler-border control-label small">Estimate Departure</legend>
                     <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Dispatch No</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" class="form-control" 
-                                       ng-model="truckingItem.Id"
-                                       ng-disabled="true" />
+                        <label class="col-md-1 control-label small">Date</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='estimateDepartureDate'
+                                       class="form-control"
+                                       ng-model="airFreightItem.EstimateDepartureDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
                             </div>
-                            <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
-                                    <span class="glyphicons glyphicons-search">
-                                    </span>
-                                </button>
+                        </div>
+
+                        <label class="col-md-1 control-label small">Time</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='estimateDepartureTime'
+                                       class="form-control"
+                                       ng-model="airFreightItem.EstimateDepartureTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
+                </fieldset>
+            </div>
+            <div class="col-md-6">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border control-label small">Estimate Arrival</legend>
                     <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Trucker</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Trucker.Name"
-                                       ng-disabled="true" />
+                        <label class="col-md-1 control-label small">Date</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='estimateArrivalDate'
+                                       class="form-control"
+                                       ng-model="airFreightItem.EstimateArrivalDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <label class="col-md-1 control-label small">Time</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='estimateArrivalTime'
+                                       class="form-control"
+                                       ng-model="airFreightItem.EstimateArrivalTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="col-md-12 text-center">
+            <div class="col-md-6">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border control-label small">Departure</legend>
                     <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Plate No</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Truck.PlateNo"
-                                       ng-disabled="true" />
+                        <label class="col-md-1 control-label small">Date</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='departureDate'
+                                       class="form-control"
+                                       ng-model="airFreightItem.DepartureDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <label class="col-md-1 control-label small">Time</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='departureTime'
+                                       class="form-control"
+                                       ng-model="airFreightItem.DepartureTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
+                </fieldset>
+            </div>
+            <div class="col-md-6">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border control-label small">Arrival</legend>
                     <div class="form-group form-group-sm">
-                        <div class="row">
-                            <label class="col-sm-4">Driver</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control"
-                                       ng-model="truckingItem.Driver.Name"
-                                       ng-disabled="true" />
+                        <label class="col-md-1 control-label small">Date</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='arrivalDate'
+                                       class="form-control"
+                                       ng-model="airFreightItem.ArrivalDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <label class="col-md-1 control-label small">Time</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='arrivalTime'
+                                       class="form-control"
+                                       ng-model="airFreightItem.ArrivalTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -144,21 +222,19 @@
             </div>
         </div>
     </form>
-    @*<div class="col-lg-12">
-        <div ui-grid="truckingShipmentGridOptions" class="grid" ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
-    </div>*@
 </div>
+    
 @*Detail*@
 <fieldset class="scheduler-border">
     <legend class="scheduler-border">Dispatching Details</legend>
-    <div id="trckngDlvry" ng-repeat="trkgdlvryList in trkgDeliveryList">
+    <div id="sList" ng-repeat="sList in shipmentList">
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Detail No {{$index+1}}</legend>
-            @*<div class="col-md-12">
-                <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
-                    <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
-                </span>
-            </div>*@
+            <div class="col-md-22">
+                    <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
+                        <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
+                    </span>
+                </div>
             <br />
             <!-------form------->
             @*row1*@
@@ -169,12 +245,16 @@
                         @*Shipment No*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Shipment No</label>
-                            <div class="col-md-8">
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="trkgdlvryList.Id"
-                                       ng-disabled="true">
+                            <div class='col-md-8'>
+                                <div class='input-group'>
+                                    <input type='text'
+                                           class="form-control"
+                                           ng-model="sList.Id"
+                                           ng-disabled="true" />
+                                    <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#shipment-list-modal')">
+                                        <span class="glyphicons glyphicons-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         @*Customer Code*@
@@ -184,7 +264,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.Customer.Code"
+                                       ng-model="sList.Shipment.Customer.Code"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -195,7 +275,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.Customer.Name"
+                                       ng-model="sList.Shipment.Customer.Name"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -208,7 +288,7 @@
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="trkgdlvryList.DeliverTo"
+                                       ng-model="sList.DeliverTo"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -220,7 +300,7 @@
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="trkgdlvryList.Shipment.DeliverToContactNo"
+                                       ng-model="sList.Shipment.DeliverToContactNo"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -231,7 +311,7 @@
                                 <textarea rows="3" style="height:auto;"
                                           class="form-control"
                                           placeholder=""
-                                          ng-model="trkgdlvryList.Shipment.Address.Line1"
+                                          ng-model="sList.Shipment.Address.Line1"
                                           ng-disabled="true"></textarea>
                             </div>
                         </div>
@@ -246,7 +326,7 @@
                                 <textarea rows="3" style="height:auto;"
                                           class="form-control"
                                           placeholder=""
-                                          ng-model="trkgdlvryList.Description"
+                                          ng-model="sList.Description"
                                           ng-disabled="true"></textarea>
                             </div>
                         </div>
@@ -257,7 +337,7 @@
                                 <input id="quantity"
                                        type="text"
                                        class="form-control"
-                                       ng-model="trkgdlvryList.Quantity"
+                                       ng-model="sList.Quantity"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -268,7 +348,7 @@
                                 <input id="cbm"
                                        type="text"
                                        class="form-control"
-                                       ng-model="trkgdlvryList.CBM"
+                                       ng-model="sList.CBM"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -280,7 +360,7 @@
                                     <input type='text'
                                            id='deliverydate'
                                            class="form-control"
-                                           ng-model="trkgdlvryList.DeliveryDate"
+                                           ng-model="sList.DeliveryDate"
                                            ng-disabled="viewOnly" />
                                     <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
@@ -296,7 +376,7 @@
                                     <input type='text'
                                            id='deliverytime'
                                            class="form-control"
-                                           ng-model="trkgdlvryList.DeliveryTime"
+                                           ng-model="sList.DeliveryTime"
                                            ng-disabled="viewOnly" />
                                     <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
@@ -311,7 +391,7 @@
                                 <input id="costAllocation"
                                        type="text"
                                        class="form-control"
-                                       ng-model="trkgdlvryList.CostAllocation"
+                                       ng-model="sList.CostAllocation"
                                        ng-disabled="viewOnly">
                             </div>
                         </div>
@@ -319,7 +399,7 @@
                     <script type="text/javascript">
                         $(function () {
                             // NUMBERS w/ DECIMAL AND COMMA
-                            $('#internalRevenue,#truckerCost,#costAllocation').priceFormat({
+                            $('#costAllocation').priceFormat({
                                 clearPrefix: true,
                                 prefix: '',
                                 centsSeparator: '.',
@@ -327,13 +407,14 @@
                                 centsLimit: 2
                             });
 
-                            $('#deliverydate').datetimepicker({
+                            $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
                                 format: 'MM-DD-YYYY',
                                 sideBySide: false,
-                                pickTime: false,
+                                pickTime: false
                                 //minDate: moment()
                             })
-                            $('#deliverytime').datetimepicker({
+
+                            $('#estimateDepartureTime,#estimateArrivalTime,#departureTime,#arrivalTime,#deliverytime').datetimepicker({
                                 format: 'HH:mm',
                                 sideBySide: false,
                                 pickDate: false
@@ -349,7 +430,7 @@
     </div>
 
     @*<div class="row text-right">
-        <div class="col-md-12">
+        <div class="col-md-22">
             <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewBooking()">
                 Add Shipment from Booking
             </button>
@@ -365,11 +446,11 @@
     </div>
 }
 
-<div id="trucking-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Trucking List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
         </div>
         <!--Modal Body-->
         <div class="panel-body">
@@ -379,25 +460,23 @@
                         <thead>
                             <tr class="myTableRow-header text-dark small">
                                 <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-seqno small">Document No</th>
-                                <th class="myTableCell cell-10 small text-center">Trucker</th>
-                                <th class="myTableCell cell-10 small text-center">Truck</th>
-                                <th class="myTableCell cell-10 small text-center">Driver</th>
-                                @*<th class="myTableCell cell-10 small text-center">Origin</th>
-                                    <th class="myTableCell cell-10 small text-center">Destination</th>*@
+                                <th class="myTableCell cell-10 small text-center">Shipment ID</th>
+                                <th class="myTableCell cell-10 small text-center">BusinessUnit</th>
+                                <th class="myTableCell cell-10 small text-center">Service</th>
+                                <th class="myTableCell cell-10 small text-center">Shipment Type</th>
+                                <th class="myTableCell cell-10 small text-center">Customer Name</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="myTableRow"
-                                ng-repeat="trucking in truckingList"
-                                ng-click="closeModalTrucking(trucking)">
+                                ng-repeat="s in ShipmentList"
+                                ng-click="closeShipmentList(s.Id)">
                                 <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{trucking.DocumentNo}}</td>
-                                <td class="myTableCell cell-10 small">{{trucking.Trucker.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{trucking.Truck.PlateNo}}</td>
-                                <td class="myTableCell cell-10 small">{{trucking.Driver.Name}}</td>
-                                @*<td class="myTableCell cell-10 small">{{(trucking.WeightCapacity)}}</td>
-                                    <td class="myTableCell cell-10 small">{{(trucking.VolumeCapacity)}}</td>*@
+                                <td class="myTableCell cell-10 small">{{s.Id}}</td>
+                                <td class="myTableCell cell-10 small">{{s.BusinessUnit.Name}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.Service.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.ShipmentType.Name)}}</td>
+                                <td class="myTableCell cell-10 small">{{(s.Customer.Name)}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -412,7 +491,7 @@
 </div>
 
 @*BUSINESS UNITS FOR ORIGIN*@
-<div id="businessUnitOrigin-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<div id="origin-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -457,7 +536,7 @@
 </div>
 
 @*BUSINESS UNITS FOR DESTINATION*@
-<div id="businessUnitDestination-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<div id="destination-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
