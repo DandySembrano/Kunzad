@@ -16,15 +16,14 @@
                 <legend class="scheduler-border control-label small">Air Freight Info</legend>
                 <div class="form-group form-group-sm">
                     <label class="col-md-2 control-label small">ID</label>
-                    <div class="col-sm-4">
+                    <div class="col-md-4">
                         <input type="text" class="form-control" placeholder="[SYSTEM GENERATED]"
                                ng-model="airFreightItem.Id"
                                ng-disabled="true" />
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
+
                     <label class="col-md-2 control-label small">Airline</label>
-                    <div class="col-sm-4">
+                    <div class="col-md-4">
                         <input type="text" class="form-control"
                                ng-model="airFreightItem.AirlineId"
                                ng-disabled="viewOnly" />
@@ -227,11 +226,11 @@
 @*Detail*@
 <fieldset class="scheduler-border">
     <legend class="scheduler-border">Dispatching Details</legend>
-    <div id="sList" ng-repeat="sList in shipmentList">
+    <div id="sList" ng-repeat="sList in shipmentItem">
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Detail No {{$index+1}}</legend>
-            <div class="col-md-22">
-                    <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
+            <div class="col-md-12">
+                    <span title="Remove" style="color:#4a89dc;position:absolute;right:0;">
                         <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
                     </span>
                 </div>
@@ -429,24 +428,24 @@
         </fieldset>
     </div>
 
-    @*<div class="row text-right">
+    <div class="row text-right">
         <div class="col-md-22">
             <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewBooking()">
                 Add Shipment from Booking
             </button>
         </div>
-    </div>*@
+    </div>
 </fieldset>
 }
 
 <!-- Trucking List -->
 @section tab2Content{
-    <div ng-show="selectedTab === tabPages[1]">
+    @*<div ng-show="selectedTab === tabPages[1]">
         <div ui-grid="gridOptionsTruckings" ui-grid-exporter class="grid"></div>
-    </div>
+    </div>*@
 }
 
-<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+@*<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -488,7 +487,27 @@
             <button class="btn" type="submit" ng-click="closeModalTrucking(trucking)">OK</button>
         </div>
     </div>
+</div>*@
+
+<!-- Shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
 </div>
+<!--End of Shipment List Modal -->
 
 @*BUSINESS UNITS FOR ORIGIN*@
 <div id="origin-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
