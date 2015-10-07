@@ -104,5 +104,9 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult CourierDelivery()
+        {
+            return View();
+        }
     }
 }

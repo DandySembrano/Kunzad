@@ -40,6 +40,7 @@ namespace Kunzad.Models
             m.MenuItems.Add(new MenuItem("Waybill Processing", "glyphicons glyphicons-truck", "#/truckingwb"));
             m.MenuItems.Add(new MenuItem("Sea Freight", "glyphicons glyphicons-boat", "#/seafreight"));
             m.MenuItems.Add(new MenuItem("Air Freight", "glyphicons glyphicons-airplane", "#/airfreight"));
+            m.MenuItems.Add(new MenuItem("Courier Delivery", "glyphicons glyphicons-truck", "#/courierdelivery"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Consolidate

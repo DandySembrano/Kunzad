@@ -126,6 +126,29 @@ kunzadApp.run(function ($rootScope) {
         }
     };
 
+    //Reusable object for filtering courier so that other module can directly access
+    $rootScope.courierObj = function () {
+        return {
+            "Courier": [
+                {
+                    "Id": null,
+                    "Name": null,
+                    "TIN": null,
+                    "Line1": null,
+                    "Line2": null,
+                    "PostalCode": null
+                },
+                {
+                    "Id": null,
+                    "Name": null,
+                    "TIN": null,
+                    "Line1": null,
+                    "Line2": null,
+                    "PostalCode": null
+                }]
+        }
+    };
+
     //Payment Mode List
     $rootScope.getPaymentModeList = function () {
         return [{ "Id": "A", "Name": "Account" },
@@ -400,6 +423,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         .when('/airfreight', {
             templateUrl: '/References/AirFreight',
             controller: 'AirFreightsController'
+        })
+
+        .when('/courierdelivery', {
+            templateUrl: '/References/CourierDelivery',
+            controller: 'CourierDeliveryController'
         })
 
         .otherwise({

@@ -170,7 +170,7 @@ kunzadApp.directive('dirDataGrid2', function () {
             //Default row template of the data grid
             $scope.defaultRowTemplate = function(){
                 return '<div>' +
-                        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
+                        ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.manipulateEditableCell(col);"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
                       '</div>';
             };
             //Process Pagination
@@ -186,6 +186,11 @@ kunzadApp.directive('dirDataGrid2', function () {
                 else
                     $scope.isNextPage = true;
             };
+
+            $scope.manipulateEditableCell = function (col) {
+                if (col.colDef.enableCellEdit == true)
+                    $scope.otheractions({ action: col.displayName });
+            }
 
             //Function that binds ui-grid template during scroll
             $scope.onScroll = function () {
