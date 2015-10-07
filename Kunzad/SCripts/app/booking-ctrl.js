@@ -3,8 +3,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
-    $scope.shipmentGridOptions = {};
-    $scope.shipmentGridOptions.data = [];
     $scope.shipmentItem = {};
     $scope.viewOnly = false;
     $scope.shipmentIsError = false;
@@ -185,6 +183,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "Retrieve": false, //By default
                 "DataItem": {},
                 "DataTarget": "ShipmentMenu",
+                "DataTarget2": "ShipmentMenu2",
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
@@ -1607,6 +1606,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.loadCustomerAddressDataGrid();
         $scope.loadCustomerAddressFiltering();
         $scope.shipmentResetData();
+
+        if ($scope.shipmentFilteringDefinition.AutoLoad == true)
+            $scope.shipmentDataDefinition.Retrieve = true;
         //---------------------------Code if using typeahead in city/municipality-------------------
         //Get cityMunicipalities
         var promise = $interval(function () {
