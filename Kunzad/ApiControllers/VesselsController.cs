@@ -174,6 +174,7 @@ namespace Kunzad.ApiControllers
                                                        )
                                           })
                                         .Where(v => vessel.Id == null || vessel.Id == 0 ? true : v.Id == vessel.Id)
+                                        .Where(v => vessel.ShippingLineId == null || vessel.ShippingLineId == 0 ? true : v.ShippingLineId == vessel.ShippingLineId)
                                         .Where(v => vessel.Name == null ? !vessel.Name.Equals("") : (v.Name.ToLower().Equals(vessel.Name)))
                                         .OrderBy(v => v.Id)
                                         .Skip(skip).Take(pageSize).ToArray();

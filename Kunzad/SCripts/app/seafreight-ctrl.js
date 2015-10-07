@@ -224,6 +224,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "Retrieve": false, //By default
                     "DataItem": {},
                     "DataTarget": "BusinessUnitMenu",
+                    "DataTarget2": "BusinessUnitMenu1",
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
@@ -393,7 +394,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "DoPagination": false, //By default
                     "Retrieve": false, //By default
                     "DataItem": {},
-                    "DataTarget": "CustomerMenu",
+                    "DataTarget": "ShippingLineMenu",
+                    "DataTarget2": "ShippingLineMenu1",
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
@@ -504,7 +506,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                                 $scope.vesselDataDefinition.DataList = [];
                             $scope.vesselFilteringDefinition.Url = 'api/Vessels?type=scroll&param1=' + $scope.vesselDataDefinition.DataList.length;
                         }
-
+                        console.log($scope.seafreightItem.VesselVoyage.ShippingLineId);
                         $scope.vesselFilteringDefinition.DataItem1.Vessel[0].ShippingLineId = $scope.seafreightItem.VesselVoyage.ShippingLineId;
 
                         return true;
@@ -563,7 +565,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "DoPagination": false, //By default
                     "Retrieve": false, //By default
                     "DataItem": {},
-                    "DataTarget": "CustomerMenu",
+                    "DataTarget": "VesselMenu",
+                    "DataTarget2": "VesselMenu1",
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
@@ -601,10 +604,6 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             $content = angular.element(document.querySelector('#vesselContainer')).html(html);
             $compile($content)($scope);
         };
-        
-
-
-
         
         //=================================================END OF VESSEL MODAL=================================================
 
@@ -946,7 +945,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "DoPagination": false, //By default
                     "Retrieve": false, //By default
                     "DataItem": {},
-                    "DataTarget": "ShipmentMenu",
+                    "DataTarget": "SeaFreightMenu",
+                    "DataTarget2": "SeaFreightMenu1",
                     "ShowCreate": true,
                     "ShowContextMenu": true,
                     "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
