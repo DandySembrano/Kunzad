@@ -25,6 +25,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                                             Retrieve            - returns true if to invoke filtering directive
                                             DataItem            - Contains the data of the selected item in DataGrid List
                                             DataTarget          - Contains the data target for the context-menu
+                                            DataTarge2          - Contains the data target for the context-menu if no row in the data grid
                                             ShowCreate          - True if create button will be shown
                                             ShowContextMenu     - True if show context menu, else false
                                             ContextMenu         - Actions to be passed in each context menu item (Ex: ["'actionName'"])
@@ -112,6 +113,8 @@ kunzadApp.directive('dirDataGrid2', function () {
                     if (angular.isDefined($scope.datadefinition.IsEditable)) {
                         if (i < $scope.datadefinition.IsEditable.length)
                             columnProperties.enableCellEdit = $scope.datadefinition.IsEditable[i];
+                        else
+                            columnProperties.enableCellEdit = false;
                     }
                     else
                         columnProperties.enableCellEdit = false;
@@ -170,7 +173,6 @@ kunzadApp.directive('dirDataGrid2', function () {
                         ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
                       '</div>';
             };
-
             //Process Pagination
             $scope.processPagination = function () {
                 if ($scope.datadefinition.CurrentPage <= 1)
@@ -439,10 +441,24 @@ kunzadApp.directive('dirDataGrid2', function () {
                 $compile($content)($scope);
             };
 
+            //Check if at least one column in a row is editable
+            $scope.checkIfEditable = function () {
+                if (angular.isDefined($scope.datadefinition.IsEditable)) {
+                    for (var i = 0; i < $scope.datadefinition.IsEditable.length; i++) {
+                        if ($scope.datadefinition.IsEditable[i] == true)
+                            return true;
+                    }
+                    return true;
+                }
+                else
+                    return false;
+            }
+
             //Listener that will check if user Submit an action
             $interval(function () {
-                //Update grid data
-                $scope.gridOptions.data = angular.copy($scope.datadefinition.DataList);
+                if (!$scope.checkIfEditable())
+                    //Update grid data
+                    $scope.gridOptions.data = angular.copy($scope.datadefinition.DataList);
                 //Invoke $scope.processPagination();
                 if ($scope.datadefinition.DoPagination)
                 {

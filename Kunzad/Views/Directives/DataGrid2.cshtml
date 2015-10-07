@@ -1,5 +1,5 @@
 <!--Data Table Content-->
-<div context-menu="" data-target="DataGrid2Menu">
+<div context-menu="" data-target="{{datadefinition.DataTarget2}}">
     <div ui-grid="gridOptions" class="grid" ng-style="{ 'height': height }" ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
     <!--Pagination Buttons-->
     <div class="myTableContainter padding-left-10">
@@ -45,7 +45,7 @@
     </div>
 
     @*Context Menu if DataList is empty*@
-    <div ng-show="datadefinition.DataList.length == 0 && datadefinition.ShowContextMenu" class="dropdown position-fixed" id="DataGrid2Menu">
+    <div ng-show="datadefinition.DataList.length == 0 && datadefinition.ShowContextMenu" class="dropdown position-fixed" id="{{datadefinition.DataTarget2}}">
         <ul class="dropdown-menu" role="menu">
             <li>
                 <a class="pointer small" role="menuitem" tabindex="0" ng-click="otheractions({action: 'Find'})">Find</a>
