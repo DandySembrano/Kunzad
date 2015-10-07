@@ -55,6 +55,19 @@ namespace Kunzad.ApiControllers
             return Ok(shippingLine);
         }
 
+        [HttpGet]
+        //Dynamic filtering
+        public IHttpActionResult GetShippingLine(string type, int param1, [FromUri]List<ShippingLine> shippingLine)
+        {
+            Object[] shippingLines = new Object[pageSize];
+            this.filterRecord(param1, type, shippingLine.ElementAt(0), shippingLine.ElementAt(1), ref shippingLines);
+
+            if (shippingLines != null)
+                return Ok(shippingLines);
+            else
+                return Ok();
+        }
+
         // PUT: api/ShippingLines/5
         [ResponseType(typeof(ShippingLine))]
         public IHttpActionResult PutShippingLine(int id, ShippingLine shippingLine)
@@ -281,6 +294,40 @@ namespace Kunzad.ApiControllers
         private bool ShippingLineExists(int id)
         {
             return db.ShippingLines.Count(e => e.Id == id) > 0;
+        }
+        public void filterRecord(int param1, string type, ShippingLine shippingLine, ShippingLine shippingLine1, ref Object[] shippingLines)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredShippingLines = (from s in db.ShippingLines
+                                           select new
+                                           {
+                                               s.Id,
+                                               s.Name,
+                                               s.CreatedByUserId,
+                                               s.CreatedDate,
+                                               s.LastUpdatedByUserId,
+                                               s.LastUpdatedDate
+                                           })
+                                        .Where(s => shippingLine.Id == null || shippingLine.Id == 0 ? true : s.Id == shippingLine.Id)
+                                        .Where(s => shippingLine.Name == null ? !shippingLine.Name.Equals("") : (s.Name.ToLower().Equals(shippingLine.Name)))
+                                        .OrderBy(s => s.Id)
+                                        .Skip(skip).Take(pageSize).ToArray();
+
+            shippingLines = filteredShippingLines;
         }
     }
 }

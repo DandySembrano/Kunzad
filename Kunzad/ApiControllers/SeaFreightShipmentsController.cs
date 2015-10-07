@@ -24,9 +24,15 @@ namespace Kunzad.ApiControllers
             return db.SeaFreightShipments;
         }
 
-        // GET: api/SeaFreightShipments?seaFreightId=1?page=1
+        // GET: api/SeaFreightShipments?seaFreightId=1&page=1
         public IHttpActionResult GetSeaFreightShipments(int seaFreightId,int page)
         {
+            int skip;
+            if (page > 1)
+                skip = (page - 1) * pageSize;
+            else
+                skip = 0;
+
             var seaFreightShipment = db.SeaFreightShipments
                             .Include(sfs => sfs.SeaFreight)
                             .Include(sfs => sfs.Shipment)
@@ -38,7 +44,11 @@ namespace Kunzad.ApiControllers
                             .Include(sfs => sfs.Shipment.Customer.CustomerContacts)
                             .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
                             .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                            .ToArray();
+                            .Where(sfs => sfs.SeaFreightId == seaFreightId)
+                            .Skip(skip).Take(pageSize).ToArray();
+
+            if (seaFreightShipment.Length == 0)
+                return Ok(seaFreightShipment);
             for (int i = 0; i < seaFreightShipment.Length; i++)
             {
 
@@ -83,14 +93,8 @@ namespace Kunzad.ApiControllers
                 }
 
             }
-            if (page > 1)
-                return Ok(seaFreightShipment.Skip((page - 1) * pageSize).Take(pageSize));
-            else
-                return Ok(seaFreightShipment.Take(pageSize));
-            //var seaFreightShipments = db.SeaFreightShipments.Where(sfs => sfs.SeaFreightId == seaFreightId).ToArray();
-            //if (seaFreightShipments.Length == 0)
-            //    return Ok();
-            //return Ok(seaFreightShipments);
+
+            return Ok(seaFreightShipment);
 
         }
 

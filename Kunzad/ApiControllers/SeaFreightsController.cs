@@ -28,6 +28,7 @@ namespace Kunzad.ApiControllers
 
             var seafreight = db.SeaFreights
                             .Include(s => s.BusinessUnit)
+                            .Include(s => s.BusinessUnit1)
                             .Include(s => s.VesselVoyage)
                             .Include(s => s.VesselVoyage.Vessel.ShippingLine)
                             .ToArray();
@@ -43,6 +44,14 @@ namespace Kunzad.ApiControllers
                 seafreight[i].BusinessUnit.Shipments = null;
                 seafreight[i].BusinessUnit.SeaFreights = null;
                 seafreight[i].BusinessUnit.SeaFreights1 = null;
+                seafreight[i].BusinessUnit1.AirFreights = null;
+                seafreight[i].BusinessUnit1.AirFreights1 = null;
+                seafreight[i].BusinessUnit1.BusinessUnitContacts = null;
+                seafreight[i].BusinessUnit1.BusinessUnitType = null;
+                seafreight[i].BusinessUnit1.CourierTransactions = null;
+                seafreight[i].BusinessUnit1.Shipments = null;
+                seafreight[i].BusinessUnit1.SeaFreights = null;
+                seafreight[i].BusinessUnit1.SeaFreights1 = null;
                 seafreight[i].VesselVoyage.SeaFreights = null;
                 seafreight[i].VesselVoyage.Vessel.VesselVoyages = null;
                 seafreight[i].VesselVoyage.Vessel.ShippingLine.Vessels = null;
@@ -52,19 +61,6 @@ namespace Kunzad.ApiControllers
                 return Ok(seafreight.Skip((page - 1) * pageSize).Take(pageSize));
             else
                 return Ok(seafreight.Take(pageSize));
-            //var seafreight = db.SeaFreights.ToArray();
-            //if (seafreight.Length <= 0)
-            //{
-            //    return Ok(seafreight);
-            //}
-            //db.Entry(seafreight[0]).Reference(s => s.BusinessUnit).Load();
-            //db.Entry(seafreight[0]).Reference(s => s.BusinessUnit1).Load();
-            //db.Entry(seafreight[0]).Reference(s => s.VesselVoyage).Load();
-
-            //if (page > 1)
-            //    return Ok(seafreight.Skip((page - 1) * pageSize).Take(pageSize));
-            //else
-            //    return Ok(seafreight.Take(pageSize));
         }
         // GET: api/SeaFreights/5
         [ResponseType(typeof(SeaFreight))]
@@ -79,6 +75,19 @@ namespace Kunzad.ApiControllers
             }
 
             return Ok(seaFreight);
+        }
+
+        [HttpGet]
+        //Dynamic Filtering
+        public IHttpActionResult GetSeaFreight(string type, int param1,[FromUri]List<SeaFreight> seaFreight) 
+        {
+            Object[] seaFreights = new Object[pageSize];
+            this.filterRecord(param1, type, seaFreight.ElementAt(0),seaFreight.ElementAt(1),ref seaFreights);
+
+            if (seaFreights != null)
+                return Ok(seaFreights);
+            else
+                return Ok();
         }
 
         // PUT: api/SeaFreights/5
@@ -145,15 +154,6 @@ namespace Kunzad.ApiControllers
                 response.message = e.InnerException.InnerException.Message.ToString();
             }
             return Ok(response);
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
-            //db.SeaFreights.Add(seaFreight);
-            //db.SaveChanges();
-
-            //return CreatedAtRoute("DefaultApi", new { id = seaFreight.Id }, seaFreight);
         }
 
         // DELETE: api/SeaFreights/5
@@ -184,6 +184,81 @@ namespace Kunzad.ApiControllers
         private bool SeaFreightExists(int id)
         {
             return db.SeaFreights.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, SeaFreight seaFreight, SeaFreight seaFreight1, ref Object[] seaFreights) 
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredSeaFreights = (from sf in db.SeaFreights
+                                            select new {
+                                                            sf.Id,
+                                                            sf.BLNumber,
+                                                            sf.BLDate,
+                                                            sf.OriginBusinessUnitId,
+                                                            BusinessUnit1 = (from o in db.BusinessUnits 
+                                                                        where o.Id == sf.OriginBusinessUnitId
+                                                                        select new {
+                                                                            o.Id,
+                                                                            o.Name
+                                                                        }
+
+                                                                     ),//Origin
+                                                            sf.DestinationBusinessUnitId,
+                                                            BusinessUnit = (from d in db.BusinessUnits 
+                                                                            where d.Id == sf.DestinationBusinessUnitId
+                                                                            select new {
+                                                                                d.Id,
+                                                                                d.Name
+                                                                            }
+
+                                                                          ),//Destination
+                                                            sf.VesselVoyageId,
+                                                            VesselVoyage = (from vv in db.VesselVoyages 
+                                                                                join v in db.Vessels on vv.VesselId equals v.Id 
+                                                                                    join s in db.ShippingLines on v.ShippingLineId equals s.Id
+                                                                             where vv.Id == sf.VesselVoyageId
+                                                                             select new {
+                                                                                 ShippingLineName = s.Name,
+                                                                                 VesselName = v.Name,
+                                                                                 vv.Id,
+                                                                                 vv.VoyageNo,
+                                                                                 vv.EstimatedArrivalDate,
+                                                                                 vv.EstimatedArrivalTime,
+                                                                                 vv.DepartureDate,
+                                                                                 vv.DepartureTime,
+                                                                                 vv.ArrivalDate,
+                                                                                 vv.ArrivalTime
+                                                                             }
+                                                                           ), 
+                                                           sf.FreightCost,
+                                                           sf.CreatedByUserId,
+                                                           sf.CreatedDate,
+                                                           sf.LastUpdatedByUserId,
+                                                           sf.LastUpdatedDate
+                                            })
+                                            .Where(sf => seaFreight.Id == null || seaFreight.Id == 0 ? true : sf.Id == seaFreight.Id)
+                                            .Where(sf => seaFreight.BLNumber == null ? !seaFreight.BLNumber.Equals("") : (sf.BLNumber.ToLower().Equals(seaFreight.BLNumber) || sf.BLNumber.ToLower().Contains(seaFreight.BLNumber)))
+                                            .Where(sf => seaFreight.BLDate == null || seaFreight.BLDate == defaultDate ? true : sf.BLDate >= seaFreight.BLDate && sf.BLDate <= seaFreight1.BLDate)
+                                            .Where(sf => seaFreight.CreatedDate == null || seaFreight.CreatedDate == defaultDate ? true : sf.CreatedDate >= seaFreight.CreatedDate && sf.CreatedDate <= seaFreight1.CreatedDate)
+                                            .Where(sf => seaFreight.LastUpdatedDate == null || seaFreight.LastUpdatedDate == defaultDate ? true : sf.LastUpdatedDate >= seaFreight.LastUpdatedDate && sf.LastUpdatedDate <= seaFreight1.LastUpdatedDate)
+                                            .OrderBy(sf => sf.Id)
+                                            .Skip(skip).Take(pageSize).ToArray();
+
+            seaFreights = filteredSeaFreights;
         }
     }
 }

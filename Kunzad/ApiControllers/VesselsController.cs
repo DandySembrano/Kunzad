@@ -15,7 +15,7 @@ namespace Kunzad.ApiControllers
     public class VesselsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        int pageSize = 20;
         // GET: api/Vessels
         public IQueryable<Vessel> GetVessels()
         {
@@ -42,6 +42,19 @@ namespace Kunzad.ApiControllers
             }
 
             return Ok(vessel);
+        }
+
+        [HttpGet]
+        //Dynamic filtering
+        public IHttpActionResult GetVessel(string type, int param1, [FromUri]List<Vessel> vessel)
+        {
+            Object[] vessels = new Object[pageSize];
+            this.filterRecord(param1, type, vessel.ElementAt(0), vessel.ElementAt(1), ref vessels);
+
+            if (vessels != null)
+                return Ok(vessels);
+            else
+                return Ok();
         }
 
         // PUT: api/Vessels/5
@@ -122,6 +135,50 @@ namespace Kunzad.ApiControllers
         private bool VesselExists(int id)
         {
             return db.Vessels.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, Vessel vessel, Vessel vessel1, ref Object[] vessels)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredVessels = (from v in db.Vessels
+                                          select new
+                                          {
+                                              v.Id,
+                                              v.Name,
+                                              v.CreatedByUserId,
+                                              v.CreatedDate,
+                                              v.LastUpdatedByUserId,
+                                              v.LastUpdatedDate,
+                                              v.ShippingLineId,
+                                              Shippingline = (from s in db.ShippingLines
+                                                        where s.Id == v.ShippingLineId
+                                                        select new
+                                                        {
+                                                            s.Id,
+                                                            s.Name
+                                                        }
+                                                       )
+                                          })
+                                        .Where(v => vessel.Id == null || vessel.Id == 0 ? true : v.Id == vessel.Id)
+                                        .Where(v => vessel.Name == null ? !vessel.Name.Equals("") : (v.Name.ToLower().Equals(vessel.Name)))
+                                        .OrderBy(v => v.Id)
+                                        .Skip(skip).Take(pageSize).ToArray();
+
+            vessels = filteredVessels;
         }
     }
 }
