@@ -17,14 +17,12 @@ namespace Kunzad.ApiControllers
     public class CustomersController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 5;
 
         // GET: api/Customers
-
-        [CacheOutput(ClientTimeSpan = 600, ServerTimeSpan = 600)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Customer> GetCustomers()
         {
-            return db.Customers;
+            return db.Customers.AsNoTracking();
         }
 
         // GET: api/Customers?page=1
@@ -37,9 +35,7 @@ namespace Kunzad.ApiControllers
                     .Include(c => c.Industry)
                     .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
                     .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
-                    .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
-
-
+                    .OrderBy(c => c.Name).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize).AsNoTracking();
             }
             else
             {
@@ -48,7 +44,7 @@ namespace Kunzad.ApiControllers
                     .Include(c => c.Industry)
                     .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
                     .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
-                    .OrderBy(c => c.Name).Take(pageSize);
+                    .OrderBy(c => c.Name).Take(AppSettingsGet.PageSize).AsNoTracking();
             }
         }
 
@@ -58,9 +54,9 @@ namespace Kunzad.ApiControllers
         {
             Customer customer = db.Customers.Find(id);
             customer.CustomerAddresses = db.CustomerAddresses
-                .Include(a => a.CityMunicipality.StateProvince).Where(a => a.CustomerId == customer.Id).ToArray();
+                .Include(a => a.CityMunicipality.StateProvince).Where(a => a.CustomerId == customer.Id).AsNoTracking().ToArray();
             customer.CustomerContacts = db.CustomerContacts
-                .Include(b => b.Contact.ContactPhones ).Where(b => b.CustomerId == customer.Id).ToArray();
+                .Include(b => b.Contact.ContactPhones ).Where(b => b.CustomerId == customer.Id).AsNoTracking().ToArray();
 
             if (customer == null)
             {
@@ -70,32 +66,14 @@ namespace Kunzad.ApiControllers
             return Ok(customer);
         }
 
-        //GET: api/Customers?customerId=1&customerContactId=1&customerContactPhoneId=1&customerAddressId=1
-        [ResponseType(typeof(Customer))]
-        public IHttpActionResult GetCustomer(int customerId, int customerContactId, int customerContactPhoneId, int customerAddressId) {
-            var customer = db.Customers.Where(c => c.Id == customerId).ToArray();
-            customer[0].CustomerAddresses = db.CustomerAddresses.Include(ca => ca.CityMunicipality).Where(ca => ca.Id == customerAddressId).ToList();
-            customer[0].CustomerContacts = db.CustomerContacts.Include(cc => cc.Contact).Where(cc => cc.Id == customerContactId).ToList();
-            customer[0].CustomerContacts = db.CustomerContacts.Include(cc => cc.Contact.ContactPhones).Where(cc => cc.Id == customerContactId).ToList();
-            foreach (var cc in customer[0].CustomerContacts)
-            {
-                cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == customerContactPhoneId).ToArray();
-            }
-            foreach (var ca in customer[0].CustomerAddresses)
-            {
-                ca.CityMunicipality.Couriers = null;
-                ca.CityMunicipality.CustomerAddresses = null;
-                ca.CityMunicipality.ServiceableAreas = null;
-                ca.CityMunicipality.StateProvince = null;
-            }
-            return Ok(customer);
-        }
 
+       
         [HttpGet]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         //Dynamic filtering
         public IHttpActionResult GetCustomer(string type, int param1, [FromUri]List<Customer> customer)
         {
-            Object[] customers = new Object[pageSize];
+            Object[] customers = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, customer.ElementAt(0), customer.ElementAt(1), ref customers);
 
             if (customers != null)
@@ -355,7 +333,7 @@ namespace Kunzad.ApiControllers
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
@@ -376,7 +354,7 @@ namespace Kunzad.ApiControllers
                                             .Where(c => customer.Code == null ? !customer.Code.Equals("") : (c.Code.ToLower().Equals(customer.Code)))
                                             .Where(c => customer.Name == null ? !customer.Name.Equals("") : (c.Name.ToLower().Equals(customer.Name) || c.Name.ToLower().Contains(customer.Name)))
                                             .OrderBy(c => c.Id)
-                                            .Skip(skip).Take(pageSize).ToArray();
+                                            .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
             customers = filteredCustomers;
         }
     }
