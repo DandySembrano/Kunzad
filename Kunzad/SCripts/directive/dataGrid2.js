@@ -234,6 +234,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                         break;
                     case 'Delete':
                         $scope.datadefinition.DataItem = $scope.datadefinition.DataList[$scope.selectedIndex];
+                        $scope.submitdefinition.Index = $scope.selectedIndex;
                         break;
                     case 'View':
                         $scope.datadefinition.DataItem = $scope.datadefinition.DataList[$scope.selectedIndex];

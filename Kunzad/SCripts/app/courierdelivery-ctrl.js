@@ -82,6 +82,25 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         });
     };
 
+    $scope.validCourierDeliveryDetails = function () {
+        for (var i = 0; i < $scope.courierDeliveryDetailsDataDefinition.DataList.length; i++)
+        {
+            if ($scope.courierDeliveryDetailsDataDefinition.DataList[i].ShipmentId == 0) {
+                $scope.courierDeliveryIsError = true;
+                $scope.courierDeliveryErrorMessage = "Shipment is required in row " + (i + 1) + ".";
+                $scope.focusOnTop();
+                return false;
+            }
+            else if ($scope.courierDeliveryDetailsDataDefinition.DataList[i].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[i].CostAllocation == 0) {
+                $scope.courierDeliveryIsError = true;
+                $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero in row " + (i + 1) + ".";
+                $scope.focusOnTop();
+                return false;
+            }
+        }
+        return true;
+    };
+
     //Disable typing
     $('#courier,#calldate,#calltime').keypress(function (key) {
         return false;
@@ -190,6 +209,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     $scope.courierDeliverySubmitDefinition.Type = "View";
                     return true;
                 case "PreSubmit":
+                    if (!$scope.validCourierDeliveryDetails())
+                        return false;
                     $scope.courierDeliverySubmitDefinition.DataItem = angular.copy($scope.courierDeliveryItem);
                     return true;
                 case "PreSave":
@@ -489,7 +510,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.focusOnTop();
                         return false;
                     }
-                    else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null) {
+                    else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
                         $scope.courierDeliveryIsError = true;
                         $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
                         $scope.focusOnTop();
@@ -499,6 +520,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 case "PostEditAction":
                     return true;
                 case "PostDeleteAction":
+                    $scope.courierDeliveryDetailsDataDefinition.DataList.splice($scope.courierDeliveryDetailsSubmitDefinition.Index, 1);
+                    if ($scope.courierDeliveryDetailsDataDefinition.DataList.length == 0)
+                        $scope.courierDeliveryDetailsResetData();
                     return true;
                 case "PostViewAction":
                     return true;
