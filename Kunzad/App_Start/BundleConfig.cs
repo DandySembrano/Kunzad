@@ -70,7 +70,8 @@ namespace Kunzad
                         "~/Scripts/app/businessunit-ctrl.js",
                         "~/Scripts/app/serviceablearea-ctrl.js",
                         "~/Scripts/app/truckingwb-ctrl.js",
-                        "~/Scripts/app/airfreight-ctrl.js"
+                        "~/Scripts/app/airfreight-ctrl.js",
+                        "~/Scripts/app/courierdelivery-ctrl.js"
                         ));
         }
     }
