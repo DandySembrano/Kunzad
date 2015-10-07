@@ -3,8 +3,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
-    $scope.shipmentGridOptions = {};
-    $scope.shipmentGridOptions.data = [];
     $scope.shipmentItem = {};
     $scope.viewOnly = false;
     $scope.shipmentIsError = false;
@@ -185,6 +183,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "Retrieve": false, //By default
                 "DataItem": {},
                 "DataTarget": "ShipmentMenu",
+                "DataTarget2": "ShipmentMenu2",
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
@@ -547,14 +546,14 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "Source": [
                             { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 2, "Label": "Customer", "Column": "CustomerId", "Values": [], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 3, "Label": "BusinessUnit", "Column": "BusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 4, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 5, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 6, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 7, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 8, "Label": "Operation Site", "Column": "PickUpBussinessUnitId", "Values": [], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 9, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
+                            //{ "Index": 7, "Label": "Customer", "Column": "CustomerId", "Values": ['GetCustomers'], "From": null, "To": null, "Type": "Modal" },
+                            //{ "Index": 8, "Label": "BusinessUnit", "Column": "BusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 2, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 3, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 4, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 5, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            //{ "Index": 9, "Label": "Operation Site", "Column": "PickUpBussinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 6, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
@@ -1607,6 +1606,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.loadCustomerAddressDataGrid();
         $scope.loadCustomerAddressFiltering();
         $scope.shipmentResetData();
+
+        if ($scope.shipmentFilteringDefinition.AutoLoad == true)
+            $scope.shipmentDataDefinition.Retrieve = true;
         //---------------------------Code if using typeahead in city/municipality-------------------
         //Get cityMunicipalities
         var promise = $interval(function () {

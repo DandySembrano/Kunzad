@@ -214,10 +214,10 @@ kunzadApp.directive('dirFiltering', function () {
                 return false;
             });
 
-            if ($scope.filterdefinition.AutoLoad == true) {
-                $scope.filterdefinition.DataItem1.Id = 0;
-                $scope.submitFilteredData();
-            }
+            //if ($scope.filterdefinition.AutoLoad == true) {
+            //    $scope.filterdefinition.DataItem1.Id = 0;
+            //    $scope.submitFilteredData();
+            //}
 
             //Listener that will check of user's action
             $interval(function () {

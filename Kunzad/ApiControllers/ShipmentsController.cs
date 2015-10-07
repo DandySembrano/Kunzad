@@ -13,7 +13,7 @@ using WebAPI.OutputCache;
 
 namespace Kunzad.ApiControllers
 {
-    [AutoInvalidateCacheOutput]
+    //[AutoInvalidateCacheOutput]
     public class ShipmentsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
@@ -79,7 +79,7 @@ namespace Kunzad.ApiControllers
         
         //Dynamic filtering api/Shipments?page=1
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
         public IHttpActionResult GetShipment(int param1, string type, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];

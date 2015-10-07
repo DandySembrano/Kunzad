@@ -23,6 +23,13 @@ kunzadApp.filter('DateTime', function ($filter) {
         return $filter('date')(value, "MM/dd/yyyy HH:mm:ss");
     }
 });
+kunzadApp.filter('Time1', function ($filter) {
+    return function (value) {
+        if (value == "" || value == null)
+            return "";
+        return $filter('date')(value, "hh:mm:ss a");
+    }
+});
 kunzadApp.filter('Time', function ($filter) {
     return function (value) {
         if (value == "" || value == null)
