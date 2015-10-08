@@ -9,18 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class BusinessUnitsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
+
         Response response = new Response();
         // GET: api/BusinessUnits
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<BusinessUnit> GetBusinessUnits()
         {
-            return db.BusinessUnits.OrderBy(bu => bu.Name);
+            return db.BusinessUnits.AsNoTracking().OrderBy(bu => bu.Name);
         }
 
         // GET: api/BusinessUnits?parentBusinessUnitId=1
@@ -47,12 +48,12 @@ namespace Kunzad.ApiControllers
             if (page > 1)
             {
                 return db.BusinessUnits
-                    .OrderBy(bu => bu.Id).Skip((page - 1) * pageSize).Take(pageSize);
+                    .OrderBy(bu => bu.Id).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
                 return db.BusinessUnits
-                    .OrderBy(bu => bu.Id).Take(pageSize);
+                    .OrderBy(bu => bu.Id).Take(AppSettingsGet.PageSize);
             }
         }
 
@@ -73,7 +74,7 @@ namespace Kunzad.ApiControllers
         //Dynamic filtering
         public IHttpActionResult GetBusinessUnit(string type, int param1, [FromUri]List<BusinessUnit> businessUnit)
         {
-            Object[] businessUnits = new Object[pageSize];
+            Object[] businessUnits = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, businessUnit.ElementAt(0), businessUnit.ElementAt(1), ref businessUnits);
 
             if (businessUnits != null)
@@ -196,7 +197,7 @@ namespace Kunzad.ApiControllers
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
@@ -215,7 +216,7 @@ namespace Kunzad.ApiControllers
                                             .Where(bu => businessUnit.Name == null ? !businessUnit.Name.Equals("") : (bu.Name.ToLower().Equals(businessUnit.Name) || bu.Name.ToLower().Contains(businessUnit.Name)))
                                             .Where(bu => businessUnit.ParentBusinessUnitId == null || businessUnit.ParentBusinessUnitId == 0 ? true : bu.ParentBusinessUnitId == businessUnit.ParentBusinessUnitId)
                                             .OrderBy(bu => bu.Id)
-                                            .Skip(skip).Take(pageSize).ToArray();
+                                            .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
             businessUnits = filteredBusinessUnits;
         }
     }

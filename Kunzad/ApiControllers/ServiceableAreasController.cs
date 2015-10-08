@@ -9,20 +9,21 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class ServiceableAreasController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
 
         // GET: api/ServiceableAreas
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ServiceableArea> GetServiceableAreas()
         {
             var serviceableAreas = db.ServiceableAreas
-                                    .Include(sa => sa.CityMunicipality);
+                                    .Include(sa => sa.CityMunicipality).AsNoTracking();
 
             foreach (var sa in serviceableAreas)
             {
@@ -43,49 +44,18 @@ namespace Kunzad.ApiControllers
         {
             if (page > 1)
             {
-                return db.ServiceableAreas
+                return db.ServiceableAreas.AsNoTracking()
                 .OrderBy(sa => sa.Id)
-                .Skip((page - 1) * pageSize).Take(pageSize);
+                .Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
-                return db.ServiceableAreas
+                return db.ServiceableAreas.AsNoTracking()
                 .OrderBy(sa => sa.Id)
-                .Take(pageSize);
+                .Take(AppSettingsGet.PageSize);
             }
         }
-        //public IHttpActionResult GetServiceableAreas(int page)
-        //{
-        //    var q = (from sa in db.ServiceableAreas
-        //             join cm in db.CityMunicipalities on sa.CityMunicipalityId equals cm.Id
-        //             join sp in db.StateProvinces on cm.StateProvinceId equals sp.Id
-        //             select new
-        //             {
-        //                 sa.Id,
-        //                 sa.Name,
-        //                 sa.CityMunicipalityId,
-        //                 sa.PostalCode,
-        //                 sa.IsServiceable,
-        //                 sa.BusinessUnitId,
-        //                 sa.CreatedDate,
-        //                 sa.LastUpdatedDate,
-        //                 sa.CreatedByUserId,
-        //                 sa.LastUpdatedByUserId,
-        //                 CityMunicipalityName = cm.Name,
-        //                 StateProvinceName = sp.Name,
-        //                 BusinessUnitName = (from bu in db.BusinessUnits where bu.Id == sa.BusinessUnitId select new { bu.Name })
-        //             });
-        //    if (page > 1)
-        //    {
-        //        q.Skip((page - 1) * pageSize).Take(pageSize);
-        //    }
-        //    else
-        //    {
-        //        q.Take(5);
-        //    }
-        //    return Json(q);
-        //}
-        // GET: api/ServiceableAreas/5
+     
         [ResponseType(typeof(ServiceableArea))]
         public IHttpActionResult GetServiceableArea(int id)
         {

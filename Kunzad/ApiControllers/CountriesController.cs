@@ -9,18 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+     [AutoInvalidateCacheOutput]
     public class CountriesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
         // GET: api/Countries
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Country> GetCountries()
         {
-            return db.Countries;
+            return db.Countries.AsNoTracking();
         }
 
         // GET: api/Countries?page=1
@@ -29,14 +30,14 @@ namespace Kunzad.ApiControllers
             if (page > 1)
             {
                 return db.Countries
-                    .Include(c => c.StateProvinces)
-                    .OrderBy(c => c.Code).Skip((page - 1) * pageSize).Take(pageSize);
+                    .Include(c => c.StateProvinces).AsNoTracking()
+                    .OrderBy(c => c.Code).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
                 return db.Countries
-                    .Include(c => c.StateProvinces)
-                    .OrderBy(c => c.Code).Take(pageSize);
+                    .Include(c => c.StateProvinces).AsNoTracking()
+                    .OrderBy(c => c.Code).Take(AppSettingsGet.PageSize);
             }
         }
 

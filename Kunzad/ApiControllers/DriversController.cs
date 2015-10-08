@@ -9,19 +9,20 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class DriversController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
 
         // GET: api/Drivers
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Driver> GetDrivers()
         {
-            return db.Drivers;
+            return db.Drivers.AsNoTracking();
         }
 
         // GET: api/Drivers?page=1
@@ -29,11 +30,11 @@ namespace Kunzad.ApiControllers
         {
             if (page > 1)
             {
-                return db.Drivers.OrderBy(c => c.FirstName).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.Drivers.AsNoTracking().OrderBy(c => c.FirstName).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
-                return db.Drivers.OrderBy(c => c.FirstName).Take(pageSize);
+                return db.Drivers.AsNoTracking().OrderBy(c => c.FirstName).Take(AppSettingsGet.PageSize);
             }
         }
 

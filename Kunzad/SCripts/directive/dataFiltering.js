@@ -61,6 +61,7 @@ kunzadApp.directive('dirFiltering', function () {
 
             //Function that will call Modal for filtering
             $scope.showModalFilter = function () {
+                $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                 $scope.otheractions({ action: $scope.filteredData.Definition.Values[0] });
             };
 
@@ -89,7 +90,7 @@ kunzadApp.directive('dirFiltering', function () {
                             if (fromDate <= toDate) {
                                 $scope.filterdefinition.Source[index].From = fromDate;
                                 $scope.filterdefinition.Source[index].To = toDate;
-                                $scope.countFilteredCriteria++;
+                                $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -100,7 +101,7 @@ kunzadApp.directive('dirFiltering', function () {
                             if ($scope.dropDownValue != null) {
                                 $scope.filterdefinition.Source[index].From = $scope.dropDownValueObject.Id;
                                 $scope.filterdefinition.Source[index].To = $scope.dropDownValueObject.Name;
-                                $scope.countFilteredCriteria++;
+                                $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -110,7 +111,7 @@ kunzadApp.directive('dirFiltering', function () {
                         case "Modal":
                             if ($scope.filteredData.Definition.To != null) {
                                 $scope.filterdefinition.Source[index].From = $scope.filterdefinition.Source[index].Values[1];
-                                $scope.countFilteredCriteria++;
+                                $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                             } else {
                                 $scope.isErrorFiltering = true;
                                 $scope.errorMessageFiltering = $scope.filteredData.Definition.Label + " is required.";
@@ -120,7 +121,7 @@ kunzadApp.directive('dirFiltering', function () {
                         default:
                             if ($scope.searchValue != "") {
                                 $scope.filterdefinition.Source[index].From = $scope.searchValue;
-                                $scope.countFilteredCriteria++;
+                                $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                             }
                             else {
                                 $scope.isErrorFiltering = true;
@@ -144,53 +145,69 @@ kunzadApp.directive('dirFiltering', function () {
                 $scope.filterdefinition.Source[index].To = null;
                 $scope.criteriaIndex = $scope.filterdefinition.Source[index].Index;
                 $scope.setFilteredDataDefinition($scope.criteriaIndex);
-                $scope.countFilteredCriteria--;
+                $scope.countFilteredCriteria = $scope.countFilteredCriteria - 1;
             };
+
+            //check if there is/are filtered data
+            $scope.validateFileteredData = function () {
+                for (var i = 0; i < $scope.filterdefinition.Source.length; i++)
+                {
+                    if ($scope.filterdefinition.Source[i].From != null)
+                        return true;
+                }
+                return false;
+            }
 
             //Triggers when user click search button
             $scope.submitFilteredData = function () {
-                var spinner = new Spinner(opts).spin(spinnerTarget);
-                $scope.retrieving = true;
-                //If submitFilteredData function is called via clicking the search button then reset the DataList
-                if ($scope.search == true) {
-                    $scope.search = false;
-                    $scope.filterdefinition.ClearData = true;
+                if ($scope.validateFileteredData() || $scope.filterdefinition.Multiple == false) {
+                    var spinner = new Spinner(opts).spin(spinnerTarget);
+                    $scope.retrieving = true;
+                    //If submitFilteredData function is called via clicking the search button then reset the DataList
+                    if ($scope.search == true) {
+                        $scope.search = false;
+                        $scope.filterdefinition.ClearData = true;
 
-                    if ($scope.filterdefinition.Multiple == false) {
+                        if ($scope.filterdefinition.Multiple == false) {
+                            $scope.setSourceToNull();
+                            $scope.addToFilteredList();
+                        }
+                    }
+
+                    if ($scope.filterdefinition.SetSourceToNull == true) {
+                        $scope.filterdefinition.SetSourceToNull = false;
                         $scope.setSourceToNull();
-                        $scope.addToFilteredList();
+                        $scope.setFilterVariables();
+                    }
+
+                    if ($scope.otheractions({ action: 'PreFilterData' })) {
+                        $scope.url = $scope.filterdefinition.Url;
+                        var dataModel1 = $scope.filterdefinition.DataItem1;
+                        $.ajax($scope.url, {
+                            type: "GET",
+                            data: dataModel1,
+                            success: function (data) {
+                                $scope.filterdefinition.DataList = angular.copy(data);
+                                $scope.forceScroll();
+                                $scope.retrieving = false;
+                                $scope.filterdefinition.ClearData = false;
+                                $scope.otheractions({ action: 'PostFilterData' })
+                                spinner.stop();
+                            },
+                            error: function (jqXHR) {
+                                $scope.isErrorFiltering = true;
+                                $scope.errorMessageFiltering = jqXHR.status;
+                            }
+                        });
+                    }
+                    else {
+                        $scope.filterdefinition.ClearData = false;
+                        spinner.stop();
                     }
                 }
-
-                if ($scope.filterdefinition.SetSourceToNull == true) {
-                    $scope.filterdefinition.SetSourceToNull = false;
-                    $scope.setSourceToNull();
-                    $scope.setFilterVariables();
-                }
-                if ($scope.otheractions({ action: 'PreFilterData' })) {
-                    $scope.url = $scope.filterdefinition.Url;
-                    var dataModel1 = $scope.filterdefinition.DataItem1;
-
-                    $.ajax($scope.url, {
-                        type: "GET",
-                        data: dataModel1,
-                        success: function (data) {
-                            $scope.filterdefinition.DataList = angular.copy(data);
-                            $scope.forceScroll();
-                            $scope.retrieving = false;
-                            $scope.filterdefinition.ClearData = false;
-                            $scope.otheractions({ action: 'PostFilterData' })
-                            spinner.stop();
-                        },
-                        error: function (jqXHR) {
-                            $scope.isErrorFiltering = true;
-                            $scope.errorMessageFiltering = jqXHR.status;
-                        }
-                    });
-                }
                 else {
-                    $scope.filterdefinition.ClearData = false;
-                    spinner.stop();
+                    $scope.isErrorFiltering = true;
+                    $scope.errorMessageFiltering = "Please select criteria for filtering.";
                 }
             }
 

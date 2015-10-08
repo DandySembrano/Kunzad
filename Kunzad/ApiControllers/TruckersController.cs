@@ -9,18 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class TruckersController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
         // GET: api/Truckers
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Trucker> GetTruckers()
         {
-            return db.Truckers.Include(t => t.Trucks);
+            return db.Truckers.Include(t => t.Trucks).AsNoTracking();
         }
 
         // GET: api/Truckers?page=1
@@ -31,16 +32,16 @@ namespace Kunzad.ApiControllers
                     return db.Truckers
                         .Include(t => t.CityMunicipality)
                         .Include(t => t.CityMunicipality.StateProvince)
-                        .Include(t => t.Trucks)
-                        .OrderBy(t => t.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                        .Include(t => t.Trucks).AsNoTracking()
+                        .OrderBy(t => t.Name).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
                 }
                 else
                 {
                     return db.Truckers
                         .Include(t => t.CityMunicipality)
                         .Include(t => t.CityMunicipality.StateProvince)
-                        .Include(t => t.Trucks)
-                        .OrderBy(t => t.Name).Take(pageSize);
+                        .Include(t => t.Trucks).AsNoTracking()
+                        .OrderBy(t => t.Name).Take(AppSettingsGet.PageSize);
                 }
         }
 
