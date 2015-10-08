@@ -8,7 +8,6 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
     $scope.seafreightGridOptions.data = [];
     $scope.SeaFreightShipmentGridOptions = {};
     $scope.SeaFreightShipmentGridOptions.data = [];
-    $scope.seafreightItem = {};
     $scope.seaFreightShipmentItem = {};
     $scope.isPrevPage = false;
     $scope.isNextPage = true;
@@ -28,9 +27,9 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
     $scope.modalType = null;
     var pageSize = 20;
 
-    $scope.showModal = function (panel, type) {
+        $scope.showModal = function (panel, type) {
             switch (type) {
-                case 'origin' || 'desination':
+                case 'origin' || 'destination':
                     $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
                     $scope.businessUnitDataDefinition.Retrieve = true;
                     break;
@@ -41,6 +40,18 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 case 'vessel':
                     $scope.vesselFilteringDefinition.SetSourceToNull = true;
                     $scope.vesselDataDefinition.Retrieve = true;
+                    break;
+                case 'vesselVoyage':
+                    $scope.vesselVoyageFilteringDefinition.SetSourceToNull = true;
+                    $scope.vesselVoyageDataDefinition.Retrieve = true;
+                    break;
+                case 'seaFreightShipment':
+                    $scope.seaFreightShipmentFilteringDefinition.SetSourceToNull = true;
+                    $scope.seaFreightShipmentDataDefinition.Retrieve = true;
+                    break;
+                case 'shipment':
+                    $scope.shipmentFilteringDefinition.SetSourceToNull = true;
+                    $scope.shipmentDataDefinition.Retrieve = true;
                     break;
             }
 
@@ -103,6 +114,416 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 }]
             };
         }
+        
+        //same with rootScope.shipmentObj
+        $scope.vesselVoyageObj = function () {
+            return {
+                "VesselVoyage": [{
+                    "Id": null,
+                    "VoyageNo": null,
+                    "VesselId": null,
+                    "OriginBusinessUnitId": null,
+                    "DestinationBusinessUnitId": null,
+                    "EstimatedDepartureDate": null,
+                    "EstimatedDepartureTime": null,
+                    "EstimatedArrivalDate": null,
+                    "EstimatedArrivalTime": null,
+                    "DepartureDate": null,
+                    "DepartureTime": null,
+                    "ArrivalDate": null,
+                    "ArrivalTime": null
+                },
+                {
+                    "Id": null,
+                    "VoyageNo": null,
+                    "VesselId": null,
+                    "OriginBusinessUnitId": null,
+                    "DestinationBusinessUnitId": null,
+                    "EstimatedDepartureDate": null,
+                    "EstimatedDepartureTime": null,
+                    "EstimatedArrivalDate": null,
+                    "EstimatedArrivalTime": null,
+                    "DepartureDate": null,
+                    "DepartureTime": null,
+                    "ArrivalDate": null,
+                    "ArrivalTime": null
+                }]
+            };
+        }
+        
+        $scope.validSeaFreightShipments = function () {
+            for (var i = 0; i < $scope.seaFreightShipmentsDataDefinition.DataList.length; i++) {
+                if ($scope.seaFreightShipmentsDataDefinition.DataList[i].ShipmentId == 0) {
+                    $scope.seaFreightIsError = true;
+                    $scope.seaFreightErrorMessage = "Shipment is required in row " + (i + 1) + ".";
+                    $scope.focusOnTop();
+                    return false;
+                }
+                else if ($scope.seaFreightShipmentsDataDefinition.DataList[i].CostAllocation == null || $scope.seaFreightShipmentsDataDefinition.DataList[i].CostAllocation == 0) {
+                    $scope.seaFreightIsError = true;
+                    $scope.seaFreightErrorMessage = "Cost Allocation must be greater than zero in row " + (i + 1) + ".";
+                    $scope.focusOnTop();
+                    return false;
+                }
+            }
+            return true;
+        };
+        
+        // NUMBERS w/ DECIMAL AND COMMA
+        $('#freightCost').priceFormat({
+            clearPrefix: true,
+            prefix: '',
+            centsSeparator: '.',
+            thousandsSeparator: ',',
+            centsLimit: 2
+        });
+        
+        //Initialize Address fields
+        $scope.initializeAddressField = function (addressItem) {
+            $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+            $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
+            $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+            return $scope.formattedAddress;
+        };
+        
+    //=================================================START OF SEA FREIGHT DATA GRID=================================================
+    //Initialized seafreight item to it's default value
+        $scope.seaFreightResetData = function () {
+            $scope.seafreightItem = {
+                "Id": null,
+                "BLNumber": null,
+                "BLDate": null,
+                "VesselVoyageId": null,
+                "VesselVoyage": {
+                    "Id": null,
+                    "VesselId": null,
+                    "VesselName": null,
+                    "ShippingLineId": null,
+                    "ShippingLineName": null,
+                    "VoyageNo": null,
+                    "EstimatedDepartureDate": null,
+                    "EstimatedDepartureTime": null,
+                    "EstimatedArrivalDate": null,
+                    "EstimatedArrivalTime": null,
+                    "OriginBusinessUnitId": null,
+                    "OriginBusinessUnit": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DestinationBusinessUnitId": null,
+                    "DestinationBusinessUnit": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DepartureDate": null,
+                    "DepartureTime": null,
+                    "ArrivalDate": null,
+                    "ArrivalTime": null
+                },
+                "OriginBusinessUnitId": null,
+                "BusinessUnit1": {
+                    "Id": null,
+                    "Code": null,
+                    "Name": null
+                },
+                "DestinationBusinessUnitId": null,
+                "BusinessUnit": {
+                    "Id": null,
+                    "Code": null,
+                    "Name": null
+                },
+                "FreightCost": null,
+                "CreatedDate": null,
+                "LastUpdatedDate": null,
+                "CreatedByUserId": null,
+                "LastUpdatedByUserId": null
+            }
+
+        };
+
+    //Load variable datagrid for compiling
+        $scope.loadSeaFreightDataGrid = function () {
+            $scope.initSeaFreightDataGrid();
+            $scope.compileSeaFreightDataGrid();
+        };
+
+    //initialized seafreight data grid
+        $scope.initSeaFreightDataGrid = function () {
+            $scope.initSeaFreightDataDefinition = function () {
+                $scope.seaFreightDataDefinition = {
+                    "Header": ['Sea Freight No', 'BL Number', 'BL Date', 'Voyage No', 'Origin', 'Destination', 'Freight Cost', 'No'],
+                    "Keys": ['Id', 'BLNumber', 'BLDate', 'VesselVoyage[0].VoyageNo', 'BusinessUnit1[0].Name', 'BusinessUnit[0].Name', 'FreightCost'],
+                    "Type": ['ControlNo', 'ProperCase', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'Decimal'],
+                    "ColWidth": [150, 150, 150, 150, 180, 180, 150],
+                    "DataList": [],
+                    "RequiredFields": [/*'BLNumber-BL Number', 'BLDate-BL Date', 'VesselVoyageId-Voyage ID', 'OriginBusinessUnitId-Origin Business Unit', 'DestinationBusinessUnitId-Destination Business Unit', 'FreightCost-Freight Cost'*/],
+                    "CellTemplate": ["None"],
+                    "RowTemplate": "Default",
+                    "EnableScroll": true,
+                    "EnablePagination": false,
+                    "CurrentPage": 1,//By default
+                    "PageSize": 20, //Should be the same in back-end
+                    "DoPagination": false, //By default
+                    "Retrieve": false, //By default
+                    "DataItem": {},
+                    "DataTarget": "SeaFreightMenu",
+                    "DataTarget2": "SeaFreightMenu1",
+                    "ShowCreate": true,
+                    "ShowContextMenu": true,
+                    "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
+                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                }
+            };
+
+            $scope.initSeaFreightSubmitDefinition = function () {
+                $scope.seaFreightSubmitDefinition = {
+                    "Submit": false, //By default
+                    "APIUrl": '/api/SeaFreights',
+                    "Type": 'Create', //By Default
+                    "DataItem": {},
+                    "Index": -1 //By Default
+                }
+            };
+
+            $scope.seaFreightOtheractions = function (action) {
+                switch (action) {
+                    case "FormCreate":
+                        $scope.selectedTab = $scope.tabPages[0];
+                        $scope.seaFreightResetData();
+                        $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
+                        $scope.seaFreightShipmentsResetData();
+                        return true;
+                    case "PreAction":
+                        return true;
+                    case "PostCreateAction":
+                        $scope.selectedTab = $scope.tabPages[0];
+                        $scope.seaFreightResetData();
+                        $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
+                        $scope.seaFreightShipmentsResetData();
+                        return true;
+                    case "PostEditAction":
+                        $scope.seaFreightSubmitDefinition.Type = "Edit";
+                        return true;
+                    case "PostDeleteAction":
+                        $scope.seaFreightSubmitDefinition.Type = "Delete";
+                        return true;
+                    case "PostViewAction":
+                        $scope.seaFreightSubmitDefinition.Type = "View";
+                        return true;
+                    case "PreSubmit":
+                        console.log($scope.validSeaFreightShipments());
+                        if (!$scope.validSeaFreightShipments())
+                            return false;
+                        $scope.seaFreightSubmitDefinition.DataItem = angular.copy($scope.seafreightItem);
+                        console.log($scope.seafreightItem);
+                        return true;
+                    case "PreSave":
+                        $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments = angular.copy($scope.seaFreightShipmentsDataDefinition.DataList);
+                        delete $scope.seaFreightSubmitDefinition.DataItem.Id;
+                        delete $scope.seaFreightSubmitDefinition.DataItem.SeaFreight;
+                        delete $scope.seaFreightSubmitDefinition.DataItem.BusinessUnit;
+                        delete $scope.seaFreightSubmitDefinition.DataItem.BusinessUnit1;
+                        delete $scope.seaFreightSubmitDefinition.DataItem.VesselVoyage;
+                        for (var i = 0; i < $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments.length; i++) {
+                            delete $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments[i].Id;
+                            delete $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments[i].Shipment;
+                        }
+                        console.log('pakyu1');
+                        return true;
+                    case "PostSave":
+                        //Initialize Sea Freight Id
+                        console.log('pakyu1');
+                        $scope.seafreightItem.Id = $scope.seaFreightSubmitDefinition.DataItem.Id;
+                        $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+                        //Initialize Sea Freight Shipments Id
+                        for (var i = 0; i < $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments.length; i++)
+                            $scope.seaFreightShipmentsDataDefinition.DataList[i].Id = $scope.seaFreightSubmitDefinition.DataItem.SeaFreightShipments[i].Id;
+                        $scope.viewOnly = true;
+                        $scope.seaFreightSubmitDefinition.Type = "Edit";
+                        alert("Successfully Saved.");
+                        return true;
+                    case "PreUpdate":
+                        return true;
+                    case "PostUpdate":
+                        return true;
+                    case "PreDelete":
+                        return true;
+                    case "PostDelete":
+                        return true;
+                    case "PostView":
+                        return true;
+                    case "Find":
+                        $scope.selectedTab = $scope.tabPages[1];
+                        var promise = $interval(function () {
+                            if ($scope.seaFreightToggle == false) {
+                                $("#seaFreightToggle").slideToggle(function () {
+                                    $scope.seaFreightToggle = true;
+                                });
+                            }
+                            $interval.cancel(promise);
+                            promise = undefined;
+                        }, 200);
+                        return true;
+                    case "Clear":
+                        $scope.seaFreightDataDefinition.DataList = [];
+                        //Required if pagination is enabled
+                        if ($scope.seaFreightDataDefinition.EnablePagination == true) {
+                            $scope.seaFreightDataDefinition.CurrentPage = 1;
+                            $scope.seaFreightDataDefinition.DoPagination = true;
+                        }
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.seaFreightShowFormError = function (error) {
+                $scope.seaFreightIsError = true;
+                $scope.seaFreightErrorMessage = error;
+            };
+
+            $scope.initSeaFreightDataDefinition();
+            $scope.initSeaFreightSubmitDefinition();
+        };
+
+    //function that will be invoked during compiling of SeaFreight datagrid to DOM
+        $scope.compileSeaFreightDataGrid = function () {
+            var html = '<dir-data-grid2 datadefinition      = "seaFreightDataDefinition"' +
+                                        'submitdefinition   = "seaFreightSubmitDefinition"' +
+                                        'otheractions       = "seaFreightOtheractions(action)"' +
+                                        'resetdata          = "seaFreightResetData()"' +
+                                        'showformerror      = "seaFreightShowFormError(error)">' +
+                        '</dir-data-grid2>';
+            $content = angular.element(document.querySelector('#seaFreightContainer')).html(html);
+            $compile($content)($scope);
+        };
+
+    //Load SeaFreight filtering for compiling
+        $scope.loadSeaFreightFiltering = function () {
+            $scope.initSeaFreightFilteringParameters();
+            $scope.initSeaFreightFilteringContainter();
+            $("#seaFreightToggle").slideToggle(function () { });
+        };
+
+    //initialize SeaFreight filtering parameters
+        $scope.initSeaFreightFilteringContainter = function () {
+            html = '<dir-filtering  filterdefinition="seaFreightFilteringDefinition"' +
+                                    'filterlistener="seaFreightDataDefinition.Retrieve"' +
+                                    'otheractions="seaFreightOtherActionsFiltering(action)"' +
+                   '</dir-filtering>';
+            $content = angular.element(document.querySelector('#seaFreightFilterContainter')).html(html);
+            $compile($content)($scope);
+        };
+
+    //function that will be called during compiling of SeaFreight filtering to DOM
+        $scope.initSeaFreightFilteringParameters = function () {
+            //Hide the SeaFreight filtering directive
+            $scope.hideSeaFreightToggle = function () {
+                var promise = $interval(function () {
+                    $("#seaFreightToggle").slideToggle(function () {
+                        $scope.seaFreightToggle = false;
+                    });
+                    $interval.cancel(promise);
+                    promise = undefined;
+                }, 200)
+            };
+            $scope.initSeaFreightFilteringDefinition = function () {
+                $scope.seaFreightFilteringDefinition = {
+                    "Url": ($scope.seaFreightDataDefinition.EnablePagination == true ? 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage : 'api/SeaFreights?type=scroll&param1=' + $scope.seaFreightDataDefinition.DataList.length),//Url for retrieve
+                    "DataList": [], //Contains the data retrieved based on the criteria
+                    "DataItem1": $scope.DataItem1, //Contains the parameter value
+                    "Source": [
+                                { "Index": 0, "Label": "Sea Freight No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
+                                { "Index": 1, "Label": "Bill of Lading Date", "Column": "BLDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                                { "Index": 2, "Label": "Origin", "Column": "OriginBusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
+                                { "Index": 3, "Label": "Destination", "Column": "DestinationBusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
+                                { "Index": 4, "Label": "Created Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                                { "Index": 5, "Label": "Last Updated Date", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Date" }
+                    ],//Contains the Criteria definition
+                    "Multiple": true,
+                    "AutoLoad": false,
+                    "ClearData": false,
+                    "SetSourceToNull": false
+                }
+            };
+
+            $scope.seaFreightOtherActionsFiltering = function (action) {
+                switch (action) {
+                    //Initialize DataItem1 and DataItem2 for data filtering
+                    case 'PreFilterData':
+                        $scope.selectedTab = $scope.tabPages[1];
+                        $scope.seaFreightSource = $scope.seaFreightFilteringDefinition.Source;
+                        //Optional in using this, can use switch if every source type has validation before filtering
+
+                        for (var i = 0; i < $scope.seaFreightSource.length; i++) {
+                            if ($scope.seaFreightSource[i].Type == "Date") {
+                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].From;
+                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[1][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].To;
+                            }
+                            else
+                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].From;
+                        }
+                        //Delete keys that the value is null
+                        for (var i = 0; i < $scope.seaFreightSource.length; i++) {
+                            if ($scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] == null) {
+                                delete $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column];
+                                delete $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[1][$scope.seaFreightSource[i].Column];
+                            }
+                        }
+
+                        if ($scope.seaFreightDataDefinition.EnablePagination == true && $scope.seaFreightFilteringDefinition.ClearData) {
+                            $scope.seaFreightDataDefinition.CurrentPage = 1;
+                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage;
+                        }
+                        else if ($scope.seaFreightDataDefinition.EnablePagination == true) {
+                            $scope.seaFreightDataDefinition.DataList = [];
+                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage;
+                        }
+                            //Scroll
+                        else {
+                            if ($scope.seaFreightFilteringDefinition.ClearData)
+                                $scope.seaFreightDataDefinition.DataList = [];
+                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=scroll&param1=' + $scope.seaFreightDataDefinition.DataList.length;
+                        }
+                        return true;
+                    case 'PostFilterData':
+                        /*Note: if pagination, initialize SeaFreightDataDefinition DataList by copying the DataList of filterDefinition then 
+                                set DoPagination to true
+                          if scroll, initialize SeaFreightDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                        //Required
+                        $scope.seaFreightFilteringDefinition.DataList = $scope.seaFreightFilteringDefinition.DataList;
+
+                        if ($scope.seaFreightDataDefinition.EnableScroll == true) {
+                            for (var j = 0; j < $scope.seaFreightFilteringDefinition.DataList.length; j++)
+                                $scope.seaFreightDataDefinition.DataList.push($scope.seaFreightFilteringDefinition.DataList[j]);
+                        }
+
+                        if ($scope.seaFreightDataDefinition.EnablePagination == true) {
+                            $scope.seaFreightDataDefinition.DataList = [];
+                            $scope.seaFreightDataDefinition.DataList = $scope.seaFreightFilteringDefinition.DataList;
+                            $scope.seaFreightDataDefinition.DoPagination = true;
+                        }
+                        if ($scope.seaFreightToggle == true)
+                            $scope.hideSeaFreightToggle();
+                        return true;
+                    case 'GetBusinessList':
+                        //Show modal here then after user choose a specific data to filter pass the to From field in the source where Values[0] is equal to the action, ex. GetBusinessUnitList
+                        //Use if filtering criteria is modal
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.initSeaFreightDataItems = function () {
+                $scope.seaFreightFilteringDefinition.DataItem1 = angular.copy($scope.seaFreightObj());
+            };
+            $scope.initSeaFreightFilteringDefinition();
+            $scope.initSeaFreightDataItems();
+
+        };
+        //=================================================END OF SEA FREIGHT DATA GRID=================================================
+
         //=================================================START OF BUSINESS UNIT MODAL=================================================
         //Load businessUnit filtering for compiling
         $scope.loadBusinessUnitFiltering = function () {
@@ -384,7 +805,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "Type": ['ProperCase'],
                     "ColWidth": [250],
                     "DataList": [],
-                    "RequiredFields": [],
+                    "RequiredFields": [], 
                     "CellTemplate": ["None"],
                     "RowTemplate": "Default",
                     "EnableScroll": true,
@@ -585,7 +1006,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         var promise = $interval(function () {
                             $interval.cancel(promise);
                             promise = undefined;
-                            $scope.showModal('#vessels-list-modal', 'vessel');
+                            $scope.showModal('#vesselVoyages-list-modal', 'vesselVoyage');
                         }, 500);
                         return true;
                     default: return true;
@@ -607,179 +1028,498 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
         
         //=================================================END OF VESSEL MODAL=================================================
 
+        //=================================================START OF VESSEL VOYAGE MODAL=================================================
+        //Load vesselVoyage filtering for compiling
+        $scope.loadVesselVoyageFiltering = function () {
+            $scope.initVesselVoyageFilteringParameters();
+            $scope.initVesselVoyageFilteringContainter();
+        };
 
+        //initialize shippingline filtering parameters
+        $scope.initVesselVoyageFilteringContainter = function () {
+            html = '<dir-filtering  filterdefinition="vesselVoyageFilteringDefinition"' +
+                                    'filterlistener="vesselVoyageDataDefinition.Retrieve"' +
+                                    'otheractions="vesselVoyageOtherActionsFiltering(action)"' +
+                   '</dir-filtering>';
+            $content = angular.element(document.querySelector('#vesselVoyageFilterContainter')).html(html);
+            $compile($content)($scope);
+        };
 
+        //function that will be called during compiling of shippingline filtering to DOM
+        $scope.initVesselVoyageFilteringParameters = function () {
+            $scope.initVesselVoyageFilteringDefinition = function () {
+                $scope.vesselVoyageFilteringDefinition = {
+                    "Url": ($scope.vesselVoyageDataDefinition.EnablePagination == true ? 'api/VesselVoyages?type=paginate&param1=' + $scope.vesselVoyageDataDefinition.CurrentPage : 'api/VesselVoyages?type=scroll&param1=' + $scope.vesselVoyageDataDefinition.DataList.length),//Url for retrieve
+                    "DataList": [], //Contains the data retrieved based on the criteria
+                    "DataItem1": $scope.DataItem1, //Contains the parameter value index
+                    "Source": [
+                                { "Index": 0, "Label": "Voyage No", "Column": "VoyageNo", "Values": [], "From": null, "To": null, "Type": "ProperCase" }
+                    ],//Contains the Criteria definition
+                    "Multiple": false,
+                    "AutoLoad": false,
+                    "ClearData": false,
+                    "SetSourceToNull": false
+                }
+            };
 
+            $scope.vesselVoyageOtherActionsFiltering = function (action) {
+                switch (action) {
+                    //Initialize DataItem1 and DataItem2 for data filtering
+                    case 'PreFilterData':
+                        $scope.vesselVoyageSource = $scope.vesselVoyageFilteringDefinition.Source;
+                        //Optional in using this, can use switch if every source type has validation before filtering
+                        for (var i = 0; i < $scope.vesselVoyageSource.length; i++) {
+                            if ($scope.vesselVoyageSource[i].Type == "Date") {
+                                $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].From;
+                                $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[1][$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].To;
+                            }
+                            else
+                                $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].From;
+                        }
 
+                        //Delete keys that the value is null
+                        for (var i = 0; i < $scope.vesselVoyageSource.length; i++) {
+                            if ($scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column] == null) {
+                                delete $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column];
+                                delete $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[1][$scope.vesselVoyageSource[i].Column];
+                            }
+                        }
 
+                        if ($scope.vesselVoyageDataDefinition.EnablePagination == true && $scope.vesselVoyageFilteringDefinition.ClearData) {
+                            $scope.vesselVoyageDataDefinition.CurrentPage = 1;
+                            $scope.vesselVoyageFilteringDefinition.Url = 'api/VesselVoyages?type=paginate&param1=' + $scope.vesselVoyageDataDefinition.CurrentPage;
+                        }
+                        else if ($scope.vesselVoyageDataDefinition.EnablePagination == true) {
+                            $scope.vesselVoyageDataDefinition.DataList = [];
+                            $scope.vesselVoyageFilteringDefinition.Url = 'api/VesselVoyages?type=paginate&param1=' + $scope.vesselVoyageDataDefinition.CurrentPage;
+                        }
+                        //Scroll
+                        else {
+                            if ($scope.vesselVoyageFilteringDefinition.ClearData)
+                                $scope.vesselVoyageDataDefinition.DataList = [];
+                            $scope.vesselVoyageFilteringDefinition.Url = 'api/VesselVoyages?type=scroll&param1=' + $scope.vesselVoyageDataDefinition.DataList.length;
+                        }
+                        $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0].VesselId = $scope.seafreightItem.VesselVoyage.VesselId;
 
+                        return true;
+                    case 'PostFilterData':
+                        /*Note: if pagination, initialize vesselVoyageDataDefinition DataList by copying the DataList of filterDefinition then 
+                                set DoPagination to true
+                          if scroll, initialize vesselVoyageDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                        //Required
+                        //$scope.vesselVoyageFilteringDefinition.DataList = $rootScope.formatCustomer($scope.vesselVoyageFilteringDefinition.DataList);
+                        if ($scope.vesselVoyageDataDefinition.EnableScroll == true) {
+                            for (var j = 0; j < $scope.vesselVoyageFilteringDefinition.DataList.length; j++)
+                                $scope.vesselVoyageDataDefinition.DataList.push($scope.vesselVoyageFilteringDefinition.DataList[j]);
+                        }
 
+                        if ($scope.vesselVoyageDataDefinition.EnablePagination == true) {
+                            $scope.vesselVoyageDataDefinition.DataList = [];
+                            $scope.vesselVoyageDataDefinition.DataList = $scope.vesselVoyageFilteringDefinition.DataList;
+                            $scope.vesselVoyageDataDefinition.DoPagination = true;
+                        }
+                        return true;
+                    default: return true;
+                }
+            };
 
-        //Show Shippingline's vessels List
-        $scope.showVessels = function (shippingLineId) {
-            var spinner = new Spinner(opts).spin(spinnerTarget);
-            $http.get("/api/Vessels?shippingLineId=" + shippingLineId)
-           .success(function (data, status) {
-               $scope.vesselList = [];
-               $scope.vesselList = data;
-               spinner.stop();
-               $scope.showModal('#vessels-list-modal', $scope.modalType);
-           })
-           .error(function (error, status) {
-               $scope.isError = true;
-               $scope.errorMessage = status;
-               spinner.stop();
-           });
+            $scope.initVesselVoyageDataItems = function () {
+                $scope.vesselVoyageFilteringDefinition.DataItem1 = angular.copy($scope.vesselVoyageObj());
+            };
+
+            $scope.initVesselVoyageFilteringDefinition();
+            $scope.initVesselVoyageDataItems();
+        };
+
+        //Load vesselVoyage datagrid for compiling
+        $scope.loadVesselVoyageDataGrid = function () {
+            $scope.initVesselVoyageDataGrid();
+            $scope.compileVesselVoyageDataGrid();
+        };
+
+        //initialize vesselVoyage datagrid parameters
+        $scope.initVesselVoyageDataGrid = function () {
+            $scope.vesselVoyageSubmitDefinition = undefined;
+            $scope.initializeVesselVoyageDataDefinition = function () {
+                $scope.vesselVoyageDataDefinition = {
+                    "Header": ['Voyage No.','Origin','Destination','Departure Date','Departure Time','Arrival Date','Arrival Time', 'No.'],
+                    "Keys": ['VoyageNo','Origin[0].Name','Destination[0].Name','DepartureDate','DepartureTime','ArrivalDate','ArrivalTime'],
+                    "Type": ['ProperCase','ProperCase','ProperCase','Date','Time','Date','Time'],
+                    "ColWidth": [150,150,150,120,100,120,100],
+                    "DataList": [],
+                    "RequiredFields": [],
+                    "CellTemplate": ["None"],
+                    "RowTemplate": "Default",
+                    "EnableScroll": true,
+                    "EnablePagination": false,
+                    "CurrentPage": 1, //By default
+                    "PageSize": 20, //Should be the same in back-end
+                    "DoPagination": false, //By default
+                    "Retrieve": false, //By default
+                    "DataItem": {},
+                    "DataTarget": "VesselVoyageMenu",
+                    "DataTarget2": "VesselVoyageMenu1",
+                    "ShowCreate": false,
+                    "ShowContextMenu": false,
+                    "ContextMenu": [""],
+                    "ContextMenuLabel": [""]
+                }
+                $scope.vesselVoyageDataDefinition.RowTemplate = '<div>' +
+                                                                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                                  '</div>';
+            };
+            $scope.vesselVoyageOtherActions = function (action) {
+                switch (action) {
+                    case 'PostEditAction':
+                        $scope.seafreightItem.VesselVoyageId = $scope.vesselVoyageDataDefinition.DataItem.Id;
+                        $scope.seafreightItem.VesselVoyage.DepartureDate = $scope.vesselVoyageDataDefinition.DataItem.DepartureDate;
+                        $scope.seafreightItem.VesselVoyage.DepartureTime = $scope.vesselVoyageDataDefinition.DataItem.DepartureTime;
+                        $scope.seafreightItem.VesselVoyage.ArrivalDate = $scope.vesselVoyageDataDefinition.DataItem.ArrivalDate;
+                        $scope.seafreightItem.VesselVoyage.ArrivalTime = $scope.vesselVoyageDataDefinition.DataItem.ArrivalTime;
+                        $scope.closeModal();
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.initializeVesselVoyageDataDefinition();
+        };
+
+        //function that will be invoked during compiling of vesselVoyage datagrid to DOM
+        $scope.compileVesselVoyageDataGrid = function () {
+            var html = '<dir-data-grid2 datadefinition      = "vesselVoyageDataDefinition"' +
+                                        'submitdefinition   = "vesselVoyageSubmitDefinition"' +
+                                        'otheractions       = "vesselVoyageOtherActions(action)">' +
+                        '</dir-data-grid2>';
+            $content = angular.element(document.querySelector('#vesselVoyageContainer')).html(html);
+            $compile($content)($scope);
         };
         
-        //Show Shippingline's vessel's vesselvoyages List
-        $scope.showVesselVoyages = function (vesselId) {
-            var spinner = new Spinner(opts).spin(spinnerTarget);
-            $http.get("/api/VesselVoyages?vesselId=" + vesselId)
-           .success(function (data, status) {
-               $scope.vesselVoyageList = [];
-               $scope.vesselVoyageList = data;
-               spinner.stop();
-               $scope.showModal('#vesselVoyages-list-modal', $scope.modalType);
-           })
-           .error(function (error, status) {
-               $scope.isError = true;
-               $scope.errorMessage = status;
-               spinner.stop();
-           });
-        };
-
-        //Close Origin Business Unit List Modal
-        $scope.closeOriginBusinessUnitList = function (bu) {
-            if (angular.isDefined(bu)) {
-                $scope.seafreightItem.OriginBusinessUnitId = bu.Id;
-                $scope.seafreightItem.BusinessUnit1.Name = bu.Name;
-            }
-            else
-                $scope.seafreightItem.OriginBusinessUnitId = null;
-            jQuery.magnificPopup.close();
-        };
-
-        //Close Destination Business Unit List Modal
-        $scope.closeDestinationBusinessUnitList = function (bu) {
-            if (angular.isDefined(bu)) {
-                $scope.seafreightItem.DestinationBusinessUnitId = bu.Id;
-                $scope.seafreightItem.BusinessUnit.Name = bu.Name;
-            }
-            else
-                $scope.seafreightItem.DestinationBusinessUnitId = null;
-            jQuery.magnificPopup.close();
-        };
-
-        //Close Shippingline List Modal
-        $scope.closeShippinglineList = function (s) {
-            if (angular.isDefined(s)) {
-                $scope.seafreightItem.VesselVoyage.Vessel.ShippingLineId = s.Id;
-                $scope.seafreightItem.VesselVoyage.Vessel.ShippingLine.Name = s.Name;
-            }
-            else
-                $scope.seafreightItem.VesselVoyage.Vessel.ShippingLineId = null;
-            jQuery.magnificPopup.close();
-            var promise = $interval(function () {
-                $interval.cancel(promise);
-                promise = undefined;
-                $scope.showVessels(s.Id);
-            }, 500);
-        };
-
-        //Close Vessel List Modal
-        $scope.closeVesselList = function (v) {
-            if (angular.isDefined(v)) {
-                $scope.seafreightItem.VesselVoyage.VesselId = v.Id;
-                $scope.seafreightItem.VesselVoyage.Vessel.Name = v.Name;
-            }
-            else
-                $scope.seafreightItem.VesselVoyage.VesselId = null;
-            jQuery.magnificPopup.close();
-            var promise = $interval(function () {
-                $interval.cancel(promise);
-                promise = undefined;
-                $scope.showVesselVoyages(v.Id);
-            }, 500);
-        };
-
-        //Close Vessel Voyage List Modal
-        $scope.closeVesselVoyageList = function (vv) {
-            if (angular.isDefined(vv)) {
-                $scope.seafreightItem.VesselVoyageId = vv.Id;
-                //retrieve origin business unit name
-                $scope.seafreightItem.VesselVoyage.OriginBusinessUnitId = vv.OriginBusinessUnitId;
-                $scope.OriginBusinessUnit = [];
-                for (var i = 0; i < $scope.vesselVoyageList.length; i++) {
-                    //Retrieve Origin Business Unit information per vessel Voyage
-
-                    var url = '/api/BusinessUnits?businessUnitId=' + $scope.seafreightItem.VesselVoyage.OriginBusinessUnitId;
-                   
-                    $http.get(url)
-                    .success(function (data1, status) {
-                        $scope.OriginBusinessUnit.push(data1);
-                    })
-                    .error(function (error, status) {
-                        spinner.stop();
-                    })
-                };
-                //Initialize Origin Business Unit information per vessel Voyage
-                var promise = $interval(function () {
-                    if ($scope.OriginBusinessUnit.length == $scope.vesselVoyageList.length) {
-                        for (var i = 0; i < $scope.OriginBusinessUnit.length; i++)
-                            $scope.seafreightItem.VesselVoyage.OriginBusinessUnit.Name = angular.copy($scope.OriginBusinessUnit.Name);
-                        $interval.cancel(promise);
-                        promise = undefined;
-                    }
-                }, 100);
-                //retrieve destination business unit name
-                $scope.seafreightItem.VesselVoyage.DestinationBusinessUnitId = vv.DestinationBusinessUnitId;
-                $scope.DestinationBusinessUnit = [];
-                for (var i = 0; i < $scope.vesselVoyageList.length; i++) {
-                    //Retrieve Destination Business Unit information per vessel Voyage
-
-                    var url = '/api/BusinessUnits?businessUnitId=' + $scope.seafreightItem.VesselVoyage.DestinationBusinessUnitId;
-
-                    $http.get(url)
-                    .success(function (data1, status) {
-                        $scope.DestinationBusinessUnit.push(data1);
-                    })
-                    .error(function (error, status) {
-                        spinner.stop();
-                    })
-                };
-                //Initialize Destination Business Unit information per vessel Voyage
-                var promise = $interval(function () {
-                    if ($scope.DestinationBusinessUnit.length == $scope.vesselVoyageList.length) {
-                        for (var i = 0; i < $scope.DestinationBusinessUnit.length; i++)
-                            $scope.seafreightItem.VesselVoyage.DestinationBusinessUnit.Name = angular.copy($scope.DestinationBusinessUnit.Name);
-                        $interval.cancel(promise);
-                        promise = undefined;
-                    }
-                }, 100);
-                $scope.seafreightItem.VesselVoyage.DepartureDate = vv.DepartureDate;
-                $scope.seafreightItem.VesselVoyage.DepartureTime = vv.DepartureTime;
-                $scope.seafreightItem.VesselVoyage.ArrivalDate = vv.ArrivalDate;
-                $scope.seafreightItem.VesselVoyage.ArrivalTime = vv.ArrivalTime;
-            }
-            else
-                $scope.seafreightItem.VesselVoyageId = null;
-            jQuery.magnificPopup.close();
-        };
+        //=================================================END OF VESSEL VOYAGE MODAL=================================================
         
-        //Close Shipment List Modal
-        $scope.closeShipmentList = function (Id) {
-            $scope.index = $scope.searchShipment(Id);
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].ShipmentId = $scope.ShipmentList[$scope.index].Id;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.ShipmentType.Name = $scope.ShipmentList[$scope.index].ShipmentType.Name;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.Customer.Name = $scope.ShipmentList[$scope.index].Customer.Name;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.Description = $scope.ShipmentList[$scope.index].Description;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.Quantity = $scope.ShipmentList[$scope.index].Quantity;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.TotalCBM = $scope.ShipmentList[$scope.index].TotalCBM;
-            $scope.SeaFreightShipmentGridOptions.data[$scope.ShipmentRow].Shipment.DeliverTo = $scope.ShipmentList[$scope.index].DeliverTo;
-            
-            jQuery.magnificPopup.close();
+        //=================================================SEA FREIGHT DETAIL DATAGRID=================================================
+        //Load seaFreightShipments datagrid for compiling
+        $scope.loadSeaFreightShipmentsDataGrid = function () {
+            $scope.initSeaFreightShipmentsDataGrid();
+            $scope.compileSeaFreightShipmentsDataGrid();
         };
+
+        //initialize seaFreightShipments datagrid parameters
+        $scope.initSeaFreightShipmentsDataGrid = function () {
+            $scope.initializeSeaFreightShipmentsDataDefinition = function () {
+                $scope.seaFreightShipmentsDataDefinition = {
+                    "Header": ['Shipment No', 'Cost Allocation', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
+                    "Keys": ['ShipmentId', 'CostAllocation', 'Shipment.TransportStatusId', 'Shipment.CreatedDate', 'Shipment.BusinessUnit.Name', 'Shipment.BusinessUnit1.Name', 'Shipment.Service.Name', 'Shipment.ShipmentType.Name', 'Shipment.PaymentMode', 'Shipment.BookingRemarks', 'Shipment.Quantity', 'Shipment.TotalCBM', 'Shipment.Description', 'Shipment.OriginAddress', 'Shipment.PickupDate', 'Shipment.PickupTime', 'Shipment.Customer.Name', 'Shipment.Customer.CustomerAddresses[0].Line1', 'Shipment.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'Shipment.DeliverTo', 'Shipment.DeliveryAddress', 'Shipment.DeliverToContactNo'],
+                    "Type": ['ControlNo', 'Decimal', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
+                    "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
+                    "DataList": [],
+                    "RequiredFields": ['ShipmentId-Shipment', 'CostAllocation-Cost'],
+                    "IsEditable": [true, true],
+                    "CellTemplate": ["None"],
+                    "RowTemplate": "Default",
+                    "EnableScroll": true,
+                    "EnablePagination": false,
+                    "CurrentPage": 1, //By default
+                    "PageSize": 20, //Should be the same in back-end
+                    "DoPagination": false, //By default
+                    "Retrieve": false, //By default
+                    "DataItem": {},
+                    "DataTarget": "SeaFreightShipmentsMenu",
+                    "DataTarget2": "SeaFreightShipmentsMenu2",
+                    "ShowCreate": false,
+                    "ShowContextMenu": true,
+                    "ContextMenu": ["'Create'", "'Delete'"],
+                    "ContextMenuLabel": ['Create', 'Delete']
+                }
+            };
+
+            $scope.initializeSeaFreightShipmentsSubmitDefinition = function () {
+                $scope.seaFreightShipmentsSubmitDefinition = {
+                    "Submit": false, //By default
+                    "APIUrl": '',
+                    "Type": 'Create', //By Default
+                    "DataItem": {},
+                    "Index": -1 //By Default
+                }
+            };
+
+            $scope.seaFreightShipmentsOtheractions = function (action) {
+                switch (action) {
+                    case "FormCreate":
+                        return true;
+                    case "PreAction":
+                        return true;
+                    case "PreCreateAction":
+                        var upperRow = $scope.seaFreightShipmentsDataDefinition.DataList.length - 1;
+                        if ($scope.seaFreightShipmentsDataDefinition.DataList[upperRow].ShipmentId == 0) {
+                            $scope.courierDeliveryIsError = true;
+                            $scope.courierDeliveryErrorMessage = "Shipment is required.";
+                            $scope.focusOnTop();
+                            return false;
+                        }
+                        else if ($scope.seaFreightShipmentsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.seaFreightShipmentsDataDefinition.DataList[upperRow].CostAllocation == 0) {
+                            $scope.courierDeliveryIsError = true;
+                            $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
+                            $scope.focusOnTop();
+                            return false;
+                        }
+                        return true;
+                    case "PostEditAction":
+                        return true;
+                    case "PostDeleteAction":
+                        $scope.seaFreightShipmentsDataDefinition.DataList.splice($scope.seaFreightShipmentsSubmitDefinition.Index, 1);
+                        if ($scope.seaFreightShipmentsDataDefinition.DataList.length == 0)
+                            $scope.seaFreightShipmentsResetData();
+                        return true;
+                    case "PostViewAction":
+                        return true;
+                    case "Clear":
+                        $scope.seaFreightShipmentsDataDefinition.DataList = [];
+                        //Required if pagination is enabled
+                        if ($scope.seaFreightShipmentsDataDefinition.EnablePagination == true) {
+                            $scope.seaFreightShipmentsDataDefinition.CurrentPage = 1;
+                            $scope.seaFreightShipmentsDataDefinition.DoPagination = true;
+                        }
+                        return true;
+                    case "Shipment No":
+                        //if datalist is only 1 then directly insert
+                        $scope.showModal('#shipment-list-modal','shipment');
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.seaFreightShipmentsResetData = function () {
+                $scope.seaFreightShipmentsItem = {
+                    "Id": null,
+                    "SeaFreightId": -1,
+                    "ShipmentId": 0,
+                    "Shipment": $rootScope.shipmentObj(),
+                    "CostAllocation": null
+                }
+
+                $scope.courierDeliveryIsError = false;
+                $scope.courierDeliveryErrorMessage = "";
+                //Added 1 row in Sea Freight Shipments
+                $scope.seaFreightShipmentsTemporyId++;
+                $scope.seaFreightShipmentsItem.Id = $scope.seaFreightShipmentsTemporyId;
+                $scope.seaFreightShipmentsDataDefinition.DataList.push($scope.seaFreightShipmentsItem);
+
+            };
+
+            $scope.seaFreightShipmentsShowFormError = function (error) {
+                $scope.seaFreightShipmentsIsError = true;
+                $scope.seaFreightShipmentsErrorMessage = error;
+            };
+
+            $scope.initializeSeaFreightShipmentsDataDefinition();
+            $scope.initializeSeaFreightShipmentsSubmitDefinition();
+        };
+
+        //function that will be invoked during compiling datagrid to DOM
+        $scope.compileSeaFreightShipmentsDataGrid = function () {
+            var html = '<dir-data-grid2 datadefinition      = "seaFreightShipmentsDataDefinition"' +
+                                        'submitdefinition   = "seaFreightShipmentsSubmitDefinition"' +
+                                        'otheractions       = "seaFreightShipmentsOtheractions(action)"' +
+                                        'resetdata          = "seaFreightShipmentsResetData()"' +
+                                        'showformerror      = "seaFreightShipmentsShowFormError(error)">' +
+                        '</dir-data-grid2>';
+            $content = angular.element(document.querySelector('#seaFreightShipmentsContainer')).html(html);
+            $compile($content)($scope);
+        };
+        //=================================================END OF SEA FREIGHT DETAIL DATAGRID=================================================
+        
+        //=================================================SHIPMENT MODAL/REPORT=================================================
+        
+        //Load businessUnit filtering for compiling
+        $scope.loadShipmentFiltering = function () {
+            $scope.initShipmentFilteringParameters();
+            $scope.initShipmentFilteringContainter();
+        };
+
+        //initialize businessUnit filtering parameters
+        $scope.initShipmentFilteringContainter = function () {
+            html = '<dir-filtering  filterdefinition="shipmentFilteringDefinition"' +
+                                    'filterlistener="shipmentDataDefinition.Retrieve"' +
+                                    'otheractions="shipmentOtherActionsFiltering(action)"' +
+                   '</dir-filtering>';
+            $content = angular.element(document.querySelector('#shipmentFilterContainter')).html(html);
+            $compile($content)($scope);
+        };
+
+        //function that will be called during compiling of business unit filtering to DOM
+        $scope.initShipmentFilteringParameters = function () {
+            $scope.initShipmentFilteringDefinition = function () {
+                $scope.shipmentFilteringDefinition = {
+                    "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
+                    "DataList": [], //Contains the data retrieved based on the criteria
+                    "DataItem1": $scope.DataItem1, //Contains the parameter value index 
+                    "Source": [
+                                { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
+                                { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                                { "Index": 3, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                                { "Index": 4, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                                { "Index": 5, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
+                                { "Index": 6, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                                { "Index": 7, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
+                    ],//Contains the Criteria definition
+                    "Multiple": false,
+                    "AutoLoad": false,
+                    "ClearData": false,
+                    "SetSourceToNull": false
+                }
+            };
+
+            $scope.shipmentOtherActionsFiltering = function (action) {
+                switch (action) {
+                    //Initialize DataItem1 and DataItem2 for data filtering
+                    case 'PreFilterData':
+                        $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
+                        //Optional in using this, can use switch if every source type has validation before filtering
+                        for (var i = 0; i < $scope.shipmentSource.length; i++) {
+                            if ($scope.shipmentSource[i].Type == "Date") {
+                                $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                                $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
+                            }
+                            else
+                                $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        }
+                        //Delete keys that the value is null
+                        for (var i = 0; i < $scope.shipmentSource.length; i++) {
+                            if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {
+                                delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column];
+                                delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column];
+                            }
+                        }
+                        if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
+                            $scope.shipmentDataDefinition.CurrentPage = 1;
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        }
+                        else if ($scope.shipmentDataDefinition.EnablePagination == true) {
+                            $scope.shipmentDataDefinition.DataList = [];
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        }
+                            //Scroll
+                        else {
+                            if ($scope.shipmentFilteringDefinition.ClearData)
+                                $scope.shipmentDataDefinition.DataList = [];
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                        }
+                        return true;
+                    case 'PostFilterData':
+                        /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
+                                set DoPagination to true
+                          if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                        //Required
+                        $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                        if ($scope.shipmentDataDefinition.EnableScroll == true) {
+                            for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
+                                $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
+                        }
+
+                        if ($scope.shipmentDataDefinition.EnablePagination == true) {
+                            $scope.shipmentDataDefinition.DataList = [];
+                            $scope.shipmentDataDefinition.DataList = $scope.shipmentFilteringDefinition.DataList;
+                            $scope.shipmentDataDefinition.DoPagination = true;
+                        }
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.initShipmentDataItems = function () {
+                $scope.shipmentFilteringDefinition.DataItem1 = angular.copy($rootScope.shipmentObj());
+            };
+
+            $scope.initShipmentFilteringDefinition();
+            $scope.initShipmentDataItems();
+        };
+
+        //Load business datagrid for compiling
+        $scope.loadShipmentDataGrid = function () {
+            $scope.initShipmentDataGrid();
+            $scope.compileShipmentDataGrid();
+        };
+
+        //initialize businessUnit datagrid parameters
+        $scope.initShipmentDataGrid = function () {
+            $scope.shipmentSubmitDefinition = undefined;
+            $scope.initializeShipmentDataDefinition = function () {
+                $scope.shipmentDataDefinition = {
+                    "Header": ['Shipment No', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
+                    "Keys": ['Id', 'TransportStatusId', 'CreatedDate', 'BusinessUnit.Name', 'BusinessUnit1.Name', 'Service.Name', 'ShipmentType.Name', 'PaymentMode', 'BookingRemarks', 'Quantity', 'TotalCBM', 'Description', 'OriginAddress', 'PickupDate', 'PickupTime', 'Customer.Name', 'Customer.CustomerAddresses[0].Line1', 'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'DeliverTo', 'DeliveryAddress', 'DeliverToContactNo'],
+                    "Type": ['ControlNo', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
+                    "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
+                    "DataList": [],
+                    "RequiredFields": [],
+                    "CellTemplate": ["None"],
+                    "RowTemplate": "Default",
+                    "EnableScroll": true,
+                    "EnablePagination": false,
+                    "CurrentPage": 1, //By default
+                    "PageSize": 20, //Should be the same in back-end
+                    "DoPagination": false, //By default
+                    "Retrieve": false, //By default
+                    "DataItem": {},
+                    "DataTarget": "ShipmentUnitMenu",
+                    "DataTarget": "ShipmentUnitMenu2",
+                    "ShowCreate": false,
+                    "ShowContextMenu": false,
+                    "ContextMenu": [""],
+                    "ContextMenuLabel": [""]
+                }
+
+                //Optional if row template
+                $scope.shipmentDataDefinition.RowTemplate = '<div>' +
+                                                                    ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                                  '</div>';
+            };
+            $scope.shipmentOtherActions = function (action) {
+                switch (action) {
+                    case 'PostEditAction':
+                        var found = false;
+                        //Check if Shipment is already in the list
+                        for (var i = 0; i < $scope.seaFreightShipmentsDataDefinition.DataList.length; i++) {
+                            if ($scope.seaFreightShipmentsDataDefinition.DataList[i].ShipmentId == $scope.shipmentDataDefinition.DataItem.Id) {
+                                found = true;
+                                i = $scope.seaFreightShipmentsDataDefinition.DataList;
+                            }
+                        }
+                        //Check if shipment is not yet in the list
+                        if (!found) {
+                            $scope.seaFreightShipmentsItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
+                            $scope.seaFreightShipmentsItem.Shipment = $scope.shipmentDataDefinition.DataItem;
+                            var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
+                            var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
+                            $scope.seaFreightShipmentsItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
+                            $scope.seaFreightShipmentsItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
+                            $scope.courierDeliveryIsError = false;
+                            $scope.courierDeliveryErrorMessage = "";
+                        }
+                        else {
+                            $scope.courierDeliveryIsError = true;
+                            $scope.courierDeliveryErrorMessage = "Shipment is already in the list.";
+
+                        }
+                        $scope.closeModal();
+                        return true;
+                    default: return true;
+                }
+            };
+
+            $scope.initializeShipmentDataDefinition();
+        };
+
+        //function that will be invoked during compiling of datagrid to DOM
+        $scope.compileShipmentDataGrid = function () {
+            var html = '<dir-data-grid2 datadefinition      = "shipmentDataDefinition"' +
+                                        'submitdefinition   = "shipmentSubmitDefinition"' +
+                                        'otheractions       = "shipmentOtherActions(action)">' +
+                        '</dir-data-grid2>';
+            $content = angular.element(document.querySelector('#shipmentContainer')).html(html);
+            $compile($content)($scope);
+        };
+        //=================================================END OF SHIPMENT MODAL=================================================
 
         //Initialize Business Unit List for Modal
         $scope.initBusinessUnitList = function () {
@@ -806,362 +1546,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 $scope.ShipmentList = data;
             })
         };
-
-        //Initialized seafreight item to it's default value
-        $scope.initializeseafreightItem = function () {
-            $scope.seafreightItem = {
-                "Id": null,
-                "BLNumber": null,
-                "BLDate": null,
-                "VesselVoyageId": null,
-                "VesselVoyage": {
-                    "Id": null,
-                    "VesselId": null,
-                    "VesselName": null,
-                    "ShippingLineId": null,
-                    "ShippingLineName": null,
-                    //"Vessel": {
-                    //    "Id": null,
-                    //    "Name": null,
-                    //    "ShippingLineId": null,
-                    //    "ShippingLine": {
-                    //        "Id": null,
-                    //        "Name": null
-                    //        //"CreatedDate": null,
-                    //        //"LastUpdatedDate": null,
-                    //        //"CreatedByUserId": null,
-                    //        //"LastUpdatedByUserId": null
-                    //    }
-                    //    //"CreatedDate": null,
-                    //    //"LastUpdatedDate": null,
-                    //    //"CreatedByUserId": null,
-                    //    //"LastUpdatedByUserId": null
-                    //},
-                    "VoyageNo": null,
-                    "EstimatedDepartureDate": null,
-                    "EstimatedDepartureTime": null,
-                    "EstimatedArrivalDate": null,
-                    "EstimatedArrivalTime": null,
-                    "OriginBusinessUnitId": null,
-                    "OriginBusinessUnit": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                        //"BusinessUnitTypeId": null,
-                        //"ParentBusinessUnitId": null,
-                        //"isOperatingSite": null,
-                        //"hasAirPort": null,
-                        //"hasSeaPort": null,
-                        //"CreatedDate": null,
-                        //"LastUpdatedDate": null,
-                        //"CreatedByUserId": null,
-                        //"LastUpdatedByUserId": null
-                    },
-                    "DestinationBusinessUnitId": null,
-                    "DestinationBusinessUnit": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                        //"BusinessUnitTypeId": null,
-                        //"ParentBusinessUnitId": null,
-                        //"isOperatingSite": null,
-                        //"hasAirPort": null,
-                        //"hasSeaPort": null,
-                        //"CreatedDate": null,
-                        //"LastUpdatedDate": null,
-                        //"CreatedByUserId": null,
-                        //"LastUpdatedByUserId": null
-                    },
-                    "DepartureDate": null,
-                    "DepartureTime": null,
-                    "ArrivalDate": null,
-                    "ArrivalTime": null
-                    //"CreatedDate": null,
-                    //"LastUpdatedDate": null,
-                    //"CreatedByUserId": null,
-                    //"LastUpdatedByUserId": null
-                },
-                "OriginBusinessUnitId": null,
-                "BusinessUnit1": {
-                    "Id": null,
-                    "Code": null,
-                    "Name": null
-                    //"BusinessUnitTypeId": null,
-                    //"ParentBusinessUnitId": null,
-                    //"isOperatingSite": null,
-                    //"hasAirPort": null,
-                    //"hasSeaPort": null,
-                    //"CreatedDate": null,
-                    //"LastUpdatedDate": null,
-                    //"CreatedByUserId": null,
-                    //"LastUpdatedByUserId": null
-                },
-                "DestinationBusinessUnitId": null,
-                "BusinessUnit": {
-                    "Id": null,
-                    "Code": null,
-                    "Name": null
-                    //"BusinessUnitTypeId": null,
-                    //"ParentBusinessUnitId": null,
-                    //"isOperatingSite": null,
-                    //"hasAirPort": null,
-                    //"hasSeaPort": null,
-                    //"CreatedDate": null,
-                    //"LastUpdatedDate": null,
-                    //"CreatedByUserId": null,
-                    //"LastUpdatedByUserId": null
-                },
-                "FreightCost": null,
-                "CreatedDate": null,
-                "LastUpdatedDate": null,
-                "CreatedByUserId": null,
-                "LastUpdatedByUserId": null
-            };
-
-        };
-
-        //Load variable datagrid for compiling
-        $scope.loadSeaFreightDataGrid = function () {
-            $scope.initSeaFreightDataGrid();
-            $scope.compileSeaFreightDataGrid();
-        };
-
-        //initialized seafreight data grid
-        $scope.initSeaFreightDataGrid = function () {
-            $scope.initSeaFreightDataDefinition = function () {
-                $scope.seaFreightDataDefinition = {
-                    "Header": ['Sea Freight No', 'BL Number', 'BL Date', 'Voyage No', 'Origin', 'Destination', 'Freight Cost', 'No'],
-                    "Keys": ['Id', 'BLNumber', 'BLDate', 'VesselVoyage[0].VoyageNo', 'BusinessUnit1[0].Name', 'BusinessUnit[0].Name', 'FreightCost'],
-                    "Type": ['ControlNo', 'ProperCase', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'Decimal'],
-                    "ColWidth": [150, 150, 150, 150, 180, 180, 150],
-                    "DataList": [],
-                    "RequiredFields": ['BLNumber-BL Number', 'BLDate-BL Date', 'VesselVoyageId-Voyage ID', 'OriginBusinessUnitId-Origin Business Unit', 'DestinationBusinessUnitId-Destination Business Unit', 'FreightCost-Freight Cost'],
-                    "CellTemplate": ["None"],
-                    "RowTemplate": "Default",
-                    "EnableScroll": true,
-                    "EnablePagination": false,
-                    "CurrentPage": 1,//By default
-                    "PageSize": 20, //Should be the same in back-end
-                    "DoPagination": false, //By default
-                    "Retrieve": false, //By default
-                    "DataItem": {},
-                    "DataTarget": "SeaFreightMenu",
-                    "DataTarget2": "SeaFreightMenu1",
-                    "ShowCreate": true,
-                    "ShowContextMenu": true,
-                    "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
-                }
-            };
-
-            $scope.initSeaFreightSubmitDefinition = function () {
-                $scope.seaFreightSubmitDefinition = {
-                    "Submit": false, //By default
-                    "APIUrl": '/api/SeaFreights',
-                    "Type": 'Create', //By Default
-                    "DataItem": {},
-                    "Index": -1 //By Default
-                }
-            };
-
-            $scope.seaFreightOtheractions = function (action) {
-                switch (action) {
-                    case "FormCreate":
-                        return true;
-                    case "PreAction":
-                        return true;
-                    case "PostCreateAction":
-                        return true;
-                    case "PostEditAction":
-                        return true;
-                    case "PostDeleteAction":
-                        return true;
-                    case "PostViewAction":
-                        return true;
-                    case "PreSubmit":
-                        return true;
-                    case "PreSave":
-                        return true;
-                    case "PostSave":
-                        return true;
-                    case "PreUpdate":
-                        return true;
-                    case "PostUpdate":
-                        return true;
-                    case "PreDelete":
-                        return true;
-                    case "PostDelete":
-                        return true;
-                    case "PostView":
-                        return true;
-                    case "Find":
-                        $scope.selectedTab = $scope.tabPages[1];
-                        var promise = $interval(function () {
-                            if ($scope.seaFreightToggle == false) {
-                                $("#seaFreightToggle").slideToggle(function () {
-                                    $scope.seaFreightToggle = true;
-                                });
-                            }
-                            $interval.cancel(promise);
-                            promise = undefined;
-                        }, 200);
-                        return true;
-                    case "Clear":
-                        $scope.seaFreightDataDefinition.DataList = [];
-                        //Required if pagination is enabled
-                        if ($scope.seaFreightDataDefinition.EnablePagination == true) {
-                            $scope.seaFreightDataDefinition.CurrentPage = 1;
-                            $scope.seaFreightDataDefinition.DoPagination = true;
-                        }
-                        return true;
-                    default: return true;
-                }
-            };
-
-            $scope.seaFreightShowFormError = function (error) {
-                $scope.seaFreightIsError = true;
-                $scope.seaFreightErrorMessage = error;
-            };
-
-            $scope.initSeaFreightDataDefinition();
-            $scope.initSeaFreightSubmitDefinition();
-        };
-
-        //function that will be invoked during compiling of SeaFreight datagrid to DOM
-        $scope.compileSeaFreightDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "seaFreightDataDefinition"' +
-                                        'submitdefinition   = "seaFreightSubmitDefinition"' +
-                                        'otheractions       = "seaFreightOtheractions(action)"' +
-                                        'resetdata          = "initializeseafreightItem()"' +
-                                        'showformerror      = "seaFreightShowFormError(error)">' +
-                        '</dir-data-grid2>';
-            $content = angular.element(document.querySelector('#seaFreightContainer')).html(html);
-            $compile($content)($scope);
-        };
         
-        //Load SeaFreight filtering for compiling
-        $scope.loadSeaFreightFiltering = function () {
-            $scope.initSeaFreightFilteringParameters();
-            $scope.initSeaFreightFilteringContainter();
-            $("#seaFreightToggle").slideToggle(function () { });
-        };
-        
-        //initialize SeaFreight filtering parameters
-        $scope.initSeaFreightFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="seaFreightFilteringDefinition"' +
-                                    'filterlistener="seaFreightDataDefinition.Retrieve"' +
-                                    'otheractions="seaFreightOtherActionsFiltering(action)"' +
-                   '</dir-filtering>';
-            $content = angular.element(document.querySelector('#seaFreightFilterContainter')).html(html);
-            $compile($content)($scope);
-        };
-        
-        //function that will be called during compiling of SeaFreight filtering to DOM
-        $scope.initSeaFreightFilteringParameters = function () {
-            //Hide the SeaFreight filtering directive
-            $scope.hideSeaFreightToggle = function () {
-                var promise = $interval(function () {
-                    $("#seaFreightToggle").slideToggle(function () {
-                        $scope.seaFreightToggle = false;
-                    });
-                    $interval.cancel(promise);
-                    promise = undefined;
-                }, 200)
-            };
-            $scope.initSeaFreightFilteringDefinition = function () {
-                $scope.seaFreightFilteringDefinition = {
-                    "Url": ($scope.seaFreightDataDefinition.EnablePagination == true ? 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage : 'api/SeaFreights?type=scroll&param1=' + $scope.seaFreightDataDefinition.DataList.length),//Url for retrieve
-                    "DataList": [], //Contains the data retrieved based on the criteria
-                    "DataItem1": $scope.DataItem1, //Contains the parameter value
-                    "Source": [
-                                { "Index": 0, "Label": "Sea Freight No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                                { "Index": 1, "Label": "Bill of Lading Date", "Column": "BLDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                                { "Index": 2, "Label": "Origin", "Column": "OriginBusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                                { "Index": 3, "Label": "Destination", "Column": "DestinationBusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                                { "Index": 4, "Label": "Created Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                                { "Index": 5, "Label": "Last Updated Date", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Date" }
-                    ],//Contains the Criteria definition
-                    "Multiple": true,
-                    "AutoLoad": false,
-                    "ClearData": false,
-                    "SetSourceToNull": false
-                }
-            };
-
-            $scope.seaFreightOtherActionsFiltering = function (action) {
-                switch (action) {
-                    //Initialize DataItem1 and DataItem2 for data filtering
-                    case 'PreFilterData':
-                        $scope.selectedTab = $scope.tabPages[1];
-                        $scope.seaFreightSource = $scope.seaFreightFilteringDefinition.Source;
-                        //Optional in using this, can use switch if every source type has validation before filtering
-
-                        for (var i = 0; i < $scope.seaFreightSource.length; i++) {
-                            if ($scope.seaFreightSource[i].Type == "Date") {
-                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].From;
-                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[1][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].To;
-                            }
-                            else
-                                $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] = $scope.seaFreightSource[i].From;
-                        }
-                        //Delete keys that the value is null
-                        for (var i = 0; i < $scope.seaFreightSource.length; i++) {
-                            if ($scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column] == null) {
-                                delete $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[0][$scope.seaFreightSource[i].Column];
-                                delete $scope.seaFreightFilteringDefinition.DataItem1.SeaFreight[1][$scope.seaFreightSource[i].Column];
-                            }
-                        }
-
-                        if ($scope.seaFreightDataDefinition.EnablePagination == true && $scope.seaFreightFilteringDefinition.ClearData) {
-                            $scope.seaFreightDataDefinition.CurrentPage = 1;
-                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage;
-                        }
-                        else if ($scope.seaFreightDataDefinition.EnablePagination == true) {
-                            $scope.seaFreightDataDefinition.DataList = [];
-                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=paginate&param1=' + $scope.seaFreightDataDefinition.CurrentPage;
-                        }
-                            //Scroll
-                        else {
-                            if ($scope.seaFreightFilteringDefinition.ClearData)
-                                $scope.seaFreightDataDefinition.DataList = [];
-                            $scope.seaFreightFilteringDefinition.Url = 'api/SeaFreights?type=scroll&param1=' + $scope.seaFreightDataDefinition.DataList.length;
-                        }
-                        return true;
-                    case 'PostFilterData':
-                        /*Note: if pagination, initialize SeaFreightDataDefinition DataList by copying the DataList of filterDefinition then 
-                                set DoPagination to true
-                          if scroll, initialize SeaFreightDataDefinition DataList by pushing each value of filterDefinition DataList*/
-                        //Required
-                        $scope.seaFreightFilteringDefinition.DataList = $scope.seaFreightFilteringDefinition.DataList;
-                       
-                        if ($scope.seaFreightDataDefinition.EnableScroll == true) {
-                            for (var j = 0; j < $scope.seaFreightFilteringDefinition.DataList.length; j++)
-                                $scope.seaFreightDataDefinition.DataList.push($scope.seaFreightFilteringDefinition.DataList[j]);
-                        }
-
-                        if ($scope.seaFreightDataDefinition.EnablePagination == true) {
-                            $scope.seaFreightDataDefinition.DataList = [];
-                            $scope.seaFreightDataDefinition.DataList = $scope.seaFreightFilteringDefinition.DataList;
-                            $scope.seaFreightDataDefinition.DoPagination = true;
-                        }
-                        if ($scope.seaFreightToggle == true)
-                            $scope.hideSeaFreightToggle();
-                        return true;
-                    case 'GetBusinessList':
-                        //Show modal here then after user choose a specific data to filter pass the to From field in the source where Values[0] is equal to the action, ex. GetBusinessUnitList
-                        //Use if filtering criteria is modal
-                        return true;
-                    default: return true;
-                }
-            };
-
-            $scope.initSeaFreightDataItems = function () {
-                $scope.seaFreightFilteringDefinition.DataItem1 = angular.copy($scope.seaFreightObj());
-            };
-            $scope.initSeaFreightFilteringDefinition();
-            $scope.initSeaFreightDataItems();
-
-        };  
+  
 
         //Retrieve seafreight's shipments
         $scope.loadDetail = function (seaFreightId) {
@@ -1330,82 +1716,6 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             return i;
         };
 
-        //Function that will format key value
-        $scope.filterValue = function (type) {
-            var format;
-            switch (type) {
-                case 'String':
-                    format = 'ProperCase';
-                    break;
-                case 'String-Upper':
-                    format = 'StringUpper';
-                    break;
-                case 'Date':
-                    format = 'Date';
-                    break;
-                case 'DateTime':
-                    format = 'DateTime';
-                    break;
-                case 'Time':
-                    format = 'Time';
-                    break;
-                case 'Boolean':
-                    format = 'Boolean';
-                    break;
-                case 'Decimal':
-                    format = 'Decimal';
-                    break;
-                case 'ControlNo':
-                    format = 'ControlNo';
-                    break;
-                case 'PaymentMode':
-                    format = 'PaymentMode';
-                    break;
-                default:
-                    format = 'Default';
-            }
-            return format;
-        };
-
-        //Search sea Freight key
-        $scope.searchKey = function (key) {
-            if (angular.isDefined($scope.seafreightItem[key]))
-                return true;
-            return false;
-        };
-
-        //Function that check required fields
-        $scope.checkRequiredFields = function () {
-            var key = "", label = "";
-            for (var i = 0; i < $scope.RequiredFields.length; i++) {
-                var split = $scope.RequiredFields[i].split("-");
-                key = split[0];
-                //Check if key is valid
-                if ($scope.searchKey(key) == false) {
-                    $scope.isError = true;
-                    $scope.errorMessage = " " + key + " is undefined.";
-                    return false;
-                }
-                else {
-                    //Check if label name exist in a key
-                    if (split.length == 2)
-                        label = split[1];
-                    else {
-                        $scope.isError = true;
-                        $scope.errorMessage = " Label name is required for Key: " + key;
-                        return false;
-                    }
-                
-                    if ($scope.seafreightItem[key] == null || $scope.seafreightItem[key] == "") {
-                        $scope.isError = true;
-                        $scope.errorMessage = " " + label + " is required.";
-                        return false;
-                    }
-                }
-            }
-            return true;
-        };
-
         //search SeaFreightShipment
         $scope.searchSeaFreightShipment = function (id) {
             var i = 0;
@@ -1422,45 +1732,45 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
         };
 
         //Triggers when user create, delete, update or view a sea freight transation in the list
-        $scope.actionForm = function (action) {
-            $scope.actionMode = action;
-            $scope.selectedseafreightIndex = $scope.searchseafreight($scope.seafreightIDholder);
-            $scope.selectedTab = $scope.tabPages[0];
-            $scope.isError = false;
-            $scope.errorMessage = "";
-            switch ($scope.actionMode) {
-                case "Create":
-                    $scope.initializeseafreightItem();
-                    $scope.viewOnly = false;
-                    $scope.submitButtonText = "Submit";
-                    break;
-                case "Edit":
-                    $scope.seafreightItem = [];
-                    $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
-                    $scope.controlNoHolder = $scope.seafreightItem.Id;
-                    $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
-                    $scope.viewOnly = false;
-                    $scope.submitButtonText = "Submit";
-                    break;
-                case "Delete":
-                    $scope.seafreightItem = [];
-                    $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
-                    $scope.controlNoHolder = $scope.seafreightItem.Id;
-                    $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
-                    $scope.viewOnly = true;
-                    $scope.submitButtonText = "Delete";
-                    break;
-                case "View":
-                    $scope.seafreightItem = [];
-                    $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
-                    $scope.controlNoHolder = $scope.seafreightItem.Id;
-                    $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
-                    $scope.loadDetail($scope.controlNoHolder);
-                    $scope.viewOnly = true;
-                    $scope.submitButtonText = "Close";
-                    break;
-            }
-        };
+        //$scope.actionForm = function (action) {
+        //    $scope.actionMode = action;
+        //    $scope.selectedseafreightIndex = $scope.searchseafreight($scope.seafreightIDholder);
+        //    $scope.selectedTab = $scope.tabPages[0];
+        //    $scope.isError = false;
+        //    $scope.errorMessage = "";
+        //    switch ($scope.actionMode) {
+        //        case "Create":
+        //            $scope.seaFreightResetData();
+        //            $scope.viewOnly = false;
+        //            $scope.submitButtonText = "Submit";
+        //            break;
+        //        case "Edit":
+        //            $scope.seafreightItem = [];
+        //            $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
+        //            $scope.controlNoHolder = $scope.seafreightItem.Id;
+        //            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+        //            $scope.viewOnly = false;
+        //            $scope.submitButtonText = "Submit";
+        //            break;
+        //        case "Delete":
+        //            $scope.seafreightItem = [];
+        //            $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
+        //            $scope.controlNoHolder = $scope.seafreightItem.Id;
+        //            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+        //            $scope.viewOnly = true;
+        //            $scope.submitButtonText = "Delete";
+        //            break;
+        //        case "View":
+        //            $scope.seafreightItem = [];
+        //            $scope.seafreightItem = angular.copy($scope.seafreightGridOptions.data[$scope.selectedseafreightIndex]);
+        //            $scope.controlNoHolder = $scope.seafreightItem.Id;
+        //            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+        //            $scope.loadDetail($scope.controlNoHolder);
+        //            $scope.viewOnly = true;
+        //            $scope.submitButtonText = "Close";
+        //            break;
+        //    }
+        //};
         
         $scope.actionFormDtl = function (action) {
             $scope.actionMode = action;
@@ -1484,152 +1794,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             }
         }
 
-        $scope.openModalForm = function (panel) {
-            $scope.isError = false;
-            $scope.isErrorSeaFreightShipment = false;
-            openModalPanel(panel);
-        }
-
-        $scope.closeModalForm = function () {
-            jQuery.magnificPopup.close();
-            $scope.isError = false;
-        }
-
-        //Triggers before submit function
-        $scope.preSubmit = function () {
-            $scope.seafreightItem.Id          = $scope.controlNoHolder;
-            $scope.seafreightItem.BLNumber = $filter('ProperCase')($scope.seafreightItem.BLNumber);
-            $scope.seafreightItem.BLDate =  $filter('Date')(document.getElementById('bldate').value, "yyyy-MM-dd");
-            $scope.seafreightItem.FreightCost = $filter('Decimal')($scope.seafreightItem.FreightCost);
-        };
-
         //Manage the submition of data base on the user action
         $scope.submit = function () {
-            $scope.isError = false;
-            $scope.errorMessage = "";
-            $scope.preSubmit();
-        
-            switch ($scope.actionMode) {
-                case 'Create':
-                    if ($scope.checkRequiredFields()) {
-                        if($scope.apiCreate())
-                            $scope.selectedTab = "List";
-                    }
-                    break;
-                case 'Edit':
-                    if ($scope.checkRequiredFields())
-                        $scope.apiUpdate($scope.seafreightItem.Id);
-                    break;
-                case 'Delete':
-                    $scope.apiDelete($scope.seafreightItem.Id);
-                    break;
-                case 'View':
-                    break;
-            }
-            $scope.focusOnTop();
+            $scope.seaFreightIsError = false;
+            $scope.seaFreightErrorMessage = "";
+            $scope.seaFreightSubmitDefinition.Submit = true;
         }
-
-        //http post request for saving seafreight information
-        $scope.apiCreate = function () {
-            var spinner = new Spinner(opts).spin(spinnerTarget);
-            var dataModel = angular.copy($scope.seafreightItem);
-            var dataModel1 = angular.copy($scope.SeaFreightShipmentGridOptions.data);
-
-            for (var i = 0; i < dataModel1.length; i++) {
-                delete dataModel1[i].Shipment;
-                delete dataModel1[i].Id;
-            }
-
-            dataModel.SeaFreightShipments = dataModel1;
-            
-            delete dataModel.Id;
-            delete dataModel.BusinessUnit;
-            delete dataModel.BusinessUnit1;
-            delete dataModel.VesselVoyage;
-
-            $http.post("/api/SeaFreights", dataModel)
-            .success(function (data, status) {
-                $scope.seafreightItem.Id = angular.copy(data.objParam1.Id);
-                $scope.seafreightGridOptions.data.push($scope.seafreightItem);
-                for (var i = 0; i < $scope.SeaFreightShipmentGridOptions.data.length; i++)
-                    $scope.SeaFreightShipmentGridOptions.data[i].Id = data.objParam1.SeaFreightShipments[i].Id;
-                spinner.stop();
-
-                return true;
-
-            })
-            .error(function (error, status) {
-                spinner.stop();
-                $scope.isError = true;
-                $scope.errorMessage = status;
-
-                return false;
-            });
-        };
-        
-        //http put request for saving the changes of seafreight information
-        $scope.apiUpdate = function (id) {
-            var spinner = new Spinner(opts).spin(spinnerTarget);
-            var dataModel = angular.copy($scope.seafreightItem);
-            var dataModel1 = angular.copy($scope.SeaFreightShipmentGridOptions.data);
-
-            for (var i = 0; i < dataModel1.length; i++) {
-                if (dataModel1[i].Id == -1)
-                    delete dataModel1[i].Id;
-
-                delete dataModel1[i].Shipment;
-            }
-
-            dataModel.SeaFreightShipments = dataModel1;
-
-            delete dataModel.BusinessUnit;
-            delete dataModel.BusinessUnit1;
-            delete dataModel.VesselVoyage;
-
-            $http.put("/api/seafreights" + "/" + id, dataModel)
-            .success(function (data, status) {
-                if (data.status = "SUCCESS") {
-                    $scope.seafreightItem.Id = angular.copy(data.objParam1.Id);
-                    $scope.seafreightGridOptions.data[$scope.selectedTruckingIndex] = angular.copy($scope.seafreightItem);
-                    for (var i = 0; i < $scope.SeaFreightShipmentGridOptions.data.length; i++)
-                        $scope.SeaFreightShipmentGridOptions.data[i].Id = data.objParam1.SeaFreightShipments[i].Id;
-                    $scope.selectedTab = $scope.tabPages[1];
-                    //$scope.onEDV();
-                    spinner.stop();
-                    alert("Successfully Updated.");
-                }
-                else {
-                    spinner.stop();
-                    $scope.isError = true;
-                    $scope.errorMessage = data.message;
-                }
-
-            })
-            .error(function (error, status) {
-                spinner.stop();
-                $scope.isError = true;
-                $scope.errorMessage = status;
-
-                return false;
-            });
-        };
-
-        //http delete request for deleting a seafreight
-        $scope.apiDelete = function (id) {
-            var spinner = new Spinner(opts).spin(spinnerTarget);
-            $http.delete("/api/seafreights" + "/" + id)
-            .success(function (data, status) {
-                $scope.seafreightGridOptions.data.splice($scope.selectedseafreightIndex, 1);
-                $scope.initializeseafreightItem();
-                spinner.stop();
-                alert("Successfully Deleted.");
-            })
-            .error(function (data, status) {
-                spinner.stop();
-                $scope.isError = true;
-                $scope.errorMessage = status;
-            })
-        };
 
         //Set the focus on top of the page during load
         $scope.focusOnTop = function () {
@@ -1647,18 +1817,32 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
         var init = function () {
             // Call function to load data during content load
             $scope.focusOnTop();
-            $scope.initializeseafreightItem();
             $scope.loadSeaFreightDataGrid();
             $scope.loadSeaFreightFiltering();
+            $scope.loadSeaFreightShipmentsDataGrid();
             $scope.loadBusinessUnitDataGrid();
             $scope.loadBusinessUnitFiltering();
             $scope.loadShippingLineDataGrid();
             $scope.loadShippingLineFiltering();
             $scope.loadVesselDataGrid();
             $scope.loadVesselFiltering();
-            $scope.initSeaFreightShipmentGridOptions();
-            $scope.initBusinessUnitList();
-            $scope.initShippingLineList();
+            $scope.loadVesselVoyageDataGrid();
+            $scope.loadVesselVoyageFiltering();
+            $scope.loadShipmentDataGrid();
+            $scope.loadShipmentFiltering();
+            //$scope.initSeaFreightShipmentGridOptions();
+
+            //$scope.initBusinessUnitList();
+            //$scope.initShippingLineList();
+            $scope.seaFreightResetData()
+            $scope.seaFreightShipmentsResetData();
+
+            //var promise = $interval(function () {
+            //    $scope.seaFreightResetData()
+            //    if(angular.isDefined($scope.seafreightItem))
+            //}, 100);
+
+            //console.log($scope.seafreightItem);
         };
 
         init();

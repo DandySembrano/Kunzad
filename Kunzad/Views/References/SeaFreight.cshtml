@@ -106,9 +106,10 @@
                 <label class="col-md-3 control-label small">Freight Cost</label>
                 <div class="col-md-8">
                     <input type="text"
-                            class="form-control"
-                            placeholder=""
-                            ng-model="seafreightItem.FreightCost">
+                           class="form-control text-right"
+                           id="freightCost"
+                           placeholder=""
+                           ng-model="seafreightItem.FreightCost">
                 </div>
             </div>
         </form>
@@ -230,8 +231,10 @@
     <!--Detail-->
     <div class="row">
         <div class="col-lg-12">
+            <div id="seaFreightShipmentsContainer"></div>
+            <!--
             <div context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl">
-                <div ui-grid="SeaFreightShipmentGridOptions" class="grid" ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
+                <div ui-grid="SeaFreightShipmentGridOptions" class="grid" ui-grid-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
             </div>
             <br />
             <div class="myTableContainter" ng-show="paginatedseaFreightShipments.length > 0">
@@ -265,6 +268,7 @@
                     </div>
                 </div>
             </div>
+           -->
         </div>
     </div>
     <!--End of Detail-->
@@ -321,6 +325,7 @@
     </div>
 </div>
 <!--End of Shippingline List Modal -->
+
 <!-- Vessel List Modal -->
 <div id="vessels-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -340,6 +345,7 @@
     </div>
 </div>
 <!--End of Vessel List Modal -->
+
 <!-- Vessel Voyage List Modal -->
 <div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -349,46 +355,17 @@
         </div>
         <!--Modal Body-->
         <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-10 small text-center">Voyage No.</th>
-                                <th class="myTableCell cell-10 small text-center">Origin</th>
-                                <th class="myTableCell cell-10 small text-center">Destination</th>
-                                <th class="myTableCell cell-10 small text-center">Departure Date</th>
-                                <th class="myTableCell cell-10 small text-center">Departure Time</th>
-                                <th class="myTableCell cell-10 small text-center">Arrival Date</th>
-                                <th class="myTableCell cell-10 small text-center">Arrival Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="vv in vesselVoyageList"
-                                ng-click="closeVesselVoyageList(vv)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{vv.Id}}</td>
-                                <td class="myTableCell cell-10 small">{{(seafreightItem.VesselVoyage.OriginBusinessUnit.Name)}}</td>
-                                <td class="myTableCell cell-10 small">{{(seafreightItem.VesselVoyage.DestinationBusinessUnit.Name)}}</td>
-                                <td class="myTableCell cell-10 small">{{(vv.DepartureDate)}}</td>
-                                <td class="myTableCell cell-10 small">{{(vv.DepartureTime)}}</td>
-                                <td class="myTableCell cell-10 small">{{(vv.ArrivalDate)}}</td>
-                                <td class="myTableCell cell-10 small">{{(vv.ArrivalTime)}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="vesselVoyageFilterContainter" style="padding-left:10px;"></div>
+            <div id="vesselVoyageContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeVesselVoyageList(vv)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
         </div>
     </div>
 </div>
 <!--End of Vessel Voyage List Modal -->
+
 <!-- Shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -398,41 +375,16 @@
         </div>
         <!--Modal Body-->
         <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-10 small text-center">Shipment ID</th>
-                                <th class="myTableCell cell-10 small text-center">BusinessUnit</th>
-                                <th class="myTableCell cell-10 small text-center">Service</th>
-                                <th class="myTableCell cell-10 small text-center">Shipment Type</th>
-                                <th class="myTableCell cell-10 small text-center">Customer Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="s in ShipmentList"
-                                ng-click="closeShipmentList(s.Id)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{s.Id}}</td>
-                                <td class="myTableCell cell-10 small">{{s.BusinessUnit.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{(s.Service.Name)}}</td>
-                                <td class="myTableCell cell-10 small">{{(s.ShipmentType.Name)}}</td>
-                                <td class="myTableCell cell-10 small">{{(s.Customer.Name)}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeShipmentList(s)">Cancel</button>
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
         </div>
     </div>
 </div>
 <!--End of Shipment List Modal -->
+
 <!--detail contextmenu-->
 @RenderPage("~/Views/Shared/_ContextMenuShipmentDtl.cshtml")
