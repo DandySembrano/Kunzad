@@ -192,6 +192,24 @@ namespace Kunzad.ApiControllers
                                             {
                                                 vv.Id,
                                                 vv.VoyageNo,
+                                                vv.VesselId,
+                                                vv.OriginBusinessUnitId,
+                                                Origin = (from o in db.BusinessUnits where o.Id == vv.OriginBusinessUnitId
+                                                          select new
+                                                          {
+                                                              o.Id,
+                                                              o.Name
+                                                          }
+                                                         ),
+                                                vv.DestinationBusinessUnitId,
+                                                Destination = (from d in db.BusinessUnits
+                                                          where d.Id == vv.DestinationBusinessUnitId
+                                                          select new
+                                                          {
+                                                              d.Id,
+                                                              d.Name
+                                                          }
+                                                         ),
                                                 vv.EstimatedArrivalDate,
                                                 vv.EstimatedArrivalTime,
                                                 vv.DepartureDate,
@@ -207,6 +225,9 @@ namespace Kunzad.ApiControllers
                                                          )
                                             })
                                         .Where(vv => vesselVoyage.Id == null || vesselVoyage.Id == 0 ? true : vv.Id == vesselVoyage.Id)
+                                        .Where(vv => vesselVoyage.VesselId == null || vesselVoyage.VesselId == 0 ? true : vv.VesselId == vesselVoyage.VesselId)
+                                        .Where(vv => vesselVoyage.OriginBusinessUnitId == null || vesselVoyage.OriginBusinessUnitId == 0 ? true : vv.OriginBusinessUnitId == vesselVoyage.OriginBusinessUnitId)
+                                        .Where(vv => vesselVoyage.DestinationBusinessUnitId == null || vesselVoyage.DestinationBusinessUnitId == 0 ? true : vv.DestinationBusinessUnitId == vesselVoyage.DestinationBusinessUnitId)
                                         .Where(vv => vesselVoyage.VoyageNo == null ? !vesselVoyage.VoyageNo.Equals("") : (vv.VoyageNo.ToLower().Equals(vesselVoyage.VoyageNo)))
                                         .Where(vv => vesselVoyage.EstimatedArrivalDate == null || vesselVoyage.EstimatedArrivalDate == defaultDate ? true : vv.EstimatedArrivalDate >= vesselVoyage.EstimatedArrivalDate && vv.EstimatedArrivalDate <= vesselVoyage1.EstimatedArrivalDate)
                                         .Where(vv => vesselVoyage.DepartureDate == null || vesselVoyage.DepartureDate == defaultDate ? true : vv.DepartureDate >= vesselVoyage.DepartureDate && vv.DepartureDate <= vesselVoyage1.DepartureDate)
