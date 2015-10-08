@@ -725,7 +725,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                         $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length;
                     }
                     $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0].ParentBusinessUnitId = $scope.shipmentItem.BusinessUnit.Id;
-                    console.log($scope.businessUnitFilteringDefinition.DataItem1);
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
