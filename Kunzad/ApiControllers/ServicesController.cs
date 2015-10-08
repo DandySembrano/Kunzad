@@ -9,17 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class ServicesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
 
         // GET: api/Services
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Service> GetServices()
         {
-            return db.Services;
+            return db.Services.AsNoTracking();
         }
 
         // GET: api/Services/5

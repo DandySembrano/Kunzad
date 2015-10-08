@@ -9,18 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class CouriersController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         Response response = new Response();
-        private int pageSize = 20;
         // GET: api/Couriers
+         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Courier> GetCouriers()
         {
-            return db.Couriers.Include(c => c.CityMunicipality);
+            return db.Couriers.Include(c => c.CityMunicipality).AsNoTracking();
         }
 
         // GET: api/Couriers?page=1
@@ -31,16 +32,16 @@ namespace Kunzad.ApiControllers
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
                     .Include(c => c.CityMunicipality.StateProvince)
-                    .Include(c => c.CityMunicipality.StateProvince.Country)
-                    .OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                    .Include(c => c.CityMunicipality.StateProvince.Country).AsNoTracking()
+                    .OrderBy(c => c.Name).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
                 return db.Couriers
                     .Include(c => c.CityMunicipality)
                     .Include(c => c.CityMunicipality.StateProvince)
-                    .Include(c => c.CityMunicipality.StateProvince.Country)
-                    .OrderBy(c => c.Name).Take(pageSize);
+                    .Include(c => c.CityMunicipality.StateProvince.Country).AsNoTracking()
+                    .OrderBy(c => c.Name).Take(AppSettingsGet.PageSize);
             }
         }
 
@@ -61,7 +62,7 @@ namespace Kunzad.ApiControllers
         //Dynamic filtering
         public IHttpActionResult GetCourier(string type, int param1, [FromUri]List<Courier> courier)
         {
-            Object[] couriers = new Object[pageSize];
+            Object[] couriers = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, courier.ElementAt(0), courier.ElementAt(1), ref couriers);
 
             if (couriers != null)
@@ -186,7 +187,7 @@ namespace Kunzad.ApiControllers
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
@@ -210,7 +211,7 @@ namespace Kunzad.ApiControllers
                                         c.PostalCode
                                     })
                                         .OrderBy(c => c.Id)
-                                        .Skip(skip).Take(pageSize).ToArray();
+                                        .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
 
             couriers = filteredCouriers;
         }

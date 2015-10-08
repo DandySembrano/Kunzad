@@ -9,18 +9,19 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class CustomerGroupsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
         // GET: api/CustomerGroups
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<CustomerGroup> GetCustomerGroups()
         {
-            return db.CustomerGroups.OrderBy(c => c.Name);
+            return db.CustomerGroups.AsNoTracking().OrderBy(c => c.Name);
         }
 
         // GET: api/CustomerGroups?page=1
@@ -28,11 +29,11 @@ namespace Kunzad.ApiControllers
         {
             if (page > 1)
             {
-                return db.CustomerGroups.OrderBy(c => c.Name).Skip((page-1) * pageSize).Take(pageSize);
+                return db.CustomerGroups.AsNoTracking().OrderBy(c => c.Name).Skip((AppSettingsGet.PageSize - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
-                return db.CustomerGroups.OrderBy(c => c.Name).Take(pageSize);
+                return db.CustomerGroups.AsNoTracking().OrderBy(c => c.Name).Take(AppSettingsGet.PageSize);
             }
         }
 

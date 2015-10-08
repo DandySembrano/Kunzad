@@ -9,19 +9,20 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+     [AutoInvalidateCacheOutput]
     public class AirLinesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
 
         // GET: api/AirLines
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<AirLine> GetAirLines()
         {
-            return db.AirLines;
+            return db.AirLines.AsNoTracking();
         }
 
         // GET: api/BusinessUnitTypes?page=1
@@ -29,11 +30,11 @@ namespace Kunzad.ApiControllers
         {
             if (page > 1)
             {
-                return db.AirLines.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.AirLines.AsNoTracking().OrderBy(c => c.Name).Skip((page - 1) * AppSettingsGet.ServerTimeSpan).Take(AppSettingsGet.ServerTimeSpan);
             }
             else
             {
-                return db.AirLines.OrderBy(c => c.Name).Take(pageSize);
+                return db.AirLines.AsNoTracking().OrderBy(c => c.Name).Take(AppSettingsGet.ServerTimeSpan);
             }
         }
 

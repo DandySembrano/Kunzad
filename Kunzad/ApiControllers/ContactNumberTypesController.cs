@@ -9,19 +9,20 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class ContactNumberTypesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
 
         // GET: api/ContactNumberTypes
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ContactNumberType> GetContactNumberTypes()
         {
-            return db.ContactNumberTypes;
+            return db.ContactNumberTypes.AsNoTracking();
         }
 
         // GET: api/AirLines?page=1
@@ -29,11 +30,11 @@ namespace Kunzad.ApiControllers
         {
             if (page > 1)
             {
-                return db.ContactNumberTypes.OrderBy(c => c.Type).Skip((page - 1) * pageSize).Take(pageSize);
+                return db.ContactNumberTypes.AsNoTracking().OrderBy(c => c.Type).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
-                return db.ContactNumberTypes.OrderBy(c => c.Type).Take(pageSize);
+                return db.ContactNumberTypes.AsNoTracking().OrderBy(c => c.Type).Take(AppSettingsGet.PageSize);
             }
         }
 

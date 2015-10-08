@@ -9,17 +9,18 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+      [AutoInvalidateCacheOutput]
     public class CustomerAddressesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         // GET: api/CustomerAddresses
+         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<CustomerAddress> GetCustomerAddresses()
         {
-            return db.CustomerAddresses;
+            return db.CustomerAddresses.AsNoTracking();
         }
 
         public IHttpActionResult GetCustomerAddresses(int customerId)
@@ -87,7 +88,7 @@ namespace Kunzad.ApiControllers
         //Dynamic filtering
         public IHttpActionResult GetCustomerAddress(string type, int param1, [FromUri]List<CustomerAddress> customerAddress)
         {
-            Object[] customerAddresses = new Object[pageSize];
+            Object[] customerAddresses = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, customerAddress.ElementAt(0), customerAddress.ElementAt(1), ref customerAddresses);
 
             if (customerAddresses != null)
@@ -152,7 +153,7 @@ namespace Kunzad.ApiControllers
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
@@ -190,7 +191,7 @@ namespace Kunzad.ApiControllers
                                                                     })
                                             })
                                         .OrderBy(cc => cc.Id)
-                                        .Skip(skip).Take(pageSize).ToArray();
+                                        .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
             customerAddresses = filteredCustomerAddresses;
         }
     }

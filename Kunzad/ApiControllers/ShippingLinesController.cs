@@ -9,19 +9,20 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class ShippingLinesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
         Response response = new Response();
 
         // GET: api/ShippingLines
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ShippingLine> GetShippingLines()
         {
-            return db.ShippingLines;
+            return db.ShippingLines.AsNoTracking();
         }
         // GET: api/ShippingLines?page=1
         public IQueryable<ShippingLine> GetShippingLines(int page)
@@ -30,15 +31,15 @@ namespace Kunzad.ApiControllers
             {
                 return db.ShippingLines
                     //.Include(s => s.Vessels.Select(v => v.VesselVoyages))
-                    .Include(s => s.Vessels)
-                    .OrderBy(s => s.Name).Skip((page - 1) * pageSize).Take(pageSize);
+                    .Include(s => s.Vessels).AsNoTracking()
+                    .OrderBy(s => s.Name).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
                 return db.ShippingLines
                     //.Include(s => s.Vessels.Select(v => v.VesselVoyages))
                     .Include(s => s.Vessels)
-                    .OrderBy(s => s.Name).Take(pageSize);
+                    .OrderBy(s => s.Name).Take(AppSettingsGet.PageSize);
             }
         }
 
@@ -59,7 +60,7 @@ namespace Kunzad.ApiControllers
         //Dynamic filtering
         public IHttpActionResult GetShippingLine(string type, int param1, [FromUri]List<ShippingLine> shippingLine)
         {
-            Object[] shippingLines = new Object[pageSize];
+            Object[] shippingLines = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, shippingLine.ElementAt(0), shippingLine.ElementAt(1), ref shippingLines);
 
             if (shippingLines != null)
@@ -305,7 +306,7 @@ namespace Kunzad.ApiControllers
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
@@ -325,7 +326,7 @@ namespace Kunzad.ApiControllers
                                         .Where(s => shippingLine.Id == null || shippingLine.Id == 0 ? true : s.Id == shippingLine.Id)
                                         .Where(s => shippingLine.Name == null ? !shippingLine.Name.Equals("") : (s.Name.ToLower().Equals(shippingLine.Name)))
                                         .OrderBy(s => s.Id)
-                                        .Skip(skip).Take(pageSize).ToArray();
+                                        .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
 
             shippingLines = filteredShippingLines;
         }
