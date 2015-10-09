@@ -149,6 +149,88 @@ kunzadApp.run(function ($rootScope) {
         }
     };
 
+    //Reusable object for filtering airline so that other module can directly access
+    $rootScope.airlineObj = function () {
+        return {
+            "Airline": [
+                {
+                    "Id": null,
+                    "Name": null
+                },
+                {
+                    "Id": null,
+                    "Name": null
+                }]
+        }
+    };
+
+    //Reusable object for filtering airfreight so that other module can directly access
+    $rootScope.airFreightObj = function () {
+        return {
+            "AirFreight": [
+                {
+                    "Id": null,
+                    "AirlineId": null,
+                    "Airline": {
+                        "Id": null,
+                        "Name": null
+                    },
+                    "AirlineWaybillNumber": null,
+                    "AirlineWaybillDate": null,
+                    "EstimatedDepartureDate": null,
+                    "EstimatedDepartureTime": null,
+                    "EstimatedArrivalDate": null,
+                    "EstimatedArrivalTime": null,
+                    "OriginBusinessUnitId": null,
+                    "BusinessUnit": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DestinationBusinessUnitId": null,
+                    "BusinessUnit1": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DepartureDate": null,
+                    "DepartureTime": null,
+                    "ArrivalDate": null,
+                    "ArrivalTime": null
+                },
+                {
+                    "Id": null,
+                    "AirlineId": null,
+                    "Airline": {
+                        "Id": null,
+                        "Name": null
+                    },
+                    "AirlineWaybillNumber": null,
+                    "AirlineWaybillDate": null,
+                    "EstimatedDepartureDate": null,
+                    "EstimatedDepartureTime": null,
+                    "EstimatedArrivalDate": null,
+                    "EstimatedArrivalTime": null,
+                    "OriginBusinessUnitId": null,
+                    "BusinessUnit": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DestinationBusinessUnitId": null,
+                    "BusinessUnit1": {
+                        "Id": null,
+                        "Code": null,
+                        "Name": null
+                    },
+                    "DepartureDate": null,
+                    "DepartureTime": null,
+                    "ArrivalDate": null,
+                    "ArrivalTime": null
+                }]
+        }
+    };
+
     //Payment Mode List
     $rootScope.getPaymentModeList = function () {
         return [{ "Id": "A", "Name": "Account" },
