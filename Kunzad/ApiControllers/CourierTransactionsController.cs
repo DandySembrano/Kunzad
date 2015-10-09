@@ -52,35 +52,85 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCourierTransaction(int id, CourierTransaction courierTransaction)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            if (!ModelState.IsValid || id != courierTransaction.Id)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            if (id != courierTransaction.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(courierTransaction).State = EntityState.Modified;
 
             try
             {
+                bool flag;
+                var currentCourierTransactionDetails = db.CourierTransactionDetails.Where(ctd => ctd.CourierTransactionId == courierTransaction.Id);
+
+                foreach (CourierTransactionDetail ctd in currentCourierTransactionDetails)
+                {
+                    flag = false;
+                    //check if current Courier Transaction Details exist in truck list
+                    foreach (CourierTransactionDetail ctd1 in courierTransaction.CourierTransactionDetails)
+                    {
+                        if (ctd.Id == ctd1.Id)
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        //remove deleted Courier Transaction Detail(s)
+                        db.CourierTransactionDetails.Remove(ctd);
+                    }
+                }
+
+                foreach (CourierTransactionDetail ctd in courierTransaction.CourierTransactionDetails)
+                {
+                    flag = false;
+                    foreach (CourierTransactionDetail ctd1 in currentCourierTransactionDetails)
+                    {
+                        if (ctd.Id == ctd1.Id)
+                        {
+                            flag = true;
+
+                            //Set changes for courier transaction detail info for edit
+                            var courierTransactionDetailHolder = db.CourierTransactionDetails.Find(ctd.Id);
+                            ctd.LastUpdatedDate = DateTime.Now;
+                            db.Entry(courierTransactionDetailHolder).CurrentValues.SetValues(ctd);
+                            db.Entry(courierTransactionDetailHolder).State = EntityState.Modified;
+                            break;
+                        }
+                    }
+                    //add courier transaction detail
+                    if (!flag)
+                    {
+                        ctd.CreatedDate = DateTime.Now;
+                        db.CourierTransactionDetails.Add(ctd);
+                    }
+                }
+
+                //Set changes for courier transaction info
+                var courierTransactionHolder = db.CourierTransactions.Find(courierTransaction.Id);
+                courierTransaction.LastUpdatedDate = DateTime.Now;
+                db.Entry(courierTransactionHolder).CurrentValues.SetValues(courierTransaction);
+                db.Entry(courierTransactionHolder).State = EntityState.Modified;
+
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = courierTransaction;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!CourierTransactionExists(id))
                 {
-                    return NotFound();
+                    response.message = "Courier Transaction doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/CourierTransactions
@@ -102,6 +152,7 @@ namespace Kunzad.ApiControllers
                     ctd.CreatedDate = DateTime.Now;
                     db.CourierTransactionDetails.Add(ctd);
                 }
+                courierTransaction.CreatedDate = DateTime.Now;
                 db.SaveChanges();
                 response.status = "SUCCESS";
                 response.objParam1 = courierTransaction;

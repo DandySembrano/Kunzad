@@ -16,7 +16,7 @@ namespace Kunzad.ApiControllers
     {   
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
-        private int pageSize = 20;
+        private int pageSize = AppSettingsGet.PageSize;
         // GET: api/SeaFreights
         public IQueryable<SeaFreight> GetSeaFreights()
         {
@@ -255,8 +255,7 @@ namespace Kunzad.ApiControllers
                                             .Where(sf => seaFreight.BLDate == null || seaFreight.BLDate == defaultDate ? true : sf.BLDate >= seaFreight.BLDate && sf.BLDate <= seaFreight1.BLDate)
                                             .Where(sf => seaFreight.CreatedDate == null || seaFreight.CreatedDate == defaultDate ? true : sf.CreatedDate >= seaFreight.CreatedDate && sf.CreatedDate <= seaFreight1.CreatedDate)
                                             .Where(sf => seaFreight.LastUpdatedDate == null || seaFreight.LastUpdatedDate == defaultDate ? true : sf.LastUpdatedDate >= seaFreight.LastUpdatedDate && sf.LastUpdatedDate <= seaFreight1.LastUpdatedDate)
-                                            .OrderBy(sf => sf.Id)
-                                            .Skip(skip).Take(pageSize).ToArray();
+                                            .OrderBy(sf => sf.Id).Skip(skip).Take(pageSize).ToArray();
 
             seaFreights = filteredSeaFreights;
         }

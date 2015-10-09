@@ -11,10 +11,13 @@
             <a class="pointer small" role="menuitem" tabindex="1" ng-click="courierDeliveryOtheractions('FormCreate')">Create</a>
         </li>
         <li>
-            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
         </li>
         <li>
-            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>
@@ -49,7 +52,7 @@
                                    type="text"
                                    class="form-control"
                                    placeholder=""
-                                   ng-model="courierDeliveryItem.BusinessUnit.Name"
+                                   ng-model="courierDeliveryItem.BusinessUnit[0].Name"
                                    ng-disabled="true">
                         </div>
                     </div>
@@ -62,7 +65,7 @@
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="courierDeliveryItem.Courier.Name"
+                                       ng-model="courierDeliveryItem.Courier[0].Name"
                                        ng-disabled="viewOnly">
                                 <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Shipper" ng-click="showCourier()">
                                     <span class=" glyphicon glyphicon-search"></span>
@@ -176,3 +179,22 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
+<!-- BusinessUnit List Modal -->
+<div id="businessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>BusinessUnit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of BusinessUnit List Modal -->
