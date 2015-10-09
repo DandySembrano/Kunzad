@@ -44,11 +44,28 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //Close the modal
     $scope.closeModal = function () {
-        $scope.shipmentDataDefinition.DataList = [];
-        $scope.shipmentFilteringDefinition.DataList = [];
-        $scope.courierDataDefinition.DataList = [];
-        $scope.courierFilteringDefinition.DataList = [];
         jQuery.magnificPopup.close();
+        if (angular.isDefined($scope.courierDataDefinition)) {
+            $scope.courierDataDefinition.DataList = [];
+            $scope.courierFilteringDefinition.DataList = [];
+            $rootScope.removeElement("courierGrid");
+            $rootScope.removeElement("courierFilter");
+        }
+
+        if (angular.isDefined($scope.businessUnitDataDefinition)) {
+            $scope.businessUnitDataDefinition.DataList = [];
+            $scope.businessUnitFilteringDefinition.DataList = [];
+            $rootScope.removeElement("businessUnitGrid");
+            $rootScope.removeElement("businessUnitFilter");
+        }
+
+        if (angular.isDefined($scope.shipmentDataDefinition)) {
+            $scope.shipmentDataDefinition.DataList = [];
+            $scope.shipmentFilteringDefinition.DataList = [];
+            $rootScope.removeElement("shipmentGrid");
+            $rootScope.removeElement("shipmentFilter");
+        }
+
     };
 
     //Initialize Payment Mode List for DropDown
@@ -263,6 +280,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.courierDeliverySubmitDefinition.Type = "Edit";
                     }
+                    //Set control no holder in case user will add item in list
+                    $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
                     $scope.enableSave = true;
                     return true;
                 case "PostDeleteAction":
@@ -638,6 +657,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 case "PreAction":
                     return true;
                 case "PreCreateAction":
+                    if (!$scope.viewOnly)
+                        return true;
+                    else
+                        return false;
+
                     var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
                     if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0)
                     {
@@ -653,8 +677,18 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         return false;
                     }
                     return true;
+                case "PreEditAction":
+                    if (!$scope.viewOnly)
+                        return true;
+                    else
+                        return false;
                 case "PostEditAction":
                     return true;
+                case "PreDeleteAction":
+                    if (!$scope.viewOnly)
+                        return true;
+                    else
+                        return false;
                 case "PostDeleteAction":
                     $scope.courierDeliveryDetailsDataDefinition.DataList.splice($scope.courierDeliveryDetailsSubmitDefinition.Index, 1);
                     if ($scope.courierDeliveryDetailsDataDefinition.DataList.length == 0)
@@ -671,8 +705,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     }
                     return true;
                 case "Shipment No":
-                    //if datalist is only 1 then directly insert
-                    $scope.showShipment();
+                    if(!$scope.viewOnly)
+                        //if datalist is only 1 then directly insert
+                        $scope.showShipment();
                     return true;
                 default: return true;
             }
@@ -690,7 +725,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             $scope.courierDeliveryIsError = false;
             $scope.courierDeliveryErrorMessage = "";
             //Added 1 row in Courier Delivery Details
-            $scope.courierDeliveryDetailsTemporyId++;
+            $scope.courierDeliveryDetailsTemporyId = $scope.courierDeliveryDetailsTemporyId + 1;
             $scope.courierDeliveryDetailsItem.Id = $scope.courierDeliveryDetailsTemporyId;
             $scope.courierDeliveryDetailsDataDefinition.DataList.push($scope.courierDeliveryDetailsItem);
 
@@ -720,10 +755,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //=====================================START OF COURIER MODAL/REPORT======================================
     $scope.showCourier = function () {
+        openModalPanel2("#courier-list-modal");
+        $scope.loadCourierDataGrid();
+        $scope.loadCourierFiltering();
         $scope.courierFilteringDefinition.SetSourceToNull = true;
         $scope.courierDataDefinition.Retrieve = true;
-        openModalPanel("#courier-list-modal");
-
     };
 
     //Load businessUnit filtering for compiling
@@ -734,7 +770,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //initialize businessUnit filtering parameters
     $scope.initCourierFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="courierFilteringDefinition"' +
+        html = '<dir-filtering  id="courierFilter" filterdefinition="courierFilteringDefinition"' +
                                 'filterlistener="courierDataDefinition.Retrieve"' +
                                 'otheractions="courierOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -892,7 +928,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //function that will be invoked during compiling of datagrid to DOM
     $scope.compileCourierDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "courierDataDefinition"' +
+        var html = '<dir-data-grid2 id = "courierGrid" datadefinition      = "courierDataDefinition"' +
                                     'submitdefinition   = "courierSubmitDefinition"' +
                                     'otheractions       = "courierOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -903,10 +939,12 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //=====================================SHIPMENT MODAL/REPORT======================================
     $scope.showShipment = function () {
+        openModalPanel2("#shipment-list-modal");
+        $scope.loadShipmentDataGrid();
+        $scope.loadShipmentFiltering();
+
         $scope.shipmentFilteringDefinition.SetSourceToNull = true;
         $scope.shipmentDataDefinition.Retrieve = true;
-        openModalPanel("#shipment-list-modal");
-
     };
     //Load businessUnit filtering for compiling
     $scope.loadShipmentFiltering = function () {
@@ -916,7 +954,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //initialize businessUnit filtering parameters
     $scope.initShipmentFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="shipmentFilteringDefinition"' +
+        html = '<dir-filtering  id="shipmentFilter" filterdefinition="shipmentFilteringDefinition"' +
                                 'filterlistener="shipmentDataDefinition.Retrieve"' +
                                 'otheractions="shipmentOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -934,11 +972,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "Source": [
                             { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 3, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 4, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 5, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 6, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 7, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
+                            { "Index": 2, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 3, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 4, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 5, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            { "Index": 6, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
                 ],//Contains the Criteria definition
                 "Multiple": false,
                 "AutoLoad": false,
@@ -1010,6 +1048,26 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
         $scope.initShipmentFilteringDefinition();
         $scope.initShipmentDataItems();
+
+        //Initialize filtering service
+        var promiseServiceList = $interval(function () {
+            if ($scope.serviceList.length > 0) {
+                $scope.shipmentFilteringDefinition.Source[2].Values = $scope.serviceList;
+                $interval.cancel(promiseServiceList);
+                promiseServiceList = undefined;
+            }
+        }, 100);
+
+        //Initialize filtering shipment type
+        var promiseShipmentTypeList = $interval(function () {
+            if ($scope.shipmentTypeList.length > 0) {
+                $scope.shipmentFilteringDefinition.Source[3].Values = $scope.shipmentTypeList;
+                $interval.cancel(promiseShipmentTypeList);
+                promiseShipmentTypeList = undefined;
+            }
+        }, 100);
+
+        console.log($scope.shipmentFilteringDefinition);
     };
 
     //Load business datagrid for compiling
@@ -1091,7 +1149,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //function that will be invoked during compiling of datagrid to DOM
     $scope.compileShipmentDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "shipmentDataDefinition"' +
+        var html = '<dir-data-grid2 id = "shipmentGrid" datadefinition      = "shipmentDataDefinition"' +
                                     'submitdefinition   = "shipmentSubmitDefinition"' +
                                     'otheractions       = "shipmentOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -1102,10 +1160,12 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //=====================================BUSINESS UNIT MODAL======================================
     $scope.showBusinessUnit = function () {
+        openModalPanel2("#businessUnit-list-modal");
+        $scope.loadBusinessUnitDataGrid();
+        $scope.loadBusinessUnitFiltering();
+
         $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
         $scope.businessUnitDataDefinition.Retrieve = true;
-        openModalPanel("#businessUnit-list-modal");
-
     };
 
     //Load businessUnit filtering for compiling
@@ -1116,7 +1176,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //initialize businessUnit filtering parameters
     $scope.initBusinessUnitFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="businessUnitFilteringDefinition"' +
+        html = '<dir-filtering  id="businessUnitFilter" filterdefinition="businessUnitFilteringDefinition"' +
                                 'filterlistener="businessUnitDataDefinition.Retrieve"' +
                                 'otheractions="businessUnitOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -1262,7 +1322,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //function that will be invoked during compiling of businessUnit datagrid to DOM
     $scope.compileBusinessUnitDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "businessUnitDataDefinition"' +
+        var html = '<dir-data-grid2 id="businessUnitGrid" datadefinition      = "businessUnitDataDefinition"' +
                                     'submitdefinition   = "businessUnitSubmitDefinition"' +
                                     'otheractions       = "businessUnitOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -1275,15 +1335,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     var init = function () {
         $scope.initPaymentModeList();
         $scope.initServiceList();
+        $scope.initShipmentTypeList();
         $scope.loadCourierDeliveryDataGrid();
         $scope.loadCourierDeliveryFiltering();
         $scope.loadCourierDeliveryDetailsDataGrid();
-        $scope.loadCourierDataGrid();
-        $scope.loadCourierFiltering();
-        $scope.loadShipmentDataGrid();
-        $scope.loadShipmentFiltering();
-        $scope.loadBusinessUnitDataGrid();
-        $scope.loadBusinessUnitFiltering();
+        $rootScope.manipulateDOM();
         
         //Initialize Courier Delivery DataItem
         $scope.courierDeliveryResetData();
@@ -1292,23 +1348,6 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         
         if ($scope.courierDeliveryFilteringDefinition.AutoLoad == true)
             $scope.courierDeliveryDataDefinition.Retrieve = true;
-
-        //Initialize filtering service
-        var promiseServiceList = $interval(function () {
-            if ($scope.serviceList.length > 0) {
-                $scope.shipmentFilteringDefinition.Source[4].Values = $scope.serviceList;
-                $interval.cancel(promiseServiceList);
-                promiseServiceList = undefined;
-            }
-        }, 100);
-        //Initialize filtering shipment type
-        var promiseShipmentTypeList = $interval(function () {
-            if ($scope.shipmentTypeList.length > 0) {
-                $scope.shipmentFilteringDefinition.Source[5].Values = $scope.shipmentTypeList;
-                $interval.cancel(promiseShipmentTypeList);
-                promiseShipmentTypeList = undefined;
-            }
-        }, 100);
     };
 
     //Initialize needed functions during page load
