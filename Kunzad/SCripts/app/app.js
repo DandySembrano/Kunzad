@@ -249,6 +249,7 @@ kunzadApp.run(function ($rootScope) {
                 { "Id": "50", "Name": "Cancel" }
         ];
     };
+
     //Trucking Status List
     $rootScope.getTruckingStatusList = function () {
         return [{ "Id": "10", "Name": "Dispatch" },
@@ -388,6 +389,28 @@ kunzadApp.run(function ($rootScope) {
             { "Id": 10, "Name": "Pick up" },
             { "Id": 20, "Name": "Trucking Delivery" }
         ]
+    };
+
+    //Manipulate DOM for removing an element
+    $rootScope.manipulateDOM = function () {
+        Element.prototype.remove = function () {
+            this.parentElement.removeChild(this);
+        }
+        NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+            for (var i = this.length - 1; i >= 0; i--) {
+                if (this[i] && this[i].parentElement) {
+                    this[i].parentElement.removeChild(this[i]);
+                }
+            }
+        }
+    };
+
+    //Remove element in DOM
+    $rootScope.removeElement = function (id) {
+        var element = document.getElementById(id);
+        if (element != null) {
+            element.parentNode.removeChild(element);
+        }
     };
 });
 kunzadApp.config(['$routeProvider', function ($routeProvider) {
@@ -576,6 +599,28 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                     this.st.mainClass = Animation;
                 },
                 afterClose: function () {
+
+                }
+            },
+            midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+        })
+    }
+
+    // -------------------------------------------------------------------------//
+    // Open Modal Panel - Use if popup will be close only by triggering the jQuery.magnificPopup.close(); //
+    function openModalPanel2(panelName) {
+        //Open Modal Form/Panel
+        jQuery.magnificPopup.open({
+            removalDelay: 500, //delay removal by X to allow out-animation,
+            items: { src: panelName },
+            modal: true, //the popup will have a modal-like behavior: it won’t be possible to dismiss it by usual means (close button, escape key, or clicking in the overlay).
+            callbacks: {
+                beforeOpen: function (e) {
+                    var Animation = "mfp-flipInY";
+                    this.st.mainClass = Animation;
+                },
+                afterClose: function () {
+
                 }
             },
             midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.

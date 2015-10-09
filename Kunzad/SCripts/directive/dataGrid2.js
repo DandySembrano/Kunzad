@@ -462,25 +462,26 @@ kunzadApp.directive('dirDataGrid2', function () {
 
             //Listener that will check if user Submit an action
             $interval(function () {
-                if (!$scope.checkIfEditable())
-                    //Update grid data
-                    $scope.gridOptions.data = angular.copy($scope.datadefinition.DataList);
-                //Invoke $scope.processPagination();
-                if ($scope.datadefinition.DoPagination)
-                {
-                    $scope.datadefinition.DoPagination = false;
-                    $scope.processPagination();
-                }
-
-                //Invoke $scope.submit($scope.submitdefinition.Type);
-                if (angular.isDefined($scope.submitdefinition)) {
-                    if ($scope.submitdefinition.Submit) {
-                        $scope.submitdefinition.Submit = false;
-                        $scope.submitDataGrid($scope.submitdefinition.Type);
+                if (angular.isDefined($scope.datadefinition)) {
+                    if (!$scope.checkIfEditable())
+                        //Update grid data
+                        $scope.gridOptions.data = angular.copy($scope.datadefinition.DataList);
+                    //Invoke $scope.processPagination();
+                    if ($scope.datadefinition.DoPagination) {
+                        $scope.datadefinition.DoPagination = false;
+                        $scope.processPagination();
                     }
+
+                    //Invoke $scope.submit($scope.submitdefinition.Type);
+                    if (angular.isDefined($scope.submitdefinition)) {
+                        if ($scope.submitdefinition.Submit) {
+                            $scope.submitdefinition.Submit = false;
+                            $scope.submitDataGrid($scope.submitdefinition.Type);
+                        }
+                    }
+                    if (angular.isUndefined($scope.flag))
+                        $scope.createContextMenu();
                 }
-                if(angular.isUndefined($scope.flag))
-                    $scope.createContextMenu();
             }, 100);
 
             //Call createContextMenu, actionForm('Load') and processSorting function

@@ -97,6 +97,7 @@
                 $scope.contextMenuLabelDefault.push($scope.datadefinition.ContextMenuLabel[i]);
             }
 
+    
             //Initialize ui-grid options
             $scope.initGridOptions = function () {
                 var columns = [];
@@ -120,14 +121,13 @@
                     columns.push(columnProperties);
                 }
 
-                console.log(columns);
                 $scope.gridOptions = {
                     columnDefs: columns,
                     rowTemplate: '<div>' +
                         ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id)"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
                       '</div>',
-                    //enableVerticalScrollbar: 0,
-                    //enableHorizontalScrollbar: 2,
+                    enableVerticalScrollbar: 2,
+                    enableHorizontalScrollbar: 2,
                     enableColumnResizing: true,
                     enableGridMenu: true,
                     enableSelectAll: true,
@@ -154,6 +154,7 @@
                 };
             };
 
+       
             //set grid height
             function setHeight(extra) {
                 $scope.height = (($scope.gridOptions.data.length * 30) + 48);
@@ -511,18 +512,19 @@
 
             };
 
-            //Listener that will check if user Submit an action
-            $interval(function () {
+            $scope.$watch('submitbuttonlistener', function () {
                 if ($scope.submitbuttonlistener == true) {
-                    //reset listener to false
-                    $scope.submitbuttonlistener = false;
                     $scope.submit($scope.actionmode);
+                    $scope.submitbuttonlistener = false;
                 }
-                if ($scope.actioncreate == true) {
-                    $scope.actioncreate = false;
-                    $scope.actionForm('Create');
-                }
-            }, 100);
+            });
+
+            $scope.$watch('actioncreate', function () {
+                    if ($scope.actioncreate == true) {
+                        $scope.actioncreate = false;
+                        $scope.actionForm('Create');
+                    }
+            });
 
             //Call createContextMenu, actionForm('Load') and processSorting function
             var init = function () {

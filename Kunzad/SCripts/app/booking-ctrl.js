@@ -37,14 +37,42 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
     };
 
-    //Displays Modal
-    $scope.showModal = function (panel, type) {
-        $scope.modalType = type;
-        openModalPanel(panel);
-    };
-
     $scope.closeModal = function () {
         jQuery.magnificPopup.close();
+        if (angular.isDefined($scope.businessUnitDataDefinition)) {
+            $scope.businessUnitDataDefinition.DataList = [];
+            $scope.businessUnitFilteringDefinition.DataList = [];
+            $rootScope.removeElement("businessUnitGrid");
+            $rootScope.removeElement("businessUnitFilter");
+        }
+
+        if (angular.isDefined($scope.customerDataDefinition)) {
+            $scope.customerDataDefinition.DataList = [];
+            $scope.customerFilteringDefinition.DataList = [];
+            $rootScope.removeElement("customerGrid");
+            $rootScope.removeElement("customerFilter");
+        }
+
+        if (angular.isDefined($scope.customerContactsDataDefinition)) {
+            $scope.customerContactsDataDefinition.DataList = [];
+            $scope.customerContactsFilteringDefinition.DataList = [];
+            $rootScope.removeElement("customerContactsGrid");
+            $rootScope.removeElement("customerContactsFilter");
+        }
+
+        if (angular.isDefined($scope.customerContactPhonesDataDefinition)) {
+            $scope.customerContactPhonesDataDefinition.DataList = [];
+            $scope.customerContactPhonesFilteringDefinition.DataList = [];
+            $rootScope.removeElement("customerContactPhonesGrid");
+            $rootScope.removeElement("customerContactPhonesFilter");
+        }
+
+        if (angular.isDefined($scope.customerAddressDataDefinition)) {
+            $scope.customerAddressDataDefinition.DataList = [];
+            $scope.customerAddressFilteringDefinition.DataList = [];
+            $rootScope.removeElement("customerAddressGrid");
+            $rootScope.removeElement("customerAddressFilter");
+        }
     };
 
     //Initialize address field
@@ -59,8 +87,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         else {//MasterList Display
             return $scope.formattedAddress;
         }
-
-
     };
 
     //Initialize Payment Mode List for DropDown
@@ -647,9 +673,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //=====================================BUSINESS UNIT MODAL======================================
     $scope.showBusinessUnit = function () {
+        openModalPanel2("#business-unit-list-modal");
+        $scope.loadBusinessUnitDataGrid();
+        $scope.loadBusinessUnitFiltering();
+
         $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
         $scope.businessUnitDataDefinition.Retrieve = true;
-        openModalPanel("#business-unit-list-modal");
 
     };
 
@@ -661,7 +690,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //initialize businessUnit filtering parameters
     $scope.initBusinessUnitFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="businessUnitFilteringDefinition"' +
+        html = '<dir-filtering  id = "businessUnitFilter" filterdefinition="businessUnitFilteringDefinition"' +
                                 'filterlistener="businessUnitDataDefinition.Retrieve"' +
                                 'otheractions="businessUnitOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -807,7 +836,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //function that will be invoked during compiling of businessUnit datagrid to DOM
     $scope.compileBusinessUnitDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "businessUnitDataDefinition"' +
+        var html = '<dir-data-grid2 id = "businessUnitGrid" datadefinition      = "businessUnitDataDefinition"' +
                                     'submitdefinition   = "businessUnitSubmitDefinition"' +
                                     'otheractions       = "businessUnitOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -818,9 +847,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //=======================================CUSTOMER MODAL==========================================
     $scope.showCustomer = function () {
+        openModalPanel2("#customer-list-modal");
+        $scope.loadCustomerDataGrid();
+        $scope.loadCustomerFiltering();
+
         $scope.customerFilteringDefinition.SetSourceToNull = true;
         $scope.customerDataDefinition.Retrieve = true;
-        openModalPanel("#customer-list-modal");
 
     };
 
@@ -832,7 +864,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //initialize customer filtering parameters
     $scope.initCustomerFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="customerFilteringDefinition"' +
+        html = '<dir-filtering  id = "customerFilter" filterdefinition="customerFilteringDefinition"' +
                                 'filterlistener="customerDataDefinition.Retrieve"' +
                                 'otheractions="customerOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -983,7 +1015,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //function that will be invoked during compiling of customer datagrid to DOM
     $scope.compileCustomerDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "customerDataDefinition"' +
+        var html = '<dir-data-grid2 id = "customerGrid" datadefinition      = "customerDataDefinition"' +
                                     'submitdefinition   = "customerSubmitDefinition"' +
                                     'otheractions       = "customerOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -994,10 +1026,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //=====================================CUSTOMER CONTACTS MODAL=====================================
     $scope.showCustomerContacts = function () {
+        openModalPanel2("#customerContacts-list-modal");
+        $scope.loadCustomerContactsDataGrid();
+        $scope.loadCustomerContactsFiltering();
+
         $scope.customerContactsFilteringDefinition.SetSourceToNull = true;
         $scope.customerContactsDataDefinition.Retrieve = true;
-        openModalPanel("#customerContacts-list-modal");
-
     };
 
     //Load customerContacts filtering for compiling
@@ -1008,7 +1042,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //initialize customerContacts filtering parameters
     $scope.initCustomerContactsFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="customerContactsFilteringDefinition"' +
+        html = '<dir-filtering  id = "customerContactsFilter" filterdefinition="customerContactsFilteringDefinition"' +
                                 'filterlistener="customerContactsDataDefinition.Retrieve"' +
                                 'otheractions="customerContactsOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -1155,7 +1189,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //function that will be invoked during compiling of customerContacts datagrid to DOM
     $scope.compileCustomerContactsDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "customerContactsDataDefinition"' +
+        var html = '<dir-data-grid2 id = "customerContactsGrid" datadefinition      = "customerContactsDataDefinition"' +
                                     'submitdefinition   = "customerContactsSubmitDefinition"' +
                                     'otheractions       = "customerContactsOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -1166,9 +1200,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //=====================================CUSTOMER CONTACT PHONE MODAL===================================
     $scope.showCustomerContactPhones = function () {
+        openModalPanel2("#customerContactPhones-list-modal");
+        $scope.loadCustomerContactPhonesDataGrid();
+        $scope.loadCustomerContactPhonesFiltering();
+
         $scope.customerContactPhonesFilteringDefinition.SetSourceToNull = true;
         $scope.customerContactPhonesDataDefinition.Retrieve = true;
-        openModalPanel("#customerContactPhones-list-modal");
 
     };
 
@@ -1180,7 +1217,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //initialize customerContactPhones filtering parameters
     $scope.initCustomerContactPhonesFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="customerContactPhonesFilteringDefinition"' +
+        html = '<dir-filtering  id = "customerContactPhonesFilter" filterdefinition="customerContactPhonesFilteringDefinition"' +
                                 'filterlistener="customerContactPhonesDataDefinition.Retrieve"' +
                                 'otheractions="customerContactPhonesOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -1324,7 +1361,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //function that will be invoked during compiling of customerContactPhones datagrid to DOM
     $scope.compileCustomerContactPhonesDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "customerContactPhonesDataDefinition"' +
+        var html = '<dir-data-grid2 id = "customerContactPhonesGrid" datadefinition      = "customerContactPhonesDataDefinition"' +
                                     'submitdefinition   = "customerContactPhonesSubmitDefinition"' +
                                     'otheractions       = "customerContactPhonesOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -1335,9 +1372,12 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //=====================================CUSTOMER ADDRESS MODAL===================================
     $scope.showCustomerAddress = function () {
+        openModalPanel2("#customerAddresses-list-modal");
+        $scope.loadCustomerAddressDataGrid();
+        $scope.loadCustomerAddressFiltering();
+
         $scope.customerAddressFilteringDefinition.SetSourceToNull = true;
         $scope.customerAddressDataDefinition.Retrieve = true;
-        openModalPanel("#customerAddresses-list-modal");
 
     };
 
@@ -1349,7 +1389,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //initialize customerAddress filtering parameters
     $scope.initCustomerAddressFilteringContainter = function () {
-        html = '<dir-filtering  filterdefinition="customerAddressFilteringDefinition"' +
+        html = '<dir-filtering  id = "customerAddressFilter" filterdefinition="customerAddressFilteringDefinition"' +
                                 'filterlistener="customerAddressDataDefinition.Retrieve"' +
                                 'otheractions="customerAddressOtherActionsFiltering(action)"' +
                '</dir-filtering>';
@@ -1511,10 +1551,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Id;
                     $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = $scope.customerAddressDataDefinition.DataItem.CityMunicipality[0].StateProvince[0].Name;
                     $scope.closeModal();
-                    var promise = $interval(function () {
-                        $interval.cancel(promise);
-                        promise = undefined;
-                    }, 500);
                     return true;
                 default: return true;
             }
@@ -1525,7 +1561,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //function that will be invoked during compiling of customerAddress datagrid to DOM
     $scope.compileCustomerAddressDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "customerAddressDataDefinition"' +
+        var html = '<dir-data-grid2 id = "customerAddressGrid" datadefinition      = "customerAddressDataDefinition"' +
                                     'submitdefinition   = "customerAddressSubmitDefinition"' +
                                     'otheractions       = "customerAddressOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -1594,18 +1630,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.initShipmentTypeList();
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
-        $scope.loadBusinessUnitDataGrid();
-        $scope.loadBusinessUnitFiltering();
-        $scope.loadCustomerDataGrid();
-        $scope.loadCustomerFiltering();
-        $scope.loadCustomerContactsDataGrid();
-        $scope.loadCustomerContactsFiltering();
-        $scope.loadCustomerContactPhonesDataGrid();
-        $scope.loadCustomerContactPhonesFiltering();
-        $scope.loadCustomerAddressDataGrid();
-        $scope.loadCustomerAddressFiltering();
         $scope.shipmentResetData();
-
+        $rootScope.manipulateDOM();
         if ($scope.shipmentFilteringDefinition.AutoLoad == true)
             $scope.shipmentDataDefinition.Retrieve = true;
         //---------------------------Code if using typeahead in city/municipality-------------------
