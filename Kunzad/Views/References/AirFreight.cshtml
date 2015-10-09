@@ -11,74 +11,81 @@
             <i class="fa fa-remove pr10"></i>
             <strong>ERROR!</strong>{{errorMessage}}
         </div>
-        <div class="col-md-12">
+        
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border control-label small">Air Freight Info</legend>
-                <div class="form-group form-group-sm">
-                    <label class="col-md-2 control-label small">ID</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="[SYSTEM GENERATED]"
-                               ng-model="airFreightItem.Id"
-                               ng-disabled="true" />
-                    </div>
+                <div class="col-md-12">
+                    <legend class="scheduler-border control-label small">Air Freight Info</legend>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-2 control-label small">ID</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="[SYSTEM GENERATED]"
+                                   ng-model="airFreightItem.Id"
+                                   ng-disabled="true" />
+                        </div>
 
-                    <label class="col-md-2 control-label small">Airline</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control"
-                               ng-model="airFreightItem.AirlineId"
-                               ng-disabled="viewOnly" />
+                        <label class="col-md-2 control-label small">Airline</label>
+                        <div class="col-md-4">
+                            <div class='input-group'>
+                                <input type='text'
+                                       class="form-control"
+                                       ng-model="airFreightItem.Airline.Name"
+                                       ng-disabled="true" />
+                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Airline" ng-click="showModal('#airline-list-modal')">
+                                    <span class="glyphicons glyphicons-search"></span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label class="col-md-2 control-label small">Waybill No</label>
-                    <div class="col-md-4">
-                        <input type='text'
-                               class="form-control"
-                               ng-model="airFreightItem.AirWaybillNumber"
-                               ng-disabled="viewOnly" />
-                    </div>
-                    <label class="col-md-2 control-label small">Waybill Date</label>
-                    <div class="col-md-4">
-                        <div class='input-group date'>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-2 control-label small">Waybill No</label>
+                        <div class="col-md-4">
                             <input type='text'
-                                   id='airWaybillDate'
                                    class="form-control"
-                                   ng-model="airFreightItem.AirWaybillDate"
+                                   ng-model="airFreightItem.AirWaybillNumber"
                                    ng-disabled="viewOnly" />
-                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                <span class=" glyphicon glyphicon-remove-circle"></span>
-                            </span>
+                        </div>
+                        <label class="col-md-2 control-label small">Waybill Date</label>
+                        <div class="col-md-4">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='airWaybillDate'
+                                       class="form-control"
+                                       ng-model="airFreightItem.AirWaybillDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label class="col-lg-2 text-right">Origin</label>
-                    <div class="col-lg-4">
-                        <div class='input-group'>
-                            <input type='text'
-                                   class="form-control"
-                                   ng-model="airFreightItem.OriginBusinessUnitName"
-                                   ng-disabled="true" />
-                            <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Origin" ng-click="showModal('#origin-list-modal')">
-                                <span class="glyphicons glyphicons-search"></span>
-                            </span>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-2 control-label">Origin</label>
+                        <div class="col-md-4">
+                            <div class='input-group'>
+                                <input type='text'
+                                       class="form-control"
+                                       ng-model="airFreightItem.OriginBusinessUnitName"
+                                       ng-disabled="true" />
+                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Origin" ng-click="showModal('#origin-list-modal')">
+                                    <span class="glyphicons glyphicons-search"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <label class="col-md-2 control-label">Destination</label>
+                        <div class="col-md-4">
+                            <div class='input-group'>
+                                <input type='text'
+                                       class="form-control input-group"
+                                       ng-model="airFreightItem.DestinationBusinessUnitName"
+                                       ng-disabled="true" />
+                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#destination-list-modal')">
+                                    <span class="glyphicons glyphicons-search"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <label class="col-lg-2 text-right">Destination</label>
-                    <div class="col-lg-4">
-                        <div class='input-group'>
-                            <input type='text'
-                                   class="form-control input-group"
-                                   ng-model="airFreightItem.DestinationBusinessUnitName"
-                                   ng-disabled="true" />
-                            <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#destination-list-modal')">
-                                <span class="glyphicons glyphicons-search"></span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
         </div>
         <div class="col-md-12 text-center">
             <div class="col-md-6">
@@ -222,18 +229,18 @@
         </div>
     </form>
 </div>
-    
+    </fieldset>
 @*Detail*@
 <fieldset class="scheduler-border">
     <legend class="scheduler-border">Dispatching Details</legend>
-    <div id="sList" ng-repeat="sList in shipmentItem">
+    <div id="sList" ng-repeat="sList in shipmentItems">
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Detail No {{$index+1}}</legend>
             <div class="col-md-12">
-                    <span title="Remove" style="color:#4a89dc;position:absolute;right:0;">
-                        <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
-                    </span>
-                </div>
+                <span title="Remove" style="color:#4a89dc;position:absolute;right:0;">
+                    <span class=" glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
+                </span>
+            </div>
             <br />
             <!-------form------->
             @*row1*@
@@ -263,7 +270,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="sList.Shipment.Customer.Code"
+                                       ng-model="sList.Customer.Code"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -274,7 +281,7 @@
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="sList.Shipment.Customer.Name"
+                                       ng-model="sList.Customer.Name"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -299,7 +306,7 @@
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="sList.Shipment.DeliverToContactNo"
+                                       ng-model="sList.DeliverToContactNo"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -310,7 +317,7 @@
                                 <textarea rows="3" style="height:auto;"
                                           class="form-control"
                                           placeholder=""
-                                          ng-model="sList.Shipment.Address.Line1"
+                                          ng-model="sList.DeliveryAddress"
                                           ng-disabled="true"></textarea>
                             </div>
                         </div>
@@ -347,7 +354,7 @@
                                 <input id="cbm"
                                        type="text"
                                        class="form-control"
-                                       ng-model="sList.CBM"
+                                       ng-model="sList.TotalCBM"
                                        ng-disabled="true">
                             </div>
                         </div>
@@ -386,7 +393,7 @@
                         @*Cost Allocation*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Cost Allocation</label>
-                            <div class="col-md-8">
+                            <div class="col-md-2">
                                 <input id="costAllocation"
                                        type="text"
                                        class="form-control"
@@ -398,6 +405,7 @@
                     <script type="text/javascript">
                         $(function () {
                             // NUMBERS w/ DECIMAL AND COMMA
+                            // COST ALLOCATION PRICE FORMAT
                             $('#costAllocation').priceFormat({
                                 clearPrefix: true,
                                 prefix: '',
@@ -406,6 +414,7 @@
                                 centsLimit: 2
                             });
 
+                            // DATE FORMATTING
                             $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
                                 format: 'MM-DD-YYYY',
                                 sideBySide: false,
@@ -413,6 +422,7 @@
                                 //minDate: moment()
                             })
 
+                            // TIME FORMATTING
                             $('#estimateDepartureTime,#estimateArrivalTime,#departureTime,#arrivalTime,#deliverytime').datetimepicker({
                                 format: 'HH:mm',
                                 sideBySide: false,
@@ -430,7 +440,7 @@
 
     <div class="row text-right">
         <div class="col-md-22">
-            <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewBooking()">
+            <button class="btn btn-sm btn-primary" type="submit" ng-click="addNewShipment()">
                 Add Shipment from Booking
             </button>
         </div>
@@ -438,11 +448,15 @@
 </fieldset>
 }
 
-<!-- Trucking List -->
+<!-- AirFreight List -->
 @section tab2Content{
-    @*<div ng-show="selectedTab === tabPages[1]">
-        <div ui-grid="gridOptionsTruckings" ui-grid-exporter class="grid"></div>
-    </div>*@
+    <div style="padding:0px 10px 0px 10px">
+        <div class="text-right toggle-hide" ng-click="hideAirFreightToggle()" ng-show="airFreightToggle">Hide</div>
+        <div id="airFreightToggle">
+            <div id="airFreightFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="airFreightContainer"></div>
+    </div>
 }
 
 @*<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
@@ -500,6 +514,26 @@
         <div class="panel-body" style="{{modalStyle}}">
             <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
             <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Shipment List Modal -->
+
+<!-- Airline List Modal -->
+<div id="airline-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Airline List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="airlineFilterContainter" style="padding-left:10px;"></div>
+            <div id="airlineContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
