@@ -271,6 +271,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                                 $scope.submitButtonText = "Submit";
                                 $scope.selectedTab = $scope.tabPages[0];
                                 $scope.courierDeliverySubmitDefinition.Type = "Edit";
+                                //Set control no holder in case user will add item in list
+                                $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
                             }
                         }, 100);
                     }
@@ -280,8 +282,6 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.courierDeliverySubmitDefinition.Type = "Edit";
                     }
-                    //Set control no holder in case user will add item in list
-                    $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
                     $scope.enableSave = true;
                     return true;
                 case "PostDeleteAction":
@@ -1066,8 +1066,6 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 promiseShipmentTypeList = undefined;
             }
         }, 100);
-
-        console.log($scope.shipmentFilteringDefinition);
     };
 
     //Load business datagrid for compiling
@@ -1352,6 +1350,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //Initialize needed functions during page load
     init();
+
     $interval(function () {
         //For responsive modal
         var width = window.innerWidth;
