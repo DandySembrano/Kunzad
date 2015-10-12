@@ -657,26 +657,24 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 case "PreAction":
                     return true;
                 case "PreCreateAction":
-                    if (!$scope.viewOnly)
+                    if (!$scope.viewOnly) {
+                        var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
+                        if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0) {
+                            $scope.courierDeliveryIsError = true;
+                            $scope.courierDeliveryErrorMessage = "Shipment is required.";
+                            $scope.focusOnTop();
+                            return false;
+                        }
+                        else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
+                            $scope.courierDeliveryIsError = true;
+                            $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
+                            $scope.focusOnTop();
+                            return false;
+                        }
                         return true;
+                    }
                     else
                         return false;
-
-                    var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
-                    if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0)
-                    {
-                        $scope.courierDeliveryIsError = true;
-                        $scope.courierDeliveryErrorMessage = "Shipment is required.";
-                        $scope.focusOnTop();
-                        return false;
-                    }
-                    else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
-                        $scope.courierDeliveryIsError = true;
-                        $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
-                        $scope.focusOnTop();
-                        return false;
-                    }
-                    return true;
                 case "PreEditAction":
                     if (!$scope.viewOnly)
                         return true;
