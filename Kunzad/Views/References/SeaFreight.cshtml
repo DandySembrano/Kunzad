@@ -1,30 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
-@*Form Context-Menu*@
-<div class="dropdown position-fixed" id="FormMenu">
-    <ul class="dropdown-menu" role="menu">
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>
-        </li>
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="shipmentOtheractions('FormCreate')">Create</a>
-        </li>
-        <li>
-            <a style="{{truckingItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Edit')">Edit</a>
-        </li>
-        <li>
-            <a style="{{truckingItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="actionForm('Delete')">Cancel</a>
-        </li>
-    </ul>
-</div>
 <!-- General -->
 @section tab1Content{
 <div context-menu="formContextMenu()" data-target="FormMenu">
     <!--Master-->
-    <div class="alert alert-danger alert-sm" ng-show="isError">
-        <i class="fa fa-remove pr10"></i>
-        <strong>ERROR!</strong>{{errorMessage}}
+    <div class="alert alert-danger alert-sm" ng-show="seaFreightIsError">
+        <i class="fa fa-remove pr10" ng-click="seaFreightIsError=false;seaFreightErrorMessage=''"></i>
+        <strong>ERROR!</strong>{{" " + seaFreightErrorMessage}}
     </div>
     @*Column 1*@
     <div class="col-lg-6">
@@ -232,43 +215,6 @@
     <div class="row">
         <div class="col-lg-12">
             <div id="seaFreightShipmentsContainer"></div>
-            <!--
-            <div context-menu="grid.appScope.setSelected(row.entity.Id)" data-target="DTShipmentDtl">
-                <div ui-grid="SeaFreightShipmentGridOptions" class="grid" ui-grid-edit ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div>
-            </div>
-            <br />
-            <div class="myTableContainter" ng-show="paginatedseaFreightShipments.length > 0">
-                <div class="myTableContent">
-                    <div class="myTableRow-no-border text-right">
-                        <div class="btn-group btn-group-sm">
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="procesSeaFreightShipmentPagination(seaFreightShipmentCurrentPage = (seaFreightShipmentCurrentPage - 1), '')"
-                                        ng-disabled="!previousPageseaFreightShipments">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-default btn-sm"
-                                        type="button"
-                                        ng-disabled="true">
-                                    {{ seaFreightShipmentCurrentPage }}
-                                </button>
-                            </div>
-                            <div class="myTableCell-no-padding text-right small">
-                                <button class="btn btn-primary btn-sm"
-                                        type="button"
-                                        ng-click="processseaFreightShipmentPagination(seaFreightShipmentCurrentPage = (seaFreightShipmentCurrentPage + 1), '')"
-                                        ng-disabled="!nextPageseaFreightShipments">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           -->
         </div>
     </div>
     <!--End of Detail-->
@@ -385,6 +331,23 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
-
-<!--detail contextmenu-->
-@RenderPage("~/Views/Shared/_ContextMenuShipmentDtl.cshtml")
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="shipmentOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{seaFreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Edit')">Edit</a>
+        </li>
+        <li>
+            <a style="{{seaFreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="actionForm('Delete')">Cancel</a>
+        </li>
+    </ul>
+</div>

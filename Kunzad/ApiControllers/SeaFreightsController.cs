@@ -204,58 +204,58 @@ namespace Kunzad.ApiControllers
                 skip = param1;
 
             var filteredSeaFreights = (from sf in db.SeaFreights
-                                            select new {
-                                                            sf.Id,
-                                                            sf.BLNumber,
-                                                            sf.BLDate,
-                                                            sf.OriginBusinessUnitId,
-                                                            BusinessUnit1 = (from o in db.BusinessUnits 
-                                                                        where o.Id == sf.OriginBusinessUnitId
+                                       where seaFreight.Id == null || seaFreight.Id == 0 ? true : sf.Id == seaFreight.Id
+                                       where seaFreight.BLNumber == null ? !seaFreight.BLNumber.Equals("") : (sf.BLNumber.ToLower().Equals(seaFreight.BLNumber) || sf.BLNumber.ToLower().Contains(seaFreight.BLNumber))
+                                       where seaFreight.BLDate == null || seaFreight.BLDate == defaultDate ? true : sf.BLDate >= seaFreight.BLDate && sf.BLDate <= seaFreight1.BLDate
+                                       where seaFreight.CreatedDate == null || seaFreight.CreatedDate == defaultDate ? true : sf.CreatedDate >= seaFreight.CreatedDate && sf.CreatedDate <= seaFreight1.CreatedDate
+                                       where seaFreight.LastUpdatedDate == null || seaFreight.LastUpdatedDate == defaultDate ? true : sf.LastUpdatedDate >= seaFreight.LastUpdatedDate && sf.LastUpdatedDate <= seaFreight1.LastUpdatedDate
+                                       select new {
+                                                        sf.Id,
+                                                        sf.BLNumber,
+                                                        sf.BLDate,
+                                                        sf.OriginBusinessUnitId,
+                                                        BusinessUnit1 = (from o in db.BusinessUnits 
+                                                                    where o.Id == sf.OriginBusinessUnitId
+                                                                    select new {
+                                                                        o.Id,
+                                                                        o.Name
+                                                                    }
+
+                                                                    ),//Origin
+                                                        sf.DestinationBusinessUnitId,
+                                                        BusinessUnit = (from d in db.BusinessUnits 
+                                                                        where d.Id == sf.DestinationBusinessUnitId
                                                                         select new {
-                                                                            o.Id,
-                                                                            o.Name
+                                                                            d.Id,
+                                                                            d.Name
                                                                         }
 
-                                                                     ),//Origin
-                                                            sf.DestinationBusinessUnitId,
-                                                            BusinessUnit = (from d in db.BusinessUnits 
-                                                                            where d.Id == sf.DestinationBusinessUnitId
+                                                                        ),//Destination
+                                                        sf.VesselVoyageId,
+                                                        VesselVoyage = (from vv in db.VesselVoyages 
+                                                                            join v in db.Vessels on vv.VesselId equals v.Id 
+                                                                                join s in db.ShippingLines on v.ShippingLineId equals s.Id
+                                                                            where vv.Id == sf.VesselVoyageId
                                                                             select new {
-                                                                                d.Id,
-                                                                                d.Name
+                                                                                ShippingLineName = s.Name,
+                                                                                VesselName = v.Name,
+                                                                                vv.Id,
+                                                                                vv.VoyageNo,
+                                                                                vv.EstimatedArrivalDate,
+                                                                                vv.EstimatedArrivalTime,
+                                                                                vv.DepartureDate,
+                                                                                vv.DepartureTime,
+                                                                                vv.ArrivalDate,
+                                                                                vv.ArrivalTime
                                                                             }
-
-                                                                          ),//Destination
-                                                            sf.VesselVoyageId,
-                                                            VesselVoyage = (from vv in db.VesselVoyages 
-                                                                                join v in db.Vessels on vv.VesselId equals v.Id 
-                                                                                    join s in db.ShippingLines on v.ShippingLineId equals s.Id
-                                                                             where vv.Id == sf.VesselVoyageId
-                                                                             select new {
-                                                                                 ShippingLineName = s.Name,
-                                                                                 VesselName = v.Name,
-                                                                                 vv.Id,
-                                                                                 vv.VoyageNo,
-                                                                                 vv.EstimatedArrivalDate,
-                                                                                 vv.EstimatedArrivalTime,
-                                                                                 vv.DepartureDate,
-                                                                                 vv.DepartureTime,
-                                                                                 vv.ArrivalDate,
-                                                                                 vv.ArrivalTime
-                                                                             }
-                                                                           ), 
-                                                           sf.FreightCost,
-                                                           sf.CreatedByUserId,
-                                                           sf.CreatedDate,
-                                                           sf.LastUpdatedByUserId,
-                                                           sf.LastUpdatedDate
-                                            })
-                                            .Where(sf => seaFreight.Id == null || seaFreight.Id == 0 ? true : sf.Id == seaFreight.Id)
-                                            .Where(sf => seaFreight.BLNumber == null ? !seaFreight.BLNumber.Equals("") : (sf.BLNumber.ToLower().Equals(seaFreight.BLNumber) || sf.BLNumber.ToLower().Contains(seaFreight.BLNumber)))
-                                            .Where(sf => seaFreight.BLDate == null || seaFreight.BLDate == defaultDate ? true : sf.BLDate >= seaFreight.BLDate && sf.BLDate <= seaFreight1.BLDate)
-                                            .Where(sf => seaFreight.CreatedDate == null || seaFreight.CreatedDate == defaultDate ? true : sf.CreatedDate >= seaFreight.CreatedDate && sf.CreatedDate <= seaFreight1.CreatedDate)
-                                            .Where(sf => seaFreight.LastUpdatedDate == null || seaFreight.LastUpdatedDate == defaultDate ? true : sf.LastUpdatedDate >= seaFreight.LastUpdatedDate && sf.LastUpdatedDate <= seaFreight1.LastUpdatedDate)
-                                            .OrderBy(sf => sf.Id).Skip(skip).Take(pageSize).ToArray();
+                                                                        ), 
+                                                        sf.FreightCost,
+                                                        sf.CreatedByUserId,
+                                                        sf.CreatedDate,
+                                                        sf.LastUpdatedByUserId,
+                                                        sf.LastUpdatedDate
+                                       })
+                                       .OrderBy(sf => sf.Id).Skip(skip).Take(pageSize).ToArray();
 
             seaFreights = filteredSeaFreights;
         }
