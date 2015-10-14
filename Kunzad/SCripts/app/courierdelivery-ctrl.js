@@ -1347,26 +1347,25 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             $scope.courierDeliveryDataDefinition.Retrieve = true;
     };
 
-    //var listener = $interval(function () {
-    //                //For responsive modal
-    //                var width = window.innerWidth;
-    //                if (width < 1030) {
-    //                    $scope.modalStyle = "height:520px; max-height:100%";
-    //                }
-    //                else {
-    //                    $scope.modalStyle = "height:450px; max-height:100%";
-    //                }
-    //                console.log('ss');
-    //            }, 100);
+    var listener = $interval(function () {
+                    //For responsive modal
+                    var width = window.innerWidth;
+                    if (width < 1030) {
+                        $scope.modalStyle = "height:520px; max-height:100%";
+                    }
+                    else {
+                        $scope.modalStyle = "height:450px; max-height:100%";
+                    }
+                }, 100);
 
-    //$scope.listener = function () {
-    //    $interval.cancel(listener);
-    //    listener = undefined;
-    //};
+    $scope.listener = function () {
+        $interval.cancel(listener);
+        listener = undefined;
+    };
 
-    //$scope.$on('$destroy', function () {
-    //    $scope.listener();
-    //});
+    $scope.$on('$destroy', function () {
+        $scope.listener();
+    });
 
     //Initialize needed functions during page load
     init();

@@ -231,13 +231,13 @@ kunzadApp.directive('dirFiltering', function () {
                 return false;
             });
 
-            //if ($scope.filterdefinition.AutoLoad == true) {
-            //    $scope.filterdefinition.DataItem1.Id = 0;
-            //    $scope.submitFilteredData();
-            //}
+            if ($scope.filterdefinition.AutoLoad == true) {
+                $scope.filterdefinition.SetSourceToNull = false;
+                $scope.submitFilteredData();
+            }
 
             //Listener that will check of user's action
-            $interval(function () {
+            var dataFilteringListener = $interval(function () {
                 var width = window.innerWidth;
 
                 //Check if directive request for filtering and status is not retrieving
@@ -263,6 +263,15 @@ kunzadApp.directive('dirFiltering', function () {
                     $scope.filterContainerStyle = "padding-left:10px;";
                 }
             }, 100);
+
+            $scope.dataFilteringListener = function () {
+                $interval.cancel(dataFilteringListener);
+                dataFilteringListener = undefined;
+            };
+
+            $scope.$on('$destroy', function () {
+                $scope.dataFilteringListener();
+            });
         }
     };
 });
