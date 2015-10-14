@@ -21,6 +21,31 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.AirFreightShipments = [];
     var pageSize = 20;
 
+    // NUMBERS w/ DECIMAL AND COMMA
+    // COST ALLOCATION PRICE FORMAT
+    $('#costAllocation').priceFormat({
+        clearPrefix: true,
+        prefix: '',
+        centsSeparator: '.',
+        thousandsSeparator: ',',
+        centsLimit: 4
+    });
+
+    // DATE FORMATTING
+    $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
+        format: 'MM-DD-YYYY',
+        sideBySide: false,
+        pickTime: false
+        //minDate: moment()
+    })
+
+    // TIME FORMATTING
+    $('#estimateDepartureTime,#estimateArrivalTime,#departureTime,#arrivalTime,#deliverytime').datetimepicker({
+        format: 'HH:mm',
+        sideBySide: false,
+        pickDate: false
+    })
+
     //function that will be called during submit
     $scope.submit = function () {
         $scope.airFreightIsError = false;
@@ -46,6 +71,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.airFreightIsError = false;
         $scope.airFreightErrorMessage = "";
         $scope.selectedTab = tab;
+    };
+
+    $scope.removeBooking = function (index) {
+        if ($scope.AirFreightShipments.length == 1)
+            alert('Unable to delete detail, At least 1 detail is required.');
+        else
+            $scope.AirFreightShipments.splice(index, 1);
     };
 
     //====================================AIRFREIGHT FILTERING AND DATAGRID==========================
@@ -95,16 +127,16 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
         $scope.airFreightOtheractions = function (action) {
             switch (action) {
-                //case "FormCreate":
-                //    $scope.shipmentResetData();
-                //    $scope.viewOnly = false;
-                //    $scope.submitButtonText = "Submit";
-                //    $scope.shipmentSubmitDefinition.Type = "Create";
+                case "FormCreate":
+                    $scope.airFreightResetData();
+                    $scope.viewOnly = false;
+                    $scope.submitButtonText = "Submit";
+                    $scope.airFreightSubmitDefinition.Type = "Create";
                 //    $scope.deliveryAddressDataDefinition.ViewOnly = false;
                 //    $scope.deliveryAddressDataDefinition.ActionMode = "Create";
                 //    $scope.pickupAddressDataDefinition.ViewOnly = false;
                 //    $scope.pickupAddressDataDefinition.ActionMode = "Create";
-                //    return true;
+                    return true;
                 //case "PreAction":
                 //    $scope.selectedTab = $scope.tabPages[0];
                 //    $scope.shipmentIsError = false;
@@ -269,6 +301,22 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null
             }
+            $scope.airFreightItem.BusinessUnit = {
+                "Id": 9,
+                "Code": "BU0005",
+                "Name": "Cebu",
+                "BusinessUnitTypeId": 1,
+                "ParentBusinessUnitId": 3,
+                "isOperatingSite": false,
+                "hasAirPort": false,
+                "hasSeaPort": false,
+                "CreatedDate": "2015-06-08T14:18:39.237",
+                "LastUpdatedDate": "2015-08-26T17:56:00.533",
+                "CreatedByUserId": null,
+                "LastUpdatedByUserId": null
+            }
+            $scope.airFreightItem.OriginBusinessUnitId = $scope.airFreightItem.BusinessUnit.Id;
+            $scope.airFreightItem.OriginBusinessUnitName = $scope.airFreightItem.BusinessUnit.Name;
         };
 
         $scope.airFreightShipmentsResetData = function () {

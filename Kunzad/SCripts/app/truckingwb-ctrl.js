@@ -1,7 +1,7 @@
 ﻿
 kunzadApp.controller("TruckingsWBController", TruckingsWBController);
 function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
-    $scope.modelName = "Trucking Waybill";
+    $scope.modelName = "Trucking Info";
     $scope.modelhref = "#/truckingwb";
     $scope.isPrevPage = false;
     $scope.isNextPage = true;
@@ -74,14 +74,41 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
             },
             "OriginServiceableAreaId": null,
             "OriginServiceableAreaName": null,
+            "BusinessUnit": {
+                "Id": null,
+                "Code": null,
+                "Name": null
+            },
             "DestinationServiceableAreaId": null,
             "DestinationServiceableAreaName": null,
-            "TruckingStatusId": 1,
+            "BusinessUnit1": {
+                "Id": null,
+                "Code": null,
+                "Name": null
+            },
+            "TruckingStatusId": null,
             "CreatedDate": null,
             "CreatedDateDesc": null,
             "LastUpdatedDate": null,
             "TruckingDeliveries": []
-        }
+        };
+        // TEMPORARY DEFAULT ORIGIN BUSINESS UNIT
+        $scope.truckingItem.BusinessUnit = {
+            "Id": 9,
+            "Code": "BU0005",
+            "Name": "Cebu",
+            "BusinessUnitTypeId": 1,
+            "ParentBusinessUnitId": 3,
+            "isOperatingSite": false,
+            "hasAirPort": false,
+            "hasSeaPort": false,
+            "CreatedDate": "2015-06-08T14:18:39.237",
+            "LastUpdatedDate": "2015-08-26T17:56:00.533",
+            "CreatedByUserId": null,
+            "LastUpdatedByUserId": null
+        };
+        $scope.truckingItem.OriginServiceableAreaId = $scope.truckingItem.BusinessUnit.Id;
+        $scope.truckingItem.OriginServiceableAreaName = $scope.truckingItem.BusinessUnit.Name;
     };
 
     $scope.addNewBooking = function () {
@@ -369,7 +396,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope) {
 
         dataModel.DocumentNo = $scope.truckingItem.DocumentNo;
         dataModel.TruckingStatusId = 20;
-        console.log(dataModel);
+        //console.log(dataModel);
 
         $http.put("/api/TruckingsWB/" + dataModel.Id, dataModel)
              .success(function (data, status) {
