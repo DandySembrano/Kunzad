@@ -18,6 +18,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     //$scope.airFreightList = [];
     $scope.businessUnitList = [];
     $scope.shipmentItems = [];
+    $scope.AirFreightShipments = [];
     var pageSize = 20;
 
     //function that will be called during submit
@@ -26,141 +27,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.airFreightErrorMessage = "";
         $scope.airFreightSubmitDefinition.Submit = true;
     }
-
-    // INITIALIZE AIRFREIGHT ITEM
-    $scope.initAirFreightItem = function () {
-        $scope.airFreightItem = {
-            "Id": null,
-            "AirlineId": null,
-            "Airline": {
-                "Id": null,
-                "Name": null
-            },
-            "AirlineWaybillNumber": null,
-            "AirlineWaybillDate": null,
-            "EstimatedDepartureDate": null,
-            "EstimatedDepartureTime": null,
-            "EstimatedArrivalDate": null,
-            "EstimatedArrivalTime": null,
-            "OriginBusinessUnitId": null,
-            "BusinessUnit": {
-                "Id": null,
-                "Code": null,
-                "Name": null
-            },
-            "DestinationBusinessUnitId": null,
-            "BusinessUnit1": {
-                "Id": null,
-                "Code": null,
-                "Name": null
-            },
-            "DepartureDate": null,
-            "DepartureTime": null,
-            "ArrivalDate": null,
-            "ArrivalTime": null,
-            "CreatedDate": null,
-            "LastUpdatedDate": null,
-            "CreatedByUserId": null,
-            "LastUpdatedByUserId": null,
-            "AirFreightShipments": []
-        };
-    };
-
-    // NEW SHIPMENT/AIRFREIGHT DETAILS
-    $scope.addNewShipment = function () {
-        $scope.shipmentItem = {
-            "Id": null,
-            "BusinessUnitId": null,
-            "BusinessUnit": {
-                "Id": null,
-                "Code": null,
-                "Name": null
-            },
-            "SerivceId": null,
-            "Service": {
-                "Id": null,
-                "Name": null,
-                "Description": null
-            },
-            "DocumentNo": null,
-            "DocumentDate": null,
-            "ShipmentTypeId": null,
-            "ShipmentType": {
-                "Id": null,
-                "Name": null
-            },
-            "PaymentMode": null,
-            "CustomerId": null,
-            "Customer": {
-                "Id": null,
-                "Code": null,
-                "Name": null,
-                "CustomerGroupId": null,
-                "TIN": null,
-                "IndustryId": null
-            },
-            "CustomerAddressId": null,
-            "CustomerContactId": null,
-            "CustomerContactPhoneId": null,
-            "BillToCustomerId": null,
-            "BillToCustomerAddressId": null,
-            "BillToCustomerContactId": null,
-            "BillToCustomerContactPhoneId": null,
-            "Quantity": null,
-            "TotalCBM": null,
-            "IsRevenue": null,
-            "Revenue": null,
-            "IsTaxInclusive": null,
-            "TaxAmount": null,
-            "TaxPercentage": null,
-            "Description": null,
-            "BookingRemarks": null,
-            "DeliverTo": null,
-            "DeliveryAddressId": null,
-            "DeliveryAddress": null,
-            "Address": {
-                "Id": null,
-                "Line1": null,
-                "Line2": null,
-                "CityMunicipalityId": null,
-                "CityMunicipality": {
-                    "Id": null,
-                    "Name": null,
-                    "StateProvinceId": null,
-                    "StateProvince": {
-                        "Id": null,
-                        "Name": null,
-                        "CountryId": null,
-                        "Country": {
-                            "Id": null,
-                            "Code": null,
-                            "Name": null
-                        },
-                    }
-                },
-                "PostalCode": null
-            },
-            "DeliveryDate": null,
-            "DeliveryTime": null,
-            "ReceivedByName": null,
-            "PickUpBussinessUnitId": null,
-            "PickupDate": null,
-            "PickupTime": null,
-            "DeliverToContactNo": null,
-            "OriginAddressId": null,
-            "ParentShipmentId": null,
-            "IsConsolidation": null,
-            "IsMultipleDelivery": null,
-            "TransportStatusId": null,
-            "TransportStatusRemarks": null,
-            "CreatedDate": null,
-            "LastUpdatedDate": null,
-            "CreatedByUserId": null,
-            "LastUpdatedByUserId": null
-        }
-
-        $scope.shipmentItems.push($scope.shipmentItem);
-    };
 
     // SHOW MODAL
     $scope.showModal = function (panel) {
@@ -284,37 +150,30 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 //    $scope.pickupAddressDataDefinition.ActionMode = "View";
                 //    return true;
                 case "PreSubmit":
-                    
+
                         $scope.airFreightSubmitDefinition.DataItem = angular.copy($scope.airFreightItem);
-                        //console.log($scope.airFreightSubmitDefinition.DataItem);
+                        $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments = angular.copy($scope.AirFreightShipments);
+                    //console.log($scope.AirFreightShipments);
+                        
                     return true;
                 case "PreSave":
-                    console.log($scope.airFreightSubmitDefinition.DataItem);
-                    //delete $scope.airFreightSubmitDefinition.DataItem.Airline;
-                    //delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit;
-                    //delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit1;
-                    //delete $scope.airFreightSubmitDefinition.DataItem.OriginalBusinessUnitName;
-                    //delete $scope.airFreightSubmitDefinition.DataItem.DestinationBusinessUnitName;
+                    
+                        delete $scope.airFreightSubmitDefinition.DataItem.Id;
+                        delete $scope.airFreightSubmitDefinition.DataItem.Airline;
+                        delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit;
+                        delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit1;
+                        delete $scope.airFreightSubmitDefinition.DataItem.OriginBusinessUnitName;
+                        delete $scope.airFreightSubmitDefinition.DataItem.DestinationBusinessUnitName;
+                        for (var i = 0; i < $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments.length; i++) {
+                            delete $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments[i].Shipment;
+                        }
+                        //console.log($scope.airFreightSubmitDefinition.DataItem);
                     return true;
                 case "PostSave":
-                    //var addressHolder = $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality;
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality = {};
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Id = addressHolder[0].Id;
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name = addressHolder[0].Name;
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince = {};
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Id = addressHolder[0].StateProvince.Id;
-                    //$scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name = addressHolder[0].StateProvince.Name;
-                    //addressHolder = {};
-                    //$scope.shipmentItem.Id = $scope.shipmentSubmitDefinition.DataItem.Id;
-                    //$scope.shipmentItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
-                    //$scope.shipmentItem.DeliveryAddressId = $scope.shipmentSubmitDefinition.DataItem.DeliveryAddressId;
-                    //$scope.shipmentItem.OriginAddressId = $scope.shipmentSubmitDefinition.DataItem.OriginAddressId;
-                    //$scope.shipmentItem.Address.Id = $scope.shipmentSubmitDefinition.DataItem.Address.Id;
-                    //$scope.shipmentItem.Address1.Id = $scope.shipmentSubmitDefinition.DataItem.Address1.Id;
-                    //$scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
-                    console.log($scope.airFreightSubmitDefinition.DataItem);
+                    
                     alert("Successfully Saved.");
                     //$scope.onEDV();
+                    $scope.loadAirFreightDataGrid();
                     $scope.submitButtonText = "Submit";
                     $scope.airFreightSubmitDefinition.Type = "Edit";
                     $scope.viewOnly = true;
@@ -376,15 +235,15 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.airFreightResetData = function () {
-            $scope.shipmentItem = {
+            $scope.airFreightItem = {
                 "Id": null,
                 "AirlineId": null,
                 "Airline": {
                     "Id": null,
                     "Name": null
                 },
-                "AirlineWaybillNumber": null,
-                "AirlineWaybillDate": null,
+                "AirWaybillNumber": null,
+                "AirWaybillDate": null,
                 "EstimatedDepartureDate": null,
                 "EstimatedDepartureTime": null,
                 "EstimatedArrivalDate": null,
@@ -408,10 +267,21 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "CreatedDate": null,
                 "LastUpdatedDate": null,
                 "CreatedByUserId": null,
-                "LastUpdatedByUserId": null,
-                "AirFreightShipments": []
+                "LastUpdatedByUserId": null
             }
         };
+
+        $scope.airFreightShipmentsResetData = function () {
+            $scope.airFreightShipmentItem = {
+                "Id": null,
+                "AirFreightId": null,
+                "ShipmentId": null,
+                "Shipment": $rootScope.shipmentObj(),
+                "CostAllocation": null
+            }
+
+            $scope.AirFreightShipments.push($scope.airFreightShipmentItem);
+        }
 
         $scope.airFreightShowFormError = function (error) {
             $scope.airFreightIsError = true;
@@ -614,7 +484,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                             //{ "Index": 9, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
                 ],//Contains the Criteria definition
                 "Multiple": false,
-                "AutoLoad": true,
+                "AutoLoad": false,
                 "ClearData": false,
                 "SetSourceToNull": false
             }
@@ -727,19 +597,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.shipmentOtherActions = function (action) {
             switch (action) {
                 case "PostEditAction":
-                    //$scope.seaFreightSubmitDefinition.Type = "Edit";
-                    $scope.shipmentItem.Id = $scope.shipmentDataDefinition.DataItem.Id;
-                    $scope.shipmentItem.TotalCBM = $scope.shipmentDataDefinition.DataItem.TotalCBM;
-                    $scope.shipmentItem.Customer.Code = $scope.shipmentDataDefinition.DataItem.Customer.Code;
-                    $scope.shipmentItem.Customer.Name = $scope.shipmentDataDefinition.DataItem.Customer.Name;
-                    $scope.shipmentItem.Quantity = $scope.shipmentDataDefinition.DataItem.Quantity;
-                    $scope.shipmentItem.DeliveryDate = $scope.shipmentDataDefinition.DataItem.DeliveryDate;
-                    $scope.shipmentItem.DeliveryTime = $scope.shipmentDataDefinition.DataItem.DeliveryTime;
-                    $scope.shipmentItem.Description = $scope.shipmentDataDefinition.DataItem.Description;
-                    $scope.shipmentItem.DeliverTo = $scope.shipmentDataDefinition.DataItem.DeliverTo;
-                    $scope.shipmentItem.DeliverToContactNo = $scope.shipmentDataDefinition.DataItem.DeliverToContactNo;
-                    $scope.shipmentItem.DeliveryAddress = $scope.shipmentDataDefinition.DataItem.Address.Line1 + ' ' + $scope.shipmentDataDefinition.DataItem.Address.Line2;
-                    //console.log($scope.shipmentItem);
+                    $scope.airFreightShipmentItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
+                    $scope.airFreightShipmentItem.Shipment = $scope.shipmentDataDefinition.DataItem;
                     $scope.closeModal();
                     return true;
                 default: return true;
@@ -793,7 +652,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                             { "Index": 0, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
                 ],//Contains the Criteria definition
                 "Multiple": false,
-                "AutoLoad": true,
+                "AutoLoad": false,
                 "ClearData": false,
                 "SetSourceToNull": false
             }
@@ -934,8 +793,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             $scope.airFreightItem.OriginBusinessUnitId = buo.Id;
             $scope.airFreightItem.OriginBusinessUnitName = buo.Name;
         } else {
-            $scope.airFreightItem.OriginalBusinessUnitId = null;
-            $scope.airFreightItem.OriginalBusinessUnitName = null;
+            $scope.airFreightItem.OriginBusinessUnitId = null;
+            $scope.airFreightItem.OriginBusinessUnitName = null;
         }
         jQuery.magnificPopup.close();
     };
@@ -967,20 +826,16 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     var init = function () {
         $scope.focusOnTop();
         $scope.initBusinessUnits();
-        $scope.initAirFreightItem();
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
         $scope.loadAirlineDataGrid();
         $scope.loadAirlineFiltering();
         $scope.loadAirFreightDataGrid();
         $scope.loadAirFreightFiltering();
-        $scope.addNewShipment();
-
-        if ($scope.shipmentFilteringDefinition.AutoLoad == true)
-            $scope.shipmentDataDefinition.Retrieve = true;
-
-        if ($scope.airlineFilteringDefinition.AutoLoad == true)
-            $scope.airlineDataDefinition.Retrieve = true;
+        $scope.airFreightResetData();
+        $scope.airFreightShipmentsResetData();
+        $scope.shipmentDataDefinition.Retrieve = true;
+        $scope.airlineDataDefinition.Retrieve = true;
     };
 
     init();
