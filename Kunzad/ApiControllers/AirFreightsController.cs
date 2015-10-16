@@ -88,6 +88,7 @@ namespace Kunzad.ApiControllers
                     afs.CreatedDate = DateTime.Now;
                     db.AirFreightShipments.Add(afs);
                 }
+                airFreight.CreatedDate = DateTime.Now;
                 db.AirFreights.Add(airFreight);
                 db.SaveChanges();
                 response.status = "SUCCESS";

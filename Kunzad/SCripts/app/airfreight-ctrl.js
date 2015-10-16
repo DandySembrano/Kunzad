@@ -151,16 +151,16 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 //    $scope.pickupAddressDataDefinition.ViewOnly = false;
                 //    $scope.pickupAddressDataDefinition.ActionMode = "Create";
                 //    return true;
-                //case "PostEditAction":
+                case "PostEditAction":
                 //    $scope.onEDV();
-                //    $scope.viewOnly = false;
-                //    $scope.submitButtonText = "Submit";
-                //    $scope.shipmentSubmitDefinition.Type = "Edit";
+                    $scope.viewOnly = false;
+                    $scope.submitButtonText = "Update";
+                    $scope.airfreightSubmitDefinition.Type = "Edit";
                 //    $scope.deliveryAddressDataDefinition.ViewOnly = false;
                 //    $scope.deliveryAddressDataDefinition.ActionMode = "Edit";
                 //    $scope.pickupAddressDataDefinition.ViewOnly = false;
                 //    $scope.pickupAddressDataDefinition.ActionMode = "Edit";
-                //    return true;
+                    return true;
                 //case "PostDeleteAction":
                 //    $scope.onEDV();
                 //    $scope.viewOnly = true;
@@ -185,7 +185,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
                         $scope.airFreightSubmitDefinition.DataItem = angular.copy($scope.airFreightItem);
                         $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments = angular.copy($scope.AirFreightShipments);
-                    //console.log($scope.AirFreightShipments);
                         
                     return true;
                 case "PreSave":
@@ -196,17 +195,19 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                         delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit1;
                         delete $scope.airFreightSubmitDefinition.DataItem.OriginBusinessUnitName;
                         delete $scope.airFreightSubmitDefinition.DataItem.DestinationBusinessUnitName;
+
                         for (var i = 0; i < $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments.length; i++) {
                             delete $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments[i].Shipment;
                         }
-                        //console.log($scope.airFreightSubmitDefinition.DataItem);
+
                     return true;
                 case "PostSave":
                     
                     alert("Successfully Saved.");
                     //$scope.onEDV();
-                    $scope.loadAirFreightDataGrid();
-                    $scope.submitButtonText = "Submit";
+                    
+                    //$scope.loadAirFreightDataGrid();
+                    $scope.submitButtonText = "Update";
                     $scope.airFreightSubmitDefinition.Type = "Edit";
                     $scope.viewOnly = true;
                     return true;
@@ -515,7 +516,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.initShipmentFilteringParameters = function () {
         $scope.initShipmentFilteringDefinition = function () {
             $scope.shipmentFilteringDefinition = {
-                "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
+                "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&source=air&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&source=air&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
                 "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
@@ -563,18 +564,20 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
                     if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                         $scope.shipmentDataDefinition.CurrentPage = 1;
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=air&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
                     else if ($scope.shipmentDataDefinition.EnablePagination == true) {
                         $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=air&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
                         //Scroll
                     else {
                         if ($scope.shipmentFilteringDefinition.ClearData)
                             $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&source=air&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
+
+                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.airFreightItem.OriginBusinessUnitId;
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -882,7 +885,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.loadAirFreightFiltering();
         $scope.airFreightResetData();
         $scope.airFreightShipmentsResetData();
-        $scope.shipmentDataDefinition.Retrieve = true;
+        //$scope.shipmentDataDefinition.Retrieve = true;
         $scope.airlineDataDefinition.Retrieve = true;
     };
 
