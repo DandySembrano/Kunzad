@@ -286,7 +286,15 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 "LastUpdatedDate": null,
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null
-            }
+            };
+            //Temporary set BusinessUnit
+            $scope.seafreightItem.BusinessUnit1 = {
+                "Id": 17,
+                "Code": "BU0007",
+                "Name": "Manila"
+            };
+            $scope.seafreightItem.OriginBusinessUnitId = $scope.seafreightItem.BusinessUnit1.Id;
+
 
         };
 
