@@ -15,6 +15,8 @@ namespace Kunzad.ApiControllers
     public class AirFreightsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
+        private Response response = new Response();
+        private int pageSize = AppSettingsGet.PageSize;
 
         // GET: api/AirFreights
         public IQueryable<AirFreight> GetAirFreights()
@@ -74,15 +76,30 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(AirFreight))]
         public IHttpActionResult PostAirFreight(AirFreight airFreight)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            try
             {
-                return BadRequest(ModelState);
+                foreach (AirFreightShipment afs in airFreight.AirFreightShipments)
+                {
+                    afs.CreatedDate = DateTime.Now;
+                    db.AirFreightShipments.Add(afs);
+                }
+                db.AirFreights.Add(airFreight);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+
+                response.objParam1 = airFreight;
             }
-
-            db.AirFreights.Add(airFreight);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = airFreight.Id }, airFreight);
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
+            //return CreatedAtRoute("DefaultApi", new { id = airFreight.Id }, airFreight);
         }
 
         // DELETE: api/AirFreights/5

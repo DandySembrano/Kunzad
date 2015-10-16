@@ -209,7 +209,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "Retrieve": false, //By default
                 "DataItem": {},
                 "DataTarget": "CourierDeliveryMenu",
-                "DataTarget2": "CourierDeliveryMenu1",
+                "DataTarget2": "CourierDeliveryMenu2",
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
@@ -891,8 +891,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "DoPagination": false, //By default
                 "Retrieve": false, //By default
                 "DataItem": {},
-                "DataTarget": "CourierUnitMenu",
-                "DataTarget": "CourierUnitMenu2",
+                "DataTarget": "CourierMenu",
+                "DataTarget2": "CourierMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
@@ -1092,8 +1092,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "DoPagination": false, //By default
                 "Retrieve": false, //By default
                 "DataItem": {},
-                "DataTarget": "ShipmentUnitMenu",
-                "DataTarget": "ShipmentUnitMenu2",
+                "DataTarget": "ShipmentMenu",
+                "DataTarget2": "ShipmentMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
@@ -1293,6 +1293,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "Retrieve": false, //By default
                 "DataItem": {},
                 "DataTarget": "BusinessUnitMenu",
+                "DataTarget2": "BusinessUnitMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
@@ -1346,18 +1347,26 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             $scope.courierDeliveryDataDefinition.Retrieve = true;
     };
 
+    var listener = $interval(function () {
+                    //For responsive modal
+                    var width = window.innerWidth;
+                    if (width < 1030) {
+                        $scope.modalStyle = "height:520px; max-height:100%";
+                    }
+                    else {
+                        $scope.modalStyle = "height:450px; max-height:100%";
+                    }
+                }, 100);
+
+    $scope.listener = function () {
+        $interval.cancel(listener);
+        listener = undefined;
+    };
+
+    $scope.$on('$destroy', function () {
+        $scope.listener();
+    });
+
     //Initialize needed functions during page load
     init();
-
-    $interval(function () {
-        //For responsive modal
-        var width = window.innerWidth;
-        if (width < 1030) {
-            $scope.modalStyle = "height:520px; max-height:100%";
-        }
-        else {
-            $scope.modalStyle = "height:450px; max-height:100%";
-        }
-    }, 100);
-
 });

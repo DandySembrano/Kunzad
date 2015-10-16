@@ -77,13 +77,33 @@ namespace Kunzad.ApiControllers
             return shipment;
         }
         
-        //Dynamic filtering api/Shipments?page=1
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-        public IHttpActionResult GetShipment(int param1, string type, [FromUri]List<Shipment> shipment)
+        public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
             this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), ref shipments);
+
+            if (shipments != null)
+                return Ok(shipments);
+            else
+                return Ok();
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
+        {
+            //Filtering for shipments that will be displayd in Sea Freight, Air Freight and Courier Delivery Module
+            Shipment[] shipments = new Shipment[pageSize];
+            int serviceCategoryId;
+            if(source.ToLower().Equals("air"))
+                serviceCategoryId = 1;
+            else if(source.ToLower().Equals("sea"))
+                serviceCategoryId = 7;
+            else //courier
+                serviceCategoryId = 6;
+
+            this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), serviceCategoryId, ref shipments);
 
             if (shipments != null)
                 return Ok(shipments);
@@ -374,8 +394,61 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.PickUpBussinessUnitId == null || shipment.PickUpBussinessUnitId == 0 ? true : s.PickUpBussinessUnitId == shipment.PickUpBussinessUnitId)
                 .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
-                .OrderByDescending(s => s.CreatedDate)
+                .OrderBy(s => s.Id)
                 .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
+            shipments = filteredShipments;
+        }
+
+        public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, int serviceCategoryId, ref Shipment[] shipments)
+        {
+           
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredShipments = db.Shipments
+                .Include(s => s.Address.CityMunicipality.StateProvince)
+                .Include(s => s.Address1)
+                .Include(s => s.Address1.CityMunicipality.StateProvince)
+                .Include(s => s.BusinessUnit)
+                .Include(s => s.BusinessUnit1)
+                .Include(s => s.Service)
+                .Include(s => s.ShipmentType)
+                .Include(s => s.Customer)
+                .Include(s => s.Customer.CustomerAddresses)
+                .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                .Include(s => s.Customer.CustomerContacts)
+                .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
+                .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                .Where(s => s.LastCheckInId == null ? true : (from ci in db.CheckIns where ci.Id == s.LastCheckInId select new { ci.CheckInBusinessUnitId }).FirstOrDefault().CheckInBusinessUnitId == s.BusinessUnitId)
+                .Where(s => s.Service.ServiceCategoryId == serviceCategoryId)
+                .Where(s => s.TransportStatusId != (int)Status.TransportStatus.Cancel && s.TransportStatusId != (int)Status.TransportStatus.Close)
+                .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)
+                .Where(s => shipment.CreatedDate == null || shipment.CreatedDate == defaultDate ? true : s.CreatedDate >= shipment.CreatedDate && s.CreatedDate <= shipment1.CreatedDate)
+                .Where(s => shipment.PickupDate == null || shipment.PickupDate == defaultDate ? true : s.PickupDate >= shipment.PickupDate && s.PickupDate <= shipment1.PickupDate)
+                .Where(s => shipment.BusinessUnitId == null || shipment.BusinessUnitId == 0 ? true : s.BusinessUnitId == shipment.BusinessUnitId)
+                .Where(s => shipment.CustomerId == null || shipment.CustomerId == 0 ? true : s.CustomerId == shipment.CustomerId)
+                .Where(s => shipment.ServiceId == null || shipment.ServiceId == 0 ? true : s.ServiceId == shipment.ServiceId)
+                .Where(s => shipment.ShipmentTypeId == null || shipment.ShipmentTypeId == 0 ? true : s.ShipmentTypeId == shipment.ShipmentTypeId)
+                .Where(s => shipment.PickUpBussinessUnitId == null || shipment.PickUpBussinessUnitId == 0 ? true : s.PickUpBussinessUnitId == shipment.PickUpBussinessUnitId)
+                .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
+                .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
+                .OrderBy(s => s.Id)
+                .Skip(skip).Take(pageSize).AsQueryable().AsNoTracking().ToArray();
             shipments = filteredShipments;
         }
     }

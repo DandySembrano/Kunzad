@@ -77,6 +77,7 @@ kunzadApp.directive('dirDataGrid2', function () {
             $scope.selectedIndex = null;
             $scope.gridOptions = {};
             $scope.scrolled = false;
+
             //function that focus on top of the page
             $scope.focusOnTop = function () {
                 $(document).ready(function () {
@@ -173,6 +174,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                         ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.manipulateEditableCell(col);"  context-menu="grid.appScope.setSelected(row.entity.Id)" data-target= "{{grid.appScope.datadefinition.DataTarget}}"></div>' +
                       '</div>';
             };
+
             //Process Pagination
             $scope.processPagination = function () {
                 if ($scope.datadefinition.CurrentPage <= 1)
@@ -461,7 +463,7 @@ kunzadApp.directive('dirDataGrid2', function () {
             }
 
             //Listener that will check if user Submit an action
-            $interval(function () {
+            var dataGrid2Listener = $interval(function () {
                 if (angular.isDefined($scope.datadefinition)) {
                     if (!$scope.checkIfEditable())
                         //Update grid data
@@ -483,6 +485,15 @@ kunzadApp.directive('dirDataGrid2', function () {
                         $scope.createContextMenu();
                 }
             }, 100);
+
+            $scope.dataGrid2Listener = function () {
+                $interval.cancel(dataGrid2Listener);
+                dataGrid2Listener = undefined;
+            };
+
+            $scope.$on('$destroy', function () {
+                $scope.dataGrid2Listener();
+            });
 
             //Call createContextMenu, actionForm('Load') and processSorting function
             var init = function () {

@@ -92,6 +92,7 @@ namespace Kunzad.ApiControllers
             {
                 //trucking.TruckingStatusId = '1';
                 //trucking.LastUpdatedDate = DateTime.Now;
+                //trucking.TruckingStatusId = Status.TruckingStatus.Waybill;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
