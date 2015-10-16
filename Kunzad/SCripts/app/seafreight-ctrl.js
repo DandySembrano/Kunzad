@@ -29,7 +29,13 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         $scope.showModal = function (panel, type) {
             switch (type) {
-                case 'origin' || 'destination':
+                case 'origin':
+                    $scope.loadBusinessUnitDataGrid();
+                    $scope.loadBusinessUnitFiltering();
+                    $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
+                    $scope.businessUnitDataDefinition.Retrieve = true;
+                    break;
+                case 'destination':
                     $scope.loadBusinessUnitDataGrid();
                     $scope.loadBusinessUnitFiltering();
                     $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
@@ -65,12 +71,42 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     break;
             }
 
-            openModalPanel(panel);
+            openModalPanel2(panel);
             $scope.modalType = type;
         };
         
         $scope.closeModal = function () {
             jQuery.magnificPopup.close();
+            if (angular.isDefined($scope.businessUnitDataDefinition)) {
+                $scope.businessUnitDataDefinition.DataList = [];
+                $scope.businessUnitFilteringDefinition.DataList = [];
+                $rootScope.removeElement("businessUnitGrid");
+                $rootScope.removeElement("businessUnitFilter");
+            }
+            if (angular.isDefined($scope.shippingLineDataDefinition)) {
+                $scope.shippingLineDataDefinition.DataList = [];
+                $scope.shippingLineFilteringDefinition.DataList = [];
+                $rootScope.removeElement("shippingLineGrid");
+                $rootScope.removeElement("shippingLineFilter");
+            }
+            if (angular.isDefined($scope.vesselDataDefinition)) {
+                $scope.vesselDataDefinition.DataList = [];
+                $scope.vesselFilteringDefinition.DataList = [];
+                $rootScope.removeElement("vesselGrid");
+                $rootScope.removeElement("vesselFilter");
+            }
+            if (angular.isDefined($scope.vesselVoyageDataDefinition)) {
+                $scope.vesselVoyageDataDefinition.DataList = [];
+                $scope.vesselVoyageFilteringDefinition.DataList = [];
+                $rootScope.removeElement("vesselVoyageGrid");
+                $rootScope.removeElement("vesselVoyageFilter");
+            }
+            if (angular.isDefined($scope.shipmentDataDefinition)) {
+                $scope.shipmentDataDefinition.DataList = [];
+                $scope.shipmentFilteringDefinition.DataList = [];
+                $rootScope.removeElement("shipmentGrid");
+                $rootScope.removeElement("shipmentFilter");
+            }
         };
 
         //same with rootScope.shipmentObj
@@ -544,7 +580,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
     
         //initialize businessUnit filtering parameters
         $scope.initBusinessUnitFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="businessUnitFilteringDefinition"' +
+            html = '<dir-filtering id="businessUnitFilter" filterdefinition="businessUnitFilteringDefinition"' +
                                     'filterlistener="businessUnitDataDefinition.Retrieve"' +
                                     'otheractions="businessUnitOtherActionsFiltering(action)"' +
                    '</dir-filtering>';
@@ -690,7 +726,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //function that will be invoked during compiling of businessUnit datagrid to DOM
         $scope.compileBusinessUnitDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "businessUnitDataDefinition"' +
+            var html = '<dir-data-grid2 id="businessUnitGrid" datadefinition = "businessUnitDataDefinition"' +
                                         'submitdefinition   = "businessUnitSubmitDefinition"' +
                                         'otheractions       = "businessUnitOtherActions(action)">' +
                         '</dir-data-grid2>';
@@ -708,7 +744,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //initialize shippingline filtering parameters
         $scope.initShippingLineFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="shippingLineFilteringDefinition"' +
+            html = '<dir-filtering id="shippingLineFilter"  filterdefinition="shippingLineFilteringDefinition"' +
                                     'filterlistener="shippingLineDataDefinition.Retrieve"' +
                                     'otheractions="shippingLineOtherActionsFiltering(action)"' +
                    '</dir-filtering>';
@@ -858,7 +894,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
         
         //function that will be invoked during compiling of shippingLine datagrid to DOM
         $scope.compileShippingLineDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "shippingLineDataDefinition"' +
+            var html = '<dir-data-grid2 id="shippingLineGrid" datadefinition      = "shippingLineDataDefinition"' +
                                         'submitdefinition   = "shippingLineSubmitDefinition"' +
                                         'otheractions       = "shippingLineOtherActions(action)">' +
                         '</dir-data-grid2>';
@@ -876,7 +912,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //initialize shippingline filtering parameters
         $scope.initVesselFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="vesselFilteringDefinition"' +
+            html = '<dir-filtering  id="vesselFilter" filterdefinition="vesselFilteringDefinition"' +
                                     'filterlistener="vesselDataDefinition.Retrieve"' +
                                     'otheractions="vesselOtherActionsFiltering(action)"' +
                    '</dir-filtering>';
@@ -1028,7 +1064,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //function that will be invoked during compiling of vessel datagrid to DOM
         $scope.compileVesselDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "vesselDataDefinition"' +
+            var html = '<dir-data-grid2 id="vesselGrid" datadefinition      = "vesselDataDefinition"' +
                                         'submitdefinition   = "vesselSubmitDefinition"' +
                                         'otheractions       = "vesselOtherActions(action)">' +
                         '</dir-data-grid2>';
@@ -1047,7 +1083,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //initialize shippingline filtering parameters
         $scope.initVesselVoyageFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="vesselVoyageFilteringDefinition"' +
+            html = '<dir-filtering id="vesselVoyageFilter"  filterdefinition="vesselVoyageFilteringDefinition"' +
                                     'filterlistener="vesselVoyageDataDefinition.Retrieve"' +
                                     'otheractions="vesselVoyageOtherActionsFiltering(action)"' +
                    '</dir-filtering>';
@@ -1197,7 +1233,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //function that will be invoked during compiling of vesselVoyage datagrid to DOM
         $scope.compileVesselVoyageDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "vesselVoyageDataDefinition"' +
+            var html = '<dir-data-grid2 id="vesselVoyageGrid"  datadefinition      = "vesselVoyageDataDefinition"' +
                                         'submitdefinition   = "vesselVoyageSubmitDefinition"' +
                                         'otheractions       = "vesselVoyageOtherActions(action)">' +
                         '</dir-data-grid2>';
@@ -1368,7 +1404,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //initialize businessUnit filtering parameters
         $scope.initShipmentFilteringContainter = function () {
-            html = '<dir-filtering  filterdefinition="shipmentFilteringDefinition"' +
+            html = '<dir-filtering id="shipmentFilter"  filterdefinition="shipmentFilteringDefinition"' +
                                     'filterlistener="shipmentDataDefinition.Retrieve"' +
                                     'otheractions="shipmentOtherActionsFiltering(action)"' +
                    '</dir-filtering>';
@@ -1434,6 +1470,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                                 $scope.shipmentDataDefinition.DataList = [];
                             $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
                         }
+
+
                         return true;
                     case 'PostFilterData':
                         /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -1541,7 +1579,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
         //function that will be invoked during compiling of datagrid to DOM
         $scope.compileShipmentDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "shipmentDataDefinition"' +
+            var html = '<dir-data-grid2 id="shipmentGrid" datadefinition      = "shipmentDataDefinition"' +
                                         'submitdefinition   = "shipmentSubmitDefinition"' +
                                         'otheractions       = "shipmentOtherActions(action)">' +
                         '</dir-data-grid2>';
@@ -1607,48 +1645,10 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 });
         };
         
-        $scope.initDetail = function () {
-            $scope.seaFreightShipmentItem = {
-                "Id": null,
-                "SeaFreightId": -1,
-                "ShipmentId": null,
-                "Shipment": {
-                    "Id": null,
-                    "BusinessUnitId": null,
-                    "ServiceId": null,
-                    "Service": {
-                        "Id": null,
-                        "Name": null
-                    },
-                    "ShipmentTypeId": null,
-                    "ShipmentType": {
-                        "Id": null,
-                        "Name": null
-                    },
-                    "PaymentMode": null,
-                    "CustomerId": null,
-                    "Customer": {
-                        "Id": null,
-                        "Name": null
-                    },
-                    "Quantity": null,
-                    "TotalCBM": null,
-                    "Description": null,
-                    "DeliverTo": null
-                },
-                "CostAllocation": null,
-                "CreatedDate": null,
-                "LastUpdatedDate": null,
-                "CreatedByUserId": null,
-                "LastUpdatedByUserId": null,
-            };
-            $scope.SeaFreightShipmentGridOptions.data.push($scope.seaFreightShipmentItem);
-        };
-        
         //add an empty row to sea freight shipment detail
         $scope.addSeaFreightShipmentItem = function () {
             $scope.initShipmentList();
-            openModalPanel("#shipment-list-modal");
+            openModalPanel2("#shipment-list-modal");
             //$scope.SeaFreightShipmentGridOptions.data.push({ ShipmentNo: null, ShipmentType: null, CustomerName: null, ShipmentDescription: null, Quantity: null, CBM: null, Consignee : null,FreightCost: null});
         }
 
