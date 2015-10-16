@@ -106,7 +106,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     };
 
     //Validate courier delivery details
-    $scope.validCourierDeliveryDetails = function () {
+    $scope.validateCourierDeliveryDetails = function () {
+        if ($scope.courierDeliveryDetailsDataDefinition.DataList.length == 1
+            && $scope.courierDeliveryDetailsDataDefinition.DataList[0].ShipmentId == 0
+            && $scope.courierDeliverySubmitDefinition.Type == "Edit")
+            return true;
         for (var i = 0; i < $scope.courierDeliveryDetailsDataDefinition.DataList.length; i++)
         {
             if ($scope.courierDeliveryDetailsDataDefinition.DataList[i].ShipmentId == 0) {
@@ -146,7 +150,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     };
 
     //Disable typing
-    $('#courier,#calldate,#calltime').keypress(function (key) {
+    $('#businessUnit,#courier,#calldate,#calltime').keypress(function (key) {
         return false;
     });
 
@@ -271,8 +275,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                                 $scope.submitButtonText = "Submit";
                                 $scope.selectedTab = $scope.tabPages[0];
                                 $scope.courierDeliverySubmitDefinition.Type = "Edit";
-                                //Set control no holder in case user will add item in list
-                                $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
+                                if ($scope.courierDeliveryDetailsDataDefinition.DataList.length > 0)
+                                    //Set control no holder in case user will add item in list
+                                    $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
+                                else
+                                    $scope.courierDeliveryDetailsResetData();
                             }
                         }, 100);
                     }
@@ -347,7 +354,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     }
                     return true;
                 case "PreSubmit":
-                    if (!$scope.validCourierDeliveryDetails())
+                    if (!$scope.validateCourierDeliveryDetails())
                         return false;
                     $scope.courierDeliverySubmitDefinition.DataItem = angular.copy($scope.courierDeliveryItem);
                     return true;
@@ -504,9 +511,10 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
                 "Source": [
                             { "Index": 0, "Label": "Delivery Id", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                            { "Index": 1, "Label": "Courier", "Column": "CourierId", "Values": ["GetCourier"], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 2, "Label": "Business Unit", "Column": "BusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 3, "Label": "Call Date", "Column": "CallDate", "Values": [], "From": null, "To": null, "Type": "Date" }
+                            { "Index": 1, "Label": "Delivery Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            { "Index": 2, "Label": "Courier", "Column": "CourierId", "Values": ["GetCourier"], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 3, "Label": "Business Unit", "Column": "BusinessUnitId", "Values": ['GetBusinessUnit'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 4, "Label": "Call Date", "Column": "CallDate", "Values": [], "From": null, "To": null, "Type": "Date" }
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
@@ -569,7 +577,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     if ($scope.courierDeliveryToggle == true)
                         $scope.hideCourierDeliveryToggle();
                     return true;
-                case 'GetBusinessList':
+                case 'GetBusinessUnit':
+                    $scope.modalWatcher = "GetBusinessUnit";
                     //Show modal here then after user choose a specific data to filter pass the to From field in the source where Values[0] is equal to the action, ex. GetBusinessUnitList
                     //Use if filtering criteria is modal
                     $scope.showBusinessUnit();
@@ -716,7 +725,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "Id": null,
                 "CourierTransactionId": -1,
                 "ShipmentId": 0,
-                "Shipment": [$rootScope.shipmentObj()],
+                "Shipment": [{}],
                 "CostAllocation": null
             }
 
@@ -964,7 +973,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     $scope.initShipmentFilteringParameters = function () {
         $scope.initShipmentFilteringDefinition = function () {
             $scope.shipmentFilteringDefinition = {
-                "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
+                "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&source=courier&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
                 "DataList": [], //Contains the data retrieved based on the criteria
                 "DataItem1": $scope.DataItem1, //Contains the parameter value index 
                 "Source": [
@@ -1006,23 +1015,25 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     }
                     if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                         $scope.shipmentDataDefinition.CurrentPage = 1;
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=courier&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
                     else if ($scope.shipmentDataDefinition.EnablePagination == true) {
                         $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=courier&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                     }
                     //Scroll
                     else {
                         if ($scope.shipmentFilteringDefinition.ClearData)
                             $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=courier&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
+                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.courierDeliveryItem.BusinessUnitId;
                     return true;
                 case 'PostFilterData':
-                    /*Note: if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then 
-                            set DoPagination to true
-                      if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    /*
+                        Note:  if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then set DoPagination to true
+                               if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
+                    */
                     //Required
                     $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
@@ -1306,8 +1317,15 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $scope.businessUnitOtherActions = function (action) {
             switch (action) {
                 case 'PostEditAction':
-                    $scope.courierDeliveryFilteringDefinition.Source[2].From = $scope.businessUnitDataDefinition.DataItem.Id;
-                    $scope.courierDeliveryFilteringDefinition.Source[2].To = $scope.businessUnitDataDefinition.DataItem.Name;
+                    if ($scope.modalWatcher != "GetBusinessUnit") {
+                        $scope.courierDeliveryItem.BusinessUnit[0]  = $scope.businessUnitDataDefinition.DataItem;
+                        $scope.courierDeliveryItem.BusinessUnitId   = $scope.businessUnitDataDefinition.DataItem.Id;
+                    }
+                    else {
+                        $scope.courierDeliveryFilteringDefinition.Source[2].From = $scope.businessUnitDataDefinition.DataItem.Id;
+                        $scope.courierDeliveryFilteringDefinition.Source[2].To = $scope.businessUnitDataDefinition.DataItem.Name;
+                    }
+                    $scope.modalWatcher = "";
                     $scope.closeModal();
                     return true;
                 default: return true;

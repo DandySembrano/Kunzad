@@ -53,17 +53,19 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult PutCourierTransaction(int id, CourierTransaction courierTransaction)
         {
             response.status = "FAILURE";
-            if (!ModelState.IsValid || id != courierTransaction.Id)
+            if (courierTransaction.CourierTransactionDetails.ElementAt(0).Id != 0)
             {
-                response.message = "Bad request.";
-                return Ok(response);
+                if ((!ModelState.IsValid || id != courierTransaction.Id))
+                {
+                    response.message = "Bad request.";
+                    return Ok(response);
+                }
             }
 
             try
             {
                 bool flag;
                 var currentCourierTransactionDetails = db.CourierTransactionDetails.Where(ctd => ctd.CourierTransactionId == courierTransaction.Id);
-
                 foreach (CourierTransactionDetail ctd in currentCourierTransactionDetails)
                 {
                     flag = false;
@@ -78,6 +80,10 @@ namespace Kunzad.ApiControllers
                     }
                     if (!flag)
                     {
+                        //Update shipment status to Open
+                        var shipment = db.Shipments.Find(ctd.ShipmentId);
+                        var shipmentEdited = shipment;
+                        shipmentEdited.LoadingStatusId = (int)Status.LoadingStatus.Open;
                         //remove deleted Courier Transaction Detail(s)
                         db.CourierTransactionDetails.Remove(ctd);
                     }
@@ -101,7 +107,7 @@ namespace Kunzad.ApiControllers
                         }
                     }
                     //add courier transaction detail
-                    if (!flag)
+                    if (!flag && ctd.Id != 0)
                     {
                         ctd.CreatedDate = DateTime.Now;
                         db.CourierTransactionDetails.Add(ctd);
@@ -147,12 +153,20 @@ namespace Kunzad.ApiControllers
             {
                 courierTransaction.CreatedDate = DateTime.Now;
                 db.CourierTransactions.Add(courierTransaction);
+
                 foreach (CourierTransactionDetail ctd in courierTransaction.CourierTransactionDetails)
                 {
                     ctd.CreatedDate = DateTime.Now;
                     db.CourierTransactionDetails.Add(ctd);
+
+                    //Update shipment loading status to Loaded
+                    var shipment = db.Shipments.Find(ctd.ShipmentId);
+                    var shipmentEdited = shipment;
+                    shipmentEdited.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
+                    db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+                    db.Entry(shipment).State = EntityState.Modified;
                 }
-                courierTransaction.CreatedDate = DateTime.Now;
+
                 db.SaveChanges();
                 response.status = "SUCCESS";
                 response.objParam1 = courierTransaction;
@@ -215,6 +229,7 @@ namespace Kunzad.ApiControllers
 
             var filteredCtrans = (from ct in db.CourierTransactions
                                   where courierTransaction.Id == null || courierTransaction.Id == 0 ? true : ct.Id == courierTransaction.Id
+                                  where courierTransaction.CreatedDate == null || courierTransaction.CreatedDate == defaultDate ? true : ct.CreatedDate >= courierTransaction.CreatedDate && ct.CreatedDate <= courierTransaction1.CreatedDate
                                   where courierTransaction.CourierId == null || courierTransaction.CourierId == 0 ? true : ct.CourierId == courierTransaction.CourierId
                                   where courierTransaction.BusinessUnitId == null || courierTransaction.BusinessUnitId == 0 ? true : ct.BusinessUnitId == courierTransaction.BusinessUnitId
                                   where courierTransaction.CallDate == null || courierTransaction.CallDate == defaultDate ? true : ct.CallDate >= courierTransaction.CallDate && ct.CallDate <= courierTransaction1.CallDate

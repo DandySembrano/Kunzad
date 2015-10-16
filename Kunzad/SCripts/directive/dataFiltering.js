@@ -197,6 +197,7 @@ kunzadApp.directive('dirFiltering', function () {
                             error: function (jqXHR) {
                                 $scope.isErrorFiltering = true;
                                 $scope.errorMessageFiltering = jqXHR.status;
+                                spinner.stop();
                             }
                         });
                     }
