@@ -344,10 +344,10 @@
             <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
         </li>
         <li>
-            <a style="{{seaFreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Edit')">Edit</a>
+            <a style="{{seafreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
         </li>
         <li>
-            <a style="{{seaFreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="actionForm('Delete')">Cancel</a>
+            <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostEditAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>

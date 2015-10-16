@@ -355,6 +355,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     case "PreAction":
                         return true;
                     case "PostCreateAction":
+                        $scope.submitButtonText = "Submit";
+                        $scope.seaFreightSubmitDefinition.Type = "Create";
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.seaFreightResetData();
                         $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
@@ -363,13 +365,102 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.viewOnly = false;
                         return true;
                     case "PostEditAction":
-                        $scope.seaFreightSubmitDefinition.Type = "Edit";
+                        //If user choose edit-menu in listing
+                        if (angular.isDefined($scope.seaFreightDataDefinition.DataItem.Id) && $scope.seafreightItem.Id != $scope.seaFreightDataDefinition.DataItem.Id) {
+                            $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
+                            $scope.seafreightItem = angular.copy($scope.seaFreightDataDefinition.DataItem);
+                            $scope.controlNoHolder = $scope.seafreightItem.Id;
+                            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+                            $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
+                            $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
+
+                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            var promise = $interval(function () {
+                                if ($scope.flagOnRetrieveDetails) {
+                                    $scope.flagOnRetrieveDetails = false;
+                                    $interval.cancel(promise);
+                                    promise = undefined;
+                                    $scope.viewOnly = false;
+                                    $scope.submitButtonText = "Submit";
+                                    $scope.selectedTab = $scope.tabPages[0];
+                                    $scope.seaFreightSubmitDefinition.Type = "Edit";
+                                    if ($scope.seaFreightShipmentsDataDefinition.DataList.length > 0)
+                                        //Set control no holder in case user will add item in list
+                                        $scope.controlNoHolder = $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1;
+                                    else
+                                        $scope.seaFreightShipmentsResetData();
+                                }
+                            }, 100);
+                        }
+                        else {
+                            $scope.viewOnly = false;
+                            $scope.submitButtonText = "Submit";
+                            $scope.selectedTab = $scope.tabPages[0];
+                            $scope.seaFreightSubmitDefinition.Type = "Edit";
+                        }
+                        $scope.enableSave = true;
                         return true;
                     case "PostDeleteAction":
-                        $scope.seaFreightSubmitDefinition.Type = "Delete";
+                        //If user choose edit-menu in listing
+                        if (angular.isDefined($scope.seaFreightDataDefinition.DataItem.Id) && $scope.seafreightItem.Id != $scope.seaFreightDataDefinition.DataItem.Id) {
+                            $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
+                            $scope.seafreightItem = angular.copy($scope.seaFreightDataDefinition.DataItem);
+                            $scope.controlNoHolder = $scope.seafreightItem.Id;
+                            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+                            $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
+                            $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
+
+                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            var promise = $interval(function () {
+                                if ($scope.flagOnRetrieveDetails) {
+                                    $scope.flagOnRetrieveDetails = false;
+                                    $interval.cancel(promise);
+                                    promise = undefined;
+                                    $scope.viewOnly = true;
+                                    $scope.submitButtonText = "Cancel";
+                                    $scope.selectedTab = $scope.tabPages[0];
+                                    $scope.seaFreightSubmitDefinition.Type = "Edit";
+                                }
+                            }, 100);
+                        }
+                        else {
+                            $scope.viewOnly = true;
+                            $scope.submitButtonText = "Cancel";
+                            $scope.selectedTab = $scope.tabPages[0];
+                            $scope.seaFreightSubmitDefinition.Type = "Edit";
+                        }
+                        $scope.enableSave = true;
                         return true;
                     case "PostViewAction":
-                        $scope.seaFreightSubmitDefinition.Type = "View";
+                        //If user choose edit-menu in listing
+                        if (angular.isDefined($scope.seaFreightDataDefinition.DataItem.Id) && $scope.seafreightItem.Id != $scope.seaFreightDataDefinition.DataItem.Id) {
+                            $scope.seaFreightShipmentsDataDefinition.DataList.splice(0, $scope.seaFreightShipmentsDataDefinition.DataList.length);
+                            $scope.seafreightItem = angular.copy($scope.seaFreightDataDefinition.DataItem);
+                            $scope.controlNoHolder = $scope.seafreightItem.Id;
+                            $scope.seafreightItem.Id = $rootScope.formatControlNo('', 15, $scope.seafreightItem.Id);
+                            $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
+                            $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
+
+                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            var promise = $interval(function () {
+                                if ($scope.flagOnRetrieveDetails) {
+                                    $scope.flagOnRetrieveDetails = false;
+                                    $interval.cancel(promise);
+                                    promise = undefined;
+                                    $scope.viewOnly = true;
+                                    $scope.submitButtonText = "Close";
+                                    $scope.selectedTab = $scope.tabPages[0];
+                                    $scope.seaFreightSubmitDefinition.Type = "View";
+                                }
+                            }, 100);
+
+                        }
+                        else {
+                            $scope.viewOnly = true;
+                            $scope.submitButtonText = "Close";
+                            $scope.selectedTab = $scope.tabPages[0];
+                            $scope.seaFreightSubmitDefinition.Type = "View";
+                        }
                         return true;
                     case "PreSubmit":
                         if (!$scope.validSeaFreightShipments())
@@ -400,8 +491,22 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         alert("Successfully Saved.");
                         return true;
                     case "PreUpdate":
+                        $scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails = angular.copy($scope.seaFreightShipmentsDataDefinition.DataList);
+                        delete $scope.seaFreightSubmitDefinition.DataItem.Courier;
+                        delete $scope.seaFreightSubmitDefinition.DataItem.BusinessUnit;
+                        for (var i = 0; i < $scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails.length; i++) {
+                            if ($scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails[i].CourierTransactionId == -1) {
+                                delete $scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails[i].Id;
+                                $scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails[i].CourierTransactionId = $scope.seafreightItem.Id;
+                            }
+
+                            delete $scope.seaFreightSubmitDefinition.DataItem.CourierTransactionDetails[i].Shipment;
+                        }
                         return true;
                     case "PostUpdate":
+                        $scope.enableSave = false;
+                        $scope.viewOnly = true;
+                        alert("Successfully Updated.");
                         return true;
                     case "PreDelete":
                         return true;
@@ -563,8 +668,14 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                             $scope.hideSeaFreightToggle();
                         return true;
                     case 'GetBusinessList':
-                        //Show modal here then after user choose a specific data to filter pass the to From field in the source where Values[0] is equal to the action, ex. GetBusinessUnitList
-                        //Use if filtering criteria is modal
+                        return true;
+                    case 'GetShippingLine':
+                        return true;
+                    case 'GetVessel':
+                        return true;
+                    case 'GetVesselVoyage':
+                        return true;
+                    case 'GetShipment':
                         return true;
                     default: return true;
                 }
@@ -715,13 +826,13 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     case 'PostEditAction':
                         switch ($scope.modalType) {
                             case 'origin':
-                                    $scope.seafreightItem.OriginBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
-                                    $scope.seafreightItem.BusinessUnit1.Name = $scope.businessUnitDataDefinition.DataItem.Name;
-                                    break;
+                                $scope.seafreightItem.OriginBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                                $scope.seafreightItem.BusinessUnit1.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                                break;
                             case 'destination':
-                                    $scope.seafreightItem.DestinationBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
-                                    $scope.seafreightItem.BusinessUnit.Name = $scope.businessUnitDataDefinition.DataItem.Name;
-                                    break;
+                                $scope.seafreightItem.DestinationBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                                $scope.seafreightItem.BusinessUnit.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                                break;
                         }
                         $scope.closeModal();
                         return true;
@@ -1466,19 +1577,20 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         }
                         if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                             $scope.shipmentDataDefinition.CurrentPage = 1;
-                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                         }
                         else if ($scope.shipmentDataDefinition.EnablePagination == true) {
                             $scope.shipmentDataDefinition.DataList = [];
-                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                         }
                             //Scroll
                         else {
                             if ($scope.shipmentFilteringDefinition.ClearData)
                                 $scope.shipmentDataDefinition.DataList = [];
-                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                            $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length;
                         }
-
+                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.seafreightItem.OriginBusinessUnitId;
+                        alert($scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId);
 
                         return true;
                     case 'PostFilterData':

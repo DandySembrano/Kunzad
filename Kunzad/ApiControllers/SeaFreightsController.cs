@@ -94,35 +94,91 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutSeaFreight(int id, SeaFreight seaFreight)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            if (seaFreight.SeaFreightShipments.ElementAt(0).Id != 0)
             {
-                return BadRequest(ModelState);
+                if ((!ModelState.IsValid || id != seaFreight.Id))
+                {
+                    response.message = "Bad request.";
+                    return Ok(response);
+                }
             }
-
-            if (id != seaFreight.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(seaFreight).State = EntityState.Modified;
 
             try
             {
+                bool flag;
+                var currentSeaFreightShipments = db.SeaFreightShipments.Where(sfs => sfs.SeaFreightId == seaFreight.Id);
+                foreach (SeaFreightShipment sfs in currentSeaFreightShipments)
+                {
+                    flag = false;
+                    //check if current Sea Freight Shipment exist in truck list
+                    foreach (SeaFreightShipment sfs1 in seaFreight.SeaFreightShipments)
+                    {
+                        if (sfs.Id == sfs1.Id)
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        //Update shipment status to Open
+                        var shipment = db.Shipments.Find(sfs.ShipmentId);
+                        var shipmentEdited = shipment;
+                        shipmentEdited.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                        //remove deleted Sea Freight Shipment(s)
+                        db.SeaFreightShipments.Remove(sfs);
+                    }
+                }
+
+                foreach (SeaFreightShipment sfs in seaFreight.SeaFreightShipments)
+                {
+                    flag = false;
+                    foreach (SeaFreightShipment sfs1 in currentSeaFreightShipments)
+                    {
+                        if (sfs.Id == sfs1.Id)
+                        {
+                            flag = true;
+
+                            //Set changes for Sea Freight Shipment info for edit
+                            var seaFreightShipmentHolder = db.SeaFreightShipments.Find(sfs.Id);
+                            sfs.LastUpdatedDate = DateTime.Now;
+                            db.Entry(seaFreightShipmentHolder).CurrentValues.SetValues(sfs);
+                            db.Entry(seaFreightShipmentHolder).State = EntityState.Modified;
+                            break;
+                        }
+                    }
+                    //add Sea Freight Shipment
+                    if (!flag)
+                    {
+                        sfs.CreatedDate = DateTime.Now;
+                        db.SeaFreightShipments.Add(sfs);
+                    }
+                }
+
+                //Set changes for Sea Freight info
+                var seaFreightHolder = db.SeaFreights.Find(seaFreight.Id);
+                seaFreight.LastUpdatedDate = DateTime.Now;
+                db.Entry(seaFreightHolder).CurrentValues.SetValues(seaFreight);
+                db.Entry(seaFreightHolder).State = EntityState.Modified;
+
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = seaFreight;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!SeaFreightExists(id))
                 {
-                    return NotFound();
+                    response.message = "Courier Transaction doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/SeaFreights
@@ -141,6 +197,13 @@ namespace Kunzad.ApiControllers
                 {
                     sfs.CreatedDate = DateTime.Now;
                     db.SeaFreightShipments.Add(sfs);
+
+                    //Update shipment loading status to Loaded
+                    var shipment = db.Shipments.Find(sfs.ShipmentId);
+                    var shipmentEdited = shipment;
+                    shipmentEdited.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
+                    db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+                    db.Entry(shipment).State = EntityState.Modified;
                 }
                 seaFreight.CreatedDate = DateTime.Now;
                 db.SeaFreights.Add(seaFreight);
