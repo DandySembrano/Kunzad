@@ -1025,7 +1025,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     else {
                         if ($scope.shipmentFilteringDefinition.ClearData)
                             $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=courier&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&source=courier&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
                     $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.courierDeliveryItem.BusinessUnitId;
                     return true;
