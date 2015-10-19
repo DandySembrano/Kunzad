@@ -16,7 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
-        private int pageSize = 20;
+        private int pageSize = (int)AppSettingsGet.PageSize;
 
         // GET: api/SeaFreightShipments
         public IQueryable<SeaFreightShipment> GetSeaFreightShipments()
@@ -34,67 +34,110 @@ namespace Kunzad.ApiControllers
                 skip = 0;
 
             var seaFreightShipment = db.SeaFreightShipments
-                            .Include(sfs => sfs.SeaFreight)
-                            .Include(sfs => sfs.Shipment)
-                            .Include(sfs => sfs.Shipment.BusinessUnit)
-                            .Include(sfs => sfs.Shipment.Service)
-                            .Include(sfs => sfs.Shipment.ShipmentType)
-                            .Include(sfs => sfs.Shipment.Customer)
-                            .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
-                            .Include(sfs => sfs.Shipment.Customer.CustomerContacts)
-                            .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
-                            .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                            .Where(sfs => sfs.SeaFreightId == seaFreightId)
-                            .Skip(skip).Take(pageSize).ToArray();
-
-            if (seaFreightShipment.Length == 0)
-                return Ok(seaFreightShipment);
-            for (int i = 0; i < seaFreightShipment.Length; i++)
-            {
-
-                seaFreightShipment[i].Shipment.BusinessUnit.AirFreights = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.AirFreights1 = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.BusinessUnitContacts = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.BusinessUnitType = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.CourierTransactions = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.SeaFreights = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.SeaFreights1 = null;
-                seaFreightShipment[i].Shipment.BusinessUnit.Shipments = null;
-                seaFreightShipment[i].Shipment.Service.ServiceCategory = null;
-                seaFreightShipment[i].Shipment.Service.ServiceCharges = null;
-                seaFreightShipment[i].Shipment.Service.Shipments = null;
-                seaFreightShipment[i].Shipment.ShipmentType.Shipments = null;
-                seaFreightShipment[i].Shipment.Customer.CustomerGroup = null;
-                seaFreightShipment[i].Shipment.Customer.Industry = null;
-                seaFreightShipment[i].Shipment.Customer.Shipments = null;
-                seaFreightShipment[i].Shipment.Customer.TruckingDeliveries = null;
-
-                seaFreightShipment[i].Shipment.Customer.CustomerContacts = seaFreightShipment[i].Shipment.Customer.CustomerContacts.Where(cc => cc.Id == seaFreightShipment[i].Shipment.CustomerContactId).ToArray();
-                foreach (var cc in seaFreightShipment[i].Shipment.Customer.CustomerContacts)
-                {
-                    cc.Customer = null;
-                    cc.Contact.BusinessUnitContacts = null;
-                    cc.Contact.CustomerContacts = null;
-                    cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == seaFreightShipment[i].Shipment.CustomerContactPhoneId).ToArray();
-                    foreach (var ccp in cc.Contact.ContactPhones)
-                    {
-                        ccp.Contact = null;
-                        ccp.ContactNumberType = null;
-                    }
-                }
-
-                //shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId).ToArray();
-                foreach (var ca in seaFreightShipment[i].Shipment.Customer.CustomerAddresses)
-                {
-                    ca.CityMunicipality.Couriers = null;
-                    ca.CityMunicipality.CustomerAddresses = null;
-                    ca.CityMunicipality.ServiceableAreas = null;
-                    ca.CityMunicipality.StateProvince = null;
-                }
-
-            }
-
+                      .Include(sfs => sfs.Shipment)
+                      .Include(sfs => sfs.Shipment.Address)
+                      .Include(sfs => sfs.Shipment.Address.CityMunicipality.StateProvince)
+                      .Include(sfs => sfs.Shipment.Address1)
+                      .Include(sfs => sfs.Shipment.Address1.CityMunicipality.StateProvince)
+                      .Include(sfs => sfs.Shipment.BusinessUnit)
+                      .Include(sfs => sfs.Shipment.BusinessUnit1)
+                      .Include(sfs => sfs.Shipment.Service)
+                      .Include(sfs => sfs.Shipment.ShipmentType)
+                      .Include(sfs => sfs.Shipment.Customer)
+                      .Include(sfs => sfs.Shipment.Customer.CustomerAddresses)
+                      .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                      .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                      .Include(sfs => sfs.Shipment.Customer.CustomerContacts)
+                      .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
+                      .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                      .Where(sfs => sfs.SeaFreightId == seaFreightId)
+                      .OrderBy(sfs => sfs.Id)
+                      .Skip(skip).Take(pageSize)
+                      .AsNoTracking().ToArray();
             return Ok(seaFreightShipment);
+
+
+            //var seaFreightShipment = db.SeaFreightShipments
+            //                .Include(sfs => sfs.SeaFreight)
+            //                .Include(sfs => sfs.Shipment)
+            //                .Include(sfs => sfs.Shipment.BusinessUnit)
+            //                .Include(sfs => sfs.Shipment.BusinessUnit1)
+            //                .Include(sfs => sfs.Shipment.Address)
+            //                .Include(sfs => sfs.Shipment.Address1)
+            //                .Include(sfs => sfs.Shipment.Service)
+            //                .Include(sfs => sfs.Shipment.ShipmentType)
+            //                .Include(sfs => sfs.Shipment.Customer)
+            //                .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+            //                .Include(sfs => sfs.Shipment.Customer.CustomerContacts)
+            //                .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
+            //                .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+            //                .Where(sfs => sfs.SeaFreightId == seaFreightId)
+            //                .OrderBy(sfs => sfs.Id)
+            //                .Skip(skip).Take(pageSize).ToArray();
+
+            //if (seaFreightShipment.Length == 0)
+            //    return Ok(seaFreightShipment);
+            //for (int i = 0; i < seaFreightShipment.Length; i++)
+            //{
+            //    seaFreightShipment[i].SeaFreight = null;
+            //    seaFreightShipment[i].Shipment.CourierTransactionDetails = null;
+            //    seaFreightShipment[i].Shipment.Address.Shipments = null;
+            //    seaFreightShipment[i].Shipment.TruckingDeliveries = null;
+            //    seaFreightShipment[i].Shipment.AirFreightShipments = null;
+            //    seaFreightShipment[i].Shipment.SeaFreightShipments = null;
+            //    seaFreightShipment[i].Shipment.ShipmentCharges = null;
+            //    seaFreightShipment[i].Shipment.ShipmentDimensions = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.AirFreights = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.AirFreights1 = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.BusinessUnitContacts = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.BusinessUnitType = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.CourierTransactions = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.SeaFreights = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.SeaFreights1 = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit.Shipments = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.AirFreights = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.AirFreights1 = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.BusinessUnitContacts = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.BusinessUnitType = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.CourierTransactions = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.SeaFreights = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.SeaFreights1 = null;
+            //    seaFreightShipment[i].Shipment.BusinessUnit1.Shipments = null;
+            //    seaFreightShipment[i].Shipment.Service.ServiceCategory = null;
+            //    seaFreightShipment[i].Shipment.Service.ServiceCharges = null;
+            //    seaFreightShipment[i].Shipment.Service.Shipments = null;
+            //    seaFreightShipment[i].Shipment.ShipmentType.Shipments = null;
+            //    seaFreightShipment[i].Shipment.Customer.CustomerGroup = null;
+            //    seaFreightShipment[i].Shipment.Customer.Industry = null;
+            //    seaFreightShipment[i].Shipment.Customer.Shipments = null;
+            //    seaFreightShipment[i].Shipment.Customer.TruckingDeliveries = null;
+
+            //    seaFreightShipment[i].Shipment.Customer.CustomerContacts = seaFreightShipment[i].Shipment.Customer.CustomerContacts.Where(cc => cc.Id == seaFreightShipment[i].Shipment.CustomerContactId).ToArray();
+            //    foreach (var cc in seaFreightShipment[i].Shipment.Customer.CustomerContacts)
+            //    {
+            //        cc.Customer = null;
+            //        cc.Contact.BusinessUnitContacts = null;
+            //        cc.Contact.CustomerContacts = null;
+            //        cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == seaFreightShipment[i].Shipment.CustomerContactPhoneId).ToArray();
+            //        foreach (var ccp in cc.Contact.ContactPhones)
+            //        {
+            //            ccp.Contact = null;
+            //            ccp.ContactNumberType = null;
+            //        }
+            //    }
+
+            //    //shipment[i].Customer.CustomerAddresses = shipment[i].Customer.CustomerAddresses.Where(ca => ca.Id == shipment[i].CustomerAddressId).ToArray();
+            //    foreach (var ca in seaFreightShipment[i].Shipment.Customer.CustomerAddresses)
+            //    {
+            //        ca.CityMunicipality.Couriers = null;
+            //        ca.CityMunicipality.CustomerAddresses = null;
+            //        ca.CityMunicipality.ServiceableAreas = null;
+            //        ca.CityMunicipality.StateProvince = null;
+            //    }
+
+            //}
+
+            //return Ok(seaFreightShipment);
 
         }
 

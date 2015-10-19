@@ -25,6 +25,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
     $scope.selectedseafreightIndex = 0;
     $scope.controlNoHolder = 0;
     $scope.modalType = null;
+    $scope.flagOnRetrieveDetails = false;
     var pageSize = 20;
 
         $scope.showModal = function (panel, type) {
@@ -255,13 +256,11 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "OriginBusinessUnitId": null,
                     "OriginBusinessUnit": {
                         "Id": null,
-                        "Code": null,
                         "Name": null
                     },
                     "DestinationBusinessUnitId": null,
                     "DestinationBusinessUnit": {
                         "Id": null,
-                        "Code": null,
                         "Name": null
                     },
                     "DepartureDate": null,
@@ -272,13 +271,11 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 "OriginBusinessUnitId": null,
                 "BusinessUnit1": {
                     "Id": null,
-                    "Code": null,
                     "Name": null
                 },
                 "DestinationBusinessUnitId": null,
                 "BusinessUnit": {
                     "Id": null,
-                    "Code": null,
                     "Name": null
                 },
                 "FreightCost": null,
@@ -288,12 +285,13 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 "LastUpdatedByUserId": null
             };
             //Temporary set BusinessUnit
-            $scope.seafreightItem.BusinessUnit1 = {
+            $scope.seafreightItem.BusinessUnit1[0] = {
                 "Id": 17,
                 "Code": "BU0007",
                 "Name": "Manila"
             };
-            $scope.seafreightItem.OriginBusinessUnitId = $scope.seafreightItem.BusinessUnit1.Id;
+            $scope.seafreightItem.OriginBusinessUnitId = $scope.seafreightItem.BusinessUnit1[0].Id;
+
 
 
         };
@@ -374,7 +372,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                             $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
                             $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
 
-                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            $scope.loadDetail($scope.seafreightItem.Id);
                             var promise = $interval(function () {
                                 if ($scope.flagOnRetrieveDetails) {
                                     $scope.flagOnRetrieveDetails = false;
@@ -385,8 +383,11 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                                     $scope.selectedTab = $scope.tabPages[0];
                                     $scope.seaFreightSubmitDefinition.Type = "Edit";
                                     if ($scope.seaFreightShipmentsDataDefinition.DataList.length > 0)
+                                    {
+                                        console.log($scope.seaFreightShipmentsDataDefinition.DataList);
                                         //Set control no holder in case user will add item in list
                                         $scope.controlNoHolder = $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1;
+                                    }
                                     else
                                         $scope.seaFreightShipmentsResetData();
                                 }
@@ -410,7 +411,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                             $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
                             $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
 
-                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            $scope.loadDetail($scope.seafreightItem.Id);
                             var promise = $interval(function () {
                                 if ($scope.flagOnRetrieveDetails) {
                                     $scope.flagOnRetrieveDetails = false;
@@ -441,7 +442,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                             $scope.seafreightItem.CallDate = $filter('Date')($scope.seafreightItem.CallDate);
                             $scope.seafreightItem.CourierCost = $filter('number')($scope.seafreightItem.CourierCost, 2);
 
-                            $scope.getCourierTransactionDetails($scope.seafreightItem.Id);
+                            $scope.loadDetail($scope.seafreightItem.Id);
                             var promise = $interval(function () {
                                 if ($scope.flagOnRetrieveDetails) {
                                     $scope.flagOnRetrieveDetails = false;
@@ -827,11 +828,11 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         switch ($scope.modalType) {
                             case 'origin':
                                 $scope.seafreightItem.OriginBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
-                                $scope.seafreightItem.BusinessUnit1.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                                $scope.seafreightItem.BusinessUnit1[0].Name = $scope.businessUnitDataDefinition.DataItem.Name;
                                 break;
                             case 'destination':
                                 $scope.seafreightItem.DestinationBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
-                                $scope.seafreightItem.BusinessUnit.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                                $scope.seafreightItem.BusinessUnit[0].Name = $scope.businessUnitDataDefinition.DataItem.Name;
                                 break;
                         }
                         $scope.closeModal();
@@ -995,8 +996,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             $scope.shippingLineOtherActions = function (action) {
                 switch (action) {
                     case 'PostEditAction':
-                        $scope.seafreightItem.VesselVoyage.ShippingLineId = $scope.shippingLineDataDefinition.DataItem.Id;
-                        $scope.seafreightItem.VesselVoyage.ShippingLineName = $scope.shippingLineDataDefinition.DataItem.Name;
+                        $scope.seafreightItem.VesselVoyage[0].ShippingLineId = $scope.shippingLineDataDefinition.DataItem.Id;
+                        $scope.seafreightItem.VesselVoyage[0].ShippingLineName = $scope.shippingLineDataDefinition.DataItem.Name;
                         $scope.closeModal();
                         var promise = $interval(function () {
                             $interval.cancel(promise);
@@ -1165,8 +1166,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             $scope.vesselOtherActions = function (action) {
                 switch (action) {
                     case 'PostEditAction':
-                        $scope.seafreightItem.VesselVoyage.VesselId = $scope.vesselDataDefinition.DataItem.Id;
-                        $scope.seafreightItem.VesselVoyage.VesselName = $scope.vesselDataDefinition.DataItem.Name;
+                        $scope.seafreightItem.VesselVoyage[0].VesselId = $scope.vesselDataDefinition.DataItem.Id;
+                        $scope.seafreightItem.VesselVoyage[0].VesselName = $scope.vesselDataDefinition.DataItem.Name;
                         $scope.closeModal();
                         var promise = $interval(function () {
                             $interval.cancel(promise);
@@ -1337,10 +1338,10 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 switch (action) {
                     case 'PostEditAction':
                         $scope.seafreightItem.VesselVoyageId = $scope.vesselVoyageDataDefinition.DataItem.Id;
-                        $scope.seafreightItem.VesselVoyage.DepartureDate = $scope.vesselVoyageDataDefinition.DataItem.DepartureDate;
-                        $scope.seafreightItem.VesselVoyage.DepartureTime = $scope.vesselVoyageDataDefinition.DataItem.DepartureTime;
-                        $scope.seafreightItem.VesselVoyage.ArrivalDate = $scope.vesselVoyageDataDefinition.DataItem.ArrivalDate;
-                        $scope.seafreightItem.VesselVoyage.ArrivalTime = $scope.vesselVoyageDataDefinition.DataItem.ArrivalTime;
+                        $scope.seafreightItem.VesselVoyage[0].DepartureDate = $scope.vesselVoyageDataDefinition.DataItem.DepartureDate;
+                        $scope.seafreightItem.VesselVoyage[0].DepartureTime = $scope.vesselVoyageDataDefinition.DataItem.DepartureTime;
+                        $scope.seafreightItem.VesselVoyage[0].ArrivalDate = $scope.vesselVoyageDataDefinition.DataItem.ArrivalDate;
+                        $scope.seafreightItem.VesselVoyage[0].ArrivalTime = $scope.vesselVoyageDataDefinition.DataItem.ArrivalTime;
                         $scope.closeModal();
                         return true;
                     default: return true;
@@ -1478,7 +1479,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "Id": null,
                     "SeaFreightId": -1,
                     "ShipmentId": 0,
-                    "Shipment": $rootScope.shipmentObj(),
+                    "Shipment": [{}],
                     "CostAllocation": null
                 }
 
@@ -1590,7 +1591,6 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                             $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length;
                         }
                         $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.seafreightItem.OriginBusinessUnitId;
-                        alert($scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId);
 
                         return true;
                     case 'PostFilterData':
@@ -1674,10 +1674,10 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         }
                         //Check if shipment is not yet in the list
                         if (!found) {
-                            $scope.seaFreightShipmentsItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
-                            $scope.seaFreightShipmentsItem.Shipment = $scope.shipmentDataDefinition.DataItem;
                             var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
                             var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
+                            $scope.seaFreightShipmentsItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
+                            $scope.seaFreightShipmentsItem.Shipment = $scope.shipmentDataDefinition.DataItem;
                             $scope.seaFreightShipmentsItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
                             $scope.seaFreightShipmentsItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
                             $scope.seaFreightIsError = false;
@@ -1708,59 +1708,27 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
         };
         //=================================================END OF SHIPMENT MODAL=================================================
 
-        //Initialize Business Unit List for Modal
-        $scope.initBusinessUnitList = function () {
-            $http.get("/api/BusinessUnits")
-            .success(function (data, status) {
-                $scope.businessUnitList = data;
-            })
-        };
-        
-        //Initialize Shippingline List for Modal
-        $scope.initShippingLineList = function () {
-            $http.get("/api/ShippingLines")
-            .success(function (data, status) {
-                for (var i = 0; i < 100; i++)
-                    $scope.shippingLineList = data;
-
-            })
-        };
-
-        //Initialize Shipment List for Modal
-        $scope.initShipmentList = function () {
-            $http.get("/api/Shipments?page=1")
-            .success(function (data, status) {
-                $scope.ShipmentList = data;
-            })
-        };
-        
-  
-
         //Retrieve seafreight's shipments
         $scope.loadDetail = function (seaFreightId) {
             var spinner = new Spinner(opts).spin(spinnerTarget);
             var i = 0;
-            $http.get("/api/SeaFreightShipments?seaFreightId=" + seaFreightId+"&page=1")
+            $http.get("/api/SeaFreightShipments?seaFreightId=" + seaFreightId + "&page=1")
                 .success(function (data, status) {
                     //initialize seafreight shipments
-                    $scope.SeaFreightShipmentGridOptions.data = data;
-
-                    //$scope.currentPage = page;
-                    //if (page <= 1) {
-                    //    $scope.isPrevPage = false;
-                    //} else {
-                    //    $scope.isPrevPage = true;
-                    //}
-                    //var rows = data.length;
-                    //if (rows < pageSize) {
-                    //    $scope.isNextPage = false;
-                    //} else {
-                    //    $scope.isNextPage = true;
-                    //}
-                    $scope.focusOnTop();
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].Shipment[0] = data[i].Shipment;
+                        $scope.seaFreightShipmentsDataDefinition.DataList.push(data[i]);
+                    }
+                    //$scope.seaFreightShipmentsDataDefinition.DataList = data;
+                   // $scope.seaFreightShipmentsDataDefinition.DataList = angular.copy(data);
+                    console.log($scope.seaFreightShipmentsDataDefinition.DataList);
+                    $scope.flagOnRetrieveDetails = true;
                     spinner.stop();
                 })
-                .error(function (data, status) {
+                .error(function (error, status) {
+                    $scope.flagOnRetrieveDetails = true;
+                    $scope.seaFreightIsError = true;
+                    $scope.seaFreightErrorMessage = status;
                     spinner.stop();
                 });
         };
