@@ -108,5 +108,10 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult VanStuff()
+        {
+            return View();
+        }
     }
 }
