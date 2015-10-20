@@ -93,9 +93,15 @@ namespace Kunzad.ApiControllers
         [HttpGet]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
-            //Filtering for shipments that will be displayd in Sea Freight, Air Freight and Courier Delivery Module
+            /*
+             * type(scroll or paginate)
+             * source(air,sea,courier)
+             * param1(length of the current shipments displayed in front-end)
+             * Filtering for shipments that will be displayd in Sea Freight, Air Freight and Courier Delivery Module
+             */
             Shipment[] shipments = new Shipment[pageSize];
             int serviceCategoryId;
+
             if(source.ToLower().Equals("air"))
                 serviceCategoryId = 1;
             else if(source.ToLower().Equals("sea"))
@@ -286,6 +292,7 @@ namespace Kunzad.ApiControllers
                     shipment.Address.CreatedDate = DateTime.Now;
                     shipment.Address1.CreatedDate = DateTime.Now;
                     shipment.TransportStatusId = (int)Status.TransportStatus.Open;
+                    shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
                     shipment.TransportStatusRemarks = "For pickup from customer";
 
                     db.Addresses.Add(shipment.Address);

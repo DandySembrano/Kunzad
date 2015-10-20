@@ -107,10 +107,16 @@ namespace Kunzad.ApiControllers
                         }
                     }
                     //add courier transaction detail
-                    if (!flag && ctd.Id != 0)
+                    if (!flag && ctd.ShipmentId != 0)
                     {
                         ctd.CreatedDate = DateTime.Now;
                         db.CourierTransactionDetails.Add(ctd);
+                        //Update shipment loading status to Loaded
+                        var shipment = db.Shipments.Find(ctd.ShipmentId);
+                        var shipmentEdited = shipment;
+                        shipmentEdited.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
+                        db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+                        db.Entry(shipment).State = EntityState.Modified;
                     }
                 }
 
