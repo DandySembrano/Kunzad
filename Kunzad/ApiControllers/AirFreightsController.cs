@@ -21,7 +21,11 @@ namespace Kunzad.ApiControllers
         // GET: api/AirFreights
         public IQueryable<AirFreight> GetAirFreights()
         {
-            return db.AirFreights;
+            return db.AirFreights
+                .Include(a => a.AirLine)
+                .Include(a => a.BusinessUnit1)
+                .Include(a => a.BusinessUnit)
+                .Include(a => a.AirFreightShipments);
         }
 
         // GET: api/AirFreights/5
@@ -131,6 +135,91 @@ namespace Kunzad.ApiControllers
         private bool AirFreightExists(int id)
         {
             return db.AirFreights.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, AirFreight airFreight, AirFreight airFreight1, ref Object[] airFreights)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredAirFreights = (from af in db.AirFreights
+                                       where airFreight.Id == null || airFreight.Id == 0 ? true : af.Id == airFreight.Id
+                                       where airFreight.AirWaybillNumber == null ? !airFreight.AirWaybillNumber.Equals("") : (af.AirWaybillNumber.ToLower().Equals(airFreight.AirWaybillNumber) || af.AirWaybillNumber.ToLower().Contains(airFreight.AirWaybillNumber))
+                                       where airFreight.AirWaybillDate == null || airFreight.AirWaybillDate == defaultDate ? true : af.AirWaybillDate >= airFreight.AirWaybillDate && af.AirWaybillDate <= airFreight1.AirWaybillDate
+                                       //where airFreight.CreatedDate == null || airFreight.CreatedDate == defaultDate ? true : af.CreatedDate >= airFreight.CreatedDate && af.CreatedDate <= airFreight1.CreatedDate
+                                       //where airFreight.LastUpdatedDate == null || airFreight.LastUpdatedDate == defaultDate ? true : af.LastUpdatedDate >= airFreight.LastUpdatedDate && af.LastUpdatedDate <= airFreight1.LastUpdatedDate
+                                       select new
+                                       {
+                                           af.Id,
+                                           af.AirWaybillNumber,
+                                           af.AirWaybillDate,
+                                           af.OriginBusinessUnitId,
+                                           BusinessUnit1 = (from o in db.BusinessUnits
+                                                            where o.Id == af.OriginBusinessUnitId
+                                                            select new
+                                                            {
+                                                                o.Id,
+                                                                o.Name
+                                                            }
+
+                                                       ),//Origin
+                                           af.DestinationBusinessUnitId,
+                                           BusinessUnit = (from d in db.BusinessUnits
+                                                           where d.Id == af.DestinationBusinessUnitId
+                                                           select new
+                                                           {
+                                                               d.Id,
+                                                               d.Name
+                                                           }
+
+                                                           ),//Destination
+                                           //af.VesselVoyageId,
+                                           //VesselVoyage = (from vv in db.VesselVoyages
+                                           //                join v in db.Vessels on vv.VesselId equals v.Id
+                                           //                join s in db.ShippingLines on v.ShippingLineId equals s.Id
+                                           //                where vv.Id == af.VesselVoyageId
+                                           //                select new
+                                           //                {
+                                           //                    ShippingLineName = s.Name,
+                                           //                    VesselName = v.Name,
+                                           //                    vv.Id,
+                                           //                    vv.VoyageNo,
+                                           //                    vv.EstimatedArrivalDate,
+                                           //                    vv.EstimatedArrivalTime,
+                                           //                    vv.DepartureDate,
+                                           //                    vv.DepartureTime,
+                                           //                    vv.ArrivalDate,
+                                           //                    vv.ArrivalTime
+                                           //                }
+                                           //                ),
+                                           af.AirLineId,
+                                           Airline = (from a in db.AirLines
+                                                      where a.Id == af.AirLineId
+                                                      select new { 
+                                                        a.Id,
+                                                        a.Name
+                                                      }
+                                                      ),
+                                           af.CreatedByUserId,
+                                           af.CreatedDate,
+                                           af.LastUpdatedByUserId,
+                                           af.LastUpdatedDate
+                                       })
+                                       .OrderBy(af => af.Id).Skip(skip).Take(pageSize).ToArray();
+
+            airFreights = filteredAirFreights;
         }
     }
 }
