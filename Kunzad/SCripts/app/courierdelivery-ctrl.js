@@ -136,8 +136,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             .success(function (data, status) {
                 for (var i = 0; i < data.length; i++) {
                     data[i].Shipment[0] = data[i].Shipment;
+                    //Initialize Pickup Address
+                    data[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data[i].Shipment[0].Address1);
+                    //Initalize Consignee Address
+                    data[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data[i].Shipment[0].Address);
                     $scope.courierDeliveryDetailsDataDefinition.DataList.push(data[i]);
                 }
+
                 $scope.flagOnRetrieveDetails = true;
                 spinner.stop();
             })
@@ -1046,6 +1051,15 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.shipmentDataDefinition.DataList = $scope.shipmentFilteringDefinition.DataList;
                         $scope.shipmentDataDefinition.DoPagination = true;
                     }
+
+                    //Format OrginAddress and Delivery Address
+                    for (var i = 0; i < $scope.shipmentDataDefinition.DataList.length; i++) {
+                        //Initialize Pickup Address
+                        $scope.shipmentDataDefinition.DataList[i].OriginAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address1);
+                        //Initalize Consignee Address
+                        $scope.shipmentDataDefinition.DataList[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address);
+                    }
+
                     return true;
                 default: return true;
             }

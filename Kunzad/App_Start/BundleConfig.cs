@@ -71,7 +71,8 @@ namespace Kunzad
                         "~/Scripts/app/serviceablearea-ctrl.js",
                         "~/Scripts/app/truckingwb-ctrl.js",
                         "~/Scripts/app/airfreight-ctrl.js",
-                        "~/Scripts/app/courierdelivery-ctrl.js"
+                        "~/Scripts/app/courierdelivery-ctrl.js",
+                        "~/Scripts/app/vanstuff-ctrl.js"
                         ));
         }
     }
