@@ -540,6 +540,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'VanStuffController'
         })
 
+        .when('/documentation', {
+            templateUrl: '/References/Documentation',
+            controller: 'DocumentationController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });
