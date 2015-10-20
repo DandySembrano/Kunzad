@@ -29,49 +29,47 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
     var pageSize = 20;
 
         $scope.showModal = function (panel, type) {
-            switch (type) {
-                case 'origin':
-                    $scope.loadBusinessUnitDataGrid();
-                    $scope.loadBusinessUnitFiltering();
-                    $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
-                    $scope.businessUnitDataDefinition.Retrieve = true;
-                    break;
-                case 'destination':
-                    $scope.loadBusinessUnitDataGrid();
-                    $scope.loadBusinessUnitFiltering();
-                    $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
-                    $scope.businessUnitDataDefinition.Retrieve = true;
-                    break;
-                case 'shippingline':
-                    $scope.loadShippingLineDataGrid();
-                    $scope.loadShippingLineFiltering();
-                    $scope.shippingLineFilteringDefinition.SetSourceToNull = true;
-                    $scope.shippingLineDataDefinition.Retrieve = true;
-                    break;
-                case 'vessel':
-                    $scope.loadVesselDataGrid();
-                    $scope.loadVesselFiltering();
-                    $scope.vesselFilteringDefinition.SetSourceToNull = true;
-                    $scope.vesselDataDefinition.Retrieve = true;
-                    break;
-                case 'vesselVoyage':
-                    $scope.loadVesselVoyageDataGrid();
-                    $scope.loadVesselVoyageFiltering();
-                    $scope.vesselVoyageFilteringDefinition.SetSourceToNull = true;
-                    $scope.vesselVoyageDataDefinition.Retrieve = true;
-                    break;
-                case 'seaFreightShipment':
-                    $scope.seaFreightShipmentFilteringDefinition.SetSourceToNull = true;
-                    $scope.seaFreightShipmentDataDefinition.Retrieve = true;
-                    break;
-                case 'shipment':
-                    $scope.loadShipmentDataGrid();
-                    $scope.loadShipmentFiltering();
-                    $scope.shipmentFilteringDefinition.SetSourceToNull = true;
-                    $scope.shipmentDataDefinition.Retrieve = true;
-                    break;
+            if (panel == '#business-unit-list-modal')
+            {
+                $scope.loadBusinessUnitDataGrid();
+                $scope.loadBusinessUnitFiltering();
+                $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
+                $scope.businessUnitDataDefinition.Retrieve = true;
             }
-
+            else
+            {
+                switch (type) {
+                    case 'shippingline':
+                        $scope.loadShippingLineDataGrid();
+                        $scope.loadShippingLineFiltering();
+                        $scope.shippingLineFilteringDefinition.SetSourceToNull = true;
+                        $scope.shippingLineDataDefinition.Retrieve = true;
+                        break;
+                    case 'vessel':
+                        $scope.loadVesselDataGrid();
+                        $scope.loadVesselFiltering();
+                        $scope.vesselFilteringDefinition.SetSourceToNull = true;
+                        $scope.vesselDataDefinition.Retrieve = true;
+                        break;
+                    case 'vesselVoyage':
+                        $scope.loadVesselVoyageDataGrid();
+                        $scope.loadVesselVoyageFiltering();
+                        $scope.vesselVoyageFilteringDefinition.SetSourceToNull = true;
+                        $scope.vesselVoyageDataDefinition.Retrieve = true;
+                        break;
+                    case 'seaFreightShipment':
+                        $scope.seaFreightShipmentFilteringDefinition.SetSourceToNull = true;
+                        $scope.seaFreightShipmentDataDefinition.Retrieve = true;
+                        break;
+                    case 'shipment':
+                        $scope.loadShipmentDataGrid();
+                        $scope.loadShipmentFiltering();
+                        $scope.shipmentFilteringDefinition.SetSourceToNull = true;
+                        $scope.shipmentDataDefinition.Retrieve = true;
+                        break;
+                }
+            }
+            
             openModalPanel2(panel);
             $scope.modalType = type;
         };
@@ -225,6 +223,17 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             thousandsSeparator: ',',
             centsLimit: 2
         });
+        $('#voyage_deptDate','#voayage_arrDate').datetimepicker({
+            format: 'MM-DD-YYYY',
+            sideBySide: false,
+            pickTime: false,
+            //minDate: moment()
+        })
+        $('#voyage_deptTime', '#voayage_arrTime').datetimepicker({
+            format: 'HH:mm',
+            sideBySide: false,
+            pickDate: false
+        })
         
         //Initialize Address fields
         $scope.initializeAddressField = function (addressItem) {
@@ -291,9 +300,6 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 "Name": "Manila"
             };
             $scope.seafreightItem.OriginBusinessUnitId = $scope.seafreightItem.BusinessUnit1[0].Id;
-
-
-
         };
 
         //Load variable datagrid for compiling
@@ -383,11 +389,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                                     $scope.selectedTab = $scope.tabPages[0];
                                     $scope.seaFreightSubmitDefinition.Type = "Edit";
                                     if ($scope.seaFreightShipmentsDataDefinition.DataList.length > 0)
-                                    {
-                                        console.log($scope.seaFreightShipmentsDataDefinition.DataList);
                                         //Set control no holder in case user will add item in list
-                                        $scope.controlNoHolder = $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1;
-                                    }
+                                        $scope.controlNoHolder = $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1;  
                                     else
                                         $scope.seaFreightShipmentsResetData();
                                 }
@@ -1717,11 +1720,13 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     //initialize seafreight shipments
                     for (var i = 0; i < data.length; i++) {
                         data[i].Shipment[0] = data[i].Shipment;
+                        //origin
+                        data[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data[i].Shipment[0].Address1);
+                        //destination
+                        data[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data[i].Shipment[0].Address);
+
                         $scope.seaFreightShipmentsDataDefinition.DataList.push(data[i]);
                     }
-                    //$scope.seaFreightShipmentsDataDefinition.DataList = data;
-                   // $scope.seaFreightShipmentsDataDefinition.DataList = angular.copy(data);
-                    console.log($scope.seaFreightShipmentsDataDefinition.DataList);
                     $scope.flagOnRetrieveDetails = true;
                     spinner.stop();
                 })

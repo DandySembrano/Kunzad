@@ -106,7 +106,7 @@ namespace Kunzad.ApiControllers
 
             try
             {
-                bool flag;
+                bool flag,flag1;
                 var currentSeaFreightShipments = db.SeaFreightShipments.Where(sfs => sfs.SeaFreightId == seaFreight.Id);
                 foreach (SeaFreightShipment sfs in currentSeaFreightShipments)
                 {
@@ -145,6 +145,41 @@ namespace Kunzad.ApiControllers
                             sfs.LastUpdatedDate = DateTime.Now;
                             db.Entry(seaFreightShipmentHolder).CurrentValues.SetValues(sfs);
                             db.Entry(seaFreightShipmentHolder).State = EntityState.Modified;
+
+                            var currentSFShipment = db.SeaFreightShipments.Where(seaFreightShipments => seaFreightShipments.SeaFreightId == sfs.SeaFreightId);
+                            //check if shipment was replaced
+                            foreach (SeaFreightShipment sfss in currentSFShipment)
+                            {
+                                flag1 = false;
+
+                                foreach (SeaFreightShipment sfss1 in seaFreight.SeaFreightShipments)
+                                {
+                                    if (sfss.ShipmentId == sfss1.ShipmentId)
+                                    {
+                                        flag1 = true;
+                                        //change shipment Loading Status to Loaded 
+                                        Shipment shipmentHolder = db.Shipments.Find(sfss1.ShipmentId);
+
+                                        if (shipmentHolder.LoadingStatusId == (int)Status.LoadingStatus.Open)
+                                        {
+                                            shipmentHolder.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
+                                            db.Entry(shipmentHolder).CurrentValues.SetValues(shipmentHolder);
+                                            db.Entry(shipmentHolder).State = EntityState.Modified;
+                                        }
+                                        break;
+                                    }
+                                }
+                                //change shipment Loading Status back to OPEN
+                                if (!flag1)
+                                {
+                                    Shipment shipmentHolder = db.Shipments.Find(sfss.ShipmentId);
+                                    shipmentHolder.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                                    db.Entry(shipmentHolder).CurrentValues.SetValues(shipmentHolder);
+
+                                    db.Entry(shipmentHolder).State = EntityState.Modified;
+                                }
+                            }
+
                             break;
                         }
                     }
