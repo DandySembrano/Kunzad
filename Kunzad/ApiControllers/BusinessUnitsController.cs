@@ -21,7 +21,7 @@ namespace Kunzad.ApiControllers
         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<BusinessUnit> GetBusinessUnits()
         {
-            return db.BusinessUnits.AsNoTracking().OrderBy(bu => bu.Name);
+            return db.BusinessUnits.Include(bu => bu.Address).AsNoTracking().OrderBy(bu => bu.Name);
         }
 
         // GET: api/BusinessUnits?parentBusinessUnitId=1
@@ -48,11 +48,18 @@ namespace Kunzad.ApiControllers
             if (page > 1)
             {
                 return db.BusinessUnits
-                    .OrderBy(bu => bu.Id).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
+                    .Include(bu => bu.Address)
+                    .Include(bu => bu.Address.CityMunicipality.StateProvince)
+                    .AsNoTracking()
+                    .OrderBy(bu => bu.Id)
+                    .Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
             }
             else
             {
                 return db.BusinessUnits
+                    .Include(bu => bu.Address)
+                    .Include(bu => bu.Address.CityMunicipality.StateProvince)
+                    .AsNoTracking()
                     .OrderBy(bu => bu.Id).Take(AppSettingsGet.PageSize);
             }
         }
@@ -82,11 +89,13 @@ namespace Kunzad.ApiControllers
             else
                 return Ok();
         }
+        
         // PUT: api/BusinessUnits/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBusinessUnit(int id, BusinessUnit businessUnit)
         {
             response.status = "FAILURE";
+
             if (!ModelState.IsValid)
             {
                 response.message = "Bad request.";
@@ -99,11 +108,25 @@ namespace Kunzad.ApiControllers
                 return Ok(response);
             }
 
-            db.Entry(businessUnit).State = EntityState.Modified;
-
             try
             {
+                var currentBusinessUnit = db.BusinessUnits.Find(businessUnit.Id);
+
+                if (currentBusinessUnit.AddressId == null)
+                {
+                    if (businessUnit.Address != null)
+                    {
+                        db.Addresses.Add(businessUnit.Address);
+                        businessUnit.AddressId = businessUnit.Address.Id;
+                    }
+                }
+                else {
+                    db.Entry(businessUnit.Address).State = EntityState.Modified;
+                    businessUnit.Address.LastUpdatedDate = DateTime.Now;
+                }
                 businessUnit.LastUpdatedDate = DateTime.Now;
+                db.Entry(currentBusinessUnit).CurrentValues.SetValues(businessUnit);
+                db.Entry(currentBusinessUnit).State = EntityState.Modified;
                 db.SaveChanges();
                 response.status = "SUCCESS";
                 response.objParam1 = businessUnit;
@@ -136,6 +159,11 @@ namespace Kunzad.ApiControllers
             try
             {
                 businessUnit.CreatedDate = DateTime.Now;
+                if (businessUnit.Address != null)
+                {
+                    businessUnit.Address.CreatedDate = DateTime.Now;
+                    db.Addresses.Add(businessUnit.Address);
+                }
                 db.BusinessUnits.Add(businessUnit);
                 db.SaveChanges();
                 response.status = "SUCCESS";
