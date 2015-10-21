@@ -91,6 +91,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         })
     };
 
+    $scope.getTrucking = function (id) {
+        $http.get("/api/truckings?shipmentid="+id)
+        .success(function (data, status) {
+            $scope.shipmentItem.Trucking = angular.copy(data[0]);
+        })
+    }
+
     //Initialize Payment Mode List for DropDown
     $scope.initPaymentModeList = function () {
         $scope.paymentModeList = $rootScope.getPaymentModeList();
@@ -112,6 +119,10 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             }
         }
 
+        // GET TRUCKING ITEM
+        $scope.getTrucking($scope.shipmentItem.Id);
+
+        //console.log($scope.shipmentItem);
         $scope.controlNoHolder = $scope.shipmentItem.Id;
         $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
     };
