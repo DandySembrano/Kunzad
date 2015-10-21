@@ -40,7 +40,7 @@
                         <input class="form-control"
                                 placeholder=""
                                 ng-disabled="true"
-                                ng-model="shipmentItem.ServiceId" />
+                                ng-model="shipmentItem.Service.Name" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
@@ -49,7 +49,7 @@
                         <input class="form-control"
                                 placeholder=""
                                 ng-disabled="true"
-                                ng-model="shipmentItem.ShipmentTypeId" />
+                                ng-model="shipmentItem.ShipmentType.Name" />
                     </div>
                 </div>
             </div>
@@ -58,9 +58,9 @@
                     <label class="col-md-3 control-label small">Payment Mode</label>
                     <div class="col-md-8">
                         <input class="form-control"
-                                placeholder=""
-                                ng-disabled="true"
-                                ng-model="shipmentItem.PaymentMode" />
+                               placeholder=""
+                               ng-disabled="true"
+                               ng-model="shipmentItem.PaymentModeName" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
@@ -273,7 +273,7 @@
                         <label class="col-md-3 control-label small">Is Revenue</label>
                         <div class="col-md-8">
                             <label class="option option-primary">
-                                <input type="checkbox" checked="" value="checked">
+                                <input type="checkbox" name="chkRevenue">
                             </label>
                         </div>
                     </div>
@@ -290,7 +290,7 @@
                         <label class="col-md-3 control-label small">Is Tax Inclusive</label>
                         <div class="col-md-8">
                             <label class="option option-primary">
-                                <input type="checkbox" checked="" value="checked">
+                                <input type="checkbox" name="chkTaxInclusive">
                             </label>
                         </div>
                     </div>

@@ -22,6 +22,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.shipmentToggle = false;
     $scope.isRevenue = false;
     $scope.isTaxInclusive = false;
+    $scope.serviceList = [];
+    $scope.shipmentTypeList = [];
     var pageSize = 20;
 
     //function that will be called during submit
@@ -39,10 +41,10 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     };
 
     //function that will be invoked when user click tab
-    $scope.setSelectedTab1 = function (tab1) {
+    $scope.setSelectedTab1 = function (tab) {
         $scope.shipmentIsError = false;
         $scope.shipmentErrorMessage = "";
-        $scope.selectedTab1 = tab1;
+        $scope.selectedTab1 = tab;
     };
 
     //Set the focus on top of the page during load
@@ -66,9 +68,32 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         }
     };
 
+    // SET SELECTED
     $scope.setSelected = function (id) {
         alert(id);
         $scope.setSelectedShipmentId = id;
+    };
+
+    //Initialize Service List for DropDown
+    $scope.initServiceList = function () {
+        $http.get("/api/Services")
+        .success(function (data, status) {
+            $scope.serviceList = data;
+        })
+    };
+
+    //Initialize Shipment Type List for DropDown
+    $scope.initShipmentTypeList = function () {
+        $http.get("/api/ShipmentTypes")
+        .success(function (data, status) {
+            $scope.shipmentTypeList = [];
+            $scope.shipmentTypeList = data;
+        })
+    };
+
+    //Initialize Payment Mode List for DropDown
+    $scope.initPaymentModeList = function () {
+        $scope.paymentModeList = $rootScope.getPaymentModeList();
     };
 
     //Function that will trigger during Edit,Delete and View Action
@@ -77,6 +102,16 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
+        $scope.shipmentItem.PaymentModeName = null;
+
+        // GET PAYMENT MODE NAME
+        for (var i = 0; i < $scope.paymentModeList.length; i++) {
+            if ($scope.shipmentItem.PaymentMode === $scope.paymentModeList[i].Id) {
+                $scope.shipmentItem.PaymentModeName = angular.copy($scope.paymentModeList[i].Name);
+                i = $scope.paymentModeList.length;
+            }
+        }
+
         $scope.controlNoHolder = $scope.shipmentItem.Id;
         $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
     };
@@ -97,7 +132,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "Type": ['ControlNo', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
                 "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
                 "DataList": [],
-                "RequiredFields": ['ServiceId-Service', 'ShipmentTypeId-Shipment Type', 'CustomerId-Customer', 'Quantity-Quantity', 'TotalCBM-Total CBM', 'Description-Cargo Description', 'PaymentMode-Payment Mode', 'DeliverTo-Consignee', 'DeliveryAddress-Consignee address', 'PickUpBussinessUnitId-Operation Site', 'OriginAddress-Pickup address'],
+                "RequiredFields": [],
                 "CellTemplate": ["None"],
                 "RowTemplate": "Default",
                 "EnableScroll": true,
@@ -133,10 +168,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.viewOnly = false;
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Create";
-                    $scope.deliveryAddressDataDefinition.ViewOnly = false;
-                    $scope.deliveryAddressDataDefinition.ActionMode = "Create";
-                    $scope.pickupAddressDataDefinition.ViewOnly = false;
-                    $scope.pickupAddressDataDefinition.ActionMode = "Create";
                     return true;
                 //case "PreAction":
                 //    $scope.selectedTab = $scope.tabPages[0];
@@ -157,7 +188,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     $scope.viewOnly = false;
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Edit";
-                    $scope.setSelectedTab = $scope.tabPages[0];
+                    alert($scope.tabPages[0]);
+                    //$scope.setSelectedTab = $scope.tabPages[0];
                     return true;
                 //case "PostDeleteAction":
                 //    $scope.onEDV();
@@ -570,6 +602,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     // Initialization routines
     var init = function () {
         $scope.focusOnTop();
+        $scope.initPaymentModeList();
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
         $scope.shipmentResetData();
