@@ -69,7 +69,7 @@
             showformerror: '&',         //function that will trigger when an error occured
         },
         templateUrl: '/Directives/DataGrid1',
-        controller: function ($scope, $http, $interval, $filter, $parse, $compile) {
+        controller: function ($scope, $http, $interval, $filter, $parse, $compile, restAPI) {
             var stop;
             $scope.currentPage = 1;
             $scope.pageSize = 20;
@@ -217,20 +217,34 @@
                 url = apiUrlSplit[0] + page;
                 for (var i = 1; i < apiUrlSplit.length; i++)
                     url = url + apiUrlSplit[i];
-                $http.get(url)
-                    .success(function (data, status) {
+                restAPI.retrieve(url);
+                var promise = $interval(function () {
+                    if (angular.isDefined(restAPI.getObjData())) {
+                        $interval.cancel(promise);
+                        promise = undefined;
                         $scope.datadefinition.DataList = [];
-                        $scope.datadefinition.DataList = data;
+                        $scope.datadefinition.DataList = restAPI.getObjData();
                         $scope.gridOptions.data = $scope.datadefinition.DataList;
                         //setHeight(100);
                         $scope.processPagination();
                         $scope.focusOnTop();
                         spinner.stop();
-                    })
-                    .error(function (data, status) {
-                        spinner.stop();
-                        $scope.showformerror({ error: status });
-                    })
+                    }
+                }, 100);
+                //$http.get(url)
+                //    .success(function (data, status) {
+                //        $scope.datadefinition.DataList = [];
+                //        $scope.datadefinition.DataList = data;
+                //        $scope.gridOptions.data = $scope.datadefinition.DataList;
+                //        //setHeight(100);
+                //        $scope.processPagination();
+                //        $scope.focusOnTop();
+                //        spinner.stop();
+                //    })
+                //    .error(function (data, status) {
+                //        spinner.stop();
+                //        $scope.showformerror({ error: status });
+                //    })
             };
 
             //search data

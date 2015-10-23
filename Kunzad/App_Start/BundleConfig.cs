@@ -43,6 +43,7 @@ namespace Kunzad
                         "~/vendor/plugins/uigrid/js/vfs_fonts.js",
                         "~/Scripts/app/app.js",
                         "~/Scripts/filter/filter.js",
+                        "~/Scripts/service/restAPI.js",
                         "~/Scripts/directive/scrollableContainer.js",
                         "~/Scripts/directive/dataFiltering.js",
                         "~/Scripts/directive/addressModal.js",

@@ -19,12 +19,13 @@ namespace Kunzad.ApiControllers
         Response response = new Response();
 
         // GET: api/ServiceCategories
-         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ServiceCategory> GetServiceCategories()
         {
             return db.ServiceCategories.AsNoTracking();
         }
 
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         // GET: api/ServiceCategories?page=1
         public IQueryable<ServiceCategory> GetServiceCategories(int page)
         {
