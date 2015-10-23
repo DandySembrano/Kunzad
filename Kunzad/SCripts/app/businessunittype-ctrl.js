@@ -16,9 +16,9 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.actionCreate = false; //default to false
     $scope.actionMode = "Create";//default to Create
     $scope.dataDefinition = {
-        "Header": ['Name','No.'],
-        "Keys": ['Name'],
-        "Type": ['String'],
+        "Header": ['Name', 'Has Location?', 'No.'],
+        "Keys": ['Name', 'hasLocation'],
+        "Type": ['String', 'Boolean'],
         "RequiredFields": ['Name-Name'],
         "DataList": [],
         "APIUrl": ['/api/BusinessUnitTypes?page=',//get
@@ -51,7 +51,8 @@ kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
     $scope.resetDataItem = function () {
         $scope.dataDefinition.DataItem = {
             "Id": null,
-            "Name": null
+            "Name": null,
+            "hasLocation": false
         }
     };
     $scope.showFormError = function (message) {

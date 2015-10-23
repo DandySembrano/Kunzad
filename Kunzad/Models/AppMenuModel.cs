@@ -27,7 +27,7 @@ namespace Kunzad.Models
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
             m.MenuItems.Add(new MenuItem("Booking", "glyphicons glyphicons-circle_plus", "#/booking"));
-            m.MenuItems.Add(new MenuItem("Documentation", "glyphicons glyphicons-circle_plus", "#/booking"));
+            m.MenuItems.Add(new MenuItem("Documentation", "glyphicons glyphicons-circle_plus", "#/documentation"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Transport

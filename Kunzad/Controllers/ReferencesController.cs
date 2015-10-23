@@ -113,5 +113,10 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult Documentation()
+        {
+            return View();
+        }
     }
 }

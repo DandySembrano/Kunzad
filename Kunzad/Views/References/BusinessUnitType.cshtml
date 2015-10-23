@@ -25,5 +25,18 @@
                        ng-model="dataDefinition.DataItem.Name" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-9">
+                <div class="checkbox-custom">
+                    <input id="hasLocation"
+                           type="checkbox"
+                           ng-model="dataDefinition.DataItem.hasLocation"
+                           ng-disabled="dataDefinition.ViewOnly">
+                    <label for="hasLocation"
+                           class="small">Has Location?</label>
+                </div>
+            </div>
+        </div>
     </form>
 }

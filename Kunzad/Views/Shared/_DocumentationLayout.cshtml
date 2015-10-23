@@ -1,0 +1,79 @@
+﻿<!-- Begin: Content -->
+<section id="content" class="animated fadeIn">
+    <div class="row">
+        <!-- Begin: section content for table -->
+        <div class="col-md-12">
+            <div class="panel mb25 mt5">
+                <div class="panel-heading">
+                    <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{modelName}}</span>
+                    <ul class="nav panel-tabs-border panel-tabs">
+                        <li ng-class="{active : selectedTab === tab}"
+                            ng-click="setSelectedTab(tab)"
+                            ng-repeat="tab in tabPages">
+                            <a href="{{modelhref}}" data-toggle="tab">{{tab}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div ng-show="selectedTab === tabPages[0] ? true: false">
+                    <div class="panel-body">
+                        <div class="panel-heading">
+                            <ul class="nav panel-tabs-border panel-tabs">
+                                <li ng-class="{active : selectedTab1 === tab1}"
+                                    ng-click="setSelectedTab1(tab1)"
+                                    ng-repeat="tab1 in tabPages1">
+                                    <a href="{{modelhref}}" data-toggle="tab1">{{tab1}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-show="selectedTab1 === tabPages1[0] ? true: false">
+                            <div class="panel-body">
+                                @RenderSection("tab1Content", false)
+                            </div>
+                        </div>
+                        <div ng-show="selectedTab1 === tabPages1[2] ? true: false">
+                            <div class="panel-body">
+                                @RenderSection("tab3Content", false)
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Panel Footer -->
+                    <div class="panel-footer">
+                        <div class="row text-right">
+                            <div class="col-md-12">
+                                <button class="btn btn-sm btn-primary" type="submit" ng-click="submit()">
+                                    {{submitButtonText}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="selectedTab === tabPages[1] ? true: false">
+                    <div class="panel panel-visible">
+                        <!-- Panel Body -->
+                        <div class="panel-body pn">
+                            <div class="col-lg-12">
+                                @RenderSection("tab2Content", false)
+                            </div>
+                        </div>
+                        <!-- Panel Footer -->
+                        <div class="panel-footer" ng-show="!withDirective">
+                            <div class="row">
+                                <div class="col-md-12" align="right">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-primary" type="button" ng-click="loadData(currentPage - 1)" ng-disabled="!isPrevPage">Previous</button>
+                                        <button class="btn btn-default" type="button" ng-disabled="true">{{ currentPage }}</button>
+                                        <button class="btn btn-primary" type="button" ng-click="loadData(currentPage + 1)" ng-disabled="!isNextPage">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@RenderBody()
+
+<!-- Context Menu Content -->
+@RenderPage("~/Views/Shared/_ContextMenuTransactional1.cshtml")

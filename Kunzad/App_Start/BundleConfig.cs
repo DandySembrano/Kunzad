@@ -72,7 +72,8 @@ namespace Kunzad
                         "~/Scripts/app/truckingwb-ctrl.js",
                         "~/Scripts/app/airfreight-ctrl.js",
                         "~/Scripts/app/courierdelivery-ctrl.js",
-                        "~/Scripts/app/vanstuff-ctrl.js"
+                        "~/Scripts/app/vanstuff-ctrl.js",
+                        "~/Scripts/app/documentation-ctrl.js"
                         ));
         }
     }
