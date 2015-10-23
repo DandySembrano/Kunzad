@@ -2,77 +2,99 @@
 @{
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="consolidationOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="consolidationOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{consolidationItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{consolidationItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Delete' ? 'PostEditAction' : '')">Cancel</a>
+        </li>
+    </ul>
+</div>
 <!-- General -->
 @section tab1Content{
     <div context-menu="formContextMenu()" data-target="FormMenu">
         <!--Master-->
-        <div class="alert alert-danger alert-sm" ng-show="seaFreightIsError">
-            <i class="fa fa-remove pr10" ng-click="seaFreightIsError=false;seaFreightErrorMessage=''"></i>
-            <strong>ERROR!</strong>{{" " + seaFreightErrorMessage}}
+        <div class="alert alert-danger alert-sm" ng-show="consolidationIsError">
+            <i class="fa fa-remove pr10" ng-click="consolidationIsError=false;consolidationErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + consolidationErrorMessage}}
         </div>
         @*Column 1*@
         <div class="col-lg-6">
             <form class="form-horizontal" role="form">
-                @*seafreight No*@
+                @*consolidation No*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Shipment No</label>
                     <div class="col-md-4">
                         <input type="text"
                                class="form-control"
                                placeholder="System Generated"
-                               ng-model="seafreightItem.Id"
+                               ng-model="consolidationItem.Id"
                                ng-disabled="true">
                     </div>
                 </div>
-                <div class="form-group form-group-sm">
+                @*<div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Date</label>
                     <div class="col-md-4">
                         <div class='input-group date'>
                             <input type='text'
-                                   id='bldate'
+                                   id='consolDate'
                                    class="form-control"
-                                   ng-model="seafreightItem.BLDate"
+                                   ng-model="consolidationItem.BLDate"
                                    ng-disabled="viewonly" />
                             <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                 <span class=" glyphicon glyphicon-remove-circle"></span>
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>*@
 
-                <div class="form-group form-group-sm">
+                @*<div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Time</label>
                     <div class="col-md-4">
                         <div class='input-group date'>
                             <input type='text'
-                                   id='bldate'
+                                   id='consolTime'
                                    class="form-control"
-                                   ng-model="seafreightItem.BLDate"
+                                   ng-model="consolidationItem.BLDate"
                                    ng-disabled="viewonly" />
                             <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                 <span class=" glyphicon glyphicon-remove-circle"></span>
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Van Number</label>
                     <div class="col-md-8">
                         <input type="text"
-                               class="form-control text-right"
-                               id="freightCost"
+                               class="form-control"
+                               id="vanNumber"
                                placeholder=""
-                               ng-model="seafreightItem.FreightCost">
+                               ng-disabled="viewOnly"
+                               ng-model="consolidationItem.ConsolidationNo1">
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Seal Number</label>
                     <div class="col-md-8">
                         <input type="text"
-                               class="form-control text-right"
-                               id="freightCost"
+                               class="form-control"
+                               id="sealNumber"
                                placeholder=""
-                               ng-model="seafreightItem.FreightCost">
+                               ng-disabled="viewOnly"
+                               ng-model="consolidationItem.ConsolidationNo2">
                     </div>
                 </div>
                 @*Origin*@
@@ -84,7 +106,7 @@
                                    id="origin"
                                    class="form-control"
                                    placeholder=""
-                                   ng-model="seafreightItem.BusinessUnit1.Name"
+                                   ng-model="consolidationItem.BusinessUnit.Name"
                                    ng-disabled="viewOnly">
                             <span class="input-group-addon" title="Find Origin" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','origin')">
                                 <span class=" glyphicon glyphicon-search"></span>
@@ -93,7 +115,7 @@
                     </div>
                 </div>
                 @*Destination*@
-                <div class="form-group form-group-sm">
+                @*<div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Destination</label>
                     <div class="col-md-8">
                         <div class='input-group date'>
@@ -101,24 +123,32 @@
                                    id="destination"
                                    class="form-control"
                                    placeholder=""
-                                   ng-model="seafreightItem.BusinessUnit.Name"
+                                   ng-model="consolidationItem.BusinessUnit.Name"
                                    ng-disabled="viewOnly" />
                             <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','destination')">
                                 <span class=" glyphicon glyphicon-search"></span>
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>*@
             </form>
             <script type="text/javascript">
-            $(function () {
-                $('#bldate').datetimepicker({
-                    format: 'MM-DD-YYYY',
-                    sideBySide: false,
-                    pickTime: false,
-                    //minDate: moment()
-                })
-            });
+                $(function () {
+                    $('#consolDate').datetimepicker({
+                        format: 'MM-DD-YYYY',
+                        sideBySide: false,
+                        pickTime: false,
+                        //minDate: moment()
+                    })
+                });
+                $(function () {
+                    $('#consolTime').datetimepicker({
+                        format: 'HH-mm',
+                        sideBySide: false,
+                        pickTime: false,
+                        //minDate: moment()
+                    })
+                });
             </script>
 
         </div>
@@ -132,8 +162,8 @@
                         <select class="form-control"
                                 placeholder=""
                                 ng-disabled="viewOnly"
-                                ng-click="setShipmentType(shipmentItem.ShipmentTypeId)"
-                                ng-model="shipmentItem.ShipmentTypeId"
+                                ng-click="setShipmentType()"
+                                ng-model="consolidationItem.ShipmentTypeId"
                                 ng-options="item.Id as item.Name for item in shipmentTypeList"></select>
                     </div>
                 </div>
@@ -143,7 +173,7 @@
                         <textarea rows="6" style="height:auto;"
                                   class="form-control"
                                   placeholder=""
-                                  ng-model="shipmentItem.BookingRemarks"
+                                  ng-model="consolidationItem.Description"
                                   ng-disabled="viewOnly"></textarea>
                     </div>
                 </div>
@@ -153,7 +183,7 @@
         <!--Detail-->
         <div class="row">
             <div class="col-lg-12">
-                <div id="seaFreightShipmentsContainer"></div>
+                <div id="consolidationDetailContainer"></div>
             </div>
         </div>
         <!--End of Detail-->
@@ -161,13 +191,13 @@
 }
 <!-- List -->
 @section tab2Content{
-    <div style="padding:0px 10px 0px 10px">
-        <div class="text-right toggle-hide" ng-click="hideSeaFreightToggle()" ng-show="seaFreightToggle">Hide</div>
-        <div id="seaFreightToggle">
-            <div id="seaFreightFilterContainter" style="padding-left:10px;"></div>
-        </div><br>
-        <div id="seaFreightContainer"></div>
-    </div>
+<div style="padding:0px 10px 0px 10px">
+    <div class="text-right toggle-hide" ng-click="hideconsolidationToggle()" ng-show="consolidationToggle">Hide</div>
+    <div id="consolidationToggle">
+        <div id="consolidationFilterContainter" style="padding-left:10px;"></div>
+    </div><br>
+    <div id="consolidationContainer"></div>
+</div>
 }
 <!--End of List-->
 <!-- Business Unit List Modal -->
@@ -189,64 +219,7 @@
     </div>
 </div>
 <!--End of Business Unit List Modal -->
-<!-- Shippingline List Modal -->
-<div id="shippingline-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shippingline List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="shippingLineFilterContainter" style="padding-left:10px;"></div>
-            <div id="shippingLineContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Shippingline List Modal -->
-<!-- Vessel List Modal -->
-<div id="vessels-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Vessel List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="vesselFilterContainter" style="padding-left:10px;"></div>
-            <div id="vesselContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Vessel List Modal -->
-<!-- Vessel Voyage List Modal -->
-<div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Vessel Voyage List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="vesselVoyageFilterContainter" style="padding-left:10px;"></div>
-            <div id="vesselVoyageContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Vessel Voyage List Modal -->
-<!-- Shipment List Modal -->
+<!-- shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
@@ -264,24 +237,4 @@
         </div>
     </div>
 </div>
-<!--End of Shipment List Modal -->
-@*Form Context-Menu*@
-<div class="dropdown position-fixed" id="FormMenu">
-    <ul class="dropdown-menu" role="menu">
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>
-        </li>
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="shipmentOtheractions('FormCreate')">Create</a>
-        </li>
-        <li>
-            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostEditAction' : '')">Cancel</a>
-        </li>
-    </ul>
-</div>
+<!--End of consolidation List Modal -->
