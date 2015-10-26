@@ -430,6 +430,7 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
+
 <!-- Airline List Modal -->
 <div id="airline-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -449,8 +450,29 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
-@*BUSINESS UNITS FOR ORIGIN*@
+
+<!-- Origin Business Unit List Modal -->
 <div id="origin-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="originFilterContainter" style="padding-left:10px;"></div>
+            <div id="originContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Origin Business Unit List Modal -->
+
+@*BUSINESS UNITS FOR ORIGIN*@
+@*<div id="origin-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
@@ -492,7 +514,7 @@
             <button class="btn" type="submit" ng-click="closeModalBusinessUnitOrigin(buo)">Cancel</button>
         </div>
     </div>
-</div>
+</div>*@
 
 @*BUSINESS UNITS FOR DESTINATION*@
 <div id="destination-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
