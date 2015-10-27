@@ -14,10 +14,10 @@
             <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
         </li>
         <li>
-            <a style="{{trucking.Id != null && truckingSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="truckingOtheractions(trucking.Id != null && truckingSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+            <a style="{{truckingItem.Id != null && truckingSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="truckingOtheractions(truckingItem.Id != null && truckingSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
         </li>
         <li>
-            <a style="{{trucking.Id != null && truckingSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="truckingOtheractions(trucking.Id != null && truckingSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+            <a style="{{truckingItem.Id != null && truckingSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="truckingOtheractions(truckingItem.Id != null && truckingSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>
@@ -53,7 +53,7 @@
                                            id='dispatchdate'
                                            class="form-control"
                                            ng-model="truckingItem.DispatchDate"
-                                           ng-disabled="viewonly" />
+                                           ng-disabled="viewOnly" />
                                     <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
@@ -179,7 +179,7 @@
                                            id='truckcalldate'
                                            class="form-control"
                                            ng-model="truckingItem.TruckCallDate"
-                                           ng-disabled="viewonly" />
+                                           ng-disabled="viewOnly" />
                                     <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
@@ -194,7 +194,7 @@
                                            id="truckcalltime"
                                            class="form-control"
                                            ng-model="truckingItem.TruckCallTime"
-                                           ng-disabled="viewonly" />
+                                           ng-disabled="viewOnly" />
                                     <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
