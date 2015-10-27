@@ -67,6 +67,18 @@ namespace Kunzad.ApiControllers
             return Ok(trucking);
         }
 
+        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        public IHttpActionResult GetTruckings(string type, int param1, [FromUri]List<Trucking> trucking)
+        {
+            Trucking[] truckings = new Trucking[AppSettingsGet.PageSize];
+            this.filterRecord(param1, type, trucking.ElementAt(0), trucking.ElementAt(1), ref truckings);
+
+            if (truckings != null)
+                return Ok(truckings);
+            else
+                return Ok();
+        }
+
         // PUT: api/TruckingsWB/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTrucking(int id, Trucking trucking)
@@ -153,6 +165,38 @@ namespace Kunzad.ApiControllers
         private bool TruckingExists(int id)
         {
             return db.Truckings.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, Trucking trucking, Trucking trucking1, ref Trucking[] truckings)
+        {
+
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            TimeSpan defaultTime = new TimeSpan(23, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredTruckings = db.Truckings
+                .Where(t => t.TruckingStatusId == (int)Status.TruckingStatus.Waybill)
+                .Where(t => trucking.Id == null || trucking.Id == 0 ? true : t.Id == trucking.Id)
+                .Where(t => trucking.TruckingTypeId == null || trucking.TruckingTypeId == 0 ? true : t.TruckingTypeId == trucking.TruckingTypeId)
+                .Where(t => trucking.TruckingStatusId == null || trucking.TruckingStatusId == 0 ? true : t.TruckingStatusId == trucking.TruckingStatusId)
+                .Where(t => t.CreatedDate == null || t.CreatedDate == defaultDate ? true : t.CreatedDate >= trucking.CreatedDate && t.CreatedDate <= trucking1.CreatedDate)
+                .OrderBy(d => d.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
+            truckings = filteredTruckings;
         }
     }
 }
