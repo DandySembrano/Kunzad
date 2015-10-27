@@ -203,13 +203,14 @@ namespace Kunzad.ApiControllers
             }
             else
                 skip = param1;
+
             var filteredServiceableAreas = db.ServiceableAreas
                 .Include(sa => sa.CityMunicipality)
                 .Where(sa => serviceableArea.Id == null || serviceableArea.Id == 0 ? true : sa.Id == serviceableArea.Id)
                 .Where(sa => serviceableArea.Name == null ? true : sa.Name.Equals(serviceableArea.Name) || sa.Name.Contains(serviceableArea.Name))
                 .Where(sa => serviceableArea.PostalCode == null ? true : sa.PostalCode.Equals(serviceableArea.PostalCode) || sa.PostalCode.Contains(serviceableArea.PostalCode))
                 //.Where(sa => sa.IsServiceable == serviceableArea.IsServiceable)
-                .Where(sa => sa.CityMunicipality.Name == null ? true : (from cm in db.CityMunicipalities where cm.Name.Equals(sa.CityMunicipality.Name) || cm.Name.Contains(sa.CityMunicipality.Name) select cm).Count() > 0 ? true : false)
+                .Where(sa => serviceableArea.CityMunicipality.Name == null ? true : sa.CityMunicipality.Name.Equals(serviceableArea.CityMunicipality.Name) || sa.CityMunicipality.Name.Contains(serviceableArea.CityMunicipality.Name))
                 .OrderBy(sa => sa.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             serviceableAreas = filteredServiceableAreas;
         }

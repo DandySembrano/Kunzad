@@ -2,242 +2,247 @@
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
 @*Form Context-Menu*@
-<div class="dropdown position-fixed" id="FormMenu">
+<div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown" style="z-index: 1000">
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="shipmentOtheractions('Find')">Find</a>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="truckingOtheractions('Find')">Find</a>
         </li>
         <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="shipmentOtheractions('FormCreate')">Create</a>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="truckingOtheractions('FormCreate')">Create</a>
         </li>
         <li>
-            <a style="{{truckingItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Edit')">Edit</a>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
         </li>
         <li>
-            <a style="{{truckingItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="actionForm('Delete')">Cancel</a>
+            <a style="{{trucking.Id != null && truckingSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="truckingOtheractions(trucking.Id != null && truckingSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{trucking.Id != null && truckingSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="truckingOtheractions(trucking.Id != null && truckingSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>
 <!-- General -->
 @section tab1Content{
-<div context-menu="formContextMenu()" data-target="FormMenu">
-    <div class="alert alert-danger alert-sm" ng-show="isError">
-        <i class="fa fa-remove pr10"></i>
-        <strong>ERROR!</strong>{{errorMessage}}
-    </div>
+    @*Master*@
+    <div context-menu="formContextMenu()" data-target="FormMenu">
+        <div class="alert alert-danger alert-sm" ng-show="truckingIsError" ng-click="truckingIsError = false">
+            <i class="fa fa-remove pr10"></i>
+            <strong>ERROR!</strong>{{" " + truckingErrorMessage}}
+        </div>
 
-    <div class="row">
-        <form class="form-horizontal" role="form">
-            @*Column 1*@
-            <div class="col-lg-6">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Dispatch No</label>
-                        <div class="col-md-4">
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder="System Generated"
-                                   ng-model="truckingItem.Id"
-                                   ng-disabled="true" />
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Dispatch Date</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id='dispatchdate'
+        <div class="row">
+            <form class="form-horizontal" role="form">
+                @*Column 1*@
+                <div class="col-lg-6">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Dispatch No</label>
+                            <div class="col-md-4">
+                                <input type="text"
                                        class="form-control"
-                                       ng-model="truckingItem.DispatchDate"
-                                       ng-disabled="viewonly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
+                                       placeholder="System Generated"
+                                       ng-model="truckingItem.Id"
+                                       ng-disabled="true" />
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Dispatch Time</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id="dispatchtime"
-                                       class="form-control"
-                                       ng-model="truckingItem.DispatchTime"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Dispatch Date</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id='dispatchdate'
+                                           class="form-control"
+                                           ng-model="truckingItem.DispatchDate"
+                                           ng-disabled="viewonly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Dispatch Time</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id="dispatchtime"
+                                           class="form-control"
+                                           ng-model="truckingItem.DispatchTime"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Truck Plate No</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Truck Plate No</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type="hidden"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="truckingItem.TruckId" />
+                                    <input id="plateNo"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="truckingItem.Truck.PlateNo"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Find Truck" style="padding:2px 0 2px 10px;" ng-click="showTruck()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Trucker Name</label>
+                            <div class="col-md-8">
                                 <input type="hidden"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="truckingItem.TruckId" />
+                                        class="form-control"
+                                        placeholder=""
+                                        ng-model="truckingItem.TruckerId" />
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="truckingItem.Truck.PlateNo"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Find Truck" style="padding:2px 0 2px 10px;" ng-click="showModal('#truck-list-modal')">
-                                    <span class=" glyphicon glyphicon-search"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Trucker Name</label>
-                        <div class="col-md-8">
-                            <input type="hidden"
-                                    class="form-control"
-                                    placeholder=""
-                                    ng-model="truckingItem.TruckerId" />
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="truckingItem.Trucker.Name"
-                                   ng-disabled="true" />
-                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Driver Name</label>
-                        <div class="col-md-8">
-                            <div class='input-group date'>
-                                <input type="hidden"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="truckingItem.DriverId" />
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="truckingItem.DriverName"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Find Driver" style="padding:2px 0 2px 10px;" ng-click="showModal('#driver-list-modal')">
-                                    <span class=" glyphicon glyphicon-search"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            @*Column 2*@
-            <div class="col-lg-6" style="padding-top:44px">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Origin</label>
-                        <div class="col-md-8">
-                            <div class='input-group date'>
-                                <input type='hidden'
-                                       class="form-control"
-                                       ng-model="truckingItem.OriginServiceableAreaId"
+                                       ng-model="truckingItem.Trucker.Name"
                                        ng-disabled="true" />
-                                <input type='text'
-                                       class="form-control"
-                                       ng-model="truckingItem.ServiceableArea1.Name"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Find Origin" style="padding:2px 0 2px 10px;" ng-click="showModal('#originServiceableArea-list-modal')">
-                                    <span class=" glyphicon glyphicon-search"></span>
-                                </span>
+                             </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Driver Name</label>
+                            <div class="col-md-8">
+                                <div class='input-group date'>
+                                    <input type="hidden"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="truckingItem.DriverId" />
+                                    <input id="driverName" type="text"
+                                           class="form-control"
+                                           placeholder=""
+                                           ng-model="truckingItem.DriverName"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Find Driver" style="padding:2px 0 2px 10px;" ng-click="showDriver()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Destination</label>
-                        <div class="col-md-8">
-                            <div class='input-group date'>
-                                <input type='hidden'
-                                       class="form-control"
-                                       ng-model="truckingItem.DestinationServiceableAreaId"
-                                       ng-disabled="true" />
-                                <input type='text'
-                                       class="form-control"
-                                       ng-model="truckingItem.ServiceableArea.Name"
-                                       ng-disabled="viewOnly" />
-                                <span class="input-group-addon" title="Find Destionation" style="padding:2px 0 2px 10px;" ng-click="showModal('#destinationServiceableArea-list-modal')">
-                                    <span class=" glyphicon glyphicon-search"></span>
-                                </span>
+                    </form>
+
+                </div>
+                @*Column 2*@
+                <div class="col-lg-6" style="padding-top:44px">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Origin</label>
+                            <div class="col-md-8">
+                                <div class='input-group date'>
+                                    <input type='hidden'
+                                           class="form-control"
+                                           ng-model="truckingItem.OriginServiceableAreaId"
+                                           ng-disabled="true" />
+                                    <input id="origin" type='text'
+                                           class="form-control"
+                                           ng-model="truckingItem.ServiceableArea1.Name"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Find Origin" style="padding:2px 0 2px 10px;" ng-click="modalWatcher = 'originSA';  showServiceableArea()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Truck Call Date</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id='truckcalldate'
-                                       class="form-control"
-                                       ng-model="truckingItem.TruckCallDate"
-                                       ng-disabled="viewonly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Destination</label>
+                            <div class="col-md-8">
+                                <div class='input-group date'>
+                                    <input type='hidden'
+                                           class="form-control"
+                                           ng-model="truckingItem.DestinationServiceableAreaId"
+                                           ng-disabled="true" />
+                                    <input id="destination" type='text'
+                                           class="form-control"
+                                           ng-model="truckingItem.ServiceableArea.Name"
+                                           ng-disabled="viewOnly" />
+                                    <span class="input-group-addon" title="Find Destionation" style="padding:2px 0 2px 10px;" ng-click="modalWatcher = 'destSA';  showServiceableArea()">
+                                        <span class=" glyphicon glyphicon-search"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Truck Call Time</label>
-                        <div class="col-md-4">
-                            <div class='input-group date'>
-                                <input type='text'
-                                       id="truckcalltime"
-                                       class="form-control"
-                                       ng-model="truckingItem.TruckCallTime"
-                                       ng-disabled="viewonly" />
-                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                                    <span class=" glyphicon glyphicon-remove-circle"></span>
-                                </span>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Truck Call Date</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id='truckcalldate'
+                                           class="form-control"
+                                           ng-model="truckingItem.TruckCallDate"
+                                           ng-disabled="viewonly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    @*TruckingType*@
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Type</label>
-                        <div class="col-md-8">
-                            <select class="form-control"
-                                    ng-click="setTruckingType(truckingItem.TruckingTypeId)"
-                                    ng-model="truckingItem.TruckingTypeId"
-                                    ng-disabled="viewOnly"
-                                    ng-options="item.Id as item.Name for item in truckingTypeList"></select>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Truck Call Time</label>
+                            <div class="col-md-4">
+                                <div class='input-group date'>
+                                    <input type='text'
+                                           id="truckcalltime"
+                                           class="form-control"
+                                           ng-model="truckingItem.TruckCallTime"
+                                           ng-disabled="viewonly" />
+                                    <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                        @*TruckingType*@
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Type</label>
+                            <div class="col-md-8">
+                                <select class="form-control"
+                                        ng-click="setTruckingType(truckingItem.TruckingTypeId)"
+                                        ng-model="truckingItem.TruckingTypeId"
+                                        ng-disabled="viewOnly"
+                                        ng-options="item.Id as item.Name for item in truckingTypeList"></select>
+                            </div>
+                        </div>
+                    </form>
 
 
-                <script type="text/javascript">
-                    $(function () {
-                        $('#dispatchdate').datetimepicker({
-                            format: 'MM-DD-YYYY',
-                            sideBySide: false,
-                            pickTime: false,
-                        })
-                        $('#truckcalldate').datetimepicker({
-                            format: 'MM-DD-YYYY',
-                            sideBySide: false,
-                            pickTime: false,
-                        })
-                        $('#dispatchtime').datetimepicker({
-                            format: 'HH:mm',
-                            sideBySide: false,
-                            pickDate: false
-                        })
-                        $('#truckcalltime').datetimepicker({
-                            format: 'HH:mm',
-                            sideBySide: false,
-                            pickDate: false
-                        })
-                    });
-                </script>
-            </div>
-        </form>
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#dispatchdate').datetimepicker({
+                                format: 'MM-DD-YYYY',
+                                sideBySide: false,
+                                pickTime: false,
+                            })
+                            $('#truckcalldate').datetimepicker({
+                                format: 'MM-DD-YYYY',
+                                sideBySide: false,
+                                pickTime: false,
+                            })
+                            $('#dispatchtime').datetimepicker({
+                                format: 'HH:mm',
+                                sideBySide: false,
+                                pickDate: false
+                            })
+                            $('#truckcalltime').datetimepicker({
+                                format: 'HH:mm',
+                                sideBySide: false,
+                                pickDate: false
+                            })
+                        });
+                    </script>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
     @*Detail*@
     <div class="row">
         <form class="form-horizontal" role="form">
@@ -257,14 +262,14 @@
                             @*Shipment No*@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small">Shipment No</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <div class="input-group date">
-                                        <input type="text"
+                                        <input id="shipmentNo" type="text"
                                                class="form-control"
                                                placeholder=""
                                                ng-model="trkgdlvryList.ShipmentId"
-                                               ng-disabled="viewOnly" />
-                                        <span class="input-group-addon" title="Find Shipment from Booking" style="padding:2px 0 2px 10px;" ng-click="showModalShipment($index)">
+                                               ng-disabled="true" />
+                                        <span class="input-group-addon" title="Find Shipment from Booking" style="padding:2px 0 2px 10px;" ng-click="showShipment($index)">
                                             <span class=" glyphicon glyphicon-search"></span>
                                         </span>
                                     </div>
@@ -273,11 +278,11 @@
                             @*Customer Code*@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small">Shipper Code</label>
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <input type="text"
                                            class="form-control"
                                            placeholder=""
-                                           ng-model="trkgdlvryList.Customer.Code"
+                                           ng-model="trkgdlvryList.Shipment.Customer.Code"
                                            ng-disabled="true">
                                 </div>
                             </div>
@@ -288,7 +293,7 @@
                                     <input type="text"
                                            class="form-control"
                                            placeholder=""
-                                           ng-model="trkgdlvryList.Customer.Name"
+                                           ng-model="trkgdlvryList.Shipment.Customer.Name"
                                            ng-disabled="true">
                                 </div>
                             </div>
@@ -321,7 +326,7 @@
                                     <textarea rows="3" style="height:auto;"
                                               class="form-control"
                                               placeholder=""
-                                              ng-model="trkgdlvryList.Description"
+                                              ng-model="trkgdlvryList.Shipment.Description"
                                               ng-disabled="true"></textarea>
                                 </div>
                             </div>
@@ -337,7 +342,7 @@
                                            type="text"
                                            class="form-control"
                                            placeholder=""
-                                           ng-model="trkgdlvryList.DeliverTo"
+                                           ng-model="trkgdlvryList.Shipment.DeliverTo"
                                            ng-disabled="true">
                                 </div>
                             </div>
@@ -360,7 +365,7 @@
                                     <textarea rows="3" style="height:auto;"
                                               class="form-control"
                                               placeholder=""
-                                              ng-model="trkgdlvryList.DeliveryAddress"
+                                              ng-model="trkgdlvryList.Shipment.DeliveryAddress"
                                               ng-disabled="true"></textarea>
                                 </div>
                             </div>
@@ -381,10 +386,19 @@
         </form>
     </div>
 }
+
 <!-- List -->
 @section tab2Content{
-    <div ui-grid="gridOptTrkList" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+    <div style="padding:0px 10px 0px 10px">
+        <div class="text-right toggle-hide" ng-click="hideTruckingToggle()" ng-show="truckingToggle">Hide</div>
+        <div id="truckingToggle">
+            <div id="truckingFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="truckingContainer"></div>
+    </div>
 }
+
+<!-- Truck List Modal -->
 <div id="truck-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
@@ -392,43 +406,19 @@
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Truck List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-seqno small">Plate No</th>
-                                <th class="myTableCell cell-10 small text-center">Truck Type</th>
-                                <th class="myTableCell cell-10 small text-center">Trucker Name</th>
-                                <th class="myTableCell cell-10 small text-center">Weight Capacity</th>
-                                <th class="myTableCell cell-10 small text-center">Volume Capacity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="truck in truckList"
-                                ng-click="closeModalTruck(truck)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{truck.PlateNo}}</td>
-                                <td class="myTableCell cell-10 small">{{truck.TruckType.Type}}</td>
-                                <td class="myTableCell cell-10 small">{{truck.Trucker.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{(truck.WeightCapacity)}}</td>
-                                <td class="myTableCell cell-10 small">{{(truck.VolumeCapacity)}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="truckFilterContainter" style="padding-left:10px;"></div>
+            <div id="truckContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModalTruck(truck)">OK</button>
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
+<!--End of Truck List Modal -->
 
+<!-- Driver List Modal -->
 <div id="driver-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
@@ -436,175 +426,54 @@
             <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Driver List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-seqno small">First Name</th>
-                                <th class="myTableCell cell-10 small text-center">Middle Name</th>
-                                <th class="myTableCell cell-10 small text-center">Last Name</th>
-                                <th class="myTableCell cell-10 small text-center">License No</th>
-                                <th class="myTableCell cell-10 small text-center">License Expiry</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="driver in driverList"
-                                ng-click="closeModalDriver(driver)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{driver.FirstName}}</td>
-                                <td class="myTableCell cell-10 small">{{driver.MiddleName}}</td>
-                                <td class="myTableCell cell-10 small">{{driver.LastName}}</td>
-                                <td class="myTableCell cell-10 small">{{(driver.LicenseNo)}}</td>
-                                <td class="myTableCell cell-10 small">{{(driver.LicenseExpiry)}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="driverFilterContainter" style="padding-left:10px;"></div>
+            <div id="driverContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModalDriver(driver)">OK</button>
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
+<!--End of Driver List Modal -->
 
-<div id="originServiceableArea-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+<!-- ServiceableArea List Modal -->
+<div id="serviceableArea-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Serviceable Area List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>ServiceableArea List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-10 small text-center">Name</th>
-                                <th class="myTableCell cell-10 small text-center">City/Municipality</th>
-                                <th class="myTableCell cell-10 small text-center">Postal Code</th>
-                                <th class="myTableCell cell-10 small text-center">Is Serviceable?</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="sa in serviceableAreaList"
-                                ng-click="closeModalOriginServiceableArea(sa)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.CityMunicipality.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.PostalCode}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.IsServiceable}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="serviceableAreaFilterContainter" style="padding-left:10px;"></div>
+            <div id="serviceableAreaContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModalOriginServiceableArea(sa)">Cancel</button>
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
+<!--End of ServiceableArea List Modal -->
 
-<div id="destinationServiceableArea-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small">No</th>
-                                <th class="myTableCell cell-10 small text-center">Name</th>
-                                <th class="myTableCell cell-10 small text-center">City/Municipality</th>
-                                <th class="myTableCell cell-10 small text-center">Postal Code</th>
-                                <th class="myTableCell cell-10 small text-center">Is Serviceable?</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="sa in serviceableAreaList"
-                                ng-click="closeModalDestinationServiceableArea(sa)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.CityMunicipality.Name}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.PostalCode}}</td>
-                                <td class="myTableCell cell-10 small">{{sa.IsServiceable}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModalDestinationServiceableArea(sa)">Cancel</button>
-        </div>
-    </div>
-</div>
-
+<!-- Shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
         <!--Modal Header-->
         <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Booking List</span>
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
         </div>
         <!--Modal Body-->
-        <div class="panel-body">
-            <div class="row">
-                <div class="myTableContainter ">
-                    <table class="myTableContent table-bordered">
-                        <thead>
-                            <tr class="myTableRow-header text-dark small">
-                                <th class="myTableCell cell-seqno small text-center">No</th>
-                                <th class="myTableCell cell-10 small text-center">Shipment No</th>
-                                <th class="myTableCell cell-10 small text-center">Customer</th>
-                                <th class="myTableCell cell-10 small text-center">Pickup Date</th>
-                                <th class="myTableCell cell-10 small text-center">Pickup Time</th>
-                                <th class="myTableCell cell-10 small text-center">Pickup Address</th>
-                                <th class="myTableCell cell-10 small text-center">Consignee</th>
-                                <th class="myTableCell cell-10 small text-center">Delivery Address</th>
-                                <th class="myTableCell cell-10 small text-center">Total Quantity</th>
-                                <th class="myTableCell cell-10 small text-center">Total CBM</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="myTableRow"
-                                ng-repeat="shipment in shipmentList"
-                                ng-click="closeShipment(shipment.Id)">
-                                <td class="myTableCell cell-seqno small">{{$index + 1}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.Id)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.Customer.Name)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.PickupDate)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.PickupTime)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.Address1.Line1 + ", " + shipment.Address1.Line2 + ", " + shipment.Address1.CityMunicipality.Name +  ", " + shipment.Address1.PostalCode)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.DeliverTo)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.Address.Line1 + ", " + shipment.Address.Line2 + ", " + shipment.Address.CityMunicipality.Name +  ", " + shipment.Address.PostalCode)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.Quantity)}}</td>
-                                <td class="myTableCell cell-10 small">{{(shipment.TotalCBM)}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeShipment(shipment.Id)">OK</button>
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
         </div>
     </div>
 </div>
+<!--End of Shipment List Modal -->

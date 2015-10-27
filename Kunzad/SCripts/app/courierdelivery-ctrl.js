@@ -765,7 +765,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     };
     //=====================================END OF COURIER DELIVERY DETAIL DATAGRID===================
 
-    //=====================================START OF COURIER MODAL/REPORT======================================
+    //=====================================START OF COURIER MODAL/REPORT=============================
     $scope.showCourier = function () {
         openModalPanel2("#courier-list-modal");
         $scope.loadCourierDataGrid();
@@ -774,13 +774,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $scope.courierDataDefinition.Retrieve = true;
     };
 
-    //Load businessUnit filtering for compiling
+    //Load Courier filtering for compiling
     $scope.loadCourierFiltering = function () {
         $scope.initCourierFilteringParameters();
         $scope.initCourierFilteringContainter();
     };
 
-    //initialize businessUnit filtering parameters
+    //initialize Courier filtering parameters
     $scope.initCourierFilteringContainter = function () {
         html = '<dir-filtering  id="courierFilter" filterdefinition="courierFilteringDefinition"' +
                                 'filterlistener="courierDataDefinition.Retrieve"' +
@@ -790,7 +790,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $compile($content)($scope);
     };
 
-    //function that will be called during compiling of business unit filtering to DOM
+    //function that will be called during compiling of courier unit filtering to DOM
     $scope.initCourierFilteringParameters = function () {
         $scope.initCourierFilteringDefinition = function () {
             $scope.courierFilteringDefinition = {
@@ -879,13 +879,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $scope.initCourierDataItems();
     };
 
-    //Load business datagrid for compiling
+    //Load Courier datagrid for compiling
     $scope.loadCourierDataGrid = function () {
         $scope.initCourierDataGrid();
         $scope.compileCourierDataGrid();
     };
 
-    //initialize businessUnit datagrid parameters
+    //initialize Courier datagrid parameters
     $scope.initCourierDataGrid = function () {
         $scope.courierSubmitDefinition = undefined;
         $scope.initializeCourierDataDefinition = function () {
@@ -958,13 +958,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $scope.shipmentFilteringDefinition.SetSourceToNull = true;
         $scope.shipmentDataDefinition.Retrieve = true;
     };
-    //Load businessUnit filtering for compiling
+    //Load shipment filtering for compiling
     $scope.loadShipmentFiltering = function () {
         $scope.initShipmentFilteringParameters();
         $scope.initShipmentFilteringContainter();
     };
 
-    //initialize businessUnit filtering parameters
+    //initialize shipment filtering parameters
     $scope.initShipmentFilteringContainter = function () {
         html = '<dir-filtering  id="shipmentFilter" filterdefinition="shipmentFilteringDefinition"' +
                                 'filterlistener="shipmentDataDefinition.Retrieve"' +
@@ -974,7 +974,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $compile($content)($scope);
     };
 
-    //function that will be called during compiling of business unit filtering to DOM
+    //function that will be called during compiling of shipment unit filtering to DOM
     $scope.initShipmentFilteringParameters = function () {
         $scope.initShipmentFilteringDefinition = function () {
             $scope.shipmentFilteringDefinition = {
@@ -1091,13 +1091,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         }, 100);
     };
 
-    //Load business datagrid for compiling
+    //Load shipment datagrid for compiling
     $scope.loadShipmentDataGrid = function () {
         $scope.initShipmentDataGrid();
         $scope.compileShipmentDataGrid();
     };
 
-    //initialize businessUnit datagrid parameters
+    //initialize shipment datagrid parameters
     $scope.initShipmentDataGrid = function () {
         $scope.shipmentSubmitDefinition = undefined;
         $scope.initializeShipmentDataDefinition = function () {
