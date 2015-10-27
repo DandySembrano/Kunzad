@@ -25,76 +25,28 @@ namespace Kunzad.ApiControllers
 
         // GET: api/TruckingDeliveries?truckingId=1&page=1
         [ResponseType(typeof(TruckingDelivery))]
-        public IHttpActionResult GetTruckingDeliveries(int truckingId, int page)
+        public IHttpActionResult GetTruckingDeliveries(int length, int masterId)
         {
             var truckingDelivery = db.TruckingDeliveries
-                                    .Include(td => td.Address)
-                                    .Include(td => td.Address.CityMunicipality.StateProvince)
-                                    .Include(td => td.Trucking)
                                     .Include(td => td.Shipment)
+                                    .Include(td => td.Shipment.Address.CityMunicipality.StateProvince)
+                                    .Include(td => td.Shipment.Address1)
+                                    .Include(td => td.Shipment.Address1.CityMunicipality.StateProvince)
                                     .Include(td => td.Shipment.BusinessUnit)
+                                    .Include(td => td.Shipment.BusinessUnit1)
                                     .Include(td => td.Shipment.Service)
                                     .Include(td => td.Shipment.ShipmentType)
-                                    .Include(td => td.Customer)
-                                    .Include(td => td.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
-                                    .Include(td => td.Customer.CustomerContacts)
-                                    .Include(td => td.Customer.CustomerContacts.Select(cc => cc.Contact))
-                                    .Include(td => td.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                                    .Where(td => td.TruckingId == truckingId)
-                                    .ToArray();
-            for (int i = 0; i < truckingDelivery.Length; i++)
-            {
-                truckingDelivery[i].Address.Shipments = null;
-                truckingDelivery[i].Address.Shipments1 = null;
-                truckingDelivery[i].Address.CityMunicipality.Addresses = null;
-                truckingDelivery[i].Address.CityMunicipality.CustomerAddresses = null;
-                truckingDelivery[i].Address.CityMunicipality.Addresses = null;
-                truckingDelivery[i].Address.CityMunicipality.ServiceableAreas = null;
-                truckingDelivery[i].Address.CityMunicipality.Truckers = null;
-                truckingDelivery[i].Address.CityMunicipality.StateProvince.CityMunicipalities = null;
-                truckingDelivery[i].Shipment.BusinessUnit.AirFreights = null;
-                truckingDelivery[i].Shipment.BusinessUnit.AirFreights1 = null;
-                truckingDelivery[i].Shipment.BusinessUnit.BusinessUnitContacts = null;
-                truckingDelivery[i].Shipment.BusinessUnit.BusinessUnitType = null;
-                truckingDelivery[i].Shipment.BusinessUnit.CourierTransactions = null;
-                truckingDelivery[i].Shipment.BusinessUnit.SeaFreights = null;
-                truckingDelivery[i].Shipment.BusinessUnit.SeaFreights1 = null;
-                truckingDelivery[i].Shipment.BusinessUnit.Shipments = null;
-                truckingDelivery[i].Shipment.Service.ServiceCategory = null;
-                truckingDelivery[i].Shipment.Service.ServiceCharges = null;
-                truckingDelivery[i].Shipment.Service.Shipments = null;
-                truckingDelivery[i].Shipment.ShipmentType.Shipments = null;
-                truckingDelivery[i].Customer.CustomerGroup = null;
-                truckingDelivery[i].Customer.Industry = null;
-                truckingDelivery[i].Customer.Shipments = null;
-                truckingDelivery[i].Customer.TruckingDeliveries = null;
-
-                truckingDelivery[i].Customer.CustomerContacts = truckingDelivery[i].Customer.CustomerContacts.Where(cc => cc.Id == truckingDelivery[i].Shipment.CustomerContactId).ToArray();
-                foreach (var cc in truckingDelivery[i].Customer.CustomerContacts)
-                {
-                    cc.Customer = null;
-                    cc.Contact.BusinessUnitContacts = null;
-                    cc.Contact.CustomerContacts = null;
-                    cc.Contact.ContactPhones = cc.Contact.ContactPhones.Where(ccp => ccp.Id == truckingDelivery[i].Shipment.CustomerContactPhoneId).ToArray();
-                    foreach (var ccp in cc.Contact.ContactPhones)
-                    {
-                        ccp.Contact = null;
-                        ccp.ContactNumberType = null;
-                    }
-                }
-
-                truckingDelivery[i].Customer.CustomerAddresses = truckingDelivery[i].Customer.CustomerAddresses.Where(ca => ca.Id == truckingDelivery[i].Shipment.CustomerAddressId).ToArray();
-                
-
-                foreach (var ca in truckingDelivery[i].Customer.CustomerAddresses)
-                {
-                    ca.CityMunicipality.Couriers = null;
-                    ca.CityMunicipality.CustomerAddresses = null;
-                    ca.CityMunicipality.ServiceableAreas = null;
-                    ca.CityMunicipality.StateProvince = null;
-                }
-
-            }
+                                    .Include(td => td.Shipment.Customer)
+                                    .Include(td => td.Shipment.Customer.CustomerAddresses)
+                                    .Include(td => td.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                                    .Include(td => td.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                                    .Include(td => td.Shipment.Customer.CustomerContacts)
+                                    .Include(td => td.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
+                                    .Include(td => td.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                                    .Where(td => td.TruckingId == masterId)
+                                    .OrderBy(td => td.Id)
+                                    .Skip(length).Take(AppSettingsGet.PageSize)
+                                    .AsNoTracking().ToArray();
             
             return Ok(truckingDelivery);
         }

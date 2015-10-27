@@ -409,6 +409,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 case "PostDelete":
                     return true;
                 case "PostView":
+                    $scope.selectedTab = $scope.tabPages[1];
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];
