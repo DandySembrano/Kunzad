@@ -321,10 +321,13 @@ namespace Kunzad.ApiControllers
                 skip = param1;
                 
             var filteredTruckings = db.Truckings
+                .Include(t => t.Truck)
+                .Include(t => t.Trucker)
+                .Include(t => t.Driver)
                 .Where(t => trucking.Id == null || trucking.Id == 0 ? true : t.Id == trucking.Id)
                 .Where(t => trucking.TruckingTypeId == null || trucking.TruckingTypeId == 0 ? true : t.TruckingTypeId == trucking.TruckingTypeId)
                 .Where(t => trucking.TruckingStatusId == null || trucking.TruckingStatusId == 0 ? true : t.TruckingStatusId == trucking.TruckingStatusId)
-                .Where(t => t.CreatedDate == null || t.CreatedDate == defaultDate ? true : t.CreatedDate >= trucking.CreatedDate && t.CreatedDate <= trucking1.CreatedDate)
+                .Where(t => trucking.CreatedDate == null || trucking.CreatedDate == defaultDate ? true : t.CreatedDate >= trucking.CreatedDate && t.CreatedDate <= trucking1.CreatedDate)
                 .OrderBy(d => d.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             truckings = filteredTruckings;
         }
