@@ -22,6 +22,19 @@ namespace Kunzad.ApiControllers
             return db.Trucks;
         }
 
+        [HttpGet]
+        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        public IHttpActionResult GetTrucks(string type, int param1, [FromUri]List<Truck> truck)
+        {
+            Truck[] trucks = new Truck[pageSize];
+            this.filterRecord(param1, type, truck.ElementAt(0), truck.ElementAt(1), ref trucks);
+
+            if (trucks != null)
+                return Ok(trucks);
+            else
+                return Ok();
+        }
+
         // GET: api/Trucks?page=1
         public IHttpActionResult GetTrucks(int page)
         {
@@ -119,7 +132,6 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(Truck))]
         public IHttpActionResult PostTruck(Truck truck)
         {
-            int i = 0;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -158,6 +170,39 @@ namespace Kunzad.ApiControllers
         private bool TruckExists(int id)
         {
             return db.Trucks.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, Truck truck, Truck truck1, ref Truck[] trucks)
+        {
+
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            TimeSpan defaultTime = new TimeSpan(23, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+            var filteredTrucks = db.Trucks
+                .Include(t => t.Trucker)
+                .Include(t => t.TruckType)
+                .Where(t => truck.Id == null || truck.Id == 0 ? true : t.Id == truck.Id)
+                .Where(t => truck.TruckTypeId == null || truck.TruckTypeId == 0 ? true : t.TruckTypeId == truck.TruckTypeId)
+                .Where(t => truck.PlateNo == null ? true : t.PlateNo.Equals(truck.PlateNo) || t.PlateNo.Contains(truck.PlateNo))
+                .OrderBy(t => t.Id)
+                .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
+
+            trucks = filteredTrucks;
         }
     }
 }

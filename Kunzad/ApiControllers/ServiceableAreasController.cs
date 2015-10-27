@@ -39,6 +39,18 @@ namespace Kunzad.ApiControllers
             return db.ServiceableAreas;
         }
 
+        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        public IHttpActionResult GetServiceableAreas(string type, int param1, [FromUri]List<ServiceableArea> serviceableArea)
+        {
+            ServiceableArea[] serviceableAreas = new ServiceableArea[AppSettingsGet.PageSize];
+            this.filterRecord(param1, type, serviceableArea.ElementAt(0), serviceableArea.ElementAt(1), ref serviceableAreas);
+
+            if (serviceableAreas != null)
+                return Ok(serviceableAreas);
+            else
+                return Ok();
+        }
+
         // GET: api/ServiceableAreas?page=1
         public IQueryable<ServiceableArea> GetServiceableAreas(int page)
         {
@@ -168,6 +180,39 @@ namespace Kunzad.ApiControllers
         private bool ServiceableAreaExists(int id)
         {
             return db.ServiceableAreas.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, ServiceableArea serviceableArea, ServiceableArea serviceableArea1, ref ServiceableArea[] serviceableAreas)
+        {
+
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            TimeSpan defaultTime = new TimeSpan(23, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredServiceableAreas = db.ServiceableAreas
+                .Include(sa => sa.CityMunicipality)
+                .Where(sa => serviceableArea.Id == null || serviceableArea.Id == 0 ? true : sa.Id == serviceableArea.Id)
+                .Where(sa => serviceableArea.Name == null ? true : sa.Name.Equals(serviceableArea.Name) || sa.Name.Contains(serviceableArea.Name))
+                .Where(sa => serviceableArea.PostalCode == null ? true : sa.PostalCode.Equals(serviceableArea.PostalCode) || sa.PostalCode.Contains(serviceableArea.PostalCode))
+                //.Where(sa => sa.IsServiceable == serviceableArea.IsServiceable)
+                .Where(sa => serviceableArea.CityMunicipality.Name == null ? true : sa.CityMunicipality.Name.Equals(serviceableArea.CityMunicipality.Name) || sa.CityMunicipality.Name.Contains(serviceableArea.CityMunicipality.Name))
+                .OrderBy(sa => sa.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
+            serviceableAreas = filteredServiceableAreas;
         }
     }
 }

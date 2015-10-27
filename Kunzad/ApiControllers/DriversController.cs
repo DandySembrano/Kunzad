@@ -25,6 +25,18 @@ namespace Kunzad.ApiControllers
             return db.Drivers.AsNoTracking();
         }
 
+        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        public IHttpActionResult GetDrivers(string type, int param1, [FromUri]List<Driver> driver)
+        {
+            Driver[] drivers = new Driver[AppSettingsGet.PageSize];
+            this.filterRecord(param1, type, driver.ElementAt(0), driver.ElementAt(1), ref drivers);
+
+            if (drivers != null)
+                return Ok(drivers);
+            else
+                return Ok();
+        }
+
         // GET: api/Drivers?page=1
         public IQueryable<Driver> GetDrivers(int page)
         {
@@ -153,6 +165,37 @@ namespace Kunzad.ApiControllers
         private bool DriverExists(int id)
         {
             return db.Drivers.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, Driver driver, Driver driver1, ref Driver[] drivers)
+        {
+
+            /*
+             * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+             * If integer value is not nullable in table equate to 0 else null
+             * Use modified date if filtered data type is date
+             */
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            TimeSpan defaultTime = new TimeSpan(23, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+            var filteredDrivers = db.Drivers
+                .Where(d => driver.Id == null || driver.Id == 0 ? true : d.Id == driver.Id)
+                .Where(d => driver.FirstName == null ? true : d.FirstName.Equals(driver.FirstName) || d.FirstName.Contains(driver.FirstName))
+                .Where(d => driver.LastName == null ? true : d.LastName.Equals(driver.LastName) || d.LastName.Contains(driver.LastName))
+                .Where(d => driver.MiddleName == null ? true : d.MiddleName.Equals(driver.MiddleName) || d.MiddleName.Contains(driver.MiddleName))
+                .Where(d => driver.LicenseNo == null ? true : d.LicenseNo.Equals(driver.LicenseNo) || d.LicenseNo.Contains(driver.LicenseNo))
+                .OrderBy(d => d.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
+            drivers = filteredDrivers;
         }
     }
 }

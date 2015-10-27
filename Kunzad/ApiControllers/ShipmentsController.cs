@@ -364,18 +364,18 @@ namespace Kunzad.ApiControllers
              * Use modified date if filtered data type is date
              */
             DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            TimeSpan defaultTime = new TimeSpan(23, 00, 00);
             int skip;
 
             if (type.Equals("paginate"))
             {
                 if (param1 > 1)
-                    skip = (param1 - 1) * pageSize;
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
                 else
                     skip = 0;
             }
             else
                 skip = param1;
-
             var filteredShipments = db.Shipments
                 .Include(s => s.Address.CityMunicipality.StateProvince)
                 .Include(s => s.Address1)
@@ -402,7 +402,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
                 .OrderBy(s => s.Id)
-                .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
+                .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             shipments = filteredShipments;
         }
 
@@ -456,7 +456,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
                 .OrderBy(s => s.Id)
-                .Skip(skip).Take(pageSize).AsQueryable().AsNoTracking().ToArray();
+                .Skip(skip).Take(AppSettingsGet.PageSize).AsQueryable().AsNoTracking().ToArray();
             shipments = filteredShipments;
         }
     }
