@@ -105,7 +105,7 @@ kunzadApp.directive('dirFiltering', function () {
                             }
                             else {
                                 $scope.isErrorFiltering = true;
-                                $scope.errorMessageFiltering = $scope.filteredData.Definition.Name + " is required.";
+                                $scope.errorMessageFiltering = $scope.filteredData.Definition.Label + " is required.";
                             }
                             break;
                         case "Modal":
