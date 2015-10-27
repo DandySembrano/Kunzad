@@ -549,17 +549,20 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     //=====================================END OF AIRFREIGHT FILTERING AND DATAGRID===================
 
     //===================================== SHIPMENT MODAL =============================================
+    //show shipment datagrid
     $scope.showShipment = function () {
         $scope.shipmentFilteringDefinition.SetSourceToNull = true;
         $scope.shipmentDataDefinition.Retrieve = true;
         openModalPanel("#shipment-list-modal");
     };
 
+    //load shipment filtering for compiling
     $scope.loadShipmentFiltering = function () {
         $scope.initShipmentFilteringParameters();
         $scope.initShipmentFilteringContainer();
     };
 
+    //inigtialize shipment filtering parameters
     $scope.initShipmentFilteringContainer = function () {
         html = '<dir-filtering  filterdefinition="shipmentFilteringDefinition"' +
                                 'filterlistener="shipmentDataDefinition.Retrieve"' +
@@ -728,6 +731,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     //===================================== END OF SHIPMENT MODAL =======================================
 
     //===================================== AIRLINE MODAL =============================================
+    //show airline datagrid
     $scope.showAirline = function () {
         $scope.airlineFilteringDefinition.SetSourceToNull = true;
         $scope.airlineDataDefinition.Retrieve = true;
@@ -735,11 +739,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
     };
 
+    //load airline filtering for compiling
     $scope.loadAirlineFiltering = function () {
         $scope.initAirlineFilteringParameters();
         $scope.initAirlineFilteringContainer();
     };
 
+    //initialize airline filtering parameters
     $scope.initAirlineFilteringContainer = function () {
         html = '<dir-filtering  filterdefinition="airlineFilteringDefinition"' +
                                 'filterlistener="airlineDataDefinition.Retrieve"' +
@@ -895,6 +901,175 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     };
     //===================================== END OF AIRLINE MODAL =======================================
 
+    //===================================== ORIGIN BUSINESS UNIT MODAL =============================================
+    $scope.showOrigin = function () {
+        $scope.originFilteringDefinition.SetSourceToNull = true;
+        $scope.originDataDefinition.Retrieve = true;
+        openModalPanel("#origin-list-modal");
+
+    };
+
+    $scope.loadOriginFiltering = function () {
+        $scope.initOriginFilteringParameters();
+        $scope.initOriginFilteringContainer();
+    };
+
+    $scope.initOriginFilteringContainer = function () {
+        html = '<dir-filtering  filterdefinition="originFilteringDefinition"' +
+                                'filterlistener="originDataDefinition.Retrieve"' +
+                                'otheractions="originOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#originFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initOriginFilteringParameters = function () {
+        $scope.initOriginFilteringDefinition = function () {
+            $scope.originFilteringDefinition = {
+                "Url": ($scope.originDataDefinition.EnablePagination == true ? 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage : 'api/BusinessUnits?type=scroll&param1=' + $scope.originDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
+                "Source": [
+                            { "Index": 0, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.originOtherActionsFiltering = function (action) {
+            switch (action) {
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.originSource = $scope.originFilteringDefinition.Source;
+                    ////Optional in using this, can use switch if every source type has validation before filtering
+                    //for (var i = 0; i < $scope.originSource.length; i++) {
+                    //    if ($scope.originSource[i].Type == "Date") {
+                    //        $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] = $scope.originSource[i].From;
+                    //        $scope.originFilteringDefinition.DataItem1.Origin[1][$scope.originSource[i].Column] = $scope.originSource[i].To;
+                    //    }
+                    //    else
+                    //        $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] = $scope.originSource[i].From;
+                    //}
+
+                    ////Delete keys that the value is null
+                    //for (var i = 0; i < $scope.originSource.length; i++) {
+                    //    if ($scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] == null) {
+                    //        delete $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column];
+                    //        delete $scope.originFilteringDefinition.DataItem1.Origin[1][$scope.originSource[i].Column];
+                    //    }
+                    //}
+
+                    if ($scope.originDataDefinition.EnablePagination == true && $scope.originFilteringDefinition.ClearData) {
+                        $scope.originDataDefinition.CurrentPage = 1;
+                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.originDataDefinition.EnablePagination == true) {
+                        $scope.originDataDefinition.DataList = [];
+                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage;
+                    }
+                        //Scroll
+                    else {
+                        if ($scope.originFilteringDefinition.ClearData)
+                            $scope.originDataDefinition.DataList = [];
+                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.originDataDefinition.DataList.length;
+                    }
+                    return true;
+                case 'PostFilterData':
+                    /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
+                            set DoPagination to true
+                      if scroll, initialize customerDataDefinition DataList by pushing each value of filterDefinition DataList*/
+                    //Required
+                    //$scope.customerFilteringDefinition.DataList = $rootScope.formatCustomer($scope.customerFilteringDefinition.DataList);
+                    if ($scope.originDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.originFilteringDefinition.DataList.length; j++)
+                            $scope.originDataDefinition.DataList.push($scope.originFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.originDataDefinition.EnablePagination == true) {
+                        $scope.originDataDefinition.DataList = [];
+                        $scope.originDataDefinition.DataList = $scope.originFilteringDefinition.DataList;
+                        $scope.originDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initOriginDataItems = function () {
+            $scope.originFilteringDefinition.DataItem1 = angular.copy($rootScope.businessUnitObj());
+        };
+
+        $scope.initOriginFilteringDefinition();
+        $scope.initOriginDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadOriginDataGrid = function () {
+        $scope.initOriginDataGrid();
+        $scope.compileOriginDataGrid();
+    };
+
+    //initialize customer datagrid parameters
+    $scope.initOriginDataGrid = function () {
+        $scope.originSubmitDefinition = undefined;
+        $scope.initializeOriginDataDefinition = function () {
+            $scope.originDataDefinition = {
+                "Header": ['ID', 'Name', 'No.'],
+                "Keys": ['Id', 'Name'],
+                "Type": ['ControlNo', 'Default'],
+                "ColWidth": [150, 850],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "OriginMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.originDataDefinition.RowTemplate = '<div>' +
+                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                '</div>';
+        };
+
+        $scope.originOtherActions = function (action) {
+            switch (action) {
+                case "PostEditAction":
+                    $scope.airFreightItem.OriginBusinessUnitId = $scope.originDataDefinition.DataItem.Id;
+                    //$scope.airFreightItem.BusinessUnit.Name = $scope.originDataDefinition.DataItem.Name;
+                    $scope.airFreightItem.OriginBusinessUnitName = $scope.originDataDefinition.DataItem.Name;
+                    $scope.closeModal();
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeOriginDataDefinition();
+    };
+
+    //function that will be invoked during compiling of customer datagrid to DOM
+    $scope.compileOriginDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "originDataDefinition"' +
+                                    'submitdefinition   = "originSubmitDefinition"' +
+                                    'otheractions       = "originOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#originContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //===================================== END OF ORIGIN BUSINESS UNIT MODAL =======================================
+
     // CLOSE MODAL BUSINESS UNIT FOR ORIGIN
     $scope.closeModalBusinessUnitOrigin = function (buo) {
         if (angular.isDefined(buo)) {
@@ -939,6 +1114,11 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     var init = function () {
         $scope.focusOnTop();
         $scope.initBusinessUnits();
+
+        // ORIGIN BUSINESS UNITS
+        $scope.loadOriginDataGrid();
+        $scope.loadOriginFiltering();
+        $scope.originDataDefinition.Retrieve = true;
 
         // SHIPMENTS
         $scope.loadShipmentDataGrid();
