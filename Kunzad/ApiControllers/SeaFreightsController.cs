@@ -68,6 +68,7 @@ namespace Kunzad.ApiControllers
         {
             SeaFreight seaFreight = db.SeaFreights.Find(id);
             db.Entry(seaFreight).Reference(c => c.BusinessUnit).Load();
+            //db.Entry(seaFreight).Collection(sfs => sfs.SeaFreightShipments).Load();
 
             if (seaFreight == null)
             {
@@ -205,7 +206,7 @@ namespace Kunzad.ApiControllers
             {
                 if (!SeaFreightExists(id))
                 {
-                    response.message = "Courier Transaction doesn't exist.";
+                    response.message = "SeaFreight Transaction doesn't exist.";
                 }
                 else
                 {
@@ -258,14 +259,22 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(SeaFreight))]
         public IHttpActionResult DeleteSeaFreight(int id)
         {
+            response.status = "FAILURE";
             SeaFreight seaFreight = db.SeaFreights.Find(id);
+            //var seaFreightShipment = db.SeaFreightShipments.Where(sfs => sfs.ShipmentId == seaFreight.Id);
+            var seaFreightShipment = db.SeaFreightShipments.Where(s => s.ShipmentId == seaFreight.Id).ToList();
+            
             if (seaFreight == null)
             {
-                return NotFound();
+                response.message = "SeaFreight doesn't exist.";
+                return Ok(response);
             }
+
+            //db.SeaFreightShipments.Remove(seaFreightShipment);
 
             db.SeaFreights.Remove(seaFreight);
             db.SaveChanges();
+            response.status = "SUCCESS";
 
             return Ok(seaFreight);
         }
