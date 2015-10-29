@@ -15,7 +15,8 @@ namespace Kunzad.ApiControllers
     public class TruckingsWBController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-        private int pageSize = 20;
+        private Response response = new Response();
+        private int pageSize = AppSettingsGet.PageSize;
 
         // GET: api/TruckingsWB
         public IHttpActionResult GetTruckings()
@@ -83,75 +84,111 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTrucking(int id, Trucking trucking)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            if (!ModelState.IsValid || id != trucking.Id)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            if (id != trucking.Id)
-            {
-                return BadRequest();
-            }
-
-            foreach (TruckingDelivery td in trucking.TruckingDeliveries)
-            {
-                db.Entry(trucking).State = EntityState.Modified;
-            }
-
-            db.Entry(trucking).State = EntityState.Modified;
 
             try
             {
-                //trucking.TruckingStatusId = '1';
-                //trucking.LastUpdatedDate = DateTime.Now;
-                //trucking.TruckingStatusId = Status.TruckingStatus.Waybill;
+                var currentDeliveries = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == trucking.Id).ToArray();
+
+                //delete truckingDelivery
+                for (var i = 0; i < currentDeliveries.Length; i++)
+                {
+                    //remove trucking delivery then set the shipment transprotStatus back to Dispatch
+                    if (trucking.TruckingStatusId == (int)Status.TruckingStatus.Dispatch)
+                        db.TruckingDeliveries.Remove(currentDeliveries[i]);
+                    //update truckingDelivery
+                    else
+                    {
+                        db.Entry(currentDeliveries[i]).CurrentValues.SetValues(trucking.TruckingDeliveries.ElementAt(i));
+                        db.Entry(currentDeliveries[i]).State = EntityState.Modified;
+                    }
+                }
+               
+                var truckingHolder = db.Truckings.Find(trucking.Id);
+                trucking.TruckingStatusId = (int)Status.TruckingStatus.Dispatch;
+                trucking.LastUpdatedDate = DateTime.Now;
+                db.Entry(truckingHolder).CurrentValues.SetValues(trucking);
+                db.Entry(truckingHolder).State = EntityState.Modified;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = trucking;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!TruckingExists(id))
                 {
-                    return NotFound();
+                    response.message = "Trucking doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/TruckingsWB
         //[ResponseType(typeof(Trucking))]
-        //public IHttpActionResult PostTrucking(Trucking trucking)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        public IHttpActionResult PostTrucking(Trucking trucking)
+        {
+            response.status = "FAILURE";
+            if (!ModelState.IsValid)
+            {
+                response.message = "Bad request.";
+                return Ok(response);
+            }
 
-        //    db.Truckings.Add(trucking);
-        //    db.SaveChanges();
+            try
+            {
+                var currentDeliveries = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == trucking.Id).ToArray();
 
-        //    return CreatedAtRoute("DefaultApi", new { id = trucking.Id }, trucking);
-        //}
+                //update truckingDelivery
+                for (var i = 0; i < currentDeliveries.Length; i++)
+                {
+                    db.Entry(currentDeliveries[i]).CurrentValues.SetValues(trucking.TruckingDeliveries.ElementAt(i));
+                    db.Entry(currentDeliveries[i]).State = EntityState.Modified;
 
-        // DELETE: api/TruckingsWB/5
-        //[ResponseType(typeof(Trucking))]
-        //public IHttpActionResult DeleteTrucking(int id)
-        //{
-        //    Trucking trucking = db.Truckings.Find(id);
-        //    if (trucking == null)
-        //    {
-        //        return NotFound();
-        //    }
+                }
 
-        //    db.Truckings.Remove(trucking);
-        //    db.SaveChanges();
+                var truckingHolder = db.Truckings.Find(trucking.Id);
+                trucking.TruckingStatusId = (int)Status.TruckingStatus.Waybill;
+                trucking.LastUpdatedDate = DateTime.Now;
+                db.Entry(truckingHolder).CurrentValues.SetValues(trucking);
+                db.Entry(truckingHolder).State = EntityState.Modified;
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = trucking;
+            }
+            catch (Exception e)
+            {
+                response.message = e.ToString();
+            }
 
-        //    return Ok(trucking);
-        //}
+            return Ok(response);
+        }
+
+        // DELETE: api/Truckings/5
+        [ResponseType(typeof(Trucking))]
+        public IHttpActionResult DeleteTrucking(int id)
+        {
+            Trucking trucking = db.Truckings.Find(id);
+
+            if (trucking == null)
+            {
+                return NotFound();
+            }
+
+            db.Truckings.Remove(trucking);
+            db.SaveChanges();
+
+            return Ok(trucking);
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -190,11 +227,15 @@ namespace Kunzad.ApiControllers
                 skip = param1;
 
             var filteredTruckings = db.Truckings
-                .Where(t => t.TruckingStatusId == (int)Status.TruckingStatus.Waybill)
+                .Include(t => t.Truck)
+                .Include(t => t.Trucker)
+                .Include(t => t.Driver)
+                .Include(t => t.ServiceableArea)
+                .Include(t => t.ServiceableArea1)
                 .Where(t => trucking.Id == null || trucking.Id == 0 ? true : t.Id == trucking.Id)
                 .Where(t => trucking.TruckingTypeId == null || trucking.TruckingTypeId == 0 ? true : t.TruckingTypeId == trucking.TruckingTypeId)
                 .Where(t => trucking.TruckingStatusId == null || trucking.TruckingStatusId == 0 ? true : t.TruckingStatusId == trucking.TruckingStatusId)
-                .Where(t => t.CreatedDate == null || t.CreatedDate == defaultDate ? true : t.CreatedDate >= trucking.CreatedDate && t.CreatedDate <= trucking1.CreatedDate)
+                .Where(t => trucking.CreatedDate == null || trucking.CreatedDate == defaultDate ? true : t.CreatedDate >= trucking.CreatedDate && t.CreatedDate <= trucking1.CreatedDate)
                 .OrderBy(d => d.Id).Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             truckings = filteredTruckings;
         }
