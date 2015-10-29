@@ -23,6 +23,16 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.modalType = null;
     var pageSize = 20;
 
+    //Disable typing
+    $('#dispatchId,#origin,#destination').keypress(function (key) {
+        return false;
+    });
+    $('.deliverydate').keypress(function (key) {
+        return false;
+    });
+    $('.deliverytime').keypress(function (key) {
+        return false;
+    });
 
     $scope.addNewBooking = function () {
         $scope.trkgDeliveryList.push(
@@ -258,7 +268,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get('api/TruckingDeliveries?length=' + 0 + '&masterId=' + id)
             .success(function (data, status) {
-                console.log(data.length);
                 for (var i = 0; i < data.length; i++) {
                     data[i].ShipmentId = $rootScope.formatControlNo('', 15, data[i].Shipment.Id);
                     //Initialize Pickup Address
@@ -298,7 +307,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         sideBySide: false,
         pickTime: false,
         //minDate: moment()
-    })
+    });
 
     //=================================================START OF TRUCKING INFORMATION MASTER GRID=================================================
     //Initialized trucking item to it's default value
@@ -324,8 +333,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "MiddleName": null,
                 "LastName": null
             },
-            "TruckerCost": null,
-            "InternalRevenue": null,
+            "TruckingTypeId": null,
+            "TruckingType": null,
             "OriginServiceableAreaId": null,
             "ServiceableArea1": {
                 "Id": null,
@@ -336,9 +345,19 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "Id": null,
                 "Name": null
             },
+            "TruckerCost": null,
             "TruckingStatusId": null,
+            "TruckingStatusRemarks": null,
+            "TruckCallDate": null,
+            "TruckCallTime": null,
+            "DispatchDate": null,
+            "DispatchTime": null,
+            "CompletedDate": null,
+            "CompletedTime": null,
             "CreatedDate": null,
-            "LastUpdatedDate": null
+            "LastUpdatedDate": null,
+            "CreatedByUserId": null,
+            "LastUpdatedByUserId": null
         };
        
     };
@@ -388,6 +407,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.truckingOtheractions = function (action) {
+            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.submitButtonText = "Submit";
@@ -412,10 +432,10 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.viewOnly = false;
                 case "PostEditAction":
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
-                        alert('Edit!');
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
                         $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
@@ -444,13 +464,12 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 case "PostDeleteAction":
                     //If user choose cancel-menu in listing
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
-                        alert('Cancel!');
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
                         $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
-                        $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -461,6 +480,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                                 $scope.submitButtonText = "Cancel";
                                 $scope.selectedTab = $scope.tabPages[0];
                                 $scope.truckingSubmitDefinition.Type = "Edit";
+                                //for cancellation
                                 $scope.truckingItem.TruckingStatusId = 10;
                                 if ($scope.trkgDeliveryList.length == 0)
                                     $scope.addNewBooking();
@@ -478,13 +498,12 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 case "PostViewAction":
                     //If user choose view-menu in listing
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
-                        $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
+                        $$scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
                         $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
-                        $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
-
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -508,22 +527,13 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     }
                     return true;
                 case "PreSubmit":
-                    for (var i = 0; i < $scope.trkgDeliveryList.length; i++) {
-                        $scope.trkgDeliveryList[i].DeliveryDate = $filter('date')($scope.trkgDeliveryList[i].DeliveryDate, "MM/dd/yyyy");
-                        $scope.trkgDeliveryList[i].DeliveryTime = $filter('date')($scope.trkgDeliveryList[i].DeliveryTime, "HH:mm");
-                        $scope.trkgDeliveryList[i].CostAllocation = $filter('number')($scope.trkgDeliveryList[i].CostAllocation, 2);
-                    }
-
                     if (!$scope.validateDetail())
                         return false;
                     $scope.truckingSubmitDefinition.DataItem = angular.copy($scope.truckingItem);
-
-                    console.log($scope.truckingSubmitDefinition.DataItem);
                     return true;
                 case "PreSave":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
 
-                    console.log($scope.truckingSubmitDefinition.DataItem.TruckingDeliveries);
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -540,10 +550,13 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.viewOnly = true;
                     $scope.truckingSubmitDefinition.Type = "Edit";
                     $scope.enableSave = false;
+                    //initialize trucking status = Waybill; This will help if the user will edit the newly saved transaction.
+                    $scope.truckingItem.TruckingStatusId = 20;
                     alert("Successfully Saved.");
                     return true;
                 case "PreUpdate":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
+
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -557,10 +570,13 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     }
                     return true;
                 case "PostUpdate":
-                    if ($scope.submitButtonText == "Cancel")
-                        $scope.truckingOtheractions("FormCreate");
-                    $scope.enableSave = false;
                     $scope.viewOnly = true;
+                    if ($scope.submitButtonText == "Cancel")
+                    {
+                        $scope.truckingOtheractions("FormCreate");
+                        $scope.viewOnly = false;
+                    }
+                    $scope.enableSave = false;
 
                     alert("Successfully Updated.");
                     return true;
@@ -652,10 +668,10 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "Source": [
                             { "Index": 0, "Label": "Dispatch No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Document No", "Column": "DocumentNo", "Values": [], "From": null, "To": null, "Type": "ProperCase" },
-                            { "Index": 2, "Label": "Origin", "Column": "OriginServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 3, "Label": "Destination", "Column": "DestinationServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 4, "Label": "Created Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 5, "Label": "Last Updated Date", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Date" }
+                            { "Index": 2, "Label": "Dispatch Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            { "Index": 3, "Label": "Origin", "Column": "OriginServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 4, "Label": "Destination", "Column": "DestinationServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 5, "Label": "Type", "Column": "TruckingTypeId", "Values": $rootScope.getTruckingTypeList(), "From": null, "To": null, "Type": "DropDown" },
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
@@ -703,7 +719,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.truckingFilteringDefinition.Url = 'api/TruckingsWB?type=scroll&param1=' + $scope.truckingDataDefinition.DataList.length;
                     }
                     //retrieve trucking data with status = WAYBILL
-                    $scope.truckingFilteringDefinition.DataItem1.Trucking[1].TruckingStatusId = 20;
+                    $scope.truckingFilteringDefinition.DataItem1.Trucking[0].TruckingStatusId = 20;
 
                     return true;
                 case 'PostFilterData':
@@ -770,10 +786,11 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "Source": [
                             { "Index": 0, "Label": "Dispatch No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 1, "Label": "Document No", "Column": "DocumentNo", "Values": [], "From": null, "To": null, "Type": "ProperCase" },
-                            { "Index": 2, "Label": "Origin", "Column": "OriginServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 3, "Label": "Destination", "Column": "DestinationServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 4, "Label": "Created Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 5, "Label": "Last Updated Date", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Date" }
+                            { "Index": 2, "Label": "Dispatch Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            { "Index": 3, "Label": "Origin", "Column": "OriginServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 4, "Label": "Destination", "Column": "DestinationServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 5, "Label": "Created Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+                            { "Index": 6, "Label": "Last Updated Date", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Date" }
                 ],//Contains the Criteria definition
                 "Multiple": false,
                 "AutoLoad": false,
@@ -896,7 +913,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         //$scope.truckingItem.CallTime = $filter('Time')($scope.truckingItem.CallTime);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + ' ' + $scope.truckingItem.Driver.MiddleName + ' ' + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.TruckerCost = $filter('number')($scope.truckingItem.TruckerCost, 2);
-
+                        $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -1181,6 +1198,27 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         if ($scope.truckingFilteringDefinition.AutoLoad == true)
             $scope.truckingDataDefinition.Retrieve = true;
     };
+
+    var listener = $interval(function () {
+        //For responsive modal
+        var width = window.innerWidth;
+        if (width < 1030) {
+            $scope.modalStyle = "height:520px; max-height:100%";
+        }
+        else {
+            $scope.modalStyle = "height:450px; max-height:100%";
+        }
+    }, 100);
+
+    $scope.listener = function () {
+        $interval.cancel(listener);
+        listener = undefined;
+    };
+
+    $scope.$on('$destroy', function () {
+        $scope.listener();
+    });
+
 
     init();
 };

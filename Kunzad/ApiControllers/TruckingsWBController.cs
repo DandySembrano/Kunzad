@@ -95,23 +95,37 @@ namespace Kunzad.ApiControllers
             {
                 var currentDeliveries = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == trucking.Id).ToArray();
 
-                //delete truckingDelivery
-                for (var i = 0; i < currentDeliveries.Length; i++)
+                //Check if truckingStatus was set to Dispatch -- meaning transaction was CANCELLED.
+                if (trucking.TruckingStatusId == (int)Status.TruckingStatus.Dispatch)
                 {
-                    //remove trucking delivery then set the shipment transprotStatus back to Dispatch
-                    if (trucking.TruckingStatusId == (int)Status.TruckingStatus.Dispatch)
-                        db.TruckingDeliveries.Remove(currentDeliveries[i]);
-                    //update truckingDelivery
-                    else
+                    var currentDeliveries1 = db.TruckingDeliveries.Where(truckingDeliveries => truckingDeliveries.TruckingId == trucking.Id);
+                    foreach(TruckingDelivery td in currentDeliveries1)
+                    {
+                        //initialize delivery date,delivery time, & cost allocation to null/0.00 of trucking deliveries.
+                        td.DeliveryDate = null;
+                        td.DeliveryTime = null;
+                        td.CostAllocation = (decimal)0.00;
+
+                        var tdHolder = db.TruckingDeliveries.Find(td.Id);
+                        
+                        db.Entry(tdHolder).CurrentValues.SetValues(td);
+                        db.Entry(tdHolder).State = EntityState.Modified;
+                    }
+
+                    //initialize trucker cost to 0.00 when CANCELLED.
+                    trucking.TruckerCost = (decimal)0.00;
+                }
+                else
+                {
+                    for (var i = 0; i < currentDeliveries.Length; i++)
                     {
                         db.Entry(currentDeliveries[i]).CurrentValues.SetValues(trucking.TruckingDeliveries.ElementAt(i));
                         db.Entry(currentDeliveries[i]).State = EntityState.Modified;
                     }
                 }
+
                
                 var truckingHolder = db.Truckings.Find(trucking.Id);
-                trucking.TruckingStatusId = (int)Status.TruckingStatus.Dispatch;
-                trucking.LastUpdatedDate = DateTime.Now;
                 db.Entry(truckingHolder).CurrentValues.SetValues(trucking);
                 db.Entry(truckingHolder).State = EntityState.Modified;
                 db.SaveChanges();

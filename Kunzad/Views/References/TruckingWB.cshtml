@@ -46,7 +46,7 @@
                         <label class="col-md-3 control-label small">Dispatch No</label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="text" class="form-control" class="form-control"
+                                <input type="text" class="form-control" id="dispatchId"
                                         ng-model="truckingItem.Id"
                                         ng-disabled="viewOnly" />
                                 <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
@@ -115,7 +115,6 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Driver Name</label>
                         <div class="col-md-8">
-                            <div class='input-group date'>
                                 <input type="hidden"
                                         class="form-control"
                                         placeholder=""
@@ -125,7 +124,6 @@
                                         placeholder=""
                                         ng-model="truckingItem.DriverName"
                                         ng-disabled="true" />
-                            </div>
                         </div>
                     </div>
             </div>
@@ -133,7 +131,7 @@
             <div class="col-lg-6" style="padding-top:44px">
                     <div class="row form-group form-group-sm">
                         <label class="col-md-3 control-label small">Trucker Cost</label>
-                        <div class="col-md-4">
+                        <div class="col-md-8">
                             <input type="text" class="form-control truckerCost"
                                    ng-model="truckingItem.TruckerCost"
                                    ng-disabled="viewOnly" />
@@ -142,30 +140,36 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Origin</label>
                         <div class="col-md-8">
-                            <div class='input-group date'>
+                            <div class="input-group">
                                 <input type='hidden'
-                                        class="form-control"
-                                        ng-model="truckingItem.OriginServiceableAreaId"
-                                        ng-disabled="true" />
+                                       class="form-control"
+                                       ng-model="truckingItem.OriginServiceableAreaId"
+                                       ng-disabled="true" />
                                 <input id="origin" type='text'
-                                        class="form-control"
-                                        ng-model="truckingItem.ServiceableArea1.Name"
-                                        ng-disabled="true" />
+                                       class="form-control"
+                                       ng-model="truckingItem.ServiceableArea1.Name"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Origin" ng-click="showModal('#serviceableArea-list-modal','origin')">
+                                    <span class="glyphicons glyphicons-search"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Destination</label>
                         <div class="col-md-8">
-                            <div class='input-group date'>
+                            <div class="input-group">
                                 <input type='hidden'
-                                        class="form-control"
-                                        ng-model="truckingItem.DestinationServiceableAreaId"
-                                        ng-disabled="true" />
+                                       class="form-control"
+                                       ng-model="truckingItem.DestinationServiceableAreaId"
+                                       ng-disabled="true" />
                                 <input id="destination" type='text'
-                                        class="form-control"
-                                        ng-model="truckingItem.ServiceableArea.Name"
-                                        ng-disabled="true" />
+                                       class="form-control"
+                                       ng-model="truckingItem.ServiceableArea.Name"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#serviceableArea-list-modal','destination')">
+                                    <span class="glyphicons glyphicons-search"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -197,11 +201,15 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Type</label>
                         <div class="col-md-8">
-                            <select class="form-control"
-                                    ng-click="setTruckingType(truckingItem.TruckingTypeId)"
-                                    ng-model="truckingItem.TruckingTypeId"
-                                    ng-disabled="viewOnly"
-                                    ng-options="item.Id as item.Name for item in truckingTypeList"></select>
+                            <input type='hidden'
+                                   id="truckcalltime"
+                                   class="form-control"
+                                   ng-model="truckingItem.TruckingTypeId"
+                                   ng-disabled="true" />
+                            <input type='text'
+                                   class="form-control"
+                                   ng-model="truckingItem.TruckingType"
+                                   ng-disabled="true" />
                         </div>
                     </div>
                 <script type="text/javascript">
@@ -415,13 +423,13 @@
                             });
 
                             $('.deliverydate').datetimepicker({
-                                format: 'MM-dd-yyyy',
+                                format: 'MM-DD-YYYY',
                                 sideBySide: false,
                                 pickTime: false,
                                 //minDate: moment()
                             })
                             $('.deliverytime').datetimepicker({
-                                format: 'HH:mm:ss',
+                                format: 'HH:mm',
                                 sideBySide: false,
                                 pickDate: false
                             })
