@@ -68,6 +68,7 @@ namespace Kunzad.ApiControllers
         {
             SeaFreight seaFreight = db.SeaFreights.Find(id);
             db.Entry(seaFreight).Reference(c => c.BusinessUnit).Load();
+            //db.Entry(seaFreight).Collection(sfs => sfs.SeaFreightShipments).Load();
 
             if (seaFreight == null)
             {
@@ -205,7 +206,7 @@ namespace Kunzad.ApiControllers
             {
                 if (!SeaFreightExists(id))
                 {
-                    response.message = "Courier Transaction doesn't exist.";
+                    response.message = "SeaFreight Transaction doesn't exist.";
                 }
                 else
                 {
@@ -258,16 +259,34 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(SeaFreight))]
         public IHttpActionResult DeleteSeaFreight(int id)
         {
+            response.status = "FAILURE";
             SeaFreight seaFreight = db.SeaFreights.Find(id);
+            var seaFreightShipment = db.SeaFreightShipments.Where(s => s.SeaFreightId == seaFreight.Id).ToList();
+            
             if (seaFreight == null)
             {
-                return NotFound();
+                response.message = "SeaFreight doesn't exist.";
+                return Ok(response);
             }
 
-            db.SeaFreights.Remove(seaFreight);
-            db.SaveChanges();
+            foreach (SeaFreightShipment sfs1 in seaFreightShipment)
+            {
+                var shipment = db.Shipments.Find(sfs1.ShipmentId);
+                var shipmentHolder = shipment;
+                shipmentHolder.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                db.Entry(shipment).CurrentValues.SetValues(shipmentHolder);
+                db.Entry(shipment).State = EntityState.Modified;
 
-            return Ok(seaFreight);
+                db.SeaFreightShipments.Remove(sfs1);
+            }
+
+            seaFreight.FreightCost = (decimal)0.00;
+            db.Entry(seaFreight).State = EntityState.Modified;
+            //db.SeaFreights.Remove(seaFreight);
+            db.SaveChanges();
+            response.status = "SUCCESS";
+
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)
