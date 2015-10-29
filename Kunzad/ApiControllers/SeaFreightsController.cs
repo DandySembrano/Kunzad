@@ -261,8 +261,7 @@ namespace Kunzad.ApiControllers
         {
             response.status = "FAILURE";
             SeaFreight seaFreight = db.SeaFreights.Find(id);
-            //var seaFreightShipment = db.SeaFreightShipments.Where(sfs => sfs.ShipmentId == seaFreight.Id);
-            var seaFreightShipment = db.SeaFreightShipments.Where(s => s.ShipmentId == seaFreight.Id).ToList();
+            var seaFreightShipment = db.SeaFreightShipments.Where(s => s.SeaFreightId == seaFreight.Id).ToList();
             
             if (seaFreight == null)
             {
@@ -270,13 +269,24 @@ namespace Kunzad.ApiControllers
                 return Ok(response);
             }
 
-            //db.SeaFreightShipments.Remove(seaFreightShipment);
+            foreach (SeaFreightShipment sfs1 in seaFreightShipment)
+            {
+                var shipment = db.Shipments.Find(sfs1.ShipmentId);
+                var shipmentHolder = shipment;
+                shipmentHolder.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                db.Entry(shipment).CurrentValues.SetValues(shipmentHolder);
+                db.Entry(shipment).State = EntityState.Modified;
 
-            db.SeaFreights.Remove(seaFreight);
+                db.SeaFreightShipments.Remove(sfs1);
+            }
+
+            seaFreight.FreightCost = (decimal)0.00;
+            db.Entry(seaFreight).State = EntityState.Modified;
+            //db.SeaFreights.Remove(seaFreight);
             db.SaveChanges();
             response.status = "SUCCESS";
 
-            return Ok(seaFreight);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)
