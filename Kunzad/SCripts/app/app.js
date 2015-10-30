@@ -152,84 +152,104 @@ kunzadApp.run(function ($rootScope) {
     //Reusable object for filtering airline so that other module can directly access
     $rootScope.airlineObj = function () {
         return {
-            "Airline": [
+            "AirLine": [
                 {
-                    "Id": null,
-                    "Name": null
+                    "Name": "Philippine Airlines",
+                    "CreatedDate": "2015-06-05T10:44:07.767",
+                    "LastUpdatedDate": "2015-06-07T08:29:35.213",
+                    "CreatedByUserId": null,
+                    "LastUpdatedByUserId": null
                 },
                 {
-                    "Id": null,
-                    "Name": null
+                    "Name": "Philippine Airlines",
+                    "CreatedDate": "2015-06-05T10:44:07.767",
+                    "LastUpdatedDate": "2015-06-07T08:29:35.213",
+                    "CreatedByUserId": null,
+                    "LastUpdatedByUserId": null
                 }]
-        }
+        };
     };
 
     //Reusable object for filtering airfreight so that other module can directly access
+
     $rootScope.airFreightObj = function () {
         return {
-            "AirFreight": [
-                {
-                    "Id": null,
-                    "AirlineId": null,
-                    "Airline": {
-                        "Id": null,
-                        "Name": null
-                    },
-                    "AirlineWaybillNumber": null,
-                    "AirlineWaybillDate": null,
-                    "EstimatedDepartureDate": null,
-                    "EstimatedDepartureTime": null,
-                    "EstimatedArrivalDate": null,
-                    "EstimatedArrivalTime": null,
-                    "OriginBusinessUnitId": null,
-                    "BusinessUnit": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                    },
-                    "DestinationBusinessUnitId": null,
-                    "BusinessUnit1": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                    },
-                    "DepartureDate": null,
-                    "DepartureTime": null,
-                    "ArrivalDate": null,
-                    "ArrivalTime": null
-                },
-                {
-                    "Id": null,
-                    "AirlineId": null,
-                    "Airline": {
-                        "Id": null,
-                        "Name": null
-                    },
-                    "AirlineWaybillNumber": null,
-                    "AirlineWaybillDate": null,
-                    "EstimatedDepartureDate": null,
-                    "EstimatedDepartureTime": null,
-                    "EstimatedArrivalDate": null,
-                    "EstimatedArrivalTime": null,
-                    "OriginBusinessUnitId": null,
-                    "BusinessUnit": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                    },
-                    "DestinationBusinessUnitId": null,
-                    "BusinessUnit1": {
-                        "Id": null,
-                        "Code": null,
-                        "Name": null
-                    },
-                    "DepartureDate": null,
-                    "DepartureTime": null,
-                    "ArrivalDate": null,
-                    "ArrivalTime": null
-                }]
-        }
+            "AirFreight": [{
+                "Id": null,
+                "CreatedDate": null
+            },
+            {
+                "Id": null,
+                "CreatedDate": null
+            }]
+        };
     };
+
+    //$rootScope.airFreightObj = function () {
+    //    return {
+    //        "AirFreight": [
+    //            {
+    //                "Id": null,
+    //                "AirlineId": null,
+    //                "Airline": {
+    //                    "Id": null,
+    //                    "Name": null
+    //                },
+    //                "AirlineWaybillNumber": null,
+    //                "AirlineWaybillDate": null,
+    //                "EstimatedDepartureDate": null,
+    //                "EstimatedDepartureTime": null,
+    //                "EstimatedArrivalDate": null,
+    //                "EstimatedArrivalTime": null,
+    //                "OriginBusinessUnitId": null,
+    //                "BusinessUnit": {
+    //                    "Id": null,
+    //                    "Code": null,
+    //                    "Name": null
+    //                },
+    //                "DestinationBusinessUnitId": null,
+    //                "BusinessUnit1": {
+    //                    "Id": null,
+    //                    "Code": null,
+    //                    "Name": null
+    //                },
+    //                "DepartureDate": null,
+    //                "DepartureTime": null,
+    //                "ArrivalDate": null,
+    //                "ArrivalTime": null
+    //            },
+    //            {
+    //                "Id": null,
+    //                "AirlineId": null,
+    //                "Airline": {
+    //                    "Id": null,
+    //                    "Name": null
+    //                },
+    //                "AirlineWaybillNumber": null,
+    //                "AirlineWaybillDate": null,
+    //                "EstimatedDepartureDate": null,
+    //                "EstimatedDepartureTime": null,
+    //                "EstimatedArrivalDate": null,
+    //                "EstimatedArrivalTime": null,
+    //                "OriginBusinessUnitId": null,
+    //                "BusinessUnit": {
+    //                    "Id": null,
+    //                    "Code": null,
+    //                    "Name": null
+    //                },
+    //                "DestinationBusinessUnitId": null,
+    //                "BusinessUnit1": {
+    //                    "Id": null,
+    //                    "Code": null,
+    //                    "Name": null
+    //                },
+    //                "DepartureDate": null,
+    //                "DepartureTime": null,
+    //                "ArrivalDate": null,
+    //                "ArrivalTime": null
+    //            }]
+    //    }
+    //};
 
     //Payment Mode List
     $rootScope.getPaymentModeList = function () {

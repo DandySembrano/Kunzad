@@ -12,7 +12,7 @@ using Kunzad.Models;
 using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
-     [AutoInvalidateCacheOutput]
+    [AutoInvalidateCacheOutput]
     public class AirLinesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
@@ -49,6 +49,61 @@ namespace Kunzad.ApiControllers
             }
 
             return Ok(airLine);
+        }
+
+
+        //Dynamic filtering
+        [HttpGet]
+        public IHttpActionResult GetAirLine(string type, int param1, [FromUri]List<AirLine> pAirline)
+        {
+
+
+            Object[] objAirline = new Object[AppSettingsGet.PageSize];
+
+            var filteredAirline = (from airLine in db.AirLines
+                                   select new
+                                   {
+                                       airLine.Id,
+                                       airLine.Name
+                                   }).ToArray();
+            objAirline = filteredAirline;
+
+            //this.filterRecord(param1, type,(AirLine)pAirline.ElementAt(0), (AirLine)pAirline.ElementAt(1), ref objAirline);
+            if (objAirline != null)
+                return Ok(objAirline);
+            else
+                return Ok();
+
+        }
+
+        public void filterRecord(int param1, string type, AirLine pAirline, AirLine pAirline1, ref Object[] objAirline)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredAirline = (from airLine in db.AirLines
+                                   select new
+                                   {
+                                       airLine.Id,
+                                       airLine.Name
+                                   })
+                                            .Where(a => pAirline.Id == null || pAirline.Id == 0 ? true : pAirline.Id == pAirline.Id)
+                                            .Where(a => pAirline.Name == null ? !pAirline.Name.Equals("") : (a.Name.ToLower().Equals(pAirline.Name) || a.Name.ToLower().Contains(pAirline.Name)))
+                                            .OrderBy(a => pAirline.Id)
+                                            .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
+            objAirline = filteredAirline;
         }
 
         // PUT: api/AirLines/5
@@ -99,7 +154,7 @@ namespace Kunzad.ApiControllers
             if (!ModelState.IsValid)
             {
                 response.message = "Bad request.";
-               return Ok(response);
+                return Ok(response);
             }
             try
             {
@@ -134,7 +189,8 @@ namespace Kunzad.ApiControllers
                 db.SaveChanges();
                 response.status = "SUCCESS";
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 response.message = e.InnerException.InnerException.Message.ToString();
             }
             return Ok(response);

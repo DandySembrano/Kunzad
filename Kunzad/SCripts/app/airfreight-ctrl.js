@@ -15,14 +15,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.selectedTab = "Information";
     $scope.showMenu = false;
     $scope.airFreightItem = [];
-    //$scope.airFreightList = [];
     $scope.businessUnitList = [];
+    $scope.airLineList = [];
     $scope.shipmentItems = [];
     $scope.AirFreightShipments = [];
     var pageSize = 20;
+    $scope.selectedShipmentDtlRow = 0;
 
-    // NUMBERS w/ DECIMAL AND COMMA
-    // COST ALLOCATION PRICE FORMAT
     $('#costAllocation').priceFormat({
         clearPrefix: true,
         prefix: '',
@@ -31,7 +30,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         centsLimit: 4
     });
 
-    // DATE FORMATTING
     $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
         format: 'MM-DD-YYYY',
         sideBySide: false,
@@ -39,19 +37,26 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         //minDate: moment()
     })
 
-    // TIME FORMATTING
     $('#estimateDepartureTime,#estimateArrivalTime,#departureTime,#arrivalTime,#deliverytime').datetimepicker({
         format: 'HH:mm',
         sideBySide: false,
         pickDate: false
     })
 
-    //function that will be called during submit
     $scope.submit = function () {
         $scope.airFreightIsError = false;
         $scope.airFreightErrorMessage = "";
         $scope.airFreightSubmitDefinition.Submit = true;
     }
+
+    //Function that will trigger during Edit,Delete and View Action
+    $scope.onEDV = function () {
+        $scope.airFreightItem = [];
+        $scope.airFreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
+        $scope.controlNoHolder = $scope.airFreightItem.Id;
+        $scope.airFreightItem.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.Id);
+    };
+
 
     //Retrieve seafreight's shipments
     $scope.getAirFreightDetail = function (airFreightId) {
@@ -70,16 +75,21 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             });
     };
 
-    // SHOW MODAL
     $scope.showModal = function (panel) {
         openModalPanel(panel);
     };
 
-    // INITIALIZE BUSINESS UNITS
     $scope.initBusinessUnits = function () {
         $http.get("/api/BusinessUnits")
         .success(function (data, status) {
             $scope.businessUnitList = data;
+        });
+    };
+
+    $scope.initAirlines = function () {
+        $http.get("/api/AirLines")
+        .success(function (data, status) {
+            $scope.airLineList = data;
         });
     };
 
@@ -108,10 +118,10 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.initAirFreightDataGrid = function () {
         $scope.initializeAirFreightDataDefinition = function () {
             $scope.airFreightDataDefinition = {
-                "Header": ['Air Freight No','Airline', 'Waybill No', 'Waybill Date', 'Est Departure Date', 'Est Departure Time', 'Est Arrival Date', 'Est Arrival Time', 'Orgin', 'Destination', 'Departure Date', 'Departure Time', 'Arrival Date', 'Arrival Time', 'No.'],
-                "Keys": ['Id','AirLine.Name', 'AirWaybillNumber', 'AirWaybillDate', 'EstimatedDepartureDate', 'EstimatedDepartureTime', 'EstimatedArrivalDate', 'EstimatedArrivalTime', 'BusinessUnit1.Name', 'BusinessUnit.Name', 'DepartureDate', 'DepartureTime', 'ArrivalDate', 'ArrivalTime', ],
-                "Type": ['ControlNo','Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default'],
-                "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150 ],
+                "Header": ['Air Freight No', 'Airline', 'Waybill No', 'Waybill Date', 'Est Departure Date', 'Est Departure Time', 'Est Arrival Date', 'Est Arrival Time', 'Orgin', 'Destination', 'Departure Date', 'Departure Time', 'Arrival Date', 'Arrival Time', 'No.'],
+                "Keys": ['Id', 'AirLine.Name', 'AirWaybillNumber', 'AirWaybillDate', 'EstimatedDepartureDate', 'EstimatedDepartureTime', 'EstimatedArrivalDate', 'EstimatedArrivalTime', 'BusinessUnit1.Name', 'BusinessUnit.Name', 'DepartureDate', 'DepartureTime', 'ArrivalDate', 'ArrivalTime', ],
+                "Type": ['ControlNo', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default', 'Default'],
+                "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150],
                 "DataList": [],
                 "RequiredFields": [],
                 "CellTemplate": ["None"],
@@ -165,178 +175,88 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             switch (action) {
                 case "FormCreate":
                     $scope.airFreightResetData();
+                    $scope.airFreightShipmentResetData();
+                    $scope.airFreightShipmentsAdd();
                     $scope.viewOnly = false;
                     $scope.submitButtonText = "Submit";
                     $scope.airFreightSubmitDefinition.Type = "Create";
-                //    $scope.deliveryAddressDataDefinition.ViewOnly = false;
-                //    $scope.deliveryAddressDataDefinition.ActionMode = "Create";
-                //    $scope.pickupAddressDataDefinition.ViewOnly = false;
-                //    $scope.pickupAddressDataDefinition.ActionMode = "Create";
                     return true;
-                //case "PreAction":
-                //    $scope.selectedTab = $scope.tabPages[0];
-                //    $scope.shipmentIsError = false;
-                //    $scope.shipmentErrorMessage = "";
-                //    return true;
-                //case "PostCreateAction":
-                //    $scope.viewOnly = false;
-                //    $scope.submitButtonText = "Submit";
-                //    $scope.shipmentSubmitDefinition.Type = "Create";
-                //    $scope.deliveryAddressDataDefinition.ViewOnly = false;
-                //    $scope.deliveryAddressDataDefinition.ActionMode = "Create";
-                //    $scope.pickupAddressDataDefinition.ViewOnly = false;
-                //    $scope.pickupAddressDataDefinition.ActionMode = "Create";
-                //    return true;
+                case "PreAction":
+                    $scope.selectedTab = $scope.tabPages[0];
+                    $scope.shipmentIsError = false;
+                    $scope.shipmentErrorMessage = "";
+                    return true;
                 case "PostEditAction":
-                //    $scope.onEDV();                    
-                    //If user choose edit-menu in listing
-                    console.log($scope.airFreightShipmentsDataDefinition.DataList);
-                    if (angular.isDefined($scope.airFreightDataDefinition.DataItem.Id) && $scope.airFreightDataDefinition.DataItem.Id) {
-                        $scope.airFreightShipmentsDataDefinition.DataList.splice(0, $scope.airFreightShipmentsDataDefinition.DataList.length);
-                        $scope.airfreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
-                        $scope.controlNoHolder = $scope.airfreightItem.Id;
-                        $scope.airfreightItem.Id = $rootScope.formatControlNo('', 15, $scope.airfreightItem.Id);
-                        $scope.airfreightItem.CallDate = $filter('Date')($scope.airfreightItem.CallDate);
-                        $scope.airfreightItem.CourierCost = $filter('number')($scope.airfreightItem.CourierCost, 2);
+                    $scope.airFreightItem = [];
+                    $scope.airFreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
+                    //format date, time
 
-                        $scope.getCourierTransactionDetails($scope.airfreightItem.Id);
-                        var promise = $interval(function () {
-                            if ($scope.flagOnRetrieveDetails) {
-                                $scope.flagOnRetrieveDetails = false;
-                                $interval.cancel(promise);
-                                promise = undefined;
-                                $scope.viewOnly = false;
-                                $scope.submitButtonText = "Submit";
-                                $scope.selectedTab = $scope.tabPages[0];
-                                $scope.airFreightSubmitDefinition.Type = "Edit";
-                                if ($scope.airFreightShipmentsDataDefinition.DataList.length > 0)
-                                    //Set control no holder in case user will add item in list
-                                    $scope.controlNoHolder = $scope.airFreightShipmentsDataDefinition.DataList[$scope.airFreightShipmentsDataDefinition.DataList.length - 1].Id + 1;
-                                else
-                                    $scope.airFreightShipmentsResetData();
-                            }
-                        }, 100);
+                    $scope.airFreightItem.EstimatedDepartureDate = $filter('Date')(($scope.airFreightItem.EstimatedDepartureDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.EstimatedArrivalTime = $filter('Date')(($scope.airFreightItem.EstimatedArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.EstimatedArrivalDate = $filter('Date')(($scope.airFreightItem.EstimatedArrivalDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.EstimatedArrivalTime = $filter('Date')(($scope.airFreightItem.EstimatedArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.DepartureDate = $filter('Date')(($scope.airFreightItem.DepartureDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.DepartureTime = $filter('Date')(($scope.airFreightItem.DepartureTime), "hh:mm:ss");
+                    $scope.airFreightItem.ArrivalDate = $filter('Date')(($scope.airFreightItem.ArrivalDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.ArrivalTime = $filter('Date')(($scope.airFreightItem.ArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.AirWaybillDate = $filter('Date')(($scope.airFreightItem.AirWaybillDate), "yyyy-MM-dd");
+
+                    $scope.controlNoHolder = $scope.airFreightItem.Id;
+                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.Id);
+
+                    $scope.AirFreightShipments = $scope.airFreightItem.AirFreightShipments;
+                    for (var i = 0; i < $scope.airFreightItem.AirFreightShipments.length; i++) {
+                        $scope.AirFreightShipments[i].Shipment.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.AirFreightShipments[i].Shipment.Id);
                     }
-                    else {
-                        $scope.viewOnly = false;
-                        $scope.submitButtonText = "Submit";
-                        $scope.selectedTab = $scope.tabPages[0];
-                        $scope.airFreightSubmitDefinition.Type = "Edit";
-                    }
-                    $scope.enableSave = true;
+                    $scope.submitButtonText = "Update";
+                    $scope.selectedTab = $scope.tabPages[0];
+                    $scope.airFreightSubmitDefinition.Type = "Edit";
+                    $scope.viewOnly = false;
                     return true;
-                //case "PostDeleteAction":
-                //    $scope.onEDV();
-                //    $scope.viewOnly = true;
-                //    $scope.submitButtonText = "Cancel";
-                //    $scope.shipmentSubmitDefinition.Type = "Delete";
-                //    $scope.deliveryAddressDataDefinition.ViewOnly = true;
-                //    $scope.deliveryAddressDataDefinition.ActionMode = "Delete";
-                //    $scope.pickupAddressDataDefinition.ViewOnly = true;
-                //    $scope.pickupAddressDataDefinition.ActionMode = "Delete";
-                //    return true;
-                //case "PostViewAction":
-                //    $scope.onEDV();
-                //    $scope.viewOnly = true;
-                //    $scope.submitButtonText = "Close";
-                //    $scope.shipmentSubmitDefinition.Type = "View";
-                //    $scope.deliveryAddressDataDefinition.ViewOnly = true;
-                //    $scope.deliveryAddressDataDefinition.ActionMode = "View";
-                //    $scope.pickupAddressDataDefinition.ViewOnly = true;
-                //    $scope.pickupAddressDataDefinition.ActionMode = "View";
-                //    return true;
                 case "PreSubmit":
-                        //if (!$scope.validAirFreightShipments())
-                        //    return false;
-                        $scope.airFreightSubmitDefinition.DataItem = angular.copy($scope.airFreightItem);
-                        $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments = angular.copy($scope.AirFreightShipments);
-                        
+                    $scope.airFreightSubmitDefinition.DataItem = angular.copy($scope.airFreightItem);
+                    $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments = angular.copy($scope.AirFreightShipments);
+                    $scope.airFreightItem.AirFreightShipments = $scope.AirFreightShipments;
                     return true;
                 case "PreSave":
-                    
-                        delete $scope.airFreightSubmitDefinition.DataItem.Id;
-                        delete $scope.airFreightSubmitDefinition.DataItem.Airline;
-                        delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit;
-                        delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit1;
-                        delete $scope.airFreightSubmitDefinition.DataItem.OriginBusinessUnitName;
-                        delete $scope.airFreightSubmitDefinition.DataItem.DestinationBusinessUnitName;
+                    delete $scope.airFreightSubmitDefinition.DataItem.Id;
+                    delete $scope.airFreightSubmitDefinition.DataItem.Airline;
+                    delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit;
+                    delete $scope.airFreightSubmitDefinition.DataItem.BusinessUnit1;
+                    delete $scope.airFreightSubmitDefinition.DataItem.OriginBusinessUnitName;
+                    delete $scope.airFreightSubmitDefinition.DataItem.DestinationBusinessUnitName;
 
-                        for (var i = 0; i < $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments.length; i++) {
-                            delete $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments[i].Shipment;
-                        }
-
+                    for (var i = 0; i < $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments.length; i++) {
+                        delete $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments[i].Shipment;
+                    }
                     return true;
                 case "PostSave":
-                    
+                    $scope.airFreightItem.Id = $scope.airFreightSubmitDefinition.DataItem.Id;
+                    $scope.airFreightDataDefinition.DataItem = $scope.airFreightItem;
                     alert("Successfully Saved.");
-                    //$scope.onEDV();
-                    
-                    //$scope.loadAirFreightDataGrid();
+                    $scope.onEDV();
                     $scope.submitButtonText = "Update";
                     $scope.airFreightSubmitDefinition.Type = "Edit";
                     $scope.viewOnly = true;
+
                     return true;
-                //case "PreUpdate":
-                //    delete $scope.shipmentSubmitDefinition.DataItem.BusinessUnit;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.BusinessUnit1;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.Service;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.ShipmentType;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.Customer;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.Address.CityMunicipality;
-                //    delete $scope.shipmentSubmitDefinition.DataItem.Address1.CityMunicipality;
-                //    return true;
-                //case "PostUpdate":
-                //    if ($scope.shipmentSubmitDefinition.Index != -1)
-                //        $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index] = $scope.shipmentItem;
-                //    $scope.shipmentDataDefinition.DataItem = $scope.shipmentItem;
-                //    $scope.onEDV();
-                //    $scope.viewOnly = true;
-                //    alert("Successfully Updated.");
-                //    return true;
-                //case "PreDelete":
-                //    return true;
-                //case "PostDelete":
-                //    $scope.shipmentItem.TrasportStatusId = $scope.shipmentSubmitDefinition.DataItem.TrasportStatusId;
-                //    if ($scope.shipmentSubmitDefinition.Index != -1)
-                //        $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index].TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
-                //    $scope.shipmentDataDefinition.DataItem.TransportStatusId = $scope.shipmentSubmitDefinition.DataItem.TransportStatusId;
-                //    $scope.onEDV();
-                //    $scope.viewOnly = true;
-                //    alert("Successfully Cancelled.");
-                //    return true;
-                //case "PostView":
-                //    $scope.selectedTab = $scope.tabPages[1];
-                //    return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];
-                    //var promise = $interval(function () {
-                        //if ($scope.airFreightToggle == false) {
-                            $("#airFreightToggle").slideToggle(function () {
-                                $scope.airFreightToggle = true;
-                            });
-                        //}
-                        //$interval.cancel(promise);
-                        //promise = undefined;
-                    //}, 200);
+                    $("#airFreightToggle").slideToggle(function () {
+                        $scope.airFreightToggle = true;
+                    });
                     return true;
-                //case "Clear":
-                //    $scope.selectedTab = $scope.tabPages[1];
-                //    $scope.shipmentDataDefinition.DataList = [];
-                //    //Required if pagination is enabled
-                //    if ($scope.shipmentDataDefinition.EnablePagination == true) {
-                //        $scope.shipmentDataDefinition.CurrentPage = 1;
-                //        $scope.shipmentDataDefinition.DoPagination = true;
-                //    }
-                //    return true;
+
                 default: return true;
             }
         };
 
         $scope.airFreightResetData = function () {
+
             $scope.airFreightItem = {
                 "Id": null,
                 "AirlineId": null,
-                "Airline": {
+                "AirLine": {
                     "Id": null,
                     "Name": null
                 },
@@ -367,6 +287,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null
             }
+
+
             $scope.airFreightItem.BusinessUnit = {
                 "Id": 17,
                 "Code": "BU0007",
@@ -385,7 +307,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             $scope.airFreightItem.OriginBusinessUnitName = $scope.airFreightItem.BusinessUnit.Name;
         };
 
-        $scope.airFreightShipmentsResetData = function () {
+
+        $scope.airFreightShipmentsAdd = function () {
             $scope.airFreightShipmentItem = {
                 "Id": null,
                 "AirFreightId": null,
@@ -393,8 +316,11 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "Shipment": $rootScope.shipmentObj(),
                 "CostAllocation": null
             }
-
             $scope.AirFreightShipments.push($scope.airFreightShipmentItem);
+        }
+
+        $scope.airFreightShipmentResetData = function () {
+            $scope.AirFreightShipments = [];
         }
 
         $scope.airFreightShowFormError = function (error) {
@@ -454,16 +380,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "DataList": [], //Contains the data retrieved based on the criteria
                 "DataItem1": $scope.DataItem1, //Contains the parameter value
                 "Source": [
-                            { "Index": 0, "Label": "AirFreight No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                            //{ "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            //{ "Index": 7, "Label": "Customer", "Column": "CustomerId", "Values": ['GetCustomers'], "From": null, "To": null, "Type": "Modal" },
-                            //{ "Index": 8, "Label": "BusinessUnit", "Column": "BusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                            //{ "Index": 2, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            //{ "Index": 3, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            //{ "Index": 4, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
-                            //{ "Index": 5, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            //{ "Index": 9, "Label": "Operation Site", "Column": "PickUpBussinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
-                            { "Index": 1, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
+                             { "Index": 0, "Label": "Code", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Name", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Default" },
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
@@ -479,22 +397,23 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.selectedTab = $scope.tabPages[1];
                     $scope.airFreightSource = $scope.airFreightFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
-
                     for (var i = 0; i < $scope.airFreightSource.length; i++) {
                         if ($scope.airFreightSource[i].Type == "Date") {
                             $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].From;
                             $scope.airFreightFilteringDefinition.DataItem1.AirFreight[1][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].To;
                         }
-                        else
+                        else {
                             $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].From;
+                        }
                     }
-                    //Delete keys that the value is null
+                    // Delete keys that the value is null
                     for (var i = 0; i < $scope.airFreightSource.length; i++) {
                         if ($scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] == null) {
                             delete $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column];
                             delete $scope.airFreightFilteringDefinition.DataItem1.AirFreight[1][$scope.airFreightSource[i].Column];
                         }
                     }
+
 
                     if ($scope.airFreightDataDefinition.EnablePagination == true && $scope.airFreightFilteringDefinition.ClearData) {
                         $scope.airFreightDataDefinition.CurrentPage = 1;
@@ -509,20 +428,15 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                         if ($scope.airFreightFilteringDefinition.ClearData)
                             $scope.airFreightDataDefinition.DataList = [];
                         $scope.airFreightFilteringDefinition.Url = 'api/AirFreights?type=scroll&param1=' + $scope.airFreightDataDefinition.DataList.length;
+
                     }
                     return true;
                 case 'PostFilterData':
-                    /*Note: if pagination, initialize shipmentDataDefinition DataList by copying the DataList of filterDefinition then 
-                            set DoPagination to true
-                      if scroll, initialize shipmentDataDefinition DataList by pushing each value of filterDefinition DataList*/
-                    //Required
                     $scope.airFreightFilteringDefinition.DataList = $scope.airFreightFilteringDefinition.DataList;
-
                     if ($scope.airFreightDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.airFreightFilteringDefinition.DataList.length; j++)
                             $scope.airFreightDataDefinition.DataList.push($scope.airFreightFilteringDefinition.DataList[j]);
                     }
-
                     if ($scope.airFreightDataDefinition.EnablePagination == true) {
                         $scope.airFreightDataDefinition.DataList = [];
                         $scope.airFreightDataDefinition.DataList = $scope.airFreightFilteringDefinition.DataList;
@@ -532,8 +446,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.hideAirFreightToggle();
                     return true;
                 case 'GetBusinessList':
-                    //Show modal here then after user choose a specific data to filter pass the to From field in the source where Values[0] is equal to the action, ex. GetBusinessUnitList
-                    //Use if filtering criteria is modal
                     return true;
                 default: return true;
             }
@@ -545,24 +457,188 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.initAirFreightFilteringDefinition();
         $scope.initAirFreightDataItems();
     };
-    //console.log($scope.airFreightDataDefinition.DataList);
     //=====================================END OF AIRFREIGHT FILTERING AND DATAGRID===================
 
+    //=====================================BUSINESS UNIT MODAL(origin & destination)======================================
+    $scope.showBusinessUnit = function (originOrDestination) {
+        $scope.BusinessUnitOriginDestination = originOrDestination; //if button click is origin or destination
+        openModalPanel2("#business-unit-list-modal");
+        $scope.loadBusinessUnitDataGrid();
+        $scope.loadBusinessUnitFiltering();
+
+        $scope.businessUnitFilteringDefinition.SetSourceToNull = true;
+        $scope.businessUnitDataDefinition.Retrieve = true;
+    };
+
+    //Load businessUnit filtering for compiling
+    $scope.loadBusinessUnitFiltering = function () {
+        $scope.initBusinessUnitFilteringParameters();
+        $scope.initBusinessUnitFilteringContainter();
+    };
+
+    //initialize businessUnit filtering parameters
+    $scope.initBusinessUnitFilteringContainter = function () {
+        html = '<dir-filtering  id = "businessUnitFilter" filterdefinition="businessUnitFilteringDefinition"' +
+                                'filterlistener="businessUnitDataDefinition.Retrieve"' +
+                                'otheractions="businessUnitOtherActionsFiltering(action)"' +
+               '</dir-filtering>';
+        $content = angular.element(document.querySelector('#businessUnitFilterContainter')).html(html);
+        $compile($content)($scope);
+    };
+
+    //function that will be called during compiling of business unit filtering to DOM
+    $scope.initBusinessUnitFilteringParameters = function () {
+        $scope.initBusinessUnitFilteringDefinition = function () {
+            $scope.businessUnitFilteringDefinition = {
+                "Url": ($scope.businessUnitDataDefinition.EnablePagination == true ? 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage : 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length),//Url for retrieve
+                "DataList": [], //Contains the data retrieved based on the criteria
+                "DataItem1": $scope.DataItem1, //Contains the parameter value index
+                "Source": [
+                            { "Index": 0, "Label": "Code", "Column": "Code", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 1, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                ],//Contains the Criteria definition
+                "Multiple": false,
+                "AutoLoad": false,
+                "ClearData": false,
+                "SetSourceToNull": false
+            }
+        };
+
+        $scope.businessUnitOtherActionsFiltering = function (action) {
+            switch (action) {
+
+                //Initialize DataItem1 and DataItem2 for data filtering
+                case 'PreFilterData':
+                    $scope.businessUnitSource = $scope.businessUnitFilteringDefinition.Source;
+                    //Optional in using this, can use switch if every source type has validation before filtering
+                    for (var i = 0; i < $scope.businessUnitSource.length; i++) {
+                        if ($scope.businessUnitSource[i].Type == "Date") {
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[1][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
+                        }
+                        else {
+                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+
+                        }
+                    }
+
+                    if ($scope.businessUnitDataDefinition.EnablePagination == true && $scope.businessUnitFilteringDefinition.ClearData) {
+                        $scope.businessUnitDataDefinition.CurrentPage = 1;
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage;
+                    }
+                    else if ($scope.businessUnitDataDefinition.EnablePagination == true) {
+                        $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.businessUnitDataDefinition.CurrentPage;
+                    } else { //scroll
+                        if ($scope.businessUnitFilteringDefinition.ClearData)
+                            $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.businessUnitDataDefinition.DataList.length;
+                    }
+                    return true;
+                case 'PostFilterData':
+                    if ($scope.businessUnitDataDefinition.EnableScroll == true) {
+                        for (var j = 0; j < $scope.businessUnitFilteringDefinition.DataList.length; j++)
+                            $scope.businessUnitDataDefinition.DataList.push($scope.businessUnitFilteringDefinition.DataList[j]);
+                    }
+
+                    if ($scope.businessUnitDataDefinition.EnablePagination == true) {
+                        $scope.businessUnitDataDefinition.DataList = [];
+                        $scope.businessUnitDataDefinition.DataList = $scope.businessUnitFilteringDefinition.DataList;
+                        $scope.businessUnitDataDefinition.DoPagination = true;
+                    }
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initBusinessUnitDataItems = function () {
+            $scope.businessUnitFilteringDefinition.DataItem1 = angular.copy($rootScope.businessUnitObj());
+
+        };
+
+        $scope.initBusinessUnitFilteringDefinition();
+        $scope.initBusinessUnitDataItems();
+    };
+
+    //Load business datagrid for compiling
+    $scope.loadBusinessUnitDataGrid = function () {
+        $scope.initBusinessUnitDataGrid();
+        $scope.compileBusinessUnitDataGrid();
+    };
+
+    //initialize businessUnit datagrid parameters
+    $scope.initBusinessUnitDataGrid = function () {
+        $scope.businessUnitSubmitDefinition = undefined;
+        $scope.initializeBusinessUnitDataDefinition = function () {
+            $scope.businessUnitDataDefinition = {
+                "Header": ['Code', 'Name', 'Main Business Unit', 'Business Unit Type', 'Is Operating Site?', 'Has Airport?', 'Has Seaport?', 'No.'],
+                "Keys": ['Code', 'Name', 'ParentBusinessUnit[0].Name', 'BusinessUnitType[0].Name', 'isOperatingSite', 'hasAirPort', 'hasSeaPort'],
+                "Type": ['Default', 'ProperCase', 'ProperCase', 'ProperCase', 'Bit', 'Bit', 'Bit'],
+                "ColWidth": [150, 200, 200, 200, 150, 150, 150],
+                "DataList": [],
+                "RequiredFields": [],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "BusinessUnitMenu",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [""],
+                "ContextMenuLabel": [""]
+            }
+            $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
+                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+                                                              '</div>';
+        };
+        $scope.businessUnitOtherActions = function (action) {
+            switch (action) {
+                case 'PostEditAction':
+                    if ($scope.BusinessUnitOriginDestination == 'ORIGIN') {
+                        $scope.airFreightItem.OriginBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                        $scope.airFreightItem.BusinessUnit.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                    } else if ($scope.BusinessUnitOriginDestination == 'DESTINATION') {
+                        $scope.airFreightItem.DestinationBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                        $scope.airFreightItem.BusinessUnit1.Name = $scope.businessUnitDataDefinition.DataItem.Name;
+                    }
+                    $scope.closeModal();
+                    return true;
+                default: return true;
+            }
+        };
+
+        $scope.initializeBusinessUnitDataDefinition();
+    };
+
+    //function that will be invoked during compiling of businessUnit datagrid to DOM
+    $scope.compileBusinessUnitDataGrid = function () {
+        var html = '<dir-data-grid2 id = "businessUnitGrid" datadefinition      = "businessUnitDataDefinition"' +
+                                    'submitdefinition   = "businessUnitSubmitDefinition"' +
+                                    'otheractions       = "businessUnitOtherActions(action)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#businessUnitContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //=======================================END OF BUSINESS UNIT MODAL==============================
+
     //===================================== SHIPMENT MODAL =============================================
-    //show shipment datagrid
-    $scope.showShipment = function () {
+    $scope.showShipment = function (row) {
+        $scope.selectedShipmentDtlRow = row;
         $scope.shipmentFilteringDefinition.SetSourceToNull = true;
         $scope.shipmentDataDefinition.Retrieve = true;
         openModalPanel("#shipment-list-modal");
     };
 
-    //load shipment filtering for compiling
     $scope.loadShipmentFiltering = function () {
         $scope.initShipmentFilteringParameters();
         $scope.initShipmentFilteringContainer();
     };
 
-    //inigtialize shipment filtering parameters
     $scope.initShipmentFilteringContainer = function () {
         html = '<dir-filtering  filterdefinition="shipmentFilteringDefinition"' +
                                 'filterlistener="shipmentDataDefinition.Retrieve"' +
@@ -586,11 +662,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                             { "Index": 3, "Label": "BusinessUnit", "Column": "BusinessUnitId", "Values": ['GetBusinessList'], "From": null, "To": null, "Type": "Modal" },
                             { "Index": 4, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
                             { "Index": 5, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            //{ "Index": 6, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
                             { "Index": 6, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
                             { "Index": 7, "Label": "Operation Site", "Column": "PickUpBussinessUnitId", "Values": [], "From": null, "To": null, "Type": "Modal" }
-                            //,
-                            //{ "Index": 9, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
                 ],//Contains the Criteria definition
                 "Multiple": false,
                 "AutoLoad": false,
@@ -610,8 +683,9 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
                         }
-                        else
+                        else {
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        }
                     }
 
                     //Delete keys that the value is null
@@ -632,19 +706,15 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     }
                         //Scroll
                     else {
-                        if ($scope.shipmentFilteringDefinition.ClearData)
+                        if ($scope.shipmentFilteringDefinition.ClearData) {
                             $scope.shipmentDataDefinition.DataList = [];
+                        }
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&source=air&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
 
                     $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.airFreightItem.OriginBusinessUnitId;
                     return true;
                 case 'PostFilterData':
-                    /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
-                            set DoPagination to true
-                      if scroll, initialize customerDataDefinition DataList by pushing each value of filterDefinition DataList*/
-                    //Required
-                    //$scope.customerFilteringDefinition.DataList = $rootScope.formatCustomer($scope.customerFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
@@ -708,8 +778,9 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.shipmentOtherActions = function (action) {
             switch (action) {
                 case "PostEditAction":
-                    $scope.airFreightShipmentItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
-                    $scope.airFreightShipmentItem.Shipment = $scope.shipmentDataDefinition.DataItem;
+                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].Shipment = $scope.shipmentDataDefinition.DataItem;
+                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].Shipment.Id = $rootScope.formatControlNo('', 15, $scope.shipmentDataDefinition.DataItem.Id);
+                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].ShipmentId = $rootScope.formatControlNo('', 15, $scope.shipmentDataDefinition.DataItem.Id);
                     $scope.closeModal();
                     return true;
                 default: return true;
@@ -731,21 +802,20 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     //===================================== END OF SHIPMENT MODAL =======================================
 
     //===================================== AIRLINE MODAL =============================================
-    //show airline datagrid
     $scope.showAirline = function () {
+        openModalPanel2("#airline-list-modal");
+        $scope.loadAirlineDataGrid();
+        $scope.loadAirlineFiltering();
         $scope.airlineFilteringDefinition.SetSourceToNull = true;
         $scope.airlineDataDefinition.Retrieve = true;
-        openModalPanel("#airline-list-modal");
 
     };
 
-    //load airline filtering for compiling
     $scope.loadAirlineFiltering = function () {
         $scope.initAirlineFilteringParameters();
         $scope.initAirlineFilteringContainer();
     };
 
-    //initialize airline filtering parameters
     $scope.initAirlineFilteringContainer = function () {
         html = '<dir-filtering  filterdefinition="airlineFilteringDefinition"' +
                                 'filterlistener="airlineDataDefinition.Retrieve"' +
@@ -763,7 +833,12 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "DataList": [], //Contains the data retrieved based on the criteria
                 "DataItem1": $scope.DataItem1, //Contains the parameter value index
                 "Source": [
-                            { "Index": 0, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                             { "Index": 0, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
+                             { "Index": 1, "Label": "CreatedDate", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Default" },
+                             { "Index": 2, "Label": "LastUpdatedDate", "Column": "LastUpdatedDate", "Values": [], "From": null, "To": null, "Type": "Default" },
+                             { "Index": 3, "Label": "CreatedByUserId", "Column": "CreatedByUserId", "Values": [], "From": null, "To": null, "Type": "Default" },
+                             { "Index": 4, "Label": "LastUpdatedByUserId", "Column": "LastUpdatedByUserId", "Values": [], "From": null, "To": null, "Type": "Default" },
+
                 ],//Contains the Criteria definition
                 "Multiple": false,
                 "AutoLoad": false,
@@ -774,48 +849,33 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
         $scope.airlineOtherActionsFiltering = function (action) {
             switch (action) {
-                //Initialize DataItem1 and DataItem2 for data filtering
+
                 case 'PreFilterData':
                     $scope.airlineSource = $scope.airlineFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.airlineSource.length; i++) {
                         if ($scope.airlineSource[i].Type == "Date") {
-                            $scope.airlineFilteringDefinition.DataItem1.Airline[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
-                            $scope.airlineFilteringDefinition.DataItem1.Airline[1][$scope.airlineSource[i].Column] = $scope.airlineSource[i].To;
+                            $scope.airlineFilteringDefinition.DataItem1.AirLine[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
+                            $scope.airlineFilteringDefinition.DataItem1.AirLine[1][$scope.airlineSource[i].Column] = $scope.airlineSource[i].To;
                         }
                         else
-                            $scope.airlineFilteringDefinition.DataItem1.Airline[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
+                            $scope.airlineFilteringDefinition.DataItem1.AirLine[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
                     }
 
-                    //Delete keys that the value is null
-                    for (var i = 0; i < $scope.airlineSource.length; i++) {
-                        if ($scope.airlineFilteringDefinition.DataItem1.Airline[0][$scope.airlineSource[i].Column] == null) {
-                            delete $scope.airlineFilteringDefinition.DataItem1.Airline[0][$scope.airlineSource[i].Column];
-                            delete $scope.airlineFilteringDefinition.DataItem1.Airline[1][$scope.airlineSource[i].Column];
-                        }
-                    }
-
-                    if ($scope.airlineDataDefinition.EnablePagination == true && $scope.airlineFilteringDefinition.ClearData) {
+                    if ($scope.airlineDataDefinition.EnablePagination == true && $scope.airlineDataDefinition.ClearData) {
                         $scope.airlineDataDefinition.CurrentPage = 1;
-                        $scope.airlineFilteringDefinition.Url = 'api/Airlines?type=paginate&param1=' + $scope.airlineDataDefinition.CurrentPage;
+                        $scope.airlineDataDefinition.Url = 'api/Airlines?type=paginate&param1=' + $scope.airlineDataDefinition.CurrentPage;
                     }
                     else if ($scope.airlineDataDefinition.EnablePagination == true) {
                         $scope.airlineDataDefinition.DataList = [];
-                        $scope.airlineFilteringDefinition.Url = 'api/Airlines?type=paginate&param1=' + $scope.airlineDataDefinition.CurrentPage;
-                    }
-                        //Scroll
-                    else {
-                        if ($scope.airlineFilteringDefinition.ClearData)
+                        $scope.airlineDataDefinition.Url = 'api/Airlines?type=paginate&param1=' + $scope.airlineDataDefinition.CurrentPage;
+                    } else { //scroll
+                        if ($scope.airlineDataDefinition.ClearData)
                             $scope.airlineDataDefinition.DataList = [];
-                        $scope.airlineFilteringDefinition.Url = 'api/Airlines?type=scroll&param1=' + $scope.airlineDataDefinition.DataList.length;
+                        $scope.airlineDataDefinition.Url = 'api/Airlines?type=scroll&param1=' + $scope.airlineDataDefinition.DataList.length;
                     }
                     return true;
                 case 'PostFilterData':
-                    /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
-                            set DoPagination to true
-                      if scroll, initialize customerDataDefinition DataList by pushing each value of filterDefinition DataList*/
-                    //Required
-                    //$scope.customerFilteringDefinition.DataList = $rootScope.formatCustomer($scope.customerFilteringDefinition.DataList);
                     if ($scope.airlineDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.airlineFilteringDefinition.DataList.length; j++)
                             $scope.airlineDataDefinition.DataList.push($scope.airlineFilteringDefinition.DataList[j]);
@@ -830,9 +890,9 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 default: return true;
             }
         };
-
         $scope.initAirlineDataItems = function () {
             $scope.airlineFilteringDefinition.DataItem1 = angular.copy($rootScope.airlineObj());
+            // console.log($scope.airlineFilteringDefinition.DataItem1)
         };
 
         $scope.initAirlineFilteringDefinition();
@@ -850,10 +910,10 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.airlineSubmitDefinition = undefined;
         $scope.initializeAirlineDataDefinition = function () {
             $scope.airlineDataDefinition = {
-                "Header": ['ID','Name','No.'],
-                "Keys": ['Id','Name'],
-                "Type": ['ControlNo','Default'],
-                "ColWidth": [150,850],
+                "Header": ['Name', 'No.'],
+                "Keys": ['Name'],
+                "Type": ['ControlNo', 'ProperCase'],
+                "ColWidth": [1500],
                 "DataList": [],
                 "RequiredFields": [],
                 "CellTemplate": ["None"],
@@ -880,7 +940,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             switch (action) {
                 case "PostEditAction":
                     $scope.airFreightItem.AirlineId = $scope.airlineDataDefinition.DataItem.Id;
-                    $scope.airFreightItem.Airline.Name = $scope.airlineDataDefinition.DataItem.Name;
+                    $scope.airFreightItem.AirLine.Name = $scope.airlineDataDefinition.DataItem.Name;
+
                     $scope.closeModal();
                     return true;
                 default: return true;
@@ -889,10 +950,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
 
         $scope.initializeAirlineDataDefinition();
     };
-
-    //function that will be invoked during compiling of customer datagrid to DOM
     $scope.compileAirlineDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "airlineDataDefinition"' +
+        var html = '<dir-data-grid2 id="airlineGrid" datadefinition = "airlineDataDefinition"' +
                                     'submitdefinition   = "airlineSubmitDefinition"' +
                                     'otheractions       = "airlineOtherActions(action)">' +
                     '</dir-data-grid2>';
@@ -901,203 +960,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     };
     //===================================== END OF AIRLINE MODAL =======================================
 
-    //===================================== ORIGIN BUSINESS UNIT MODAL =============================================
-    $scope.showOrigin = function () {
-        $scope.originFilteringDefinition.SetSourceToNull = true;
-        $scope.originDataDefinition.Retrieve = true;
-        openModalPanel("#origin-list-modal");
-
-    };
-
-    $scope.loadOriginFiltering = function () {
-        $scope.initOriginFilteringParameters();
-        $scope.initOriginFilteringContainer();
-    };
-
-    $scope.initOriginFilteringContainer = function () {
-        html = '<dir-filtering  filterdefinition="originFilteringDefinition"' +
-                                'filterlistener="originDataDefinition.Retrieve"' +
-                                'otheractions="originOtherActionsFiltering(action)"' +
-               '</dir-filtering>';
-        $content = angular.element(document.querySelector('#originFilterContainter')).html(html);
-        $compile($content)($scope);
-    };
-
-    //function that will be called during compiling of business unit filtering to DOM
-    $scope.initOriginFilteringParameters = function () {
-        $scope.initOriginFilteringDefinition = function () {
-            $scope.originFilteringDefinition = {
-                "Url": ($scope.originDataDefinition.EnablePagination == true ? 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage : 'api/BusinessUnits?type=scroll&param1=' + $scope.originDataDefinition.DataList.length),//Url for retrieve
-                "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index
-                "Source": [
-                            { "Index": 0, "Label": "Name", "Column": "Name", "Values": [], "From": null, "To": null, "Type": "Default" },
-                ],//Contains the Criteria definition
-                "Multiple": false,
-                "AutoLoad": false,
-                "ClearData": false,
-                "SetSourceToNull": false
-            }
-        };
-
-        $scope.originOtherActionsFiltering = function (action) {
-            switch (action) {
-                //Initialize DataItem1 and DataItem2 for data filtering
-                case 'PreFilterData':
-                    $scope.originSource = $scope.originFilteringDefinition.Source;
-                    ////Optional in using this, can use switch if every source type has validation before filtering
-                    //for (var i = 0; i < $scope.originSource.length; i++) {
-                    //    if ($scope.originSource[i].Type == "Date") {
-                    //        $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] = $scope.originSource[i].From;
-                    //        $scope.originFilteringDefinition.DataItem1.Origin[1][$scope.originSource[i].Column] = $scope.originSource[i].To;
-                    //    }
-                    //    else
-                    //        $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] = $scope.originSource[i].From;
-                    //}
-
-                    ////Delete keys that the value is null
-                    //for (var i = 0; i < $scope.originSource.length; i++) {
-                    //    if ($scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column] == null) {
-                    //        delete $scope.originFilteringDefinition.DataItem1.Origin[0][$scope.originSource[i].Column];
-                    //        delete $scope.originFilteringDefinition.DataItem1.Origin[1][$scope.originSource[i].Column];
-                    //    }
-                    //}
-
-                    if ($scope.originDataDefinition.EnablePagination == true && $scope.originFilteringDefinition.ClearData) {
-                        $scope.originDataDefinition.CurrentPage = 1;
-                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage;
-                    }
-                    else if ($scope.originDataDefinition.EnablePagination == true) {
-                        $scope.originDataDefinition.DataList = [];
-                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=paginate&param1=' + $scope.originDataDefinition.CurrentPage;
-                    }
-                        //Scroll
-                    else {
-                        if ($scope.originFilteringDefinition.ClearData)
-                            $scope.originDataDefinition.DataList = [];
-                        $scope.originFilteringDefinition.Url = 'api/BusinessUnits?type=scroll&param1=' + $scope.originDataDefinition.DataList.length;
-                    }
-                    return true;
-                case 'PostFilterData':
-                    /*Note: if pagination, initialize customerDataDefinition DataList by copying the DataList of filterDefinition then 
-                            set DoPagination to true
-                      if scroll, initialize customerDataDefinition DataList by pushing each value of filterDefinition DataList*/
-                    //Required
-                    //$scope.customerFilteringDefinition.DataList = $rootScope.formatCustomer($scope.customerFilteringDefinition.DataList);
-                    if ($scope.originDataDefinition.EnableScroll == true) {
-                        for (var j = 0; j < $scope.originFilteringDefinition.DataList.length; j++)
-                            $scope.originDataDefinition.DataList.push($scope.originFilteringDefinition.DataList[j]);
-                    }
-
-                    if ($scope.originDataDefinition.EnablePagination == true) {
-                        $scope.originDataDefinition.DataList = [];
-                        $scope.originDataDefinition.DataList = $scope.originFilteringDefinition.DataList;
-                        $scope.originDataDefinition.DoPagination = true;
-                    }
-                    return true;
-                default: return true;
-            }
-        };
-
-        $scope.initOriginDataItems = function () {
-            $scope.originFilteringDefinition.DataItem1 = angular.copy($rootScope.businessUnitObj());
-        };
-
-        $scope.initOriginFilteringDefinition();
-        $scope.initOriginDataItems();
-    };
-
-    //Load business datagrid for compiling
-    $scope.loadOriginDataGrid = function () {
-        $scope.initOriginDataGrid();
-        $scope.compileOriginDataGrid();
-    };
-
-    //initialize customer datagrid parameters
-    $scope.initOriginDataGrid = function () {
-        $scope.originSubmitDefinition = undefined;
-        $scope.initializeOriginDataDefinition = function () {
-            $scope.originDataDefinition = {
-                "Header": ['ID', 'Name', 'No.'],
-                "Keys": ['Id', 'Name'],
-                "Type": ['ControlNo', 'Default'],
-                "ColWidth": [150, 850],
-                "DataList": [],
-                "RequiredFields": [],
-                "CellTemplate": ["None"],
-                "RowTemplate": "Default",
-                "EnableScroll": true,
-                "EnablePagination": false,
-                "CurrentPage": 1, //By default
-                "PageSize": 20, //Should be the same in back-end
-                "DoPagination": false, //By default
-                "Retrieve": false, //By default
-                "DataItem": {},
-                "DataTarget": "OriginMenu",
-                "ShowCreate": false,
-                "ShowContextMenu": false,
-                "ContextMenu": [""],
-                "ContextMenuLabel": [""]
-            }
-            $scope.originDataDefinition.RowTemplate = '<div>' +
-                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
-                '</div>';
-        };
-
-        $scope.originOtherActions = function (action) {
-            switch (action) {
-                case "PostEditAction":
-                    $scope.airFreightItem.OriginBusinessUnitId = $scope.originDataDefinition.DataItem.Id;
-                    //$scope.airFreightItem.BusinessUnit.Name = $scope.originDataDefinition.DataItem.Name;
-                    $scope.airFreightItem.OriginBusinessUnitName = $scope.originDataDefinition.DataItem.Name;
-                    $scope.closeModal();
-                    return true;
-                default: return true;
-            }
-        };
-
-        $scope.initializeOriginDataDefinition();
-    };
-
-    //function that will be invoked during compiling of customer datagrid to DOM
-    $scope.compileOriginDataGrid = function () {
-        var html = '<dir-data-grid2 datadefinition      = "originDataDefinition"' +
-                                    'submitdefinition   = "originSubmitDefinition"' +
-                                    'otheractions       = "originOtherActions(action)">' +
-                    '</dir-data-grid2>';
-        $content = angular.element(document.querySelector('#originContainer')).html(html);
-        $compile($content)($scope);
-    };
-    //===================================== END OF ORIGIN BUSINESS UNIT MODAL =======================================
-
-    // CLOSE MODAL BUSINESS UNIT FOR ORIGIN
-    $scope.closeModalBusinessUnitOrigin = function (buo) {
-        if (angular.isDefined(buo)) {
-            $scope.airFreightItem.OriginBusinessUnitId = buo.Id;
-            $scope.airFreightItem.OriginBusinessUnitName = buo.Name;
-
-            $scope.loadShipmentDataGrid();
-            $scope.loadShipmentFiltering();
-            $scope.shipmentFilteringDefinition.SetSourceToNull = true;
-            $scope.shipmentDataDefinition.Retrieve = true;
-        } else {
-            $scope.airFreightItem.OriginBusinessUnitId = null;
-            $scope.airFreightItem.OriginBusinessUnitName = null;
-        }
-        jQuery.magnificPopup.close();
-    };
-
-    // CLOSE MODAL BUSINESS UNIT FOR DESTINATION
-    $scope.closeModalBusinessUnitDestination = function (bud) {
-        if (angular.isDefined(bud)) {
-            $scope.airFreightItem.DestinationBusinessUnitId = bud.Id;
-            $scope.airFreightItem.DestinationBusinessUnitName = bud.Name;
-        } else {
-            $scope.airFreightItem.DestinationBusinessUnitId = null;
-            $scope.airFreightItem.DestinationBusinessUnitName = null;
-        }
-        jQuery.magnificPopup.close();
-    };
 
     //Set the focus on top of the page during load
     $scope.focusOnTop = function () {
@@ -1115,31 +977,23 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.focusOnTop();
         $scope.initBusinessUnits();
 
-        // ORIGIN BUSINESS UNITS
-        $scope.loadOriginDataGrid();
-        $scope.loadOriginFiltering();
-        $scope.originDataDefinition.Retrieve = true;
-
         // SHIPMENTS
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
 
         // AIRLINES
-        $scope.loadAirlineDataGrid();
-        $scope.loadAirlineFiltering();
-        $scope.airlineDataDefinition.Retrieve = true;
+        $scope.initAirlines();
+        //$scope.loadAirlineDataGrid();
+        //$scope.loadAirlineFiltering();
+        //$scope.airlineDataDefinition.Retrieve = true;
 
         // AIRFREIGHTS
         $scope.loadAirFreightDataGrid();
         $scope.loadAirFreightFiltering();
 
-        //$scope.airFreightFilteringDefinition.SetSourceToNull = true;
-        //$scope.airFreightDataDefinition.Retrieve = true;
-
-        // RESET DATA
+        //RESET DATA
         $scope.airFreightResetData();
-        $scope.airFreightShipmentsResetData();
-        
+        $scope.airFreightShipmentsAdd();
     };
 
     init();
