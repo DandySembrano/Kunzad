@@ -407,7 +407,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.truckingOtheractions = function (action) {
-            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.submitButtonText = "Submit";
@@ -498,7 +497,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 case "PostViewAction":
                     //If user choose view-menu in listing
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
-                        $$scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
+                        $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
                         $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
@@ -950,14 +949,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
     //=================================================END OF DISPATCHING MODAL=================================================
 
     //=====================================START OF SERVICEABLE AREA MODAL/REPORT==============================
-    $scope.showServiceableArea = function () {
-        openModalPanel2("#serviceableArea-list-modal");
-        $scope.loadServiceableAreaDataGrid();
-        $scope.loadServiceableAreaFiltering();
-        $scope.serviceableAreaFilteringDefinition.SetSourceToNull = true;
-        $scope.serviceableAreaDataDefinition.Retrieve = true;
-    };
-
     //Load ServiceableArea filtering for compiling
     $scope.loadServiceableAreaFiltering = function () {
         $scope.initServiceableAreaFilteringParameters();
@@ -1110,16 +1101,17 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.serviceableAreaOtherActions = function (action) {
             switch (action) {
                 case 'PostEditAction':
-                    if ($scope.modalWatcher == 'originSA') {
-                        $scope.truckingItem.ServiceableArea1 = $scope.serviceableAreaDataDefinition.DataItem;
-                        $scope.truckingItem.OriginServiceableAreaId = $scope.serviceableAreaDataDefinition.DataItem.Id;
-                    }
-                    else {
-                        $scope.truckingItem.ServiceableArea = $scope.serviceableAreaDataDefinition.DataItem;
-                        $scope.truckingItem.DestinationServiceableAreaId = $scope.serviceableAreaDataDefinition.DataItem.Id;
+                    switch ($scope.modalType) {
+                        case 'origin':
+                            $scope.truckingItem.ServiceableArea1 = $scope.serviceableAreaDataDefinition.DataItem;
+                            $scope.truckingItem.OriginServiceableAreaId = $scope.serviceableAreaDataDefinition.DataItem.Id;
+                            break;
+                        case 'destination':
+                            $scope.truckingItem.ServiceableArea = $scope.serviceableAreaDataDefinition.DataItem;
+                            $scope.truckingItem.DestinationServiceableAreaId = $scope.serviceableAreaDataDefinition.DataItem.Id;
+                            break;
                     }
                     $scope.closeModal();
-                    return true;
                 default: return true;
             }
         };
