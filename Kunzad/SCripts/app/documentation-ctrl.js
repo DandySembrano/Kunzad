@@ -136,8 +136,6 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
             alert("Please find and select shipment!");
             $scope.valError = 1;
         }
-        //alert($scope.shipmentSubmitDefinition.DataItem.isRevenue);
-        //alert($scope.shipmentSubmitDefinition.DataItem.isTaxInclusive);
         
         if ($scope.shipmentSubmitDefinition.DataItem.isRevenue === 1) {
             // IF REVENUE IS 0
@@ -227,6 +225,19 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Create";
                     return true;
+                case "PreSave":
+                    alert("Please select shipment to update!");
+                    $scope.selectedTab = $scope.tabPages[1];
+                    var promise = $interval(function () {
+                        if ($scope.shipmentToggle == false) {
+                            $("#shipmentToggle").slideToggle(function () {
+                                $scope.shipmentToggle = true;
+                            });
+                        }
+                        $interval.cancel(promise);
+                        promise = undefined;
+                    }, 200);
+                    return false;
                 case "PostEditAction":
                     $scope.onEDV();
                     $scope.viewOnly = false;
@@ -236,11 +247,6 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                 case "PreUpdate":
                     $scope.shipmentSubmitDefinition.DataItem = angular.copy($scope.shipmentItem);
 
-                    $scope.validateShipment();
-                    if ($scope.valError > 0) {
-                        return false;
-                    }
-
                     delete $scope.shipmentSubmitDefinition.DataItem.Address;
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1;
                     delete $scope.shipmentSubmitDefinition.DataItem.BusinessUnit;
@@ -249,15 +255,14 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     delete $scope.shipmentSubmitDefinition.DataItem.Service;
                     delete $scope.shipmentSubmitDefinition.DataItem.ShipmentType;
 
-                    console.log($scope.shipmentSubmitDefinition.DataItem);
+                    $scope.viewOnly = true;
+                    $scope.submitButtonText = "Submit";
+                    $scope.shipmentSubmitDefinition.Type = "Edit";
+                    alert("Successfully Updated.");
+
                     return true;
                 case "PostUpdate":
-                    //if ($scope.shipmentSubmitDefinition.Index != -1)
-                    //    $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index] = $scope.shipmentItem;
-
-                    //$scope.onEDV();
-                    $scope.viewOnly = true;
-                    alert("Successfully Updated.");
+                    
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];

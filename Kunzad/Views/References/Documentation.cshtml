@@ -268,62 +268,29 @@
         <form class="form-horizontal" role="form">
             <div class="col-lg-6">
                 <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Booking</legend>
+                    <legend class="scheduler-border">Revenue</legend>
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Is Revenue</label>
+                        <label class="col-md-4 control-label small">Amount</label>
                         <div class="col-md-8">
-                            <label class="option option-primary">
-                                <input type="checkbox" ng-model="shipmentItem.isRevenue" ng-true-value="1" name="isRevenue" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Revenue Amount</label>
-                        <div class="col-md-4">
                             <input type="text"
                                    class="form-control"
                                    ng-model="shipmentItem.Revenue"
                                    ng-disabled="ViewOnly" placeholder="0.00" />
                         </div>
                     </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Is Tax Inclusive</label>
-                        <div class="col-md-8">
-                            <label class="option option-primary">
-                                <input type="checkbox" ng-model="shipmentItem.isTaxInclusive" ng-true-value="1" name="isTaxInclusive" />
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Tax Amount</label>
-                        <div class="col-md-4">
-                            <input type="text"
-                                   class="form-control"
-                                   ng-model="shipmentItem.TaxAmount"
-                                   ng-disabled="ViewOnly" placeholder="0.00" />
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Tax Percentage</label>
-                        <div class="col-md-4">
-                            <input type="text"
-                                   class="form-control"
-                                   ng-model="shipmentItem.TaxPercentage"
-                                   ng-disabled="ViewOnly" placeholder="0.00%" />
-                        </div>
-                    </div>
+                    
                 </fieldset>
             </div>
             <div class="col-lg-6">
                 <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Trucking</legend>
+                    <legend class="scheduler-border">Tax</legend>
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Revenue Amount</label>
-                        <div class="col-md-4">
+                        <label class="col-md-4 control-label small">Amount</label>
+                        <div class="col-md-8">
                             <input type="text"
                                    class="form-control"
-                                   ng-model="shipmentItem.TruckingDeliveries.Trucking[0].InternalRevenue"
-                                   ng-disabled="ViewOnly">
+                                   ng-model="shipmentItem.TaxAmount"
+                                   ng-disabled="ViewOnly" placeholder="0.00" />
                         </div>
                     </div>
                 </fieldset>
