@@ -1,26 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_TransactionLayout.cshtml";
 }
-@*Form Context-Menu*@
-<div class="dropdown position-fixed" id="FormMenu">
-    <ul class="dropdown-menu" role="menu">
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="seaFreightOtheractions('Find')">Find</a>
-        </li>
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="seaFreightOtheractions('FormCreate')">Create</a>
-        </li>
-        <li>
-            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
-        </li>
-    </ul>
-</div>
+
 
 <!-- General -->
 @section tab1Content{
@@ -108,7 +89,7 @@
             @*Freight Cost*@
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Freight Cost</label>
-                <div class="col-md-8">
+                <div class="col-md-4">
                     <input type="text"
                            class="form-control text-right"
                            id="freightCost"
@@ -116,38 +97,22 @@
                            ng-model="seafreightItem.FreightCost">
                 </div>
             </div>
-        </form>
-        <script type="text/javascript">
-            $(function () {
-                $('#bldate').datetimepicker({
-                    format: 'MM-DD-YYYY',
-                    sideBySide: false,
-                    pickTime: false,
-                    //minDate: moment()
-                })
-            });
-        </script>
 
-    </div>
-
-    @*Column 2*@
-    <div class="col-lg-6">
-        <form class="form-horizontal" role="form">
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label">Voyage No</label>
-                    <div class="col-md-8">
-                        <div class='input-group date'>
-                            <input type="text"
-                                    id="voyageNo"
-                                    class="form-control"
-                                    placeholder=""
-                                    ng-model="seafreightItem.VesselVoyage.VoyageNo" />
-                            <span class="input-group-addon" style="padding:2px 0 2px 10px;"
-                                    ng-click="showModal('#shippingline-modal','shippingline')">
-                                <span class=" glyphicon glyphicon-search"></span>
-                            </span>
-                        </div>   
+                <div class="col-md-8">
+                    <div class='input-group date'>
+                        <input type="text"
+                               id="voyageNo"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="seafreightItem.VesselVoyage.VoyageNo" />
+                        <span class="input-group-addon" style="padding:2px 0 2px 10px;"
+                              ng-click="showModal('#shippingline-modal','shippingline')">
+                            <span class=" glyphicon glyphicon-search"></span>
+                        </span>
                     </div>
+                </div>
             </div>
             <div class="form-group form-group-sm">
                 <label class="col-md-3 control-label small">Shipping Line</label>
@@ -169,9 +134,77 @@
                            ng-disabled="true">
                 </div>
             </div>
+        </form>
+    </div>
+
+    @*Column 2*@
+    <div class="col-lg-6">
+        <form class="form-horizontal" role="form">
+            
             <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Departure Date</label>
-                <div class="col-md-4">
+                <label class="col-md-5 control-label small">Estimated Departure Date</label>
+                <div class="col-md-5">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='voyage_estdeptDate'
+                               class="form-control"
+                               ng-model="seafreightItem.VesselVoyage.EstimatedDepartureDate"
+                               ng-disabled="true" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-5 control-label small">Estimated Departure Time</label>
+                <div class="col-md-5">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='voyage_estdeptTime'
+                               class="form-control"
+                               ng-model="seafreightItem.VesselVoyage.EstimatedDepartureTime"
+                               ng-disabled="true" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-5 control-label small">Estimated Arrival Date</label>
+                <div class="col-md-5">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='voyage_estarrDate'
+                               class="form-control"
+                               ng-model="seafreightItem.VesselVoyage.EstimatedArrivalDate"
+                               ng-disabled="true" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                <label class="col-md-5 control-label small">Estimated Arrival Time</label>
+                <div class="col-md-5">
+                    <div class='input-group date'>
+                        <input type='text'
+                               id='voyage_estarrTime'
+                               class="form-control"
+                               ng-model="seafreightItem.VesselVoyage.EstimatedArrivalTime"
+                               ng-disabled="true" />
+                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                            <span class=" glyphicon glyphicon-remove-circle"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+                <label class="col-md-5 control-label small">Departure Date</label>
+                <div class="col-md-5">
                     <div class='input-group date'>
                         <input type='text'
                                id='voyage_deptDate'
@@ -185,8 +218,8 @@
                 </div>
             </div>
             <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Departure Time</label>
-                <div class="col-md-4">
+                <label class="col-md-5 control-label small">Departure Time</label>
+                <div class="col-md-5">
                     <div class='input-group date'>
                         <input type='text'
                                id='voyage_deptTime'
@@ -200,8 +233,8 @@
                 </div>
             </div>
             <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Arrival Date</label>
-                <div class="col-md-4">
+                <label class="col-md-5 control-label small">Arrival Date</label>
+                <div class="col-md-5">
                     <div class='input-group date'>
                         <input type='text'
                                id='voyage_arrDate'
@@ -215,14 +248,14 @@
                 </div>
             </div>
             <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Arrival Time</label>
+                <label class="col-md-5 control-label small">Arrival Time</label>
                 <div class="col-md-4">
                     <div class='input-group date'>
                         <input type='text'
-                                id='voyage_arrTime'
-                                class="form-control"
-                                ng-model="seafreightItem.VesselVoyage.ArrivalTime"
-                                ng-disabled="true" />
+                               id='voyage_arrTime'
+                               class="form-control"
+                               ng-model="seafreightItem.VesselVoyage.ArrivalTime"
+                               ng-disabled="true" />
                         <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                             <span class=" glyphicon glyphicon-remove-circle"></span>
                         </span>
@@ -352,3 +385,24 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
+
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="seaFreightOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="seaFreightOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{seafreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+        </li>
+    </ul>
+</div>
