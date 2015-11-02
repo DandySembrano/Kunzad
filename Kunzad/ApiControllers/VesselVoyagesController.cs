@@ -210,6 +210,8 @@ namespace Kunzad.ApiControllers
                                                               d.Name
                                                           }
                                                          ),
+                                                vv.EstimatedDepartureDate,
+                                                vv.EstimatedDepartureTime,
                                                 vv.EstimatedArrivalDate,
                                                 vv.EstimatedArrivalTime,
                                                 vv.DepartureDate,
