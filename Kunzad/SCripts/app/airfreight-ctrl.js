@@ -54,7 +54,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.airFreightItem = [];
         $scope.airFreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
         $scope.controlNoHolder = $scope.airFreightItem.Id;
-        $scope.airFreightItem.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.Id);
+        $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
     };
 
 
@@ -202,12 +202,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.airFreightItem.AirWaybillDate = $filter('Date')(($scope.airFreightItem.AirWaybillDate), "yyyy-MM-dd");
 
                     $scope.controlNoHolder = $scope.airFreightItem.Id;
-                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.Id);
+                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
 
                     $scope.AirFreightShipments = $scope.airFreightItem.AirFreightShipments;
                     for (var i = 0; i < $scope.airFreightItem.AirFreightShipments.length; i++) {
-                        $scope.AirFreightShipments[i].Shipment.Id = $rootScope.formatControlNo('', 15, $scope.airFreightItem.AirFreightShipments[i].Shipment.Id);
+                        $scope.AirFreightShipments[i].Shipment.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.AirFreightShipments[i].Shipment.Id);
                     }
+
                     $scope.submitButtonText = "Update";
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.airFreightSubmitDefinition.Type = "Edit";
@@ -261,7 +262,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     "Name": null
                 },
                 "AirWaybillNumber": null,
-                "AirWaybillDate": null,
+                "AirWaybillDate": $filter('Date')(new Date()),
                 "EstimatedDepartureDate": null,
                 "EstimatedDepartureTime": null,
                 "EstimatedArrivalDate": null,
@@ -287,8 +288,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null
             }
-
-
             $scope.airFreightItem.BusinessUnit = {
                 "Id": 17,
                 "Code": "BU0007",
@@ -307,14 +306,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             $scope.airFreightItem.OriginBusinessUnitName = $scope.airFreightItem.BusinessUnit.Name;
         };
 
-
         $scope.airFreightShipmentsAdd = function () {
             $scope.airFreightShipmentItem = {
                 "Id": null,
                 "AirFreightId": null,
                 "ShipmentId": null,
                 "Shipment": $rootScope.shipmentObj(),
-                "CostAllocation": null
+                "CostAllocation": $filter('number')(0.00,2)
             }
             $scope.AirFreightShipments.push($scope.airFreightShipmentItem);
         }
@@ -779,8 +777,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             switch (action) {
                 case "PostEditAction":
                     $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].Shipment = $scope.shipmentDataDefinition.DataItem;
-                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].Shipment.Id = $rootScope.formatControlNo('', 15, $scope.shipmentDataDefinition.DataItem.Id);
-                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].ShipmentId = $rootScope.formatControlNo('', 15, $scope.shipmentDataDefinition.DataItem.Id);
+                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].Shipment.Id = $rootScope.formatControlNo('', 8, $scope.shipmentDataDefinition.DataItem.Id);
+                    $scope.AirFreightShipments[$scope.selectedShipmentDtlRow].ShipmentId = $rootScope.formatControlNo('', 8, $scope.shipmentDataDefinition.DataItem.Id);
                     $scope.closeModal();
                     return true;
                 default: return true;
