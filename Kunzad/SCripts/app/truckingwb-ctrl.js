@@ -269,7 +269,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         $http.get('api/TruckingDeliveries?length=' + 0 + '&masterId=' + id)
             .success(function (data, status) {
                 for (var i = 0; i < data.length; i++) {
-                    data[i].ShipmentId = $rootScope.formatControlNo('', 15, data[i].Shipment.Id);
+                    data[i].ShipmentId = $rootScope.formatControlNo('', 8, data[i].Shipment.Id);
                     data[i].CostAllocation = $filter('number')(data[i].CostAllocation, 2);
                     //Initialize Pickup Address
                     data[i].Shipment.OriginAddress = $scope.initializeAddressField(data[i].Shipment.Address1);
@@ -418,7 +418,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.truckingOtheractions = function (action) {
-            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.submitButtonText = "Submit";
@@ -445,13 +444,13 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
-                        $scope.truckingItem.TruckerCost = document.getElementById('truckerCost'); //$filter('number')($scope.truckingItem.TruckerCost, 2);
-                        $scope.truckingItem.InternalRevenue = document.getElementById('revenue'); //$filter('number')($scope.truckingItem.InternalRevenue, 2);
-                        console.log($scope.truckingItem.TruckerCost);
+                        $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
+                        $scope.truckingItem.TruckerCost = document.getElementById('truckerCost').value; //$filter('number')($scope.truckingItem.TruckerCost, 2);
+                        $scope.truckingItem.InternalRevenue = document.getElementById('revenue').value; //$filter('number')($scope.truckingItem.InternalRevenue, 2);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -480,7 +479,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
@@ -516,10 +515,11 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
+                        $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
                         $scope.truckingItem.TruckerCost = $filter('number')($scope.truckingItem.TruckerCost, 2);
                         $scope.truckingItem.InternalRevenue = $filter('number')($scope.truckingItem.InternalRevenue, 2);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
@@ -551,7 +551,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     return true;
                 case "PreSave":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
-                    console.log($scope.truckingSubmitDefinition.DataItem.TruckerCost);
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -574,7 +573,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     return true;
                 case "PreUpdate":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
-                    console.log($scope.truckingSubmitDefinition.DataItem.TruckerCost);
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -591,7 +589,6 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.viewOnly = true;
                     if ($scope.submitButtonText == "Cancel")
                     {
-                        $scope.truckingDataDefinition.DataList[]
                         $scope.truckingOtheractions("FormCreate");
                         $scope.viewOnly = false;
                     }
@@ -927,7 +924,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.truckingDataDefinition.DataList.splice(0, $scope.dispatchingDataDefinition.DataList.length);
                         $scope.truckingItem = angular.copy($scope.dispatchingDataDefinition.DataItem);
                         $scope.controlNoHolder = $scope.truckingItem.Id;
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         //$scope.truckingItem.CallDate = $filter('Date')($scope.truckingItem.CallDate);
                         //$scope.truckingItem.CallTime = $filter('Time')($scope.truckingItem.CallTime);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + ' ' + $scope.truckingItem.Driver.MiddleName + ' ' + $scope.truckingItem.Driver.LastName;
