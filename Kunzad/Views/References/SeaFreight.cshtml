@@ -276,8 +276,10 @@
 }
 <!-- List -->
 @section tab2Content{
-    <div style="padding:0px 10px 0px 10px">
-        <div class="text-right toggle-hide" ng-click="hideSeaFreightToggle()" ng-show="seaFreightToggle">Hide</div>
+    <div style="padding:0 10px">
+        <div class="text-right toggle-hide" ng-click="hideSeaFreightToggle()" ng-show="seaFreightToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
         <div id="seaFreightToggle">
             <div id="seaFreightFilterContainter" style="padding-left:10px;"></div>
         </div><br>
