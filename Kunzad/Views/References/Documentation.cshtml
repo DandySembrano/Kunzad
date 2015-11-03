@@ -16,7 +16,7 @@
             <div class="col-lg-6">
                 <div class="form-group form-group-sm">
                     <label class="col-md-3 control-label small">Shipment No</label>
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <input type="text"
                                 class="form-control"
                                 placeholder=""
@@ -174,20 +174,20 @@
                 <div class="col-lg-6">
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Total Qty</label>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
                             <input type="text"
-                                    class="form-control"
-                                    ng-model="shipmentItem.Quantity"
-                                    ng-disabled="true">
+                                   class="form-control"
+                                   ng-model="shipmentItem.Quantity"
+                                   ng-disabled="true">
                         </div>
                     </div>
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Total CBM</label>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
                             <input type="text"
-                                    class="form-control"
-                                    ng-model="shipmentItem.TotalCBM"
-                                    ng-disabled="true">
+                                   class="form-control"
+                                   ng-model="shipmentItem.TotalCBM"
+                                   ng-disabled="true">
                         </div>
                     </div>
                     <div class="form-group form-group-sm">
@@ -204,13 +204,11 @@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Operation Site</label>
                         <div class="col-md-8">
-                            <div class="input-group date">
                                 <input type="text"
                                         class="form-control"
                                         placeholder=""
                                         ng-model="shipmentItem.BusinessUnit1.Name"
                                         ng-disabled="true">
-                            </div>
                         </div>
                     </div>
                     <div class="form-group form-group-sm">
@@ -266,26 +264,27 @@
 @section tab3Content{
     <div class="row">
         <form class="form-horizontal" role="form">
-
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Revenue Amount</label>
-                <div class="col-md-4">
-                    <input type="text"
-                           id="RevenueAmount"
-                           class="form-control text-right"
-                           ng-model="shipmentItem.Revenue"
-                           ng-disabled="ViewOnly" />
+            <div class="col-md-6">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Revenue Amount</label>
+                    <div class="col-md-4">
+                        <input type="text"
+                               id="RevenueAmount"
+                               class="form-control text-right"
+                               ng-model="shipmentItem.Revenue"
+                               ng-disabled="ViewOnly" />
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group form-group-sm">
-                <label class="col-md-3 control-label small">Tax Amount</label>
-                <div class="col-md-4">
-                    <input type="text"
-                           id="TaxAmount"
-                           class="form-control text-right"
-                           ng-model="shipmentItem.TaxAmount"
-                           ng-disabled="ViewOnly" />
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Tax Amount</label>
+                    <div class="col-md-4">
+                        <input type="text"
+                               id="TaxAmount"
+                               class="form-control text-right"
+                               ng-model="shipmentItem.TaxAmount"
+                               ng-disabled="ViewOnly" />
+                    </div>
                 </div>
             </div>
 
