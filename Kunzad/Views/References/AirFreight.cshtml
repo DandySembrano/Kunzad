@@ -18,13 +18,13 @@
                 <div class="col-md-12">
                     <div class="form-group form-group-sm">
                         <label class="col-md-2 control-label small">Transaction No</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="[SYSTEM GENERATED]"
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" placeholder="System Generated"
                                    ng-model="airFreightItem.Id"
                                    ng-disabled="true" />
                         </div>
 
-                        <label class="col-md-2 control-label small">Airline</label>
+                        <label class="col-md-4 control-label small">Airline</label>
                         <div class="col-md-4">
                             <div class='input-group'>
                                 <input type='text'
@@ -39,14 +39,14 @@
                     </div>
                     <div class="form-group form-group-sm">
                         <label class="col-md-2 control-label small">Waybill No</label>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <input type='text'
                                    class="form-control"
                                    ng-model="airFreightItem.AirWaybillNumber"
                                    ng-disabled="viewOnly" />
                         </div>
-                        <label class="col-md-2 control-label small">Waybill Date</label>
-                        <div class="col-md-4">
+                        <label class="col-md-4 control-label small">Waybill Date</label>
+                        <div class="col-md-2">
                             <div class='input-group date'>
                                 <input type='text'
                                        id='airWaybillDate'
@@ -90,33 +90,6 @@
                         </div>
                     </div>
 
-                    @*<div class="form-group form-group-sm">
-                            <label class="col-md-2 control-label">Origin</label>
-                            <div class="col-md-4">
-                                <div class='input-group'>
-                                    <input type='text'
-                                           class="form-control"
-                                           ng-model="airFreightItem.OriginBusinessUnitName"
-                                           ng-disabled="true" />
-                                    <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Origin" ng-click="showModal('#origin-list-modal')">
-                                        <span class="glyphicons glyphicons-search"></span>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <label class="col-md-2 control-label">Destination</label>
-                            <div class="col-md-4">
-                                <div class='input-group'>
-                                    <input type='text'
-                                           class="form-control input-group"
-                                           ng-model="airFreightItem.DestinationBusinessUnitName"
-                                           ng-disabled="true" />
-                                    <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Destination" ng-click="showModal('#destination-list-modal')">
-                                        <span class="glyphicons glyphicons-search"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-2 control-label small">Est Departure Date</label>
                         <div class="col-md-2">
@@ -262,7 +235,7 @@
                                     @*Shipment No*@
                                     <div class="form-group form-group-sm">
                                         <label class="col-md-3 control-label small">Shipment No</label>
-                                        <div class='col-md-8'>
+                                        <div class='col-md-4'>
                                             <div class='input-group'>
                                                 <input type='text'
                                                        class="form-control"
@@ -277,7 +250,7 @@
                                     @*Customer Code*@
                                     <div class="form-group form-group-sm">
                                         <label class="col-md-3 control-label small">Shipper Code</label>
-                                        <div class="col-md-8">
+                                        <div class="col-md-4">
                                             <input type="text"
                                                    class="form-control"
                                                    placeholder=""
@@ -350,7 +323,7 @@
                                     @*Quantity*@
                                     <div class="form-group form-group-sm">
                                         <label class="col-md-3 control-label small">Quantity</label>
-                                        <div class="col-md-8">
+                                        <div class="col-md-4">
                                             <input id="quantity"
                                                    type="text"
                                                    class="form-control"
@@ -361,7 +334,7 @@
                                     @*Total CBM*@
                                     <div class="form-group form-group-sm">
                                         <label class="col-md-3 control-label small">Total CBM</label>
-                                        <div class="col-md-8">
+                                        <div class="col-md-4">
                                             <input id="cbm"
                                                    type="text"
                                                    class="form-control"
@@ -404,7 +377,7 @@
                                     @*Cost Allocation*@
                                     <div class="form-group form-group-sm">
                                         <label class="col-md-3 control-label small">Cost Allocation</label>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input id="costAllocation"
                                                    type="text"
                                                    class="form-control"
@@ -435,7 +408,9 @@
 <!-- AirFreight List -->
 @section tab2Content{
     <div style="padding:0 10px">
-        <div class="text-right toggle-hide" ng-click="hideAirFreightToggle()" ng-show="airFreightToggle">Hide</div>
+        <div class="text-right toggle-hide" ng-click="hideAirFreightToggle()" ng-show="airFreightToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
         <div id="airFreightToggle">
             <div id="airFreightFilterContainter" style="padding-left:10px;"></div>
         </div><br>

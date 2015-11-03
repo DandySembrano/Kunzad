@@ -2,7 +2,7 @@
     return function (value) {
         if (angular.isDefined(value)) {
             var formattedValue = value.toString();
-            while (formattedValue.length < 15) {
+            while (formattedValue.length < 9) {
                 formattedValue = "0" + formattedValue;
             }
             return formattedValue;

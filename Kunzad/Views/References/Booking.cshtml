@@ -193,7 +193,7 @@
                                           ng-disabled="true"></textarea>
                             </div>
                             <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly"  title="Input address here" ng-click="showDeliveryAddress = true">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Input address here" ng-click="showDeliveryAddress = true">
                                     <span class="glyphicon glyphicon-edit" style="color:#4a89dc"></span>
                                 </button>
                             </div>
@@ -288,7 +288,7 @@
                                            class="form-control"
                                            ng-model="shipmentItem.PickupTime"
                                            ng-disabled="viewOnly" />
-                                    <span class="input-group-addon" ng-disabled="viewOnly"  title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
                                         <span class=" glyphicon glyphicon-remove-circle"></span>
                                     </span>
                                 </div>
@@ -306,7 +306,7 @@
                                           ng-disabled="true"></textarea>
                             </div>
                             <div class="col-sm-1">
-                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly"  title="Input address here" ng-click="showPickupAddress = true">
+                                <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Input address here" ng-click="showPickupAddress = true">
                                     <span class="glyphicon glyphicon-edit" style="color:#4a89dc"></span>
                                 </button>
                             </div>
@@ -334,8 +334,10 @@
 }
 <!-- List -->
 @section tab2Content{
-    <div style="padding:0px 10px 0px 10px">
-        <div class="text-right toggle-hide" ng-click="hideShipmentToggle()" ng-show="shipmentToggle">Hide</div>
+    <div style="padding:0 10px">
+        <div class="text-right toggle-hide" ng-click="hideShipmentToggle()" ng-show="shipmentToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
         <div id="shipmentToggle">
             <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
         </div><br>
@@ -356,8 +358,8 @@
         </div>
         <!--Modal Body-->
         <div class="panel-body" style="{{modalStyle}}">
-                <div id="customerFilterContainter" style="padding-left:10px;"></div>
-                <div id="customerContainer"></div>
+            <div id="customerFilterContainter" style="padding-left:10px;"></div>
+            <div id="customerContainer"></div>
         </div>
         <!-- Panel Footer -->
         <div class="panel-footer text-right">
@@ -366,7 +368,6 @@
     </div>
 </div>
 <!--End of Customer List Modal -->
-
 <!-- Customer Contacts List Modal -->
 <div id="customerContacts-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -386,7 +387,6 @@
     </div>
 </div>
 <!--End of Customer Contacts List Modal -->
-
 <!-- Customer ContactPhones List Modal -->
 <div id="customerContactPhones-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -406,7 +406,6 @@
     </div>
 </div>
 <!--End of Customer ContactPhones List Modal -->
-
 <!-- Customer Addresses List Modal -->
 <div id="customerAddresses-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -426,7 +425,6 @@
     </div>
 </div>
 <!--End of Customer Addresses List Modal -->
-
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -446,7 +444,6 @@
     </div>
 </div>
 <!--End of Business Unit List Modal -->
-
 @*Form Context-Menu*@
 <div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown">
     <ul class="dropdown-menu" role="menu">

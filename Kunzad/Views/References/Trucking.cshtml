@@ -100,15 +100,15 @@
                             <label class="col-md-3 control-label small">Trucker Name</label>
                             <div class="col-md-8">
                                 <input type="hidden"
-                                        class="form-control"
-                                        placeholder=""
-                                        ng-model="truckingItem.TruckerId" />
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="truckingItem.TruckerId" />
                                 <input type="text"
                                        class="form-control"
                                        placeholder=""
                                        ng-model="truckingItem.Trucker.Name"
                                        ng-disabled="true" />
-                             </div>
+                            </div>
                         </div>
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Driver Name</label>
@@ -390,7 +390,9 @@
 <!-- List -->
 @section tab2Content{
     <div style="padding:0px 10px 0px 10px">
-        <div class="text-right toggle-hide" ng-click="hideTruckingToggle()" ng-show="truckingToggle">Hide</div>
+        <div class="text-right toggle-hide" ng-click="hideTruckingToggle()" ng-show="truckingToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
         <div id="truckingToggle">
             <div id="truckingFilterContainter" style="padding-left:10px;"></div>
         </div><br>
@@ -417,7 +419,6 @@
     </div>
 </div>
 <!--End of Truck List Modal -->
-
 <!-- Driver List Modal -->
 <div id="driver-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -437,7 +438,6 @@
     </div>
 </div>
 <!--End of Driver List Modal -->
-
 <!-- ServiceableArea List Modal -->
 <div id="serviceableArea-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -457,7 +457,6 @@
     </div>
 </div>
 <!--End of ServiceableArea List Modal -->
-
 <!-- Shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
