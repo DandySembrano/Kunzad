@@ -266,7 +266,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryDetailsDataDefinition.DataList.splice(0, $scope.courierDeliveryDetailsDataDefinition.DataList.length);
                         $scope.courierDeliveryItem = angular.copy($scope.courierDeliveryDataDefinition.DataItem);
                         $scope.controlNoHolder = $scope.courierDeliveryItem.Id;
-                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 15, $scope.courierDeliveryItem.Id);
+                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 8, $scope.courierDeliveryItem.Id);
                         $scope.courierDeliveryItem.CallDate = $filter('Date')($scope.courierDeliveryItem.CallDate);
                         $scope.courierDeliveryItem.CourierCost = $filter('number')($scope.courierDeliveryItem.CourierCost, 2);
 
@@ -302,7 +302,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryDetailsDataDefinition.DataList.splice(0, $scope.courierDeliveryDetailsDataDefinition.DataList.length);
                         $scope.courierDeliveryItem = angular.copy($scope.courierDeliveryDataDefinition.DataItem);
                         $scope.controlNoHolder = $scope.courierDeliveryItem.Id;
-                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 15, $scope.courierDeliveryItem.Id);
+                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 8, $scope.courierDeliveryItem.Id);
                         $scope.courierDeliveryItem.CallDate = $filter('Date')($scope.courierDeliveryItem.CallDate);
                         $scope.courierDeliveryItem.CourierCost = $filter('number')($scope.courierDeliveryItem.CourierCost, 2);
 
@@ -333,7 +333,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryDetailsDataDefinition.DataList.splice(0, $scope.courierDeliveryDetailsDataDefinition.DataList.length);
                         $scope.courierDeliveryItem = angular.copy($scope.courierDeliveryDataDefinition.DataItem);
                         $scope.controlNoHolder = $scope.courierDeliveryItem.Id;
-                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 15, $scope.courierDeliveryItem.Id);
+                        $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 8, $scope.courierDeliveryItem.Id);
                         $scope.courierDeliveryItem.CallDate = $filter('Date')($scope.courierDeliveryItem.CallDate);
                         $scope.courierDeliveryItem.CourierCost = $filter('number')($scope.courierDeliveryItem.CourierCost, 2);
 
@@ -377,7 +377,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     //Initialize Courier Transaction Id
                     $scope.courierDeliveryItem.Id = $scope.courierDeliverySubmitDefinition.DataItem.Id;
                     $scope.controlNoHolder = $scope.courierDeliveryItem.Id;
-                    $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 15, $scope.courierDeliveryItem.Id);
+                    $scope.courierDeliveryItem.Id = $rootScope.formatControlNo('', 8, $scope.courierDeliveryItem.Id);
                     //Initialize Courier Transaction Details Id
                     for (var i = 0; i < $scope.courierDeliverySubmitDefinition.DataItem.CourierTransactionDetails.length; i++)
                         $scope.courierDeliveryDetailsDataDefinition.DataList[i].Id = $scope.courierDeliverySubmitDefinition.DataItem.CourierTransactionDetails[i].Id;
