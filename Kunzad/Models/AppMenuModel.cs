@@ -51,8 +51,8 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Batching", "fa fa-th", "#"));
-            m.MenuItems.Add(new MenuItem("Van Stuffing", "fa fa-th", "#/vanstuff"));
+            m.MenuItems.Add(new MenuItem("Batching", "fa fa-th", "#/consolidation/batch"));
+            m.MenuItems.Add(new MenuItem("Van Stuffing", "fa fa-th", "#/consolidation/vanstuff"));
             menuGroup.MenuGroupItems.Add(m);
 
             MenuGroups.Add(menuGroup);

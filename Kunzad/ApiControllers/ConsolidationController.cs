@@ -12,7 +12,7 @@ using Kunzad.Models;
 
 namespace Kunzad.ApiControllers
 {
-    public class VanStuffController : ApiController
+    public class ConsolidationController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
@@ -140,7 +140,7 @@ namespace Kunzad.ApiControllers
                         s.TransportStatusId = (int)Status.TransportStatus.Open;
                         s.LoadingStatusId = (int)Status.LoadingStatus.Open;
                         s.TransportStatusRemarks = "For pickup from customer";
-
+                        s.IsConsolidation = true;
                         //db.Addresses.Add(s.Address);
                         //db.Addresses.Add(s.Address1);
 
@@ -156,9 +156,15 @@ namespace Kunzad.ApiControllers
                             //consolidate master       
                             consolidation.ShipmentId = parentShipmentId;
                             consolidation.ParentShipmentId = 0;
-                            consolidation.ConsolidationTypeId = 20;
+                            
+                            if(s.ConsolidationNo2 != null)
+                                //vanstuff
+                                consolidation.ConsolidationTypeId = 20;
+                            else
+                                //batch
+                                consolidation.ConsolidationTypeId = 10;
 
-
+                            consolidation.CreatedDate = DateTime.Now;
                             db.Consolidations.Add(consolidation);
 
                             db.SaveChanges();
@@ -169,6 +175,7 @@ namespace Kunzad.ApiControllers
                     else
                     {
                         s.ParentShipmentId = parentShipmentId;
+                        s.IsConsolidation = true;
 
                         var shipmentHolder = db.Shipments.Find(s.Id);
                         db.Entry(shipmentHolder).CurrentValues.SetValues(s);
@@ -176,9 +183,16 @@ namespace Kunzad.ApiControllers
 
                         //consolidate detail
                         consolidation.ShipmentId = s.Id;
-                        consolidation.ParentShipmentId = parentShipmentId; // s1.ParentShipmentId;
-                        consolidation.ConsolidationTypeId = 20;
+                        consolidation.ParentShipmentId = parentShipmentId; 
 
+                        if (s.ConsolidationNo2 != null)
+                            //vanstuff
+                            consolidation.ConsolidationTypeId = 20;
+                        else
+                            //batch
+                            consolidation.ConsolidationTypeId = 10;
+
+                        consolidation.CreatedDate = DateTime.Now;
                         db.Consolidations.Add(consolidation);
 
                         db.SaveChanges();

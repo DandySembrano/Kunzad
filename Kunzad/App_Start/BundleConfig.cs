@@ -57,7 +57,6 @@ namespace Kunzad
                         "~/Scripts/app/courier-ctrl.js",
                         "~/Scripts/app/airline-ctrl.js",
                         "~/Scripts/app/trucker-ctrl.js",
-                        "~/Scripts/app/trucktype-ctrl.js", 
                         "~/Scripts/app/trucking-ctrl.js",
                         "~/Scripts/app/trucktype-ctrl.js",
                         "~/Scripts/app/industry-ctrl.js",
@@ -73,7 +72,7 @@ namespace Kunzad
                         "~/Scripts/app/truckingwb-ctrl.js",
                         "~/Scripts/app/airfreight-ctrl.js",
                         "~/Scripts/app/courierdelivery-ctrl.js",
-                        "~/Scripts/app/vanstuff-ctrl.js",
+                        "~/Scripts/app/consolidation-ctrl.js",
                         "~/Scripts/app/documentation-ctrl.js"
                         ));
         }
