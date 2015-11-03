@@ -117,7 +117,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "OriginBusinessUnitId": null,
                     "DestinationBusinessUnitId": null,
                     "CreatedDate": null,
-                    "LastUpdatedDate": null
+                    "LastUpdatedDate": null,
+                    "FreightCost": $filter('number')(0.00, 2)
                 },
                 {
                     "Id": null,
@@ -125,7 +126,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "OriginBusinessUnitId": null,
                     "DestinationBusinessUnitId": null,
                     "CreatedDate": null,
-                    "LastUpdatedDate": null
+                    "LastUpdatedDate": null,
+                    "FreightCost": $filter('number')(0.00, 2)
                 }]
             };
         }
@@ -227,6 +229,14 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             pickDate: false
         })
         
+        $('#freightCost').priceFormat({
+            clearPrefix: true,
+            prefix: '',
+            centsSeparator: '.',
+            thousandsSeparator: ',',
+            centsLimit: 2
+        });
+        
         //Initialize Address fields
         $scope.initializeAddressField = function (addressItem) {
             $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
@@ -241,7 +251,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             $scope.seafreightItem = {
                 "Id": null,
                 "BLNumber": null,
-                "BLDate": null,
+                "BLDate": $filter('Date')(new Date()),
                 "VesselVoyageId": null,
                 "VesselVoyage": {
                     "Id": null,
@@ -279,7 +289,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "Id": null,
                     "Name": null
                 },
-                "FreightCost": null,
+                "FreightCost": $filter('number')(0.00, 2),
                 "CreatedDate": null,
                 "LastUpdatedDate": null,
                 "CreatedByUserId": null,
