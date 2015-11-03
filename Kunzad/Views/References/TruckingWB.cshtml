@@ -37,19 +37,19 @@
                         <label class="col-md-3 control-label small">Document no</label>
                         <div class="col-md-4">
                             <input type="text" class="form-control"
-                                    ng-model="truckingItem.DocumentNo"
-                                    ng-disabled="viewOnly" />
+                                   ng-model="truckingItem.DocumentNo"
+                                   ng-disabled="viewOnly" />
                         </div>
 
                     </div>
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Dispatch No</label>
+                        <label class="col-md-3 control-label small">Transaction No</label>
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="dispatchId"
                                         ng-model="truckingItem.Id"
                                         ng-disabled="viewOnly" />
-                                <span class="input-group-addon" style="padding:2px 0; color: #4a89dc ; cursor: pointer;" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
+                                <span class="input-group-addon" style="padding : 2px;color: #4a89dc ; cursor: pointer;" title="Search Dispatch" ng-click="showModal('#trucking-list-modal')">
                                     <span class="glyphicons glyphicons-search">
                                     </span>
                                 </span>
@@ -128,15 +128,7 @@
                     </div>
             </div>
             @*Column 2*@
-            <div class="col-lg-6" style="padding-top:44px">
-                    <div class="row form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Trucker Cost</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control truckerCost"
-                                   ng-model="truckingItem.TruckerCost"
-                                   ng-disabled="viewOnly" />
-                        </div>
-                    </div>
+            <div class="col-lg-6" @*style="padding-top:44px"*@>
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Origin</label>
                         <div class="col-md-8">
@@ -200,7 +192,7 @@
                     @*TruckingType*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Type</label>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
                             <input type='hidden'
                                    id="truckcalltime"
                                    class="form-control"
@@ -212,39 +204,22 @@
                                    ng-disabled="true" />
                         </div>
                     </div>
-                <script type="text/javascript">
-                    $(function () {
-                        // NUMBERS w/ DECIMAL AND COMMA
-                        $('.truckerCost').priceFormat({
-                            clearPrefix: true,
-                            prefix: '',
-                            centsSeparator: '.',
-                            thousandsSeparator: ',',
-                            centsLimit: 2
-                        });
-
-                        $('#dispatchdate').datetimepicker({
-                            format: 'MM-DD-YYYY',
-                            sideBySide: false,
-                            pickTime: false,
-                        })
-                        $('#truckcalldate').datetimepicker({
-                            format: 'MM-DD-YYYY',
-                            sideBySide: false,
-                            pickTime: false,
-                        })
-                        $('#dispatchtime').datetimepicker({
-                            format: 'HH:mm',
-                            sideBySide: false,
-                            pickDate: false
-                        })
-                        $('#truckcalltime').datetimepicker({
-                            format: 'HH:mm',
-                            sideBySide: false,
-                            pickDate: false
-                        })
-                    });
-                </script>
+                    <div class="row form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Trucker Cost</label>
+                        <div class="col-md-4">
+                            <input type="text" id="truckerCost" class="form-control"
+                                   ng-model="truckingItem.TruckerCost"
+                                   ng-disabled="viewOnly" />
+                        </div>
+                    </div>
+                    <div class="row form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Revenue</label>
+                        <div class="col-md-4">
+                            <input type="text" id="revenue" class="form-control"
+                                   ng-model="truckingItem.InternalRevenue"
+                                   ng-disabled="viewOnly" />
+                        </div>
+                    </div>
             </div>
         </form>
     </div>  
@@ -403,7 +378,7 @@
                         @*Cost Allocation*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Cost Allocation</label>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <input type="text"
                                        class="form-control costAllocation"
                                        ng-model="trkgdlvryList.CostAllocation"

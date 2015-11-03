@@ -117,9 +117,9 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                      },
                      PostalCode: null
                  },
-                 DeliveryDate: null,
-                 DeliveryTime: null,
-                 CostAllocation: null,
+                 DeliveryDate: $filter('Date')(new Date()),
+                 DeliveryTime: $filter('Time')(new Date()),
+                 CostAllocation: $filter('number')(0.00, 2),
                  CreatedDate: null,
                  LastUpdatedDate: null,
                  CreatedByUserId: null,
@@ -270,6 +270,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
             .success(function (data, status) {
                 for (var i = 0; i < data.length; i++) {
                     data[i].ShipmentId = $rootScope.formatControlNo('', 15, data[i].Shipment.Id);
+                    data[i].CostAllocation = $filter('number')(data[i].CostAllocation, 2);
                     //Initialize Pickup Address
                     data[i].Shipment.OriginAddress = $scope.initializeAddressField(data[i].Shipment.Address1);
                     //Initalize Consignee Address
@@ -289,19 +290,28 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
             })
     };
 
-    $('.truckerCost', '.costAllocation').priceFormat({
+    $('#truckerCost,#revenue,.costAllocation').priceFormat({
         clearPrefix: true,
         prefix: '',
         centsSeparator: '.',
         thousandsSeparator: ',',
         centsLimit: 2
     });
-    $('#createdDate', '.deliveryDate').datetimepicker({
+
+    $('#createdDate').datetimepicker({
         format: 'MM-DD-YYYY',
         sideBySide: false,
         pickTime: false,
         //minDate: moment()
     });
+
+    $('.deliveryDate').datetimepicker({
+        format: 'MM-DD-YYYY',
+        sideBySide: false,
+        pickTime: false,
+        //minDate: moment()
+    });
+
     $('.deliveryTime').datetimepicker({
         format: 'HH:mm',
         sideBySide: false,
@@ -345,7 +355,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "Id": null,
                 "Name": null
             },
-            "TruckerCost": null,
+            "TruckerCost": $filter('number')(0.00, 2),
+            "InternalRevenue": $filter('number')(0.00, 2),
             "TruckingStatusId": null,
             "TruckingStatusRemarks": null,
             "TruckCallDate": null,
@@ -407,6 +418,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.truckingOtheractions = function (action) {
+            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.submitButtonText = "Submit";
@@ -437,6 +449,9 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
+                        $scope.truckingItem.TruckerCost = document.getElementById('truckerCost'); //$filter('number')($scope.truckingItem.TruckerCost, 2);
+                        $scope.truckingItem.InternalRevenue = document.getElementById('revenue'); //$filter('number')($scope.truckingItem.InternalRevenue, 2);
+                        console.log($scope.truckingItem.TruckerCost);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -469,6 +484,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
+                        $scope.truckingItem.TruckerCost = $filter('number')($scope.truckingItem.TruckerCost, 2);
+                        $scope.truckingItem.InternalRevenue = $filter('number')($scope.truckingItem.InternalRevenue, 2);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -503,6 +520,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                         $scope.truckingItem.TruckingType = $filter('TruckingType')($scope.truckingItem.TruckingTypeId);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
+                        $scope.truckingItem.TruckerCost = $filter('number')($scope.truckingItem.TruckerCost, 2);
+                        $scope.truckingItem.InternalRevenue = $filter('number')($scope.truckingItem.InternalRevenue, 2);
                         $scope.getTruckingDeliveries($scope.truckingItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
@@ -532,7 +551,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     return true;
                 case "PreSave":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
-
+                    console.log($scope.truckingSubmitDefinition.DataItem.TruckerCost);
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -555,7 +574,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     return true;
                 case "PreUpdate":
                     $scope.truckingSubmitDefinition.DataItem.TruckingDeliveries = angular.copy($scope.trkgDeliveryList);
-
+                    console.log($scope.truckingSubmitDefinition.DataItem.TruckerCost);
                     delete $scope.truckingSubmitDefinition.DataItem.Truck;
                     delete $scope.truckingSubmitDefinition.DataItem.Driver;
                     delete $scope.truckingSubmitDefinition.DataItem.Trucker;
@@ -572,6 +591,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.viewOnly = true;
                     if ($scope.submitButtonText == "Cancel")
                     {
+                        $scope.truckingDataDefinition.DataList[]
                         $scope.truckingOtheractions("FormCreate");
                         $scope.viewOnly = false;
                     }
@@ -1179,6 +1199,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
 
      // Initialization routines
     var init = function () {
+
         $scope.focusOnTop();
         $scope.loadTruckingDataGrid();
         $scope.loadTruckingFiltering();
