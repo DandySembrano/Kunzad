@@ -73,10 +73,17 @@ namespace Kunzad.ApiControllers
                 return BadRequest();
             }
 
-            //foreach (Trucking t in shipment.TruckingDeliveries)
-            //{
-            //    db.Entry(t.tru).State = EntityState.Modified;
-            //}
+            //set revenue to TRUE if revenue amount is inputted
+            if (shipment.Revenue > 0)
+            {
+                shipment.IsRevenue = true;
+            }
+
+            //set tax inclusive to TRUE if tax amount is inputted
+            if (shipment.TaxAmount > 0)
+            {
+                shipment.IsTaxInclusive = true;
+            }
 
             db.Entry(shipment).State = EntityState.Modified;
 

@@ -90,13 +90,6 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
         })
     };
 
-    $scope.getTrucking = function (id) {
-        $http.get("/api/documentation/"+id)
-        .success(function (data, status) {
-            $scope.shipmentItem.TruckingDeliveries = angular.copy(data[0]);
-        })
-    }
-
     //Initialize Payment Mode List for DropDown
     $scope.initPaymentModeList = function () {
         $scope.paymentModeList = $rootScope.getPaymentModeList();
@@ -105,6 +98,8 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
     //Function that will trigger during Edit,Delete and View Action
     $scope.onEDV = function () {
         $scope.shipmentItem = [];
+        $scope.shipmentDataDefinition.DataItem.Revenue = $filter('number')($scope.shipmentDataDefinition.DataItem.Revenue, 2);
+        $scope.shipmentDataDefinition.DataItem.TaxAmount = $filter('number')($scope.shipmentDataDefinition.DataItem.TaxAmount, 2);
         $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
@@ -118,12 +113,8 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
             }
         }
 
-        // GET TRUCKING ITEM
-        //$scope.getTrucking($scope.shipmentItem.Id);
-
-        //console.log($scope.shipmentItem);
         $scope.controlNoHolder = $scope.shipmentItem.Id;
-        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 8, $scope.shipmentItem.Id);
 
         // SET TAB TO INFORMATION
         $scope.selectedTab = $scope.tabPages[0];
@@ -136,42 +127,49 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
             alert("Please find and select shipment!");
             $scope.valError = 1;
         }
-        //alert($scope.shipmentSubmitDefinition.DataItem.isRevenue);
-        //alert($scope.shipmentSubmitDefinition.DataItem.isTaxInclusive);
         
-        if ($scope.shipmentSubmitDefinition.DataItem.isRevenue === 1) {
-            // IF REVENUE IS 0
-            if ($scope.shipmentSubmitDefinition.DataItem.Revenue === 0 || $scope.shipmentSubmitDefinition.DataItem.Revenue == 0) {
-                alert("Revenue cannot be zero(0) of value!");
-                $scope.valError = 1;
-            }
-            // IF REVEUE IS NULL
-            if ($scope.shipmentSubmitDefinition.DataItem.Revenue === "" || $scope.shipmentSubmitDefinition.DataItem.Revenue === null) {
-                alert("Please enter revenue amount!");
-                $scope.valError = 1;
-            }
-        } else {
-            $scope.shipmentSubmitDefinition.DataItem.isRevenue = 0;
-            $scope.shipmentSubmitDefinition.DataItem.Revenue = 0;
-        }
+        //if ($scope.shipmentSubmitDefinition.DataItem.isRevenue === 1) {
+        //    // IF REVENUE IS 0
+        //    if ($scope.shipmentSubmitDefinition.DataItem.Revenue === 0 || $scope.shipmentSubmitDefinition.DataItem.Revenue == 0) {
+        //        alert("Revenue cannot be zero(0) of value!");
+        //        $scope.valError = 1;
+        //    }
+        //    // IF REVEUE IS NULL
+        //    if ($scope.shipmentSubmitDefinition.DataItem.Revenue === "" || $scope.shipmentSubmitDefinition.DataItem.Revenue === null) {
+        //        alert("Please enter revenue amount!");
+        //        $scope.valError = 1;
+        //    }
+        //} else {
+        //    $scope.shipmentSubmitDefinition.DataItem.isRevenue = 0;
+        //    $scope.shipmentSubmitDefinition.DataItem.Revenue = 0;
+        //}
 
-        if ($scope.shipmentSubmitDefinition.DataItem.isTaxInclusive === 1) {
-            // IF REVENUE IS 0
-            if ($scope.shipmentSubmitDefinition.DataItem.TaxAmount === 0 || $scope.shipmentSubmitDefinition.DataItem.TaxAmount == 0) {
-                alert("Tax Amount cannot be zero(0) of value!");
-                $scope.valError = 1;
-            }
-            // IF REVEUE IS NULL
-            if ($scope.shipmentSubmitDefinition.DataItem.TaxAmount === "" || $scope.shipmentSubmitDefinition.DataItem.TaxAmount === null) {
-                alert("Please enter tax amount!");
-                $scope.valError = 1;
-            }
-        } else {
-            $scope.shipmentSubmitDefinition.DataItem.isTaxInclusive = 0;
-            $scope.shipmentSubmitDefinition.DataItem.TaxAmount = 0;
-            $scope.shipmentSubmitDefinition.DataItem.TaxPercentage = 0;
-        }
+        //if ($scope.shipmentSubmitDefinition.DataItem.isTaxInclusive === 1) {
+        //    // IF REVENUE IS 0
+        //    if ($scope.shipmentSubmitDefinition.DataItem.TaxAmount === 0 || $scope.shipmentSubmitDefinition.DataItem.TaxAmount == 0) {
+        //        alert("Tax Amount cannot be zero(0) of value!");
+        //        $scope.valError = 1;
+        //    }
+        //    // IF REVEUE IS NULL
+        //    if ($scope.shipmentSubmitDefinition.DataItem.TaxAmount === "" || $scope.shipmentSubmitDefinition.DataItem.TaxAmount === null) {
+        //        alert("Please enter tax amount!");
+        //        $scope.valError = 1;
+        //    }
+        //} else {
+        //    $scope.shipmentSubmitDefinition.DataItem.isTaxInclusive = 0;
+        //    $scope.shipmentSubmitDefinition.DataItem.TaxAmount = 0;
+        //    $scope.shipmentSubmitDefinition.DataItem.TaxPercentage = 0;
+        //}
     }
+
+    // NUMBERS w/ DECIMAL AND COMMA
+    $('#RevenueAmount,#TaxAmount').priceFormat({
+        clearPrefix: true,
+        prefix: '',
+        centsseparator: '.',
+        thousandsSeparator: ',',
+        centsLimit: 2
+    });
 
     //====================================SHIPMENT FILTERING AND DATAGRID==========================
     //Load shipment datagrid for compiling
@@ -227,6 +225,19 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Create";
                     return true;
+                case "PreSave":
+                    alert("Please select shipment to update!");
+                    $scope.selectedTab = $scope.tabPages[1];
+                    var promise = $interval(function () {
+                        if ($scope.shipmentToggle == false) {
+                            $("#shipmentToggle").slideToggle(function () {
+                                $scope.shipmentToggle = true;
+                            });
+                        }
+                        $interval.cancel(promise);
+                        promise = undefined;
+                    }, 200);
+                    return false;
                 case "PostEditAction":
                     $scope.onEDV();
                     $scope.viewOnly = false;
@@ -234,12 +245,11 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     $scope.shipmentSubmitDefinition.Type = "Edit";
                     return true;
                 case "PreUpdate":
+                    
+                    $scope.shipmentItem.Revenue = $filter('number')($scope.shipmentItem.Revenue, 2);
+                    $scope.shipmentItem.TaxAmount = $filter('number')($scope.shipmentItem.TaxAmount, 2);
                     $scope.shipmentSubmitDefinition.DataItem = angular.copy($scope.shipmentItem);
-
-                    $scope.validateShipment();
-                    if ($scope.valError > 0) {
-                        return false;
-                    }
+                    //console.log($scope.shipmentSubmitDefinition.DataItem);
 
                     delete $scope.shipmentSubmitDefinition.DataItem.Address;
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1;
@@ -249,15 +259,14 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     delete $scope.shipmentSubmitDefinition.DataItem.Service;
                     delete $scope.shipmentSubmitDefinition.DataItem.ShipmentType;
 
-                    console.log($scope.shipmentSubmitDefinition.DataItem);
+                    $scope.viewOnly = true;
+                    $scope.submitButtonText = "Submit";
+                    $scope.shipmentSubmitDefinition.Type = "Edit";
+                    alert("Successfully Updated.");
+
                     return true;
                 case "PostUpdate":
-                    //if ($scope.shipmentSubmitDefinition.Index != -1)
-                    //    $scope.shipmentDataDefinition.DataList[$scope.shipmentSubmitDefinition.Index] = $scope.shipmentItem;
-
-                    //$scope.onEDV();
-                    $scope.viewOnly = true;
-                    alert("Successfully Updated.");
+                    
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];
@@ -387,11 +396,8 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                 "LastUpdatedDate": null,
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null,
-                "isRevenue": null,
-                "Revenue": null,
-                "isTaxInclusive": null,
-                "TaxAmount": null,
-                "TaxPercentage": null
+                "Revenue": $filter('number')(0.00, 2),
+                "TaxAmount": $filter('number')(0.00, 2)
             }
             //Temporary set BusinessUnit
             $scope.shipmentItem.BusinessUnit = {
@@ -529,8 +535,9 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                             set DoPagination to true
                       if scroll, initialize shipmentDataDefinition DataList by pushing each value of filterDefinition DataList*/
                     //Required
+                    $scope.shipmentFilteringDefinition.DataList[0].Revenue = $filter('number')($scope.shipmentFilteringDefinition.DataList[0].Revenue, 2);
+                    $scope.shipmentFilteringDefinition.DataList[0].TaxAmount = $filter('number')($scope.shipmentFilteringDefinition.DataList[0].TaxAmount, 2);
                     $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
-
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
@@ -574,7 +581,7 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
         $scope.initPaymentModeList();
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
-        $scope.shipmentResetData();
+        //$scope.shipmentResetData();
     };
 
     init();
