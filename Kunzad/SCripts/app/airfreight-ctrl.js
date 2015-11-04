@@ -21,14 +21,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.AirFreightShipments = [];
     var pageSize = 20;
     $scope.selectedShipmentDtlRow = 0;
-
-    $('#costAllocation').priceFormat({
-        clearPrefix: true,
-        prefix: '',
-        centsSeparator: '.',
-        thousandsSeparator: ',',
-        centsLimit: 4
-    });
+    $scope.enableSave = true;
 
     $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
         format: 'MM-DD-YYYY',
@@ -56,7 +49,6 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         $scope.controlNoHolder = $scope.airFreightItem.Id;
         $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
     };
-
 
     //Retrieve seafreight's shipments
     $scope.getAirFreightDetail = function (airFreightId) {
@@ -106,6 +98,15 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         else
             $scope.AirFreightShipments.splice(index, 1);
     };
+
+    // NUMBERS w/ DECIMAL AND COMMA
+    $('#cost').priceFormat({
+        clearPrefix: true,
+        prefix: '',
+        centsSeparator: '.',
+        thousandsSeparator: ',',
+        centsLimit: 2
+    });
 
     //====================================AIRFREIGHT FILTERING AND DATAGRID==========================
     //Load airfreight datagrid for compiling
@@ -172,6 +173,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
         };
 
         $scope.airFreightOtheractions = function (action) {
+            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.airFreightResetData();
@@ -214,6 +216,30 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.airFreightSubmitDefinition.Type = "Edit";
                     $scope.viewOnly = false;
                     return true;
+                case "PostViewAction":
+                    $scope.airFreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
+                    $scope.airFreightItem.EstimatedDepartureDate = $filter('Date')(($scope.airFreightItem.EstimatedDepartureDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.EstimatedArrivalTime = $filter('Date')(($scope.airFreightItem.EstimatedArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.EstimatedArrivalDate = $filter('Date')(($scope.airFreightItem.EstimatedArrivalDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.EstimatedArrivalTime = $filter('Date')(($scope.airFreightItem.EstimatedArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.DepartureDate = $filter('Date')(($scope.airFreightItem.DepartureDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.DepartureTime = $filter('Date')(($scope.airFreightItem.DepartureTime), "hh:mm:ss");
+                    $scope.airFreightItem.ArrivalDate = $filter('Date')(($scope.airFreightItem.ArrivalDate), "yyyy-MM-dd");
+                    $scope.airFreightItem.ArrivalTime = $filter('Date')(($scope.airFreightItem.ArrivalTime), "hh:mm:ss");
+                    $scope.airFreightItem.AirWaybillDate = $filter('Date')(($scope.airFreightItem.AirWaybillDate), "yyyy-MM-dd");
+
+                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
+
+                    $scope.AirFreightShipments = $scope.airFreightItem.AirFreightShipments;
+                    for (var i = 0; i < $scope.airFreightItem.AirFreightShipments.length; i++) {
+                        $scope.AirFreightShipments[i].Shipment.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.AirFreightShipments[i].Shipment.Id);
+                    }
+                    
+                    $scope.submitButtonText = "Close";
+                    $scope.selectedTab = $scope.tabPages[0];
+                    $scope.airFreightSubmitDefinition.Type = "Edit";
+                    $scope.viewOnly = true;
+                    return true;
                 case "PreSubmit":
                     $scope.airFreightSubmitDefinition.DataItem = angular.copy($scope.airFreightItem);
                     $scope.airFreightSubmitDefinition.DataItem.AirFreightShipments = angular.copy($scope.AirFreightShipments);
@@ -234,12 +260,30 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 case "PostSave":
                     $scope.airFreightItem.Id = $scope.airFreightSubmitDefinition.DataItem.Id;
                     $scope.airFreightDataDefinition.DataItem = $scope.airFreightItem;
+                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
                     alert("Successfully Saved.");
                     $scope.onEDV();
                     $scope.submitButtonText = "Update";
                     $scope.airFreightSubmitDefinition.Type = "Edit";
                     $scope.viewOnly = true;
+                    $scope.enableSave = false;
 
+                    return true;
+                case "PreUpdate":
+                    //console.log($scope.airFreightDataDefinition.DataItem);
+                    $scope.airFreightItem = angular.copy($scope.airFreightDataDefinition.DataItem);
+                    $scope.airFreightItem.Id = $rootScope.formatControlNo('', 8, $scope.airFreightItem.Id);
+                    delete $scope.airFreightDataDefinition.DataItem.BusinessUnit;
+                    delete $scope.airFreightDataDefinition.DataItem.BusinessUnit1;
+                    delete $scope.airFreightDataDefinition.DataItem.AirLine;
+                    for (var i = 0; i < $scope.airFreightDataDefinition.DataItem.AirFreightShipments.length; i++) {
+                        delete $scope.airFreightDataDefinition.DataItem.AirFreightShipments[i].Shipment;
+                    }
+                    alert("Successfully Updated.");
+                    $scope.onEDV();
+                    $scope.submitButtonText = "Update";
+                    $scope.airFreightSubmitDefinition.Type = "Edit";
+                    $scope.viewOnly = true;
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];

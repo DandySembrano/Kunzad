@@ -253,7 +253,7 @@
                         <legend class="scheduler-border">Detail No {{$index+1}}</legend>
                         <div class="col-md-12">
                             <span title="Remove" style="color:#4a89dc;position:absolute;right:0px;">
-                                <span class="glyphicon glyphicon-trash" ng-click="removeBooking($index)"></span>
+                                <span class="glyphicon glyphicon-remove-circle" ng-click="removeBooking($index)"></span>
                             </span>
                         </div><br />
                         <!-------form------->
@@ -262,7 +262,7 @@
                             @*Shipment No*@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small">Shipment No</label>
-                                <div class="col-md-8">
+                                <div class="col-md-4">
                                     <div class="input-group date">
                                         <input id="shipmentNo" type="text"
                                                class="form-control"
@@ -278,7 +278,7 @@
                             @*Customer Code*@
                             <div class="form-group form-group-sm">
                                 <label class="col-md-3 control-label small">Shipper Code</label>
-                                <div class="col-md-8">
+                                <div class="col-md-4">
                                     <input type="text"
                                            class="form-control"
                                            placeholder=""
@@ -302,7 +302,7 @@
                                 <label class="col-md-3 control-label small">Quantity</label>
                                 <div class="col-md-4">
                                     <input type="text"
-                                           class="form-control"
+                                           class="form-control text-right"
                                            placeholder=""
                                            ng-model="trkgdlvryList.Quantity"
                                            ng-disabled="viewOnly">
@@ -313,7 +313,7 @@
                                 <label class="col-md-3 control-label small">Total CBM</label>
                                 <div class="col-md-4">
                                     <input type="text"
-                                           class="form-control"
+                                           class="form-control text-right"
                                            placeholder=""
                                            ng-model="trkgdlvryList.CBM"
                                            ng-disabled="viewOnly">

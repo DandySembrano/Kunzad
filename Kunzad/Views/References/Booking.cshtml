@@ -18,7 +18,7 @@
                     @*Shipment No*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Shipment No</label>
-                        <div class="col-md-8">
+                        <div class="col-md-4">
                             <input type="text"
                                    class="form-control"
                                    placeholder="System Generated"
@@ -104,7 +104,7 @@
                         @*Customer Code*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Code</label>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <div class="input-group date">
                                     <input id="customerCode"
                                            type="text"
@@ -213,10 +213,10 @@
                         @*Quantity*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Total Qty</label>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <input id="quantity"
                                        type="text"
-                                       class="form-control"
+                                       class="form-control text-right"
                                        ng-model="shipmentItem.Quantity"
                                        ng-disabled="viewOnly">
                             </div>
@@ -224,10 +224,10 @@
                         @*Total CBM*@
                         <div class="form-group form-group-sm">
                             <label class="col-md-3 control-label small">Total CBM</label>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
                                 <input id="cbm"
                                        type="text"
-                                       class="form-control"
+                                       class="form-control text-right"
                                        ng-model="shipmentItem.TotalCBM"
                                        ng-disabled="viewOnly">
                             </div>

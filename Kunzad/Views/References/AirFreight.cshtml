@@ -326,7 +326,8 @@
                                         <div class="col-md-4">
                                             <input id="quantity"
                                                    type="text"
-                                                   class="form-control"
+                                                   placeholder="0"
+                                                   class="form-control text-right"
                                                    ng-model="sList.Shipment.Quantity"
                                                    ng-disabled="true">
                                         </div>
@@ -337,7 +338,8 @@
                                         <div class="col-md-4">
                                             <input id="cbm"
                                                    type="text"
-                                                   class="form-control"
+                                                   placeholder="0"
+                                                   class="form-control text-right"
                                                    ng-model="sList.Shipment.TotalCBM"
                                                    ng-disabled="true">
                                         </div>
@@ -380,7 +382,7 @@
                                         <div class="col-md-4">
                                             <input id="costAllocation"
                                                    type="text"
-                                                   class="form-control"
+                                                   class="form-control text-right"
                                                    ng-model="sList.CostAllocation"
                                                    ng-disabled="viewOnly">
                                         </div>
@@ -483,6 +485,9 @@
         </li>
         <li>
             <a class="pointer small" role="menuitem" tabindex="1" ng-click="airFreightOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
         </li>
         <li>
             <a style="{{airFreightItem.Id != null && airFreightSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="airFreightOtheractions(airFreightItem.Id != null && airFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
