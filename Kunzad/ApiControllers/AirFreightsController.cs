@@ -105,6 +105,7 @@ namespace Kunzad.ApiControllers
                         if (airShipmentOnParam.Id == aShipmentOnDb.Id)
                         {
                             var airShip = db.AirFreightShipments.Find(airShipmentOnParam.Id);
+                            airShip.Shipment.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
                             db.Entry(airShip).CurrentValues.SetValues(airShipmentOnParam);
                             db.Entry(airShip).State = EntityState.Modified;
                             bolFound = true;
@@ -156,6 +157,11 @@ namespace Kunzad.ApiControllers
                     objAirShipmentDtl.CreatedDate = DateTime.Now;
                     objAirShipmentDtl.AirFreightId = pAirFreight.Id;
                     db.AirFreightShipments.Add(objAirShipmentDtl);
+
+                    var shipment = db.Shipments.Find(objAirShipmentDtl.ShipmentId);
+                    shipment.LoadingStatusId = (int)Status.LoadingStatus.Loaded;
+                    db.Entry(shipment).State = EntityState.Modified;
+
                 }
                 pAirFreight.CreatedDate = DateTime.Now;
                 db.AirFreights.Add(pAirFreight);
