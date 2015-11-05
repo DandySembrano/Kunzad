@@ -1,7 +1,8 @@
-﻿var restAPI = function ($http, $localForage) {
+﻿var restAPI = function ($http, $localForage, $q) {
     var service = this;
     var asyncCall = undefined;
     var objData = undefined;
+    var deferred = $q.defer();
 
     if (window.XMLHttpRequest) {
         FactoryXMLHttpRequest = function () {
@@ -23,42 +24,57 @@
     function Asynchronous_call(request) {
         var instance = this;
         var instRequest = request;
-
         //send request to server
         this.xmlhttp.open(request.action, request.url, true);
         try {
+
+            var eTagId = null;
+            var etagKey = null;
+
             this.xmlhttp.onreadystatechange = function () {
                 if (instance.xmlhttp.readyState == 4) {
                     //if already completed
-                    if (instance.xmlhttp.status == 200 && request.action == "GET") {
-                        //persist in local foreage
-                        $localForage.setItem("EtagID", instance.xmlhttp.getResponseHeader("ETag"));
+                    if (instance.xmlhttp.status == 200 && request.action == "GET") { //get fresh data
+                        if (etagKey != null) {
+                            //remove first existing just in case it is expire on server
+                            $localForage.removeItem(etagKey);
+                        }
+                        var newETagId = instance.xmlhttp.getResponseHeader("ETag");
+                        $localForage.setItem(request.url + "+" + newETagId, instance.xmlhttp.response);
                         var jsonObj = JSON.parse(instance.xmlhttp.response);
                         //save data in local storage here
                         objData = jsonObj;
+                    } else if (instance.xmlhttp.status == 304 && request.action == "GET") { //retrive in cache
+                        $localForage.getItem(etagKey).then(function (data) {
+                            objData = JSON.parse(data);
+                        });
                     }
+                    //reset all keys
+                    eTagId = null
+                    etagKey = null
                 }
             }
 
-            $localForage.getItem("EtagID").then(function (data) {
-                if (data === undefined) {
-                    instance.xmlhttp.setRequestHeader("If-None-Match", '"xxx"');
+            $localForage.iterate(function (value, key) {
+                if (key.indexOf(request.url) > -1) { //if request is already on localforeage get the etag
+                    eTagId = key.substring(key.indexOf("+") + 1, key.length);
+                    etagKey = key;
+                }
+            }).then(function (data) {
+                if (eTagId == null) {
+                    instance.xmlhttp.setRequestHeader("If-None-Match", '"dummy"');
                     instance.xmlhttp.send(request.data); //send w/o if-none-match
-                } else { //retrieve in the cache
-                    alert('Dili pa ka retrieve kay wla paman na save sa local storage, temporary.');
-                    EtagID = data;
-                    var jsonObj = [{ForTesting: null}];
-                    objData = jsonObj;
-                    instance.xmlhttp.setRequestHeader("If-None-Match", EtagID);
+                } else {
+                    instance.xmlhttp.setRequestHeader("If-None-Match", eTagId);
                     instance.xmlhttp.send(request.data);
                 }
-            })
+            });
         }
         catch (e) {
             //globals.errorHandler(e);
         }
     }
-  
+
     function HttpRequest_get(strurl) {
         //invoke Asynchronous.prototype.call function
         this.call({ action: "GET", url: strurl });
@@ -77,7 +93,6 @@
 
     service.retrieve = function (url) {
         asyncCall = request.validatingAsynchronous("GET");
-        //invoke Asynchronous.prototype.get function
         asyncCall.get(url);
     };
 
@@ -92,8 +107,33 @@
 
     };
 
+    function cloneObject(obj) {
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+
+        var temp = obj.constructor(); // give temp the original obj's constructor
+        for (var key in obj) {
+            temp[key] = cloneObject(obj[key]);
+        }
+        return temp;
+    }
+
     service.getObjData = function () {
-        return objData;
+        var objToCreate = (cloneObject(objData));
+
+        objData = undefined;
+        return objToCreate;
+    }
+
+    service.isValid = function () {
+        return objData != null;
+    }
+
+
+
+    service.setObjData = function (val) {
+        objData = val;
     }
 };
 kunzadApp.service('restAPI', restAPI);
