@@ -1393,16 +1393,17 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                 switch (action) {
                     case 'PostEditAction':
                         $scope.seafreightItem.VesselVoyageId = $scope.vesselVoyageDataDefinition.DataItem.Id;
+                        $scope.seafreightItem.VesselVoyage.Id = $scope.vesselVoyageDataDefinition.DataItem.Id;
                         $scope.seafreightItem.VesselVoyage.VoyageNo = $scope.vesselVoyageDataDefinition.DataItem.VoyageNo;
-                        $scope.seafreightItem.VesselVoyage.DepartureDate = $scope.vesselVoyageDataDefinition.DataItem.DepartureDate;
+                        $scope.seafreightItem.VesselVoyage.DepartureDate = $filter('Date')($scope.vesselVoyageDataDefinition.DataItem.DepartureDate);
                         $scope.seafreightItem.VesselVoyage.DepartureTime = $scope.vesselVoyageDataDefinition.DataItem.DepartureTime;
-                        $scope.seafreightItem.VesselVoyage.ArrivalDate = $scope.vesselVoyageDataDefinition.DataItem.ArrivalDate;
+                        $scope.seafreightItem.VesselVoyage.ArrivalDate = $filter('Date')($scope.vesselVoyageDataDefinition.DataItem.ArrivalDate);
                         $scope.seafreightItem.VesselVoyage.ArrivalTime = $scope.vesselVoyageDataDefinition.DataItem.ArrivalTime;
-                        $scope.seafreightItem.VesselVoyage.EstimatedDepartureDate = $scope.vesselVoyageDataDefinition.DataItem.EstimatedDepartureDate;
+                        $scope.seafreightItem.VesselVoyage.EstimatedDepartureDate = $filter('Date')($scope.vesselVoyageDataDefinition.DataItem.EstimatedDepartureDate);
                         $scope.seafreightItem.VesselVoyage.EstimatedDepartureTime = $scope.vesselVoyageDataDefinition.DataItem.EstimatedDepartureTime;
-                        $scope.seafreightItem.VesselVoyage.EstimatedArrivalDate = $scope.vesselVoyageDataDefinition.DataItem.EstimatedArrivalDate;
+                        $scope.seafreightItem.VesselVoyage.EstimatedArrivalDate = $filter('Date')($scope.vesselVoyageDataDefinition.DataItem.EstimatedArrivalDate);
                         $scope.seafreightItem.VesselVoyage.EstimatedArrivalTime = $scope.vesselVoyageDataDefinition.DataItem.EstimatedArrivalTime;
-                        console.log($scope.vesselVoyageDataDefinition.DataItem);
+                        console.log($scope.seafreightItem);
                         $scope.closeModal();
                         return true;
                     default: return true;
