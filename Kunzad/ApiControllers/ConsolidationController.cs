@@ -70,10 +70,10 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-        public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
+        public IHttpActionResult GetShipment(string type,int consolidationType, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
-            this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), ref shipments);
+            this.filterRecord(param1, type, consolidationType, shipment.ElementAt(0), shipment.ElementAt(1), ref shipments);
 
             if (shipments != null)
                 return Ok(shipments);
@@ -83,37 +83,113 @@ namespace Kunzad.ApiControllers
 
         // PUT: api/VanStuff/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutShipment(int id, Shipment shipment)
+        public IHttpActionResult PutShipment(int id,List<Shipment> shipment)
         {
+            Boolean parent = true;
+            Boolean vanstuff = true;
+            Boolean flag = true;
+
+            int parentShipmentId = 0;
+
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            if (id != shipment.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(shipment).State = EntityState.Modified;
-
             try
             {
-                db.SaveChanges();
+                Consolidation consolidation = new Consolidation();
+                foreach (Shipment s in shipment)
+                {
+                    if (parent == true)
+                    {
+                        s.LastUpdatedDate = DateTime.Now;
+                        db.Entry(shipment).State = EntityState.Modified;
+
+                        db.SaveChanges();
+
+                        //assign parent shipmentId
+                        parentShipmentId = s.Id;
+
+                        //vanstuff
+                        if (s.ConsolidationNo2 != null)
+                             vanstuff = false;
+                           
+                        parent = false;
+                    }
+                    else
+                    {
+                        var currentConsolidationDetails = db.Shipments.Where(currentDetails => currentDetails.Id == s.Id);
+                        
+                        foreach (Shipment s1 in currentConsolidationDetails)
+                        {
+                            flag = false;
+                            var shipmentCurrentHolder = db.Shipments.Find(s1.Id);
+                            
+                            if(s.Id == s1.Id)
+                            {
+                                flag = true;
+                                break;
+                            }
+                            else
+                            {
+                                //Shipment that is removed in Consolidation Detail
+                                var shipmentInConsolidationToBeRemoved = db.Consolidations.Where(c => c.ShipmentId == s1.Id && c.ParentShipmentId == s1.ParentShipmentId);
+                                foreach (Consolidation shipmentConsolidation in shipmentInConsolidationToBeRemoved)
+                                {
+                                    db.Consolidations.Remove(shipmentConsolidation);
+                                }
+
+                                
+                                s1.ParentShipmentId = 0;
+                                s1.IsConsolidation = false;
+                                var shipmentToBeRemovedInConsolidationHolder = db.Shipments.Find(s1.Id);
+
+                                db.Entry(shipmentCurrentHolder).CurrentValues.SetValues(shipmentToBeRemovedInConsolidationHolder);
+                                db.Entry(shipmentCurrentHolder).State = EntityState.Modified;
+
+                                db.SaveChanges();
+                            }
+
+                        }
+                        if (!flag)
+                        {
+                            s.ParentShipmentId = parentShipmentId;
+                            s.IsConsolidation = true;
+
+                            var shipmentHolder = db.Shipments.Find(s.Id);
+                            db.Entry(shipmentHolder).CurrentValues.SetValues(s);
+                            db.Entry(shipmentHolder).State = EntityState.Modified;
+
+                            //consolidate detail
+                            consolidation.ShipmentId = s.Id;
+                            consolidation.ParentShipmentId = parentShipmentId;
+
+                            //vanstuff
+                            if (vanstuff)
+                                consolidation.ConsolidationTypeId = 20;
+                            //batch
+                            else
+                                consolidation.ConsolidationTypeId = 10;
+
+                            consolidation.CreatedDate = DateTime.Now;
+                            db.Consolidations.Add(consolidation);
+
+                            db.SaveChanges();
+                        }                       
+                    }
+                }
+
+                response.status = "SUCCESS";
+                response.objParam1 = shipment;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!ShipmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/VanStuff
@@ -121,6 +197,8 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult PostShipment(List<Shipment> shipment)
         {
             Boolean parent = true;
+            Boolean vanstuff = true;
+
             int parentShipmentId = 0;
             
             response.status = "FAILURE";
@@ -141,8 +219,6 @@ namespace Kunzad.ApiControllers
                         s.LoadingStatusId = (int)Status.LoadingStatus.Open;
                         s.TransportStatusRemarks = "For pickup from customer";
                         s.IsConsolidation = true;
-                        //db.Addresses.Add(s.Address);
-                        //db.Addresses.Add(s.Address1);
 
                         db.Shipments.Add(s);
 
@@ -151,24 +227,24 @@ namespace Kunzad.ApiControllers
                         //assign parent shipmentId
                         parentShipmentId = s.Id;
 
-                        if (parentShipmentId != 0)
+                        //consolidate master       
+                        consolidation.ShipmentId = parentShipmentId;
+                        consolidation.ParentShipmentId = 0;
+
+                        //vanstuff
+                        if(s.ConsolidationNo2 != null)
+                            consolidation.ConsolidationTypeId = 20;
+                        //batch
+                        else
                         {
-                            //consolidate master       
-                            consolidation.ShipmentId = parentShipmentId;
-                            consolidation.ParentShipmentId = 0;
-                            
-                            if(s.ConsolidationNo2 != null)
-                                //vanstuff
-                                consolidation.ConsolidationTypeId = 20;
-                            else
-                                //batch
-                                consolidation.ConsolidationTypeId = 10;
-
-                            consolidation.CreatedDate = DateTime.Now;
-                            db.Consolidations.Add(consolidation);
-
-                            db.SaveChanges();
+                            consolidation.ConsolidationTypeId = 10;
+                            vanstuff = false;
                         }
+
+                        consolidation.CreatedDate = DateTime.Now;
+                        db.Consolidations.Add(consolidation);
+
+                        db.SaveChanges();
 
                         parent = false;
                     }
@@ -183,13 +259,13 @@ namespace Kunzad.ApiControllers
 
                         //consolidate detail
                         consolidation.ShipmentId = s.Id;
-                        consolidation.ParentShipmentId = parentShipmentId; 
-
-                        if (s.ConsolidationNo2 != null)
-                            //vanstuff
+                        consolidation.ParentShipmentId = parentShipmentId;
+                        
+                        //vanstuff
+                        if (vanstuff)
                             consolidation.ConsolidationTypeId = 20;
+                        //batch
                         else
-                            //batch
                             consolidation.ConsolidationTypeId = 10;
 
                         consolidation.CreatedDate = DateTime.Now;
@@ -205,7 +281,7 @@ namespace Kunzad.ApiControllers
             catch (Exception e)
             {
                 response.message = e.InnerException.InnerException.Message.ToString();
-            }
+             }
             //catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
             //{
             //    Exception raise = dbEx;
@@ -231,6 +307,39 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult DeleteShipment(int id)
         {
+            //check if shipment in detail was replaced/removed
+            //foreach (Shipment s1 in currentConsolidationDetails)
+            //{
+            //    flag = false;
+            //    foreach (Shipment s2 in shipment)
+            //    {
+            //        if (s1.Id == s2.Id)
+            //        {
+            //            flag = true;
+            //            break;
+            //        }
+            //    }
+            //    //if replaced/removed then reset parentShipmentId to 0
+            //    if (!flag)
+            //    {
+            //        var consolidationDetail = db.Shipments.Where(s3 => s3.Id == s1.Id);
+            //        foreach (Shipment s4 in consolidationDetail)
+            //        {
+            //            var shipmentHolder = db.Shipments.Find(s4.Id);
+
+            //            var consolidation1 = db.Consolidations.Where(c => c.ShipmentId == s4.Id && c.ParentShipmentId == parentShipmentId);
+            //            foreach (Consolidation c in consolidation1)
+            //            {
+            //                db.Consolidations.Remove(c);
+            //            }
+
+            //            s4.ParentShipmentId = 0;
+            //            db.Entry(shipmentHolder).CurrentValues.SetValues(s4);
+
+            //        }
+            //    }
+            //}
+
             Shipment shipment = db.Shipments.Find(id);
             if (shipment == null)
             {
@@ -257,7 +366,7 @@ namespace Kunzad.ApiControllers
             return db.Shipments.Count(e => e.Id == id) > 0;
         }
 
-        public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, ref Shipment[] shipments)
+        public void filterRecord(int param1, string type, int consolidationType, Shipment shipment, Shipment shipment1, ref Shipment[] shipments)
         {
 
             /*
@@ -294,11 +403,13 @@ namespace Kunzad.ApiControllers
                 .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
                 .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
                 .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)
-                .Where(s => shipment.Id == null ? true : (from c in db.Consolidations where c.ShipmentId == s.Id select new { c.ShipmentId }).FirstOrDefault().ShipmentId == s.Id)
                 .Where(s => shipment.ShipmentTypeId == null || shipment.ShipmentTypeId == 0 ? true : s.ShipmentTypeId == shipment.ShipmentTypeId)
                 .Where(s => shipment.BusinessUnitId == null || shipment.BusinessUnitId == 0 ? true : s.BusinessUnitId == shipment.BusinessUnitId)
                 .Where(s => shipment.ConsolidationNo1 == null || shipment.ConsolidationNo1 == 0 ? true : s.ConsolidationNo1 == shipment.ConsolidationNo1)
                 .Where(s => shipment.ConsolidationNo2 == null || shipment.ConsolidationNo2 == 0 ? true : s.ConsolidationNo2 == shipment.ConsolidationNo2)
+                .Where(s => shipment.Id == null ? true : (from c in db.Consolidations
+                                                          where c.ShipmentId == s.Id && c.ConsolidationTypeId == consolidationType
+                                                          select new { c.ShipmentId }).FirstOrDefault().ShipmentId == s.Id)
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
             shipments = filteredShipments;

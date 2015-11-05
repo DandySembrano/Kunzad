@@ -19,7 +19,7 @@
             <a style="{{consolidationItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
         </li>
         <li>
-            <a style="{{consolidationItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+            <a style="{{consolidationItem.Id != null && actionMode == 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
     </ul>
 </div>
