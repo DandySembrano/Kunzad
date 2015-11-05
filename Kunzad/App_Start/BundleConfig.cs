@@ -47,6 +47,7 @@ namespace Kunzad
                         "~/Scripts/directive/scrollableContainer.js",
                         "~/Scripts/directive/dataFiltering.js",
                         "~/Scripts/directive/addressModal.js",
+                        "~/Scripts/directive/vesselVoyageModal.js",
                         "~/Scripts/directive/dataGrid1.js",
                         "~/Scripts/directive/dataGrid2.js",
                         "~/Scripts/directive/dataExport.js",
