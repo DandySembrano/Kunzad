@@ -241,6 +241,8 @@
 }
 <!--End of List-->
 
+@*Directive if module has vesselvoyage input*@
+
 <!-- Business Unit List Modal -->
 <div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -341,6 +343,8 @@
 </div>
 <!--End of Shipment List Modal -->
 
+<dir-vessel-voyage datadefinition="updateVesselVoyageDataDefinition" showmodal="showUpdateVesselVoyage" otheractions="otherActionsUpdateVesselVoyage(action)"></dir-vessel-voyage>
+
 @*Form Context-Menu*@
 <div class="dropdown position-fixed" id="FormMenu">
     <ul class="dropdown-menu" role="menu">
@@ -360,7 +364,7 @@
             <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
         </li>
         <li>
-            <a style="{{seafreightItem.VesselVoyage.Id != null ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="vesselOtheractions('Edit')">Update Vessel Schedule</a>
+            <a style="{{seafreightItem.VesselVoyage.Id != null ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="showUpdateVesselVoyage = true">Update Voyage Schedule</a>
         </li>
     </ul>
 </div>

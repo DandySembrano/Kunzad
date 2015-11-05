@@ -31,7 +31,15 @@ kunzadApp.directive('dirVesselVoyage', function () {
                     "EstimatedArrivalDate": null,
                     "EstimatedArrivalTime": null,
                     "OriginBusinessUnitId": null,
+                    "Origin": [{
+                        "Id": null,
+                        "Name": null
+                    }],
                     "DestinationBusinessUnitId": null,
+                    "Destination": [{
+                        "Id": null,
+                        "Name": null
+                    }],
                     "DepartureDate": null,
                     "DepartureTime": null,
                     "ArrivalDate": null,
@@ -100,14 +108,23 @@ kunzadApp.directive('dirVesselVoyage', function () {
             //---------------------------End of typeahead-----------------------------------------------
 
             $scope.initDataItem();
-            $interval(function () {
-                if ($scope.showmodal) {
+            var showvvModalWatcher = $scope.$watch(function () {
+                $scope.datadefinition.ActionMode = 'Edit';
+                return $scope.showmodal;
+            }, function () {
+                if ($scope.showmodal === true) {
                     $scope.showmodal = false;
                     $scope.initDataItem();
                     $scope.otheractions({ action: 'PreOpen' });
                     openModalPanel("#" + $scope.datadefinition.ModalId);
                 }
-            }, 100)
+            });
+            var deregistershowvvModalWatcher = function () {
+                showvvModalWatcher();
+            }
+            $scope.$on('$destroy', function () {
+                deregistershowvvModalWatcher();
+            });
         }
     }
 });
