@@ -1,0 +1,110 @@
+﻿<div id="{{datadefinition.ModalId}}" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorUpdateVessel">
+                <i class="fa fa-remove pr10" ng-click="isErrorUpdateVessel = false; errorMessageUpdateVessel = ''"></i>
+                <strong>ERROR!</strong>    {{errorMessageAddress}}
+            </div>
+            <div class="row">
+                <form class="form-horizontal" role="form">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Number</label>
+                                <div class="col-md-8 text-left">
+                                    <input type="text" class="form-control"
+                                           ng-model="seafreightItem.VesselVoyage.VoyageNo"
+                                           ng-disabled="viewOnly">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small text-left">Business Unit</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Origin</label>
+                                <div class="col-md-8">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm">
+                                <label class="col-md-3 control-label small text-right">Destination</label>
+                                <div class="col-md-8">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <div class="row">
+                            <label class="col-md-2 control-label small">Departure Date</label>
+                            <div class="col-md-2">
+                                <input type='text'
+                                       id='voyage_deptDate'
+                                       class="form-control"
+                                       ng-model="seafreightItem.VesselVoyage.DepartureDate"
+                                       ng-disabled="true" />
+                            </div>
+                            <label class="col-md-4 control-label small">Departure Time</label>
+                            <div class="col-md-2">
+                                <input type='text'
+                                       id='voyage_deptTime'
+                                       class="form-control"
+                                       ng-model="seafreightItem.VesselVoyage.DepartureTime"
+                                       ng-disabled="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <div class="row">
+                            <label class="col-md-2 control-label small">Arrival Date</label>
+                            <div class="col-md-2">
+                                <input type='text'
+                                       id='voyage_arrDate'
+                                       class="form-control"
+                                       ng-model="seafreightItem.VesselVoyage.ArrivalDate"
+                                       ng-disabled="true" />
+                            </div>
+                            <label class="col-md-4 control-label small">Arrival Time</label>
+                            <div class="col-md-2">
+                                <input type='text'
+                                       id='voyage_arrTime'
+                                       class="form-control"
+                                       ng-model="seafreightItem.VesselVoyage.ArrivalTime"
+                                       ng-disabled="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                    $(function () {
+                        $('#voyage_deptDate,#voyage_arrDate').datetimepicker({
+                            format: 'MM-DD-YYYY',
+                            sideBySide: false,
+                            pickTime: false,
+                            //minDate: moment()
+                        })
+                        $('#voyage_deptTime,#voayage_arrTime').datetimepicker({
+                            format: 'HH:mm',
+                            sideBySide: false,
+                            pickDate: false
+                        })
+                    });
+                    </script>
+
+                </form>
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="closeAddressForm(datadefinition.DataItem)">
+                {{datadefinition.ActionMode === 'Edit' ? 'Done' : (datadefinition.ActionMode === 'View' ? 'Close' : datadefinition.ActionMode)}}
+            </button>
+        </div>
+    </div>
+</div>
