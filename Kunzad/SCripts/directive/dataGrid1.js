@@ -217,34 +217,24 @@
                 url = apiUrlSplit[0] + page;
                 for (var i = 1; i < apiUrlSplit.length; i++)
                     url = url + apiUrlSplit[i];
+
+
+
                 restAPI.retrieve(url);
                 var promise = $interval(function () {
-                    if (angular.isDefined(restAPI.getObjData())) {
+                    if (restAPI.isValid()) {
                         $interval.cancel(promise);
                         promise = undefined;
                         $scope.datadefinition.DataList = [];
                         $scope.datadefinition.DataList = restAPI.getObjData();
                         $scope.gridOptions.data = $scope.datadefinition.DataList;
+
                         //setHeight(100);
                         $scope.processPagination();
                         $scope.focusOnTop();
                         spinner.stop();
                     }
                 }, 100);
-                //$http.get(url)
-                //    .success(function (data, status) {
-                //        $scope.datadefinition.DataList = [];
-                //        $scope.datadefinition.DataList = data;
-                //        $scope.gridOptions.data = $scope.datadefinition.DataList;
-                //        //setHeight(100);
-                //        $scope.processPagination();
-                //        $scope.focusOnTop();
-                //        spinner.stop();
-                //    })
-                //    .error(function (data, status) {
-                //        spinner.stop();
-                //        $scope.showformerror({ error: status });
-                //    })
             };
 
             //search data

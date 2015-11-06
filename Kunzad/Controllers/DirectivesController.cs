@@ -30,5 +30,9 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult VesselVoyageModal()
+        {
+            return View();
+        }
     }
 }
