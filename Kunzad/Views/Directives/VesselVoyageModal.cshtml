@@ -104,7 +104,7 @@
                             pickTime: false,
                             //minDate: moment()
                         })
-                        $('#voyage_deptTime,#voayage_arrTime').datetimepicker({
+                        $('#voyage_deptTime,#voyage_arrTime').datetimepicker({
                             format: 'HH:mm',
                             sideBySide: false,
                             pickDate: false
@@ -115,8 +115,7 @@
         </div>
         <div class="panel-footer text-right">
             <button class="btn btn-primary" type="submit"
-                    ng-click="closeAddressForm(datadefinition.DataItem)">
-                {{datadefinition.ActionMode === 'Edit' ? 'Done' : 'Close'}}
+                    ng-click="closeVesselVoyageForm(datadefinition.DataItem)">Done
             </button>
         </div>
     </div>

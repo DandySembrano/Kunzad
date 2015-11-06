@@ -35,7 +35,8 @@
                     <input type="text"
                            class="form-control"
                            placeholder=""
-                           ng-model="seafreightItem.BLNumber">
+                           ng-model="seafreightItem.BLNumber"
+                           ng-disabled="viewOnly">
                 </div>
                 @*Bill of Lading Date*@
                 <label class="col-md-2 control-label small">BL Date</label>
@@ -45,7 +46,7 @@
                                id='bldate'
                                class="form-control"
                                ng-model="seafreightItem.BLDate"
-                               ng-disabled="viewonly" />
+                               ng-disabled="viewOnly" />
                         <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
                             <span class=" glyphicon glyphicon-remove-circle"></span>
                         </span>
@@ -62,7 +63,6 @@
                         <input type="text"
                                id="origin"
                                class="form-control"
-                               placeholder=""
                                ng-model="seafreightItem.BusinessUnit1.Name"
                                ng-disabled="viewOnly">
                         <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','origin')">
@@ -77,7 +77,6 @@
                         <input type="text"
                                id="destination"
                                class="form-control"
-                               placeholder=""
                                ng-model="seafreightItem.BusinessUnit.Name"
                                ng-disabled="viewOnly" />
                         <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','destination')">
@@ -96,7 +95,7 @@
                         <input type="text"
                                id="voyageNo"
                                class="form-control"
-                               placeholder=""
+                               ng-disabled="viewOnly"
                                ng-model="seafreightItem.VesselVoyage.VoyageNo" />
                         <span class="input-group-addon" style="padding:2px 0 2px 10px;"
                               ng-click="showModal('#shippingline-modal','shippingline')">
@@ -111,7 +110,8 @@
                            class="form-control text-right"
                            id="freightCost"
                            placeholder=""
-                           ng-model="seafreightItem.FreightCost">
+                           ng-model="seafreightItem.FreightCost"
+                           ng-disabled="viewOnly">
                 </div>
             </div>
         </div>
