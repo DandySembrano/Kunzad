@@ -109,7 +109,7 @@ namespace Kunzad.Controllers
             return View();
         }
 
-        public ActionResult VanStuff()
+        public ActionResult Consolidation()
         {
             return View();
         }

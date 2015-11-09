@@ -555,9 +555,14 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'CourierDeliveryController'
         })
 
-        .when('/vanstuff', {
-            templateUrl: '/References/VanStuff',
-            controller: 'VanStuffController'
+        .when('/consolidation/vanstuff', {
+            templateUrl: '/References/Consolidation',
+            controller: 'ConsolidationController'
+        })
+
+        .when('/consolidation/batch', {
+            templateUrl: '/References/Consolidation',
+            controller: 'ConsolidationController'
         })
 
         .when('/documentation', {
