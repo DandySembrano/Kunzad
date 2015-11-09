@@ -5,227 +5,248 @@
 
 <!-- General -->
 @section tab1Content{
-<div context-menu="formContextMenu()" data-target="FormMenu">
-    <!--Master-->
-    <div class="alert alert-danger alert-sm" ng-show="seaFreightIsError">
-        <i class="fa fa-remove pr10" ng-click="seaFreightIsError=false;seaFreightErrorMessage=''"></i>
-        <strong>ERROR!</strong>{{" " + seaFreightErrorMessage}}
-    </div>
-    @*Column 1*@
-    
-    <form class="form-horizontal" role="form">
-        <div class="form-group form-group-sm">
-            @*seafreight No*@
-            <div class="row">
-                <label class="col-md-2 control-label small">Transaction No</label>
-                <div class="col-md-2">
-                    <input type="text"
-                           class="form-control"
-                           placeholder="System Generated"
-                           ng-model="seafreightItem.seaFreightId"
-                           ng-disabled="true">
-                </div>
-            </div>
+    <div context-menu="formContextMenu()" data-target="FormMenu">
+        <!--Master-->
+        <div class="alert alert-danger alert-sm" ng-show="seaFreightIsError">
+            <i class="fa fa-remove pr10" ng-click="seaFreightIsError=false;seaFreightErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + seaFreightErrorMessage}}
         </div>
-        <div class="form-group form-group-sm">
-            @*Bill of Lading Number*@
-            <div class="row">
-                <label class="col-md-2 control-label small">BL Number</label>
-                <div class="col-md-4">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="seafreightItem.BLNumber"
-                           ng-disabled="viewOnly">
-                </div>
-                @*Bill of Lading Date*@
-                <label class="col-md-2 control-label small">BL Date</label>
-                <div class="col-md-2">
-                    <div class='input-group date'>
-                        <input type='text'
-                               id='bldate'
-                               class="form-control"
-                               ng-model="seafreightItem.BLDate"
-                               ng-disabled="viewOnly" />
-                        <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
-                            <span class=" glyphicon glyphicon-remove-circle"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                @*Origin*@
-                <label class="col-md-2 control-label small">Origin</label>
-                <div class="col-md-4">
-                    <div class='input-group'>
-                        <input type="text"
-                               id="origin"
-                               class="form-control"
-                               ng-model="seafreightItem.BusinessUnit1.Name"
-                               ng-disabled="viewOnly">
-                        <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','origin')">
-                            <span class=" glyphicon glyphicon-search"></span>
-                        </span>
-                    </div>
-                </div>
-                @*Destination*@
-                <label class="col-md-2 control-label small">Destination</label>
-                <div class="col-md-4">
-                    <div class='input-group'>
-                        <input type="text"
-                               id="destination"
-                               class="form-control"
-                               ng-model="seafreightItem.BusinessUnit.Name"
-                               ng-disabled="viewOnly" />
-                        <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','destination')">
-                            <span class=" glyphicon glyphicon-search"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                @* Voyage No *@
-                <label class="col-md-2 control-label">Voyage No</label>
-                <div class="col-md-2">
-                    <div class='input-group date'>
-                        <input type="text"
-                               id="voyageNo"
-                               class="form-control"
-                               ng-disabled="viewOnly"
-                               ng-model="seafreightItem.VesselVoyage.VoyageNo" />
-                        <span class="input-group-addon" style="padding:2px 0 2px 10px;"
-                              ng-click="showModal('#shippingline-modal','shippingline')">
-                            <span class=" glyphicon glyphicon-search"></span>
-                        </span>
-                    </div>
-                </div>
-                @*Freight Cost*@
-                <label class="col-md-4 control-label small">Freight Cost</label>
-                <div class="col-md-2">
-                    <input type="text"
-                           class="form-control text-right"
-                           id="freightCost"
-                           placeholder=""
-                           ng-model="seafreightItem.FreightCost"
-                           ng-disabled="viewOnly">
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                <label class="col-md-2 control-label small">Shipping Line</label>
-                <div class="col-md-4">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="seafreightItem.VesselVoyage.ShippingLineName"
-                           ng-disabled="true">
-                </div>
-                <label class="col-md-2 control-label small">Vessel Name</label>
-                <div class="col-md-4">
-                    <input type="text"
-                           class="form-control"
-                           placeholder=""
-                           ng-model="seafreightItem.VesselVoyage.VesselName"
-                           ng-disabled="true">
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                <label class="col-md-2 control-label small">Estimated Departure Date</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_estdeptDate'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.EstimatedDepartureDate"
-                           ng-disabled="true" />
-                </div>
-                <label class="col-md-4 control-label small">Estimated Departure Time</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_estdeptTime'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.EstimatedDepartureTime"
-                           ng-disabled="true" />
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                <label class="col-md-2 control-label small">Estimated Arrival Date</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_estarrDate'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.EstimatedArrivalDate"
-                           ng-disabled="true" />
-                </div>
-                <label class="col-md-4 control-label small">Estimated Arrival Time</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_estarrTime'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.EstimatedArrivalTime"
-                           ng-disabled="true" />
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                <label class="col-md-2 control-label small">Departure Date</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_deptDate'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.DepartureDate"
-                           ng-disabled="true" />
-                </div>
-                <label class="col-md-4 control-label small">Departure Time</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_deptTime'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.DepartureTime"
-                           ng-disabled="true" />
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-sm">
-            <div class="row">
-                <label class="col-md-2 control-label small">Arrival Date</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_arrDate'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.ArrivalDate"
-                           ng-disabled="true" />
-                </div>
-                <label class="col-md-4 control-label small">Arrival Time</label>
-                <div class="col-md-2">
-                    <input type='text'
-                           id='voyage_arrTime'
-                           class="form-control"
-                           ng-model="seafreightItem.VesselVoyage.ArrivalTime"
-                           ng-disabled="true" />
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+        @*Column 1*@
 
-<!--End of Master-->
-<!--Detail-->
-<div class="row">
-    <div class="col-lg-12">
-        <div id="seaFreightShipmentsContainer"></div>
+        <form class="form-horizontal" role="form">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        @*seafreight No*@
+                        <label class="col-md-4 control-label small">Transaction No</label>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="System Generated"
+                                   ng-model="seafreightItem.seaFreightId"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        @*Bill of Lading Number*@
+                        <label class="col-md-4 control-label small">BL Number</label>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="seafreightItem.BLNumber"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        @*Bill of Lading Date*@
+                        <label class="col-md-4 control-label small">BL Date</label>
+                        <div class="col-md-4">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='bldate'
+                                       class="form-control"
+                                       ng-model="seafreightItem.BLDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        @* Voyage No *@
+                        <label class="col-md-4 control-label">Voyage No</label>
+                        <div class="col-md-6">
+                            <div class='input-group date'>
+                                <input type="text"
+                                       id="voyageNo"
+                                       class="form-control"
+                                       ng-disabled="viewOnly"
+                                       ng-model="seafreightItem.VesselVoyage.VoyageNo" />
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;"
+                                      ng-click="showModal('#shippingline-modal','shippingline')">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Shipping Line</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="seafreightItem.VesselVoyage.ShippingLineName"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        @* Vessel Name *@
+                        <label class="col-md-4 control-label small">Vessel Name</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="seafreightItem.VesselVoyage.VesselName"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        @*Origin*@
+                        <label class="col-md-4 control-label small">Origin</label>
+                        <div class="col-md-8">
+                            <div class='input-group'>
+                                <input type="text"
+                                       id="origin"
+                                       class="form-control"
+                                       ng-model="seafreightItem.BusinessUnit1.Name"
+                                       ng-disabled="viewOnly">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','origin')">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        @*Destination*@
+                        <label class="col-md-4 control-label small">Destination</label>
+                        <div class="col-md-8">
+                            <div class='input-group'>
+                                <input type="text"
+                                       id="destination"
+                                       class="form-control"
+                                       ng-model="seafreightItem.BusinessUnit.Name"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','destination')">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        @*Freight Cost*@
+                        <label class="col-md-4 control-label small">Freight Cost</label>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control text-right"
+                                   id="freightCost"
+                                   placeholder=""
+                                   ng-model="seafreightItem.FreightCost"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Est Departure Date</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_estdeptDate'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.EstimatedDepartureDate"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Est Departure Time</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_estdeptTime'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.EstimatedDepartureTime"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Departure Date</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_deptDate'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.DepartureDate"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Departure Time</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_deptTime'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.DepartureTime"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Est Arrival Date</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_estarrDate'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.EstimatedArrivalDate"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Est Arrival Time</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_estarrTime'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.EstimatedArrivalTime"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Arrival Date</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_arrDate'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.ArrivalDate"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-4 control-label small">Arrival Time</label>
+                        <div class="col-md-4">
+                            <input type='text'
+                                   id='voyage_arrTime'
+                                   class="form-control"
+                                   ng-model="seafreightItem.VesselVoyage.ArrivalTime"
+                                   ng-disabled="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
-<!--End of Detail-->
+
+    <!--End of Master-->
+    <!--Detail-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="seaFreightShipmentsContainer"></div>
+        </div>
+    </div>
+    <!--End of Detail-->
 }
 <!-- List -->
 @section tab2Content{
@@ -240,7 +261,6 @@
     </div>
 }
 <!--End of List-->
-
 @*Directive if module has vesselvoyage input*@
 
 <!-- Business Unit List Modal -->
@@ -262,7 +282,6 @@
     </div>
 </div>
 <!--End of Business Unit List Modal -->
-
 <!-- Shippingline List Modal -->
 <div id="shippingline-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -282,7 +301,6 @@
     </div>
 </div>
 <!--End of Shippingline List Modal -->
-
 <!-- Vessel List Modal -->
 <div id="vessels-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -302,7 +320,6 @@
     </div>
 </div>
 <!--End of Vessel List Modal -->
-
 <!-- Vessel Voyage List Modal -->
 <div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -322,7 +339,6 @@
     </div>
 </div>
 <!--End of Vessel Voyage List Modal -->
-
 <!-- Shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
