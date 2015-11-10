@@ -344,7 +344,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": true,
                     "ShowContextMenu": true,
                     "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                    "IsDetail": false
                 }
             };
 
@@ -810,12 +811,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.businessUnitSource = $scope.businessUnitFilteringDefinition.Source;
                         //Optional in using this, can use switch if every source type has validation before filtering
                         for (var i = 0; i < $scope.businessUnitSource.length; i++) {
-                            if ($scope.businessUnitSource[i].Type == "Date") {
+                            //if ($scope.businessUnitSource[i].Type == "Date") {
                                 $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
                                 $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[1][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
-                            }
-                            else
-                                $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                            //}
+                            //else
+                            //    $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
                         }
                         
                         if ($scope.businessUnitDataDefinition.EnablePagination == true && $scope.businessUnitFilteringDefinition.ClearData) {
@@ -893,7 +894,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
-                    "ContextMenuLabel": [""]
+                    "ContextMenuLabel": [""],
+                    "IsDetail": false
                 }
                 $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
                                                                     ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -975,12 +977,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.shippingLineSource = $scope.shippingLineFilteringDefinition.Source;
                         //Optional in using this, can use switch if every source type has validation before filtering
                         for (var i = 0; i < $scope.shippingLineSource.length; i++) {
-                            if ($scope.shippingLineSource[i].Type == "Date") {
+                            //if ($scope.shippingLineSource[i].Type == "Date") {
                                 $scope.shippingLineFilteringDefinition.DataItem1.ShippingLine[0][$scope.shippingLineSource[i].Column] = $scope.shippingLineSource[i].From;
                                 $scope.shippingLineFilteringDefinition.DataItem1.ShippingLine[1][$scope.shippingLineSource[i].Column] = $scope.shippingLineSource[i].To;
-                            }
-                            else
-                                $scope.shippingLineFilteringDefinition.DataItem1.ShippingLine[0][$scope.shippingLineSource[i].Column] = $scope.shippingLineSource[i].From;
+                            //}
+                            //else
+                            //    $scope.shippingLineFilteringDefinition.DataItem1.ShippingLine[0][$scope.shippingLineSource[i].Column] = $scope.shippingLineSource[i].From;
                         }
 
                         //Delete keys that the value is null
@@ -1066,7 +1068,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
-                    "ContextMenuLabel": [""]
+                    "ContextMenuLabel": [""],
+                    "IsDetail": false
                 }
                 $scope.shippingLineDataDefinition.RowTemplate = '<div>' +
                                                                     ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1143,12 +1146,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.vesselSource = $scope.vesselFilteringDefinition.Source;
                         //Optional in using this, can use switch if every source type has validation before filtering
                         for (var i = 0; i < $scope.vesselSource.length; i++) {
-                            if ($scope.vesselSource[i].Type == "Date") {
+                            //if ($scope.vesselSource[i].Type == "Date") {
                                 $scope.vesselFilteringDefinition.DataItem1.Vessel[0][$scope.vesselSource[i].Column] = $scope.vesselSource[i].From;
                                 $scope.vesselFilteringDefinition.DataItem1.Vessel[1][$scope.vesselSource[i].Column] = $scope.vesselSource[i].To;
-                            }
-                            else
-                                $scope.vesselFilteringDefinition.DataItem1.Vessel[0][$scope.vesselSource[i].Column] = $scope.vesselSource[i].From;
+                            //}
+                            //else
+                            //    $scope.vesselFilteringDefinition.DataItem1.Vessel[0][$scope.vesselSource[i].Column] = $scope.vesselSource[i].From;
                         }
 
                         //Delete keys that the value is null
@@ -1236,7 +1239,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
-                    "ContextMenuLabel": [""]
+                    "ContextMenuLabel": [""],
+                    "IsDetail": false
                 }
                 $scope.vesselDataDefinition.RowTemplate = '<div>' +
                                                                     ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1314,12 +1318,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.vesselVoyageSource = $scope.vesselVoyageFilteringDefinition.Source;
                         //Optional in using this, can use switch if every source type has validation before filtering
                         for (var i = 0; i < $scope.vesselVoyageSource.length; i++) {
-                            if ($scope.vesselVoyageSource[i].Type == "Date") {
+                            //if ($scope.vesselVoyageSource[i].Type == "Date") {
                                 $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].From;
                                 $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].To;
-                            }
-                            else
-                                $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].From;
+                            //}
+                            //else
+                            //    $scope.vesselVoyageFilteringDefinition.DataItem1.VesselVoyage[0][$scope.vesselVoyageSource[i].Column] = $scope.vesselVoyageSource[i].From;
                         }
 
                         //Delete keys that the value is null
@@ -1408,7 +1412,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
-                    "ContextMenuLabel": [""]
+                    "ContextMenuLabel": [""],
+                    "IsDetail": false
                 }
                 $scope.vesselVoyageDataDefinition.RowTemplate = '<div>' +
                                                                     ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1486,7 +1491,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": true,
                     "ContextMenu": ["'Create'", "'Delete'"],
-                    "ContextMenuLabel": ['Add Shipment', 'Delete']
+                    "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                    "IsDetail": true
                 }
             };
 
@@ -1655,12 +1661,12 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
                         //Optional in using this, can use switch if every source type has validation before filtering
                         for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                            if ($scope.shipmentSource[i].Type == "Date") {
+                            //if ($scope.shipmentSource[i].Type == "Date") {
                                 $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                                 $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                            }
-                            else
-                                $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                            //}
+                            //else
+                            //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                         }
                         //Delete keys that the value is null
                         for (var i = 0; i < $scope.shipmentSource.length; i++) {
@@ -1746,7 +1752,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "ShowCreate": false,
                     "ShowContextMenu": false,
                     "ContextMenu": [""],
-                    "ContextMenuLabel": [""]
+                    "ContextMenuLabel": [""],
+                    "IsDetail": false
                 }
 
                 //Optional if row template

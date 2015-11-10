@@ -213,7 +213,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": true
             }
         };
 
@@ -818,7 +819,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -991,7 +993,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1167,7 +1170,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerContactsDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1337,7 +1341,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerContactPhonesDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1536,7 +1541,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerAddressDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +

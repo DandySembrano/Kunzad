@@ -139,7 +139,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": false
             }
         };
 
@@ -428,7 +429,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "Multiple": true,
                 "AutoLoad": false,
                 "ClearData": false,
-                "SetSourceToNull": false
+                "SetSourceToNull": false,
+                "IsDetail": true
             }
         };
 
@@ -440,13 +442,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.airFreightSource = $scope.airFreightFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.airFreightSource.length; i++) {
-                        if ($scope.airFreightSource[i].Type == "Date") {
+                        //if ($scope.airFreightSource[i].Type == "Date") {
                             $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].From;
                             $scope.airFreightFilteringDefinition.DataItem1.AirFreight[1][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].To;
-                        }
-                        else {
-                            $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].From;
-                        }
+                        //}
+                        //else {
+                        //    $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0][$scope.airFreightSource[i].Column] = $scope.airFreightSource[i].From;
+                        //}
                     }
                     // Delete keys that the value is null
                     for (var i = 0; i < $scope.airFreightSource.length; i++) {
@@ -554,14 +556,14 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.businessUnitSource = $scope.businessUnitFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.businessUnitSource.length; i++) {
-                        if ($scope.businessUnitSource[i].Type == "Date") {
+                        //if ($scope.businessUnitSource[i].Type == "Date") {
                             $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
                             $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[1][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].To;
-                        }
-                        else {
-                            $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
+                        //}
+                        //else {
+                        //    $scope.businessUnitFilteringDefinition.DataItem1.BusinessUnit[0][$scope.businessUnitSource[i].Column] = $scope.businessUnitSource[i].From;
 
-                        }
+                        //}
                     }
 
                     if ($scope.businessUnitDataDefinition.EnablePagination == true && $scope.businessUnitFilteringDefinition.ClearData) {
@@ -632,7 +634,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": true
             }
             $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -721,13 +724,13 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentSource[i].Type == "Date") {
+                        //if ($scope.shipmentSource[i].Type == "Date") {
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                        }
-                        else {
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                        }
+                        //}
+                        //else {
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        //}
                     }
 
                     //Delete keys that the value is null
@@ -810,7 +813,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": true
             }
             $scope.shipmentDataDefinition.RowTemplate = '<div>' +
                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -896,12 +900,12 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.airlineSource = $scope.airlineFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.airlineSource.length; i++) {
-                        if ($scope.airlineSource[i].Type == "Date") {
+                        //if ($scope.airlineSource[i].Type == "Date") {
                             $scope.airlineFilteringDefinition.DataItem1.AirLine[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
                             $scope.airlineFilteringDefinition.DataItem1.AirLine[1][$scope.airlineSource[i].Column] = $scope.airlineSource[i].To;
-                        }
-                        else
-                            $scope.airlineFilteringDefinition.DataItem1.AirLine[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
+                        //}
+                        //else
+                        //    $scope.airlineFilteringDefinition.DataItem1.AirLine[0][$scope.airlineSource[i].Column] = $scope.airlineSource[i].From;
                     }
 
                     if ($scope.airlineDataDefinition.EnablePagination == true && $scope.airlineDataDefinition.ClearData) {
@@ -971,7 +975,8 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": true
             }
             $scope.airlineDataDefinition.RowTemplate = '<div>' +
                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +

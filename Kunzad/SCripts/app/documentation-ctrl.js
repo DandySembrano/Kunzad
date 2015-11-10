@@ -169,7 +169,8 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                 "ShowCreate": false,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Edit'", "'Find'"],
-                "ContextMenuLabel": ['Edit', 'Find']
+                "ContextMenuLabel": ['Edit', 'Find'],
+                "IsDetail": false
             }
         };
 

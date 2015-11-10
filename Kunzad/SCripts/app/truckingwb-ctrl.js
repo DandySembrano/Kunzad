@@ -403,7 +403,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": false
             }
         };
 
@@ -705,12 +706,12 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     //Optional in using this, can use switch if every source type has validation before filtering
 
                     for (var i = 0; i < $scope.truckingSource.length; i++) {
-                        if ($scope.truckingSource[i].Type == "Date") {
+                        //if ($scope.truckingSource[i].Type == "Date") {
                             $scope.truckingFilteringDefinition.DataItem1.Trucking[0][$scope.truckingSource[i].Column] = $scope.truckingSource[i].From;
                             $scope.truckingFilteringDefinition.DataItem1.Trucking[1][$scope.truckingSource[i].Column] = $scope.truckingSource[i].To;
-                        }
-                        else
-                            $scope.truckingFilteringDefinition.DataItem1.Trucking[0][$scope.truckingSource[i].Column] = $scope.truckingSource[i].From;
+                        //}
+                        //else
+                        //    $scope.truckingFilteringDefinition.DataItem1.Trucking[0][$scope.truckingSource[i].Column] = $scope.truckingSource[i].From;
                     }
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.truckingSource.length; i++) {
@@ -823,12 +824,12 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                     $scope.dispatchingSource = $scope.dispatchingFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.dispatchingSource.length; i++) {
-                        if ($scope.dispatchingSource[i].Type == "Date") {
+                        //if ($scope.dispatchingSource[i].Type == "Date") {
                             $scope.dispatchingFilteringDefinition.DataItem1.Trucking[0][$scope.dispatchingSource[i].Column] = $scope.dispatchingSource[i].From;
                             $scope.dispatchingFilteringDefinition.DataItem1.Trucking[1][$scope.dispatchingSource[i].Column] = $scope.dispatchingSource[i].To;
-                        }
-                        else
-                            $scope.dispatchingFilteringDefinition.DataItem1.Trucking[0][$scope.dispatchingSource[i].Column] = $scope.dispatchingSource[i].From;
+                        //}
+                        //else
+                        //    $scope.dispatchingFilteringDefinition.DataItem1.Trucking[0][$scope.dispatchingSource[i].Column] = $scope.dispatchingSource[i].From;
                     }
 
                     if ($scope.dispatchingDataDefinition.EnablePagination == true && $scope.dispatchingFilteringDefinition.ClearData) {
@@ -910,7 +911,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.dispatchingDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1108,7 +1110,8 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             //Optional if row template
             $scope.serviceableAreaDataDefinition.RowTemplate = '<div>' +

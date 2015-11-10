@@ -305,7 +305,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": false
             }
         };
 
@@ -776,12 +777,12 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     $scope.truckSource = $scope.truckFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.truckSource.length; i++) {
-                        if ($scope.truckSource[i].Type == "Date") {
+                        //if ($scope.truckSource[i].Type == "Date") {
                             $scope.truckFilteringDefinition.DataItem1.Truck[0][$scope.truckSource[i].Column] = $scope.truckSource[i].From;
                             $scope.truckFilteringDefinition.DataItem1.Truck[1][$scope.truckSource[i].Column] = $scope.truckSource[i].To;
-                        }
-                        else
-                            $scope.truckFilteringDefinition.DataItem1.Truck[0][$scope.truckSource[i].Column] = $scope.truckSource[i].From;
+                        //}
+                        //else
+                        //    $scope.truckFilteringDefinition.DataItem1.Truck[0][$scope.truckSource[i].Column] = $scope.truckSource[i].From;
                     }
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.truckSource.length; i++) {
@@ -872,7 +873,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             //Optional if row template
             $scope.truckDataDefinition.RowTemplate = '<div>' +
@@ -959,12 +961,12 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     $scope.driverSource = $scope.driverFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.driverSource.length; i++) {
-                        if ($scope.driverSource[i].Type == "Date") {
+                        //if ($scope.driverSource[i].Type == "Date") {
                             $scope.driverFilteringDefinition.DataItem1.Driver[0][$scope.driverSource[i].Column] = $scope.driverSource[i].From;
                             $scope.driverFilteringDefinition.DataItem1.Driver[1][$scope.driverSource[i].Column] = $scope.driverSource[i].To;
-                        }
-                        else
-                            $scope.driverFilteringDefinition.DataItem1.Driver[0][$scope.driverSource[i].Column] = $scope.driverSource[i].From;
+                        //}
+                        //else
+                        //    $scope.driverFilteringDefinition.DataItem1.Driver[0][$scope.driverSource[i].Column] = $scope.driverSource[i].From;
                     }
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.driverSource.length; i++) {
@@ -1055,7 +1057,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             //Optional if row template
             $scope.driverDataDefinition.RowTemplate = '<div>' +
@@ -1238,7 +1241,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             //Optional if row template
             $scope.serviceableAreaDataDefinition.RowTemplate = '<div>' +
@@ -1332,12 +1336,12 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
                     //Optional in using this, can use switch if every source type has validation before filtering
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentSource[i].Type == "Date") {
+                        //if ($scope.shipmentSource[i].Type == "Date") {
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                             $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                        }
-                        else
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        //}
+                        //else
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
                     }
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
@@ -1452,7 +1456,8 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
 
             //Optional if row template
