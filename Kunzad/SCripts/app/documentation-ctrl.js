@@ -101,6 +101,8 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
         $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
+        $scope.shipmentItem.Revenue = $filter('number')($scope.shipmentItem.Revenue, 2);
+        $scope.shipmentItem.TaxAmount = $filter('number')($scope.shipmentItem.TaxAmount, 2);
         $scope.shipmentItem.PaymentModeName = null;
 
         // GET PAYMENT MODE NAME
