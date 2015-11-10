@@ -45,7 +45,8 @@ kunzadApp.directive('dirFiltering', function () {
                 $scope.dropDownValueObject = {};
                 $scope.fromDate = $filter('Date')(new Date());
                 $scope.toDate = $filter('Date')(new Date());
-                $scope.searchValue = "";
+                $scope.fromSearchValue = "";
+                $scope.toSearchValue = "";
                 $scope.showFilterDate = false;
                 $scope.showFilterDropDown = false;
                 $scope.showFilterText = true;
@@ -68,8 +69,7 @@ kunzadApp.directive('dirFiltering', function () {
             //Initialize dropDownValueObject 
             $scope.setSelectedDropDownData = function (id) {
                 for (var i = 0; i < $scope.filteredData.Definition.Values.length; i++) {
-                    if ($scope.filteredData.Definition.Values[i].Id == id)
-                    {
+                    if ($scope.filteredData.Definition.Values[i].Id == id) {
                         $scope.dropDownValueObject = angular.copy($scope.filteredData.Definition.Values[i]);
                         i = $scope.filteredData.Definition.Values.length;
                     }
@@ -119,8 +119,13 @@ kunzadApp.directive('dirFiltering', function () {
                             break;
                             //Default Type
                         default:
-                            if ($scope.searchValue != "") {
-                                $scope.filterdefinition.Source[index].From = $scope.searchValue;
+                            if ($scope.fromSearchValue != "") {
+                                $scope.filterdefinition.Source[index].From = $scope.fromSearchValue;
+
+                                if ($scope.toSearchValue == "" || $scope.toSearchValue == null)
+                                    $scope.toSearchValue = $scope.fromSearchValue;
+
+                                $scope.filterdefinition.Source[index].To = $scope.toSearchValue;
                                 $scope.countFilteredCriteria = $scope.countFilteredCriteria + 1;
                             }
                             else {
@@ -150,8 +155,7 @@ kunzadApp.directive('dirFiltering', function () {
 
             //check if there is/are filtered data
             $scope.validateFileteredData = function () {
-                for (var i = 0; i < $scope.filterdefinition.Source.length; i++)
-                {
+                for (var i = 0; i < $scope.filterdefinition.Source.length; i++) {
                     if ($scope.filterdefinition.Source[i].From != null)
                         return true;
                 }
