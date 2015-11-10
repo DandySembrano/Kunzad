@@ -34,7 +34,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
         $scope.controlNoHolder = $scope.shipmentItem.Id;
-        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 8, $scope.shipmentItem.Id);
     };
 
     $scope.closeModal = function () {
