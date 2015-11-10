@@ -930,8 +930,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryItem.CourierId = $scope.courierDataDefinition.DataItem.Id;
                     }
                     else {
-                        $scope.courierDeliveryFilteringDefinition.Source[1].From = $scope.courierDataDefinition.DataItem.Id;
-                        $scope.courierDeliveryFilteringDefinition.Source[1].To = $scope.courierDataDefinition.DataItem.Name;
+
+                        $scope.courierDeliveryFilteringDefinition.Source[2].From = $scope.courierDataDefinition.DataItem.Id;
+                        $scope.courierDeliveryFilteringDefinition.Source[2].To = $scope.courierDataDefinition.DataItem.Name;
                     }
                     $scope.modalWatcher = "";
                     $scope.closeModal();

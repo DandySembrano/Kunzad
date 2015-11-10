@@ -597,13 +597,17 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     //Optional in using this, can use switch if every source type has validation before filtering
 
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentSource[i].Type == "Date") {
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                        }
-                        else
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;// + " 23:59:00.000";
+                        //if ($scope.shipmentSource[i].Type == "Date") {
+                           
+                        //}
+                        //else {
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
+                        //}
                     }
+
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
                         if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {

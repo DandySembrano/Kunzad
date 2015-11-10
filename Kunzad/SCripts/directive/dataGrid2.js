@@ -25,11 +25,12 @@ kunzadApp.directive('dirDataGrid2', function () {
                                             Retrieve            - returns true if to invoke filtering directive
                                             DataItem            - Contains the data of the selected item in DataGrid List
                                             DataTarget          - Contains the data target for the context-menu
-                                            DataTarge2          - Contains the data target for the context-menu if no row in the data grid
+                                            DataTarget2         - Contains the data target for the context-menu if no row in the data grid
                                             ShowCreate          - True if create button will be shown
                                             ShowContextMenu     - True if show context menu, else false
                                             ContextMenu         - Actions to be passed in each context menu item (Ex: ["'actionName'"])
                                             ContextMenuLabel    - Lable for each context menu item (Ex: ['actionLabel'])
+                                            IsDetail            - true if datagrid used as detail else false if master
                                         */
             submitdefinition: '=',        /*  
                                             Submit              - true if trigger submit function else false
@@ -428,25 +429,49 @@ kunzadApp.directive('dirDataGrid2', function () {
 
             //Write the Context-Menu in DOM
             $scope.createContextMenu = function () {
-                var htmlScript = "", $content = "";
-                for (var i = 0; i < $scope.datadefinition.ContextMenu.length; i++) {
-                    if (i == 0) {
-                        htmlScript = '<ul class="dropdown-menu" role="menu"> <li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
-                        htmlScript = htmlScript + '<li class="divider"></li>';
-                    }
-                    else {
-                        htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
-                                    + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
-                        if (i == 4 && ($scope.datadefinition.ContextMenu.length -1) != i)
+                //Generate conxtext menu if datagrid used as master list
+                //if ($scope.datadefinition.ShowContextMenu == true && $scope.datadefinition.IsDetail == false) {
+                    var htmlScript = "", $content = "";
+                    for (var i = 0; i < $scope.datadefinition.ContextMenu.length; i++) {
+                        if (i == 0) {
+                            htmlScript = '<ul class="dropdown-menu" role="menu"> <li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
+                                        + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
                             htmlScript = htmlScript + '<li class="divider"></li>';
+                        }
+                        else {
+                            htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="actionForm(' + $scope.datadefinition.ContextMenu[i] + ')">'
+                                        + $scope.datadefinition.ContextMenuLabel[i] + '</a></li>';
+                            if (i == 4 && ($scope.datadefinition.ContextMenu.length - 1) != i)
+                                htmlScript = htmlScript + '<li class="divider"></li>';
+                        }
                     }
-                }
-                htmlScript = htmlScript + '</ul>';
-                var menu = '#' + $scope.datadefinition.DataTarget;
-                $content = angular.element(document.querySelector(menu)).html(htmlScript);
-                $scope.flag = $content;
-                $compile($content)($scope);
+                    htmlScript = htmlScript + '</ul>';
+                    var menu = '#' + $scope.datadefinition.DataTarget;
+                    $content = angular.element(document.querySelector(menu)).html(htmlScript);
+                    $compile($content)($scope);
+                    $scope.flag = $content;
+                //}
+                //Generate context-menu if data grid used as detail list
+                //else {
+                //    var htmlScript = "", $content = "";
+                //    for (var i = 0; i < $scope.datadefinition.ContextMenuDetail.length; i++) {
+                //        if (i == 0) {
+                //            htmlScript = '<ul class="dropdown-menu" role="menu"> <li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="otheractions({action: ' + $scope.datadefinition.ContextMenuDetail[i] + '})">' 
+                //                        + $scope.datadefinition.ContextMenuDetailLabel[i] + '</a></li>';                                                                        
+                //            //htmlScript = htmlScript + '<li class="divider"></li>';
+                //        }
+                //        else {
+                //            htmlScript = htmlScript + '<li> <a class="pointer small" role="menuitem" tabindex="' + i + '" ' + 'ng-click="otheractions({action: ' + $scope.datadefinition.ContextMenuDetail[i] + '})">'
+                //                        + $scope.datadefinition.ContextMenuDetailLabel[i] + '</a></li>';
+                //            //if (i == 4 && ($scope.datadefinition.ContextMenu.length - 1) != i)
+                //            //    htmlScript = htmlScript + '<li class="divider"></li>';
+                //        }
+                //    }
+                //    htmlScript = htmlScript + '</ul>';
+                //    $content = angular.element(document.querySelector('#contextMenuDetail')).html(htmlScript);
+                //    $compile($content)($scope);
+                //    $scope.flag = $content;
+                //}
             };
 
             //Check if at least one column in a row is editable
@@ -481,8 +506,9 @@ kunzadApp.directive('dirDataGrid2', function () {
                             $scope.submitDataGrid($scope.submitdefinition.Type);
                         }
                     }
-                    if (angular.isUndefined($scope.flag))
+                    if (angular.isUndefined($scope.flag)) {
                         $scope.createContextMenu();
+                    }
                 }
             }, 100);
 

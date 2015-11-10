@@ -1,5 +1,5 @@
 <!--Data Table Content-->
-<div context-menu="" data-target="{{datadefinition.DataTarget2}}">
+<div context-menu="" data-target="{{datadefinition.IsDetail == true ? datadefinition.DataTarget : datadefinition.DataTarget2}}">
     <div ui-grid="gridOptions" class="grid" ng-style="{ 'height': height }" ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
     <!--Pagination Buttons-->
     <div class="myTableContainter padding-left-10">
@@ -40,12 +40,29 @@
             </div>
         </div>
     </div><br />
-    <!--Context Menu-->
+    <!--Context Menu if datagrid used as master list-->
     <div ng-show="datadefinition.ShowContextMenu" class="dropdown position-fixed" id="{{datadefinition.DataTarget}}">
     </div>
 
+    <!--Context Menu if datagrid used as detail list-->
+    @*<div class="dropdown position-fixed" id="{{datadefinition.DataTarget2}}">
+            Context Menu if datagrid is used as master and datalist length is equal to 0
+            <div ng-show="datadefinition.DataList.length == 0 && datadefinition.ShowContextMenu && datadefinition.IsDetail == false">
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a class="pointer small" role="menuitem" tabindex="0" ng-click="otheractions({action: 'Find'})">Find</a>
+                    </li>
+                    <li>
+                        <a class="pointer small" role="menuitem" tabindex="1" ng-click="actionForm('Create')">Create</a>
+                    </li>
+                </ul>
+            </div>
+            Context Menu if datagrid is used as detail
+            <div id="contextMenuDetail" ng-show="datadefinition.IsDetail == true"></div>
+        </div>*@
+
     @*Context Menu if DataList is empty*@
-    <div ng-show="datadefinition.DataList.length == 0 && datadefinition.ShowContextMenu" class="dropdown position-fixed" id="{{datadefinition.DataTarget2}}">
+    <div ng-show="datadefinition.DataList.length == 0 && datadefinition.ShowContextMenu && datadefinition.IsDetail == false" class="dropdown position-fixed" id="{{datadefinition.DataTarget2}}">
         <ul class="dropdown-menu" role="menu">
             <li>
                 <a class="pointer small" role="menuitem" tabindex="0" ng-click="otheractions({action: 'Find'})">Find</a>
