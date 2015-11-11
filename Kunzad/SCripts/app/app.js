@@ -570,6 +570,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'DocumentationController'
         })
 
+        .when('/pod', {
+            templateUrl: '/References/POD',
+            controller: 'PODController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });

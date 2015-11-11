@@ -118,5 +118,9 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult POD()
+        {
+            return View();
+        }
     }
 }
