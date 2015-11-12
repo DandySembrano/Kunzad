@@ -88,10 +88,25 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
     };
 
     $scope.validateShipment = function () {
-        $scope.shipmentItem = [];
-        $scope.shipmentItem = angular.copy($scope.shipmentDataDefinition.DataItem);
-        console.log($scope.shipmentItem);
-        return false;
+        $scope.controlNoHolder = $scope.shipmentItem.Id;
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 8, $scope.shipmentItem.Id);
+        $scope.shipmentItem.TotalCBM = $filter('number')($scope.shipmentItem.TotalCBM, 2);
+        $scope.shipmentItem.DeliveryDate = $filter('Date')($scope.shipmentItem.DeliveryDate, "yyyy-MM-dd");
+        $scope.shipmentItem.DeliveryTime = $filter('Date')($scope.shipmentItem.DeliveryTime, "hh:mm:ss");
+
+        if ($scope.shipmentItem.Id === null) {
+            alert("Please select shipment to update!");
+            return false;
+        } else if ($scope.shipmentItem.DeliveryDate === "") {
+            alert("Please enter shipment delivery date!");
+            return false;
+        } else if ($scope.shipmentItem.DeliveryTime === "") {
+            alert("Please enter shipment delivery time!");
+            return false;
+        } else if ($scope.shipmentItem.ReceivedByName === null) {
+            alert("Please enter shipment receiver!");
+            return false;
+        } else { }
     }
 
     //====================================SHIPMENT FILTERING AND DATAGRID==========================
@@ -170,8 +185,8 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
                     return true;
                 case "PreUpdate":
                     $scope.validateShipment();
-                    return false;
                     $scope.shipmentSubmitDefinition.DataItem = angular.copy($scope.shipmentItem);
+                    $scope.shipmentDataDefinition.DataItem = $scope.shipmentSubmitDefinition.DataItem;
 
                     delete $scope.shipmentSubmitDefinition.DataItem.Address;
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1;
@@ -181,14 +196,13 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
                     delete $scope.shipmentSubmitDefinition.DataItem.Service;
                     delete $scope.shipmentSubmitDefinition.DataItem.ShipmentType;
 
-                    $scope.viewOnly = true;
-                    $scope.submitButtonText = "Submit";
-                    $scope.shipmentSubmitDefinition.Type = "Edit";
-                    alert("Successfully Updated.");
-
                     return true;
                 case "PostUpdate":
-                    
+                        $scope.viewOnly = true;
+                        $scope.submitButtonText = "Submit";
+                        $scope.shipmentSubmitDefinition.Type = "Edit";
+                        $scope.actionMode = 'Edit';
+                        alert("Successfully Updated.");
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];

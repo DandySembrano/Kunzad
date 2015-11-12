@@ -246,14 +246,10 @@ namespace Kunzad.ApiControllers
             }
 
             db.Entry(shipment).State = EntityState.Modified;
-            db.Entry(shipment.Address).State = EntityState.Modified;
-            db.Entry(shipment.Address1).State = EntityState.Modified;
             try
             {
 
                 shipment.LastUpdatedDate = DateTime.Now;
-                shipment.Address.LastUpdatedDate = DateTime.Now;
-                shipment.Address1.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
                 response.status = "SUCCESS";
                 response.objParam1 = shipment;
