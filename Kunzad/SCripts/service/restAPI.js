@@ -37,7 +37,6 @@ var restAPI = function ($http, $localForage) {
                             $localForage.getItem(etagKey).then(function (data) {
 
                                 objData = JSON.parse(data);
-                                console.log(objData);
                                 objData = angular.copy(objData);
 
                             });
