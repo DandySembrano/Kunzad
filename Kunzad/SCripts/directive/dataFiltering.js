@@ -25,7 +25,7 @@ kunzadApp.directive('dirFiltering', function () {
                                         */
         },
         templateUrl: '/Directives/DataFiltering',
-        controller: function ($scope, $http, $interval, $filter, $parse, $compile) {
+        controller: function ($scope, $http, $interval, $filter, $parse, $compile,$localForage) {
             $scope.countFilteredCriteria = 0;
             $scope.criteriaIndex = 0;
             $scope.search = false;
@@ -187,23 +187,65 @@ kunzadApp.directive('dirFiltering', function () {
                     if ($scope.otheractions({ action: 'PreFilterData' })) {
                         $scope.url = $scope.filterdefinition.Url;
                         var dataModel1 = $scope.filterdefinition.DataItem1;
-                        $.ajax($scope.url, {
-                            type: "GET",
-                            data: dataModel1,
-                            success: function (data) {
-                                $scope.filterdefinition.DataList = angular.copy(data);
-                                $scope.forceScroll();
-                                $scope.retrieving = false;
-                                $scope.filterdefinition.ClearData = false;
-                                $scope.otheractions({ action: 'PostFilterData' })
-                                spinner.stop();
-                            },
-                            error: function (jqXHR) {
-                                $scope.isErrorFiltering = true;
-                                $scope.errorMessageFiltering = jqXHR.status;
-                                spinner.stop();
+
+                        var eTagId = null;
+                        var etagKey = null;
+
+                        $localForage.iterate(function (value, key) {
+                            if (key.indexOf($scope.url) > -1) { //if request is already on localforeage get the etag
+                                eTagId = key.substring(key.indexOf("+") + 1, key.length);
+                                etagKey = key;
                             }
+                        }).then(function (data) {
+                            if (eTagId == null) {
+                                eTagId = "dummy"
+                            }
+
+                            $.ajax($scope.url, {
+                                type: "GET",
+                                beforeSend: function (request) {
+                                    request.setRequestHeader("If-None-Match", eTagId);
+                                },
+                                data: dataModel1,
+                                success: function (result, status, xhr) {
+                                    if (xhr.readyState == 4) {
+                                        if (status == 'success') { //200
+                                            if (etagKey != null) {
+                                                //remove first existing just in case it is expire on server
+                                                $localForage.removeItem(etagKey);
+                                            }
+                                            var newETagId = xhr.getResponseHeader("ETag");
+                                            $localForage.setItem($scope.url + "+" + newETagId, xhr.responseText);
+                                            $scope.filterdefinition.DataList = angular.copy(xhr.responseJSON)
+                                            $scope.forceScroll();
+                                            $scope.retrieving = false;
+                                            $scope.filterdefinition.ClearData = false;
+                                            $scope.otheractions({ action: 'PostFilterData' })
+                                            spinner.stop();
+                                        } else if (status == 'notmodified') { //304
+                                            $localForage.getItem(etagKey).then(function (data) {
+                                                var objData = undefined;
+                                                objData = JSON.parse(data);
+                                                $scope.filterdefinition.DataList = angular.copy(objData);
+                                                $scope.forceScroll();
+                                                $scope.retrieving = false;
+                                                $scope.filterdefinition.ClearData = false;
+                                                $scope.otheractions({ action: 'PostFilterData' })
+                                                spinner.stop();
+                                            });
+                                        }
+                                        eTagId = null
+                                        etagKey = null
+                                    }
+                                },
+                                error: function (xhr) {
+                                    $scope.isErrorFiltering = true;
+                                    $scope.errorMessageFiltering = xhr.status;
+                                    spinner.stop();
+                                }
+                            });
                         });
+
                     }
                     else {
                         $scope.filterdefinition.ClearData = false;

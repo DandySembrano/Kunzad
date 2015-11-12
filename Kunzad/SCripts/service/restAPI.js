@@ -1,101 +1,58 @@
-﻿var restAPI = function ($http, $localForage, $q) {
+﻿
+var restAPI = function ($http, $localForage) {
     var service = this;
-    var asyncCall = undefined;
     var objData = undefined;
-    var deferred = $q.defer();
-
-    if (window.XMLHttpRequest) {
-        FactoryXMLHttpRequest = function () {
-            return new XMLHttpRequest();
-        }
-    }
-    else if (window.ActiveXObject) {
-        FactoryXMLHttpRequest = function () {
-            return new ActiveXObject("Microsoft.XMLHTTP");
-        }
-    }
-
-    function Asynchronous(userSettings) {
-        this.xmlhttp = new FactoryXMLHttpRequest();
-        this.isBusy = false;
-        this.userSettings = userSettings;
-    }
-
-    function Asynchronous_call(request) {
-        var instance = this;
-        var instRequest = request;
-        //send request to server
-        this.xmlhttp.open(request.action, request.url, true);
-        try {
-
-            var eTagId = null;
-            var etagKey = null;
-
-            this.xmlhttp.onreadystatechange = function () {
-                if (instance.xmlhttp.readyState == 4) {
-                    //if already completed
-                    if (instance.xmlhttp.status == 200 && request.action == "GET") { //get fresh data
-                        if (etagKey != null) {
-                            //remove first existing just in case it is expire on server
-                            $localForage.removeItem(etagKey);
-                        }
-                        var newETagId = instance.xmlhttp.getResponseHeader("ETag");
-                        $localForage.setItem(request.url + "+" + newETagId, instance.xmlhttp.response);
-                        var jsonObj = JSON.parse(instance.xmlhttp.response);
-                        //save data in local storage here
-                        objData = jsonObj;
-                    } else if (instance.xmlhttp.status == 304 && request.action == "GET") { //retrive in cache
-                        $localForage.getItem(etagKey).then(function (data) {
-                            objData = JSON.parse(data);
-                        });
-                    }
-                    //reset all keys
-                    eTagId = null
-                    etagKey = null
-                }
-            }
-
-            $localForage.iterate(function (value, key) {
-                if (key.indexOf(request.url) > -1) { //if request is already on localforeage get the etag
-                    eTagId = key.substring(key.indexOf("+") + 1, key.length);
-                    etagKey = key;
-                }
-            }).then(function (data) {
-                if (eTagId == null) {
-                    instance.xmlhttp.setRequestHeader("If-None-Match", '"dummy"');
-                    instance.xmlhttp.send(request.data); //send w/o if-none-match
-                } else {
-                    instance.xmlhttp.setRequestHeader("If-None-Match", eTagId);
-                    instance.xmlhttp.send(request.data);
-                }
-            });
-        }
-        catch (e) {
-            //globals.errorHandler(e);
-        }
-    }
-
-    function HttpRequest_get(strurl) {
-        //invoke Asynchronous.prototype.call function
-        this.call({ action: "GET", url: strurl });
-    }
-
-    //invoke HttpRequest_get function
-    Asynchronous.prototype.get = HttpRequest_get;
-    //invoke Asynchronous_call function
-    Asynchronous.prototype.call = Asynchronous_call;
-
-    var request = {
-        validatingAsynchronous: function (type) {
-            return new Asynchronous();
-        },
-    };
 
     service.retrieve = function (url) {
-        asyncCall = request.validatingAsynchronous("GET");
-        asyncCall.get(url);
-    };
+        var eTagId = null;
+        var etagKey = null;
 
+        $localForage.iterate(function (value, key) {
+            if (key.indexOf(url) > -1) { //if request is already on localforeage get the etag
+                eTagId = key.substring(key.indexOf("+") + 1, key.length);
+                etagKey = key;
+            }
+        }).then(function (data) {
+            if (eTagId == null) {
+                eTagId = "dummy"
+            }
+
+            $.ajax(url, {
+                type: "GET",
+                beforeSend: function (request) {
+                    request.setRequestHeader("If-None-Match", eTagId);
+                },
+                success: function (result, status, xhr) {
+                    if (xhr.readyState == 4) {
+                        if (status == 'success') { //200
+                            if (etagKey != null) {
+                                //remove first existing just in case it is expire on server
+                                $localForage.removeItem(etagKey);
+                            }
+                            var newETagId = xhr.getResponseHeader("ETag");
+                            $localForage.setItem(url + "+" + newETagId, xhr.responseText);
+                            objData = angular.copy(xhr.responseJSON)
+
+                        } else if (status == 'notmodified') { //304
+                            $localForage.getItem(etagKey).then(function (data) {
+
+                                objData = JSON.parse(data);
+                                console.log(objData);
+                                objData = angular.copy(objData);
+
+                            });
+                        }
+                        eTagId = null
+                        etagKey = null
+                    }
+                },
+                error: function (xhr) {
+
+                }
+            });
+        });
+
+    }
     service.edit = function (url) {
     };
 
@@ -129,8 +86,6 @@
     service.isValid = function () {
         return objData != null;
     }
-
-
 
     service.setObjData = function (val) {
         objData = val;
