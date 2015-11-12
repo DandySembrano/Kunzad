@@ -75,7 +75,8 @@ namespace Kunzad
                         "~/Scripts/app/courierdelivery-ctrl.js",
                         "~/Scripts/app/consolidation-ctrl.js",
                         "~/Scripts/app/documentation-ctrl.js",
-                        "~/Scripts/app/checkin-ctrl.js"
+                        "~/Scripts/app/checkin-ctrl.js",
+                        "~/Scripts/app/pod-ctrl.js"
                         ));
         }
     }

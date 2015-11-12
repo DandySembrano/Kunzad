@@ -119,7 +119,10 @@ namespace Kunzad.Controllers
             return View();
         }
 
-        public ActionResult CheckIn()
+        public ActionResult CheckIn(){
+            return View();
+        }
+        public ActionResult POD()
         {
             return View();
         }
