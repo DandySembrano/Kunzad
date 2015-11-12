@@ -570,6 +570,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'DocumentationController'
         })
 
+        .when('/checkin', {
+            templateUrl: '/References/CheckIn',
+            controller: 'CheckInController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });

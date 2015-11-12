@@ -74,7 +74,8 @@ namespace Kunzad
                         "~/Scripts/app/airfreight-ctrl.js",
                         "~/Scripts/app/courierdelivery-ctrl.js",
                         "~/Scripts/app/consolidation-ctrl.js",
-                        "~/Scripts/app/documentation-ctrl.js"
+                        "~/Scripts/app/documentation-ctrl.js",
+                        "~/Scripts/app/checkin-ctrl.js"
                         ));
         }
     }

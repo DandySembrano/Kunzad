@@ -55,6 +55,16 @@ namespace Kunzad.Models
             m.MenuItems.Add(new MenuItem("Van Stuffing", "fa fa-th", "#/consolidation/vanstuff"));
             menuGroup.MenuGroupItems.Add(m);
 
+            // Check In
+            m = new MenuGroupItem();
+            m.Name = "Check-In";
+            m.Icon = "glyphicon glyphicon-check";
+            m.IsSubMenu = true;
+            m.Link = "#";
+            m.MenuItems = new List<MenuItem>();
+            m.MenuItems.Add(new MenuItem("Check-In", "fa fa-th", "#/checkin"));
+            menuGroup.MenuGroupItems.Add(m);
+
             MenuGroups.Add(menuGroup);
 
 
