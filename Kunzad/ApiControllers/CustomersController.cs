@@ -26,6 +26,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Customers?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Customer> GetCustomers(int page)
         {
             if (page > 1)
@@ -49,6 +50,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Customers/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Customer))]
         public IHttpActionResult GetCustomer(int id)
         {

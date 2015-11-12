@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
-function BookingController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
@@ -96,19 +96,35 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //Initialize Service List for DropDown
     $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
+        //$http.get("/api/Services")
+        //.success(function (data, status) {
+        //    $scope.serviceList = data;
+        //})
+        restAPI.retrieve("/api/Services");
+        var promise = $interval(function () {
+            if (restAPI.isValid()) {
+                $interval.cancel(promise);
+                promise = undefined;
+                $scope.serviceList = restAPI.getObjData();
+            }
+        }, 100);
     };
 
     //Initialize Shipment Type List for DropDown
     $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
+        //$http.get("/api/ShipmentTypes")
+        //.success(function (data, status) {
+        //    $scope.shipmentTypeList = [];
+        //    $scope.shipmentTypeList = data;
+        //})
+        restAPI.retrieve("/api/ShipmentTypes");
+        var promise = $interval(function () {
+            if (restAPI.isValid()) {
+                $interval.cancel(promise);
+                promise = undefined;
+                $scope.shipmentTypeList = restAPI.getObjData();
+            }
+        }, 100);
     };
 
     //function that will be invoked when user click tab
