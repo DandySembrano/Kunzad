@@ -1,6 +1,6 @@
 ﻿
 kunzadApp.controller("TruckingController", TruckingController);
-function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
     $scope.modelName = "Dispatching";
     $scope.modelhref = "#/trucking";
     $scope.withDirective = true;
@@ -50,18 +50,31 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
     };
 
     $scope.getTruckTypes = function () {
-        $http.get("api/TruckTypes")
-        .success(function (data, status) {
-            //For filtering only
+        //$http.get("api/TruckTypes")
+        //.success(function (data, status) {
+        //    //For filtering only
             
-            for (var i = 0; i < data.length; i++)
-            {
+        //    for (var i = 0; i < data.length; i++)
+        //    {
+        //        var truckTypeItem = { "Id": null, "Name": null };
+        //        truckTypeItem.Id = data[i].Id;
+        //        truckTypeItem.Name = data[i].Type;
+        //        $scope.truckTypeList.push(truckTypeItem);
+        //    }
+        //})
+        restAPI.retrieve("/api/TruckTypes");
+        var promise = $interval(function () {
+            if (restAPI.isValid()) {
+                $interval.cancel(promise);
+                promise = undefined;
+                var data = restAPI.getObjData();
+
                 var truckTypeItem = { "Id": null, "Name": null };
-                truckTypeItem.Id = data[i].Id;
-                truckTypeItem.Name = data[i].Type;
+                truckTypeItem.Id = data.Id;
+                truckTypeItem.Name = data.Type;
                 $scope.truckTypeList.push(truckTypeItem);
             }
-        })
+        }, 100);
     };
 
     //Close the modal
@@ -243,7 +256,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
         $http.get('api/TruckingDeliveries?length=' + $scope.trkgDeliveryList.length + '&masterId=' + id)
             .success(function (data, status) {
                 for (var i = 0; i < data.length; i++) {
-                    data[i].ShipmentId = $rootScope.formatControlNo('', 15, data[i].Shipment.Id);
+                    data[i].ShipmentId = $rootScope.formatControlNo('', 8, data[i].Shipment.Id);
                     //Initialize Pickup Address
                     data[i].Shipment.OriginAddress = $scope.initializeAddressField(data[i].Shipment.Address1);
                     //Initalize Consignee Address
@@ -348,7 +361,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
                         $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
@@ -380,7 +393,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
                         $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
@@ -413,7 +426,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     if (angular.isDefined($scope.truckingDataDefinition.DataItem.Id) && $scope.truckingItem.Id != $scope.truckingDataDefinition.DataItem.Id) {
                         $scope.trkgDeliveryList.splice(0, $scope.trkgDeliveryList.length);
                         $scope.truckingItem = angular.copy($scope.truckingDataDefinition.DataItem);
-                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingItem.Id);
+                        $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingItem.Id);
                         $scope.truckingItem.DriverName = $scope.truckingItem.Driver.FirstName + "  " + $scope.truckingItem.Driver.MiddleName + "  " + $scope.truckingItem.Driver.LastName;
                         $scope.truckingItem.DispatchDate = $filter('date')($scope.truckingItem.DispatchDate, "MM/dd/yyyy");
                         $scope.truckingItem.TruckCallDate = $filter('date')($scope.truckingItem.TruckCallDate, "MM/dd/yyyy");
@@ -467,7 +480,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     return true;
                 case "PostSave":
                     //Initialize Trucking Transaction Id
-                    $scope.truckingItem.Id = $rootScope.formatControlNo('', 15, $scope.truckingSubmitDefinition.DataItem.Id);
+                    $scope.truckingItem.Id = $rootScope.formatControlNo('', 8, $scope.truckingSubmitDefinition.DataItem.Id);
                     $scope.truckingItem.TruckingStatusId = $scope.truckingSubmitDefinition.DataItem.TruckingStatusId;
 
                     //Initialize Trucking Delivery Id
@@ -1374,6 +1387,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                                if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
                     */
                     //Required
+                    console.log($scope.shipmentFilteringDefinition.DataList);
                     $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
@@ -1482,7 +1496,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                         var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
 
                         $scope.trkgDeliveryList[$scope.selectedShipmentIndex].Shipment      = $scope.shipmentDataDefinition.DataItem;
-                        $scope.trkgDeliveryList[$scope.selectedShipmentIndex].ShipmentId    = $rootScope.formatControlNo('', 15, $scope.shipmentDataDefinition.DataItem.Id);
+                        $scope.trkgDeliveryList[$scope.selectedShipmentIndex].ShipmentId    = $rootScope.formatControlNo('', 8, $scope.shipmentDataDefinition.DataItem.Id);
                         $scope.trkgDeliveryList[$scope.selectedShipmentIndex].Quantity      = $scope.shipmentDataDefinition.DataItem.Quantity;
                         $scope.trkgDeliveryList[$scope.selectedShipmentIndex].CBM           = $scope.shipmentDataDefinition.DataItem.TotalCBM;
                         $scope.trkgDeliveryList[$scope.selectedShipmentIndex].CustomerId    = $scope.shipmentDataDefinition.DataItem.CustomerId;

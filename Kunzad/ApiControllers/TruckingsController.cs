@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class TruckingsController : ApiController
@@ -19,6 +19,7 @@ namespace Kunzad.ApiControllers
         private int pageSize = 20;
 
         // GET: api/Truckings
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Trucking> GetTruckings()
         { 
             return db.Truckings
@@ -29,6 +30,7 @@ namespace Kunzad.ApiControllers
         }
         
         // GET: api/Truckings?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Trucking))]
         public IHttpActionResult GetTruckings(int page)
         {
@@ -69,7 +71,7 @@ namespace Kunzad.ApiControllers
             return Ok(trucking);
         }
 
-        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetTruckings(string type, int param1, [FromUri]List<Trucking> trucking)
         {
             Trucking[] truckings = new Trucking[AppSettingsGet.PageSize];
@@ -82,6 +84,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Truckings/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Trucking))]
         public IHttpActionResult GetTrucking(int id)
         {

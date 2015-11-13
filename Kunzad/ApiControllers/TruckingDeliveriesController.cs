@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class TruckingDeliveriesController : ApiController
@@ -18,12 +18,14 @@ namespace Kunzad.ApiControllers
         private Response response = new Response();
 
         // GET: api/TruckingDeliveries
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<TruckingDelivery> GetTruckingDeliveries()
         {
             return db.TruckingDeliveries;
         }
 
         // GET: api/TruckingDeliveries?truckingId=1&page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(TruckingDelivery))]
         public IHttpActionResult GetTruckingDeliveries(int length, int masterId)
         {
@@ -52,6 +54,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/TruckingDeliveries/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(TruckingDelivery))]
         public IHttpActionResult GetTruckingDelivery(int id)
         {
