@@ -40,6 +40,7 @@ namespace Kunzad.ApiControllers
         }
 
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetServiceableAreas(string type, int param1, [FromUri]List<ServiceableArea> serviceableArea)
         {
             ServiceableArea[] serviceableAreas = new ServiceableArea[AppSettingsGet.PageSize];
@@ -52,6 +53,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/ServiceableAreas?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ServiceableArea> GetServiceableAreas(int page)
         {
             if (page > 1)
@@ -69,6 +71,7 @@ namespace Kunzad.ApiControllers
         }
      
         [ResponseType(typeof(ServiceableArea))]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetServiceableArea(int id)
         {
             ServiceableArea serviceableArea = db.ServiceableAreas.Find(id);

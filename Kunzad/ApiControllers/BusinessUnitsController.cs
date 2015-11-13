@@ -25,6 +25,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/BusinessUnits?parentBusinessUnitId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetBusinessUnitss(int parentBusinessUnitId)
         {
             var businessUnit = db.BusinessUnits.Where(bu => bu.ParentBusinessUnitId == parentBusinessUnitId).ToArray();
@@ -34,6 +35,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/BusinessUnits?businessUnitId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetBusinessUnits(int businessUnitId,string dummy)
         {
             var businessUnit = db.BusinessUnits.Where(bu => bu.Id == businessUnitId).ToArray();
@@ -43,6 +45,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/GetBusinessUnits?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<BusinessUnit> GetBusinessUnits(int page)
         {
             if (page > 1)
@@ -65,6 +68,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/BusinessUnits/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(BusinessUnit))]
         public IHttpActionResult GetBusinessUnit(int id)
         {
@@ -79,6 +83,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetBusinessUnit(string type, int param1, [FromUri]List<BusinessUnit> businessUnit)
         {
             Object[] businessUnits = new Object[AppSettingsGet.PageSize];

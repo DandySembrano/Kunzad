@@ -222,7 +222,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": false
             }
         };
 
@@ -244,7 +245,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.courierDeliveryResetData();
                     $scope.courierDeliveryDetailsDataDefinition.DataList.splice(0, $scope.courierDeliveryDetailsDataDefinition.DataList.length);
-                    $scope.courierDeliveryDetailsResetData();
+                    //$scope.courierDeliveryDetailsResetData();
                     $scope.enableSave = true;
                     $scope.viewOnly = false;
                     return true;
@@ -256,7 +257,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.courierDeliveryResetData();
                     $scope.courierDeliveryDetailsDataDefinition.DataList.splice(0, $scope.courierDeliveryDetailsDataDefinition.DataList.length);
-                    $scope.courierDeliveryDetailsResetData();
+                    //$scope.courierDeliveryDetailsResetData();
                     $scope.enableSave = true;
                     $scope.viewOnly = false;
                     return true;
@@ -283,8 +284,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                                 if ($scope.courierDeliveryDetailsDataDefinition.DataList.length > 0)
                                     //Set control no holder in case user will add item in list
                                     $scope.controlNoHolder = $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1;
-                                else
-                                    $scope.courierDeliveryDetailsResetData();
+                                //else
+                                //    $scope.courierDeliveryDetailsResetData();
                             }
                         }, 100);
                     }
@@ -651,7 +652,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "ShowCreate": false,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Create'", "'Delete'"],
-                "ContextMenuLabel": ['Add Shipment','Delete']
+                "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                "IsDetail": true
             }
         };
 
@@ -673,18 +675,20 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     return true;
                 case "PreCreateAction":
                     if (!$scope.viewOnly) {
-                        var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
-                        if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0) {
-                            $scope.courierDeliveryIsError = true;
-                            $scope.courierDeliveryErrorMessage = "Shipment is required.";
-                            $scope.focusOnTop();
-                            return false;
-                        }
-                        else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
-                            $scope.courierDeliveryIsError = true;
-                            $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
-                            $scope.focusOnTop();
-                            return false;
+                        if ($scope.courierDeliveryDetailsDataDefinition.DataList.length > 0) {
+                            var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
+                            if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0) {
+                                $scope.courierDeliveryIsError = true;
+                                $scope.courierDeliveryErrorMessage = "Shipment is required.";
+                                $scope.focusOnTop();
+                                return false;
+                            }
+                            else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
+                                $scope.courierDeliveryIsError = true;
+                                $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
+                                $scope.focusOnTop();
+                                return false;
+                            }
                         }
                         return true;
                     }
@@ -926,8 +930,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryItem.CourierId = $scope.courierDataDefinition.DataItem.Id;
                     }
                     else {
-                        $scope.courierDeliveryFilteringDefinition.Source[1].From = $scope.courierDataDefinition.DataItem.Id;
-                        $scope.courierDeliveryFilteringDefinition.Source[1].To = $scope.courierDataDefinition.DataItem.Name;
+
+                        $scope.courierDeliveryFilteringDefinition.Source[2].From = $scope.courierDataDefinition.DataItem.Id;
+                        $scope.courierDeliveryFilteringDefinition.Source[2].To = $scope.courierDataDefinition.DataItem.Name;
                     }
                     $scope.modalWatcher = "";
                     $scope.closeModal();
@@ -1041,7 +1046,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                                if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
                     */
                     //Required
-                    $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                    //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
@@ -1374,7 +1379,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         //Initialize Courier Delivery DataItem
         $scope.courierDeliveryResetData();
         //Initialize Courier Delivery Details DataItem
-        $scope.courierDeliveryDetailsResetData();
+        //$scope.courierDeliveryDetailsResetData();
         
         if ($scope.courierDeliveryFilteringDefinition.AutoLoad == true)
             $scope.courierDeliveryDataDefinition.Retrieve = true;

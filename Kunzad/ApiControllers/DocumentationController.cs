@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class DocumentationController : ApiController
@@ -17,22 +17,17 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
 
         // GET: api/Documentation
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Shipment> GetShipments()
         {
             return db.Shipments;
         }
 
         // GET: api/Documentation/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult GetShipment(int id)
         {
-            //Shipment shipment = db.Shipments.Find(id);
-            //db.Entry(shipment).Collection(c => c.TruckingDeliveries).Load();
-            //
-            //if (shipment == null)
-            //{
-            //    return NotFound();
-            //}
             var shipment = (from t in db.Truckings
                             select new
                             {
@@ -63,11 +58,6 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutShipment(int id, Shipment shipment)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
             if (id != shipment.Id)
             {
                 return BadRequest();

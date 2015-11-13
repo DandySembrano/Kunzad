@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class CustomerContactsController : ApiController
@@ -17,12 +17,14 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
         // GET: api/CustomerContacts
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<CustomerContact> GetCustomerContacts()
         {
             return db.CustomerContacts;
         }
 
         // GET: api/CustomerContacts?customerId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCustomerContacts(int customerId)
         {
             var customerContacts = db.CustomerContacts.Where(cc => cc.CustomerId == customerId).ToArray();
@@ -34,6 +36,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/CustomerContacts/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(CustomerContact))]
         public IHttpActionResult GetCustomerContact(int id)
         {
@@ -83,6 +86,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCustomerContact(string type, int param1, [FromUri]List<CustomerContact> customerContact)
         {
             Object[] customerContacts = new Object[pageSize];

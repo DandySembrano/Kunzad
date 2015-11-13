@@ -18,7 +18,7 @@
                             <td style="width: 16px; height:16px; background-position-y: 5px; background-image: url('/images/delete.png'); background-size: 16px 14px; background-repeat: no-repeat;" ng-click="deleteFilteredData(data.Index)"></td>
                             <td style="padding-left: 20px;">{{data.Label}}</td>
                             <td style="padding: 0px 2px 0px 2px;">:</td>
-                            <td style="padding-left: 20px;">{{(data.Type == 'Date' ? data.From + " - " + data.To : (data.Type == 'DropDown' || data.Type == 'Modal' ? data.To : data.From))}}</td>
+                            <td style="padding-left: 20px;">{{(data.Type == 'Date' || data.Type == 'Default' ? data.From + " - " + data.To : (data.Type == 'DropDown' || data.Type == 'Modal' ? data.To : data.From))}}</td>
                         </tr>
                     </table>
                 </div>
@@ -36,13 +36,21 @@
                         <div class="col-lg-6">
                             @*Text field*@
                             <div class="form-group form-group-sm" ng-show="(filteredData.Definition.Type | lowercase ) == 'default' ? true : false">
-                                <div class="col-md-12">
-                                    <input id="searchValue"
-                                           type="text"
+                                @*From*@
+                                <div class="col-md-5">
+                                    <input type="text"
                                            class="form-control"
-                                           ng-model="searchValue" />
+                                           ng-model="fromSearchValue" />
+                                </div>
+                                <div class="col-md-1 text-center">_</div>
+                                @*To*@
+                                <div class="col-md-5">
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="toSearchValue" />
                                 </div>
                             </div>
+
                             @*Modal*@
                             <div class="form-group form-group-sm" ng-show="(filteredData.Definition.Type | lowercase) == 'modal' ? true : false">
                                 <div class="col-md-11">

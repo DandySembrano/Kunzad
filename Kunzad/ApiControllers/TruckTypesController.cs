@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class TruckTypesController : ApiController
@@ -18,11 +18,13 @@ namespace Kunzad.ApiControllers
         private int pageSize = 20;
         Response response = new Response();
         // GET: api/TruckTypes
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<TruckType> GetTruckTypes()
         {
             return db.TruckTypes;
         }
         // GET: api/TruckTypes?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<TruckType> GetTruckTypes(int page)
         {
             if (page > 1)
@@ -36,6 +38,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/TruckTypes/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(TruckType))]
         public IHttpActionResult GetTruckType(int id)
         {

@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
-function BookingController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
@@ -34,7 +34,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
         $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
         $scope.controlNoHolder = $scope.shipmentItem.Id;
-        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 15, $scope.shipmentItem.Id);
+        $scope.shipmentItem.Id = $rootScope.formatControlNo('', 8, $scope.shipmentItem.Id);
     };
 
     $scope.closeModal = function () {
@@ -100,6 +100,14 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         .success(function (data, status) {
             $scope.serviceList = data;
         })
+        //restAPI.retrieve("/api/Services");
+        //var promise = $interval(function () {
+        //    if (restAPI.isValid()) {
+        //        $interval.cancel(promise);
+        //        promise = undefined;
+        //        $scope.serviceList = restAPI.getObjData();
+        //    }
+        //}, 100);
     };
 
     //Initialize Shipment Type List for DropDown
@@ -109,6 +117,14 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.shipmentTypeList = [];
             $scope.shipmentTypeList = data;
         })
+        //restAPI.retrieve("/api/ShipmentTypes");
+        //var promise = $interval(function () {
+        //    if (restAPI.isValid()) {
+        //        $interval.cancel(promise);
+        //        promise = undefined;
+        //        $scope.shipmentTypeList = restAPI.getObjData();
+        //    }
+        //}, 100);
     };
 
     //function that will be invoked when user click tab
@@ -213,7 +229,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": true,
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                "IsDetail": true
             }
         };
 
@@ -597,13 +614,17 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                     //Optional in using this, can use switch if every source type has validation before filtering
 
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentSource[i].Type == "Date") {
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                        }
-                        else
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;// + " 23:59:00.000";
+                        //if ($scope.shipmentSource[i].Type == "Date") {
+                           
+                        //}
+                        //else {
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+                        //    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
+                        //}
                     }
+
                     //Delete keys that the value is null
                     for (var i = 0; i < $scope.shipmentSource.length; i++) {
                         if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {
@@ -814,7 +835,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.businessUnitDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -987,7 +1009,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1163,7 +1186,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerContactsDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1333,7 +1357,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerContactPhonesDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
@@ -1532,7 +1557,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
                 "ShowCreate": false,
                 "ShowContextMenu": false,
                 "ContextMenu": [""],
-                "ContextMenuLabel": [""]
+                "ContextMenuLabel": [""],
+                "IsDetail": false
             }
             $scope.customerAddressDataDefinition.RowTemplate = '<div>' +
                                                                 ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
