@@ -339,7 +339,8 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     "ShowCreate": true,
                     "ShowContextMenu": true,
                     "ContextMenu": ["'Load'", "'Create'", "'Edit'", "'Delete'", "'View'", "'Find'", "'Clear'"],
-                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear']
+                    "ContextMenuLabel": ['Reload', 'Create', 'Edit', 'Cancel', 'View', 'Find', 'Clear'],
+                    "IsDetail": false
                 }
 
                 if ($scope.currentUrl == '/consolidation/vanstuff') {
@@ -854,7 +855,8 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     "ShowCreate": false,
                     "ShowContextMenu": true,
                     "ContextMenu": ["'Create'", "'Delete'"],
-                    "ContextMenuLabel": ['Add Shipment', 'Delete']
+                    "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                    "IsDetail": true
                 }
             };
 
@@ -1534,15 +1536,14 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             });
         };
         
-        //used in batching; for filtering shipments
+        //used in batching; after filtering 1st shipment for detail
         $scope.checkShipment = function (shipmentId, serviceCategoryId) {
             $http.get("/api/Consolidation?shipmentId=" + shipmentId + "&serviceCategoryId=" + serviceCategoryId + "&page=1")
-            .success(function (data,status) {
+            //$http.get("/api/Consolidation?parentShipmentId=" + shipmentId  + "&page=1") -- used to verify if the url above was the only one that will get an error but after testing, this one also gets error 405.
+            .success(function (data, status) {
                 console.log(data);
-                if (data.length < 1)
-                    return false;
+                return data;
             });
-            return true;
         };
 
         //don't allow input
