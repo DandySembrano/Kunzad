@@ -1,6 +1,6 @@
 ﻿
 kunzadApp.controller("TruckingsWBController", TruckingsWBController);
-function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
     $scope.modelName = "Trucking Info";
     $scope.modelhref = "#/truckingwb";
     $scope.isPrevPage = false;
@@ -265,9 +265,12 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
 
     //Function that will retrieve the transaction details
     $scope.getTruckingDeliveries = function (id) {
-        var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('api/TruckingDeliveries?length=' + 0 + '&masterId=' + id)
-            .success(function (data, status) {
+        restAPI.retrieve("/api/TruckingDeliveries?length=" + 0 + "&masterId=" + id);
+        var promise = $interval(function () {
+            if (restAPI.isValid()) {
+                $interval.cancel(promise);
+                promise = undefined;
+                var data = restAPI.getObjData();
                 for (var i = 0; i < data.length; i++) {
                     data[i].ShipmentId = $rootScope.formatControlNo('', 8, data[i].Shipment.Id);
                     data[i].CostAllocation = $filter('number')(data[i].CostAllocation, 2);
@@ -278,16 +281,32 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
 
                     $scope.trkgDeliveryList = angular.copy(data);
                 }
+                //$scope.trkgDeliveryList = angular.copy(data);
+            }
+        }, 100);
+        //var spinner = new Spinner(opts).spin(spinnerTarget);
+        //$http.get('api/TruckingDeliveries?length=' + 0 + '&masterId=' + id)
+        //    .success(function (data, status) {
+        //        for (var i = 0; i < data.length; i++) {
+        //            data[i].ShipmentId = $rootScope.formatControlNo('', 8, data[i].Shipment.Id);
+        //            data[i].CostAllocation = $filter('number')(data[i].CostAllocation, 2);
+        //            //Initialize Pickup Address
+        //            data[i].Shipment.OriginAddress = $scope.initializeAddressField(data[i].Shipment.Address1);
+        //            //Initalize Consignee Address
+        //            data[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data[i].Shipment.Address);
 
-                $scope.flagOnRetrieveDetails = true;
-                spinner.stop();
-            })
-            .error(function (error, status) {
-                $scope.flagOnRetrieveDetails = true;
-                $scope.truckingIsError = true;
-                $scope.truckingErrorMessage = status;
-                spinner.stop();
-            })
+        //            $scope.trkgDeliveryList = angular.copy(data);
+        //        }
+
+        //        $scope.flagOnRetrieveDetails = true;
+        //        spinner.stop();
+        //    })
+        //    .error(function (error, status) {
+        //        $scope.flagOnRetrieveDetails = true;
+        //        $scope.truckingIsError = true;
+        //        $scope.truckingErrorMessage = status;
+        //        spinner.stop();
+        //    })
     };
 
     $('#truckerCost,#revenue,.costAllocation').priceFormat({
