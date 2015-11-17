@@ -63,7 +63,7 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Check-In", "fa fa-th", "#/checkin"));
+            m.MenuItems.Add(new MenuItem("Sea Freight Loading", "fa fa-th", "#/seafreightloading"));
             menuGroup.MenuGroupItems.Add(m);
 
             MenuGroups.Add(menuGroup);

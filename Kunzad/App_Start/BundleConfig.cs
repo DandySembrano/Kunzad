@@ -51,6 +51,7 @@ namespace Kunzad
                         "~/Scripts/directive/dataGrid1.js",
                         "~/Scripts/directive/dataGrid2.js",
                         "~/Scripts/directive/dataExport.js",
+                        "~/Scripts/directive/ngEnter.js",
                         "~/Scripts/app/booking-ctrl.js",
                         "~/Scripts/app/seafreight-ctrl.js",
                         "~/Scripts/app/customer-ctrl.js",
@@ -75,7 +76,7 @@ namespace Kunzad
                         "~/Scripts/app/courierdelivery-ctrl.js",
                         "~/Scripts/app/consolidation-ctrl.js",
                         "~/Scripts/app/documentation-ctrl.js",
-                        "~/Scripts/app/checkin-ctrl.js",
+                        "~/Scripts/app/seafreightloading-ctrl.js",
                         "~/Scripts/app/pod-ctrl.js"
                         ));
         }

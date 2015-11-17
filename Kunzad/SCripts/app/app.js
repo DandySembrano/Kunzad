@@ -264,9 +264,9 @@ kunzadApp.run(function ($rootScope) {
     $rootScope.getTransportStatusList = function () {
         return [{ "Id": "10", "Name": "Open" },
                 { "Id": "20", "Name": "Partial" },
-                { "Id": "30", "Name": "Dispatch" },
-                { "Id": "40", "Name": "Close" },
-                { "Id": "50", "Name": "Cancel" }
+                { "Id": "30", "Name": "Dispatched" },
+                { "Id": "40", "Name": "Closed" },
+                { "Id": "50", "Name": "Cancelled" }
         ];
     };
 
@@ -570,9 +570,9 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'DocumentationController'
         })
 
-        .when('/checkin', {
-            templateUrl: '/References/CheckIn',
-            controller: 'CheckInController'
+        .when('/seafreightloading', {
+            templateUrl: '/References/SeaFreightLoading',
+            controller: 'SeaFreightLoadingController'
         })
 
         .when('/pod', {

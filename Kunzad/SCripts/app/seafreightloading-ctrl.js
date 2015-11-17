@@ -1,11 +1,11 @@
-﻿kunzadApp.controller("CheckInController", function ($rootScope, $scope, $http, $interval, $compile, $filter) {
-    $scope.modelName = "Check-In";
-    $scope.modelhref = "#/checkin";
+﻿kunzadApp.controller("SeaFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter) {
+    $scope.modelName = "Sea Freight Loading";
+    $scope.modelhref = "#/seafreightloading";
     $scope.withDirective = true;
     $scope.checkinItem = {};
     $scope.viewOnly = false;
-    $scope.checkinIsError = false;
-    $scope.checkinErrorMessage = "";
+    $scope.checkInIsError = false;
+    $scope.checkInErrorMessage = "";
     $scope.submitButtonText = "Submit";
     $scope.tabPages = ["Information", "List"];
     $scope.selectedTab = "Information";
@@ -13,6 +13,7 @@
     $scope.checkInToggle = false;
     $scope.checkInDetailsToggle = false;
     $scope.checkInTypeList = [];
+    $scope.checkInShipmentHolder = [];
     $scope.controlNoHolder = 0;
     $scope.flagOnRetrieveDetails = false;
     $scope.enableSave = true;
@@ -95,6 +96,83 @@
         })
     };
 
+    //get sea freight shipments
+    $scope.fetchShipment = function () {
+        //if ($scope.checkInShipmentsDataDefinition.DataList.length > 0) {
+        //    $scope.checkInShipmentsDataDefinition.DataList = [];
+        //}
+        var spinner = new Spinner(opts).spin(spinnerTarget);
+        $http.get('/api/SeaFreightShipments?blno=' + $scope.checkInItem.CheckInSourceId)
+        .success(function (data, status) {
+            if (data.status == "SUCCESS") {
+                for (var i = 0; i < data.objParam1.length; i++) {
+                    //Initialize Pickup Address
+                    data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
+                    //Initalize Consignee Address
+                    data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
+                    $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
+                    $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                }
+                $scope.checkInIsError = false;
+                $scope.checkInErrorMessage = "";
+                spinner.stop();
+            }
+            else {
+                $scope.checkInIsError = true;
+                $scope.checkInErrorMessage = data.message;
+                spinner.stop();
+            }
+        })
+        .error(function (error, status) {
+            $scope.checkInIsError = true;
+            $scope.checkInErrorMessage = error;
+            spinner.stop();
+        })
+    };
+
+    //Initialize Address fields
+    $scope.initializeAddressField = function (addressItem) {
+        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
+        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+        return $scope.formattedAddress;
+    };
+
+    $scope.removeCheckInShipment = function () {
+        $scope.checkInShipmentsDataDefinition.DataList = [];
+    };
+
+    //Function that will retrieve of a courier transaction details
+    $scope.getCheckInShipments = function (id) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
+        $http.get('/api/CheckInShipments?length=' + $scope.checkInShipmentsDataDefinition.DataList.length + '&masterId=' + id)
+            .success(function (data, status) {
+                if (data.status == "SUCCESS") {
+                    for (var i = 0; i < data.objParam1.length; i++) {
+                        //Initialize Pickup Address
+                        data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
+                        //Initalize Consignee Address
+                        data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
+                        $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
+                        $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                    }
+                }
+                else {
+                    $scope.courierDeliveryIsError = true;
+                    $scope.courierDeliveryErrorMessage = data.message;
+                }
+
+                $scope.flagOnRetrieveDetails = true;
+                spinner.stop();
+            })
+            .error(function (error, status) {
+                $scope.flagOnRetrieveDetails = true;
+                $scope.courierDeliveryIsError = true;
+                $scope.courierDeliveryErrorMessage = status;
+                spinner.stop();
+            })
+    };
+
     //Disable typing
     $('#checkindate,#checkintime,#shipmentId').keypress(function (key) {
         return false;
@@ -112,14 +190,6 @@
         sideBySide: false,
         pickDate: false
     });
-
-    //Initialize Address fields
-    $scope.initializeAddressField = function (addressItem) {
-        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
-        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
-        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
-        return $scope.formattedAddress;
-    };
 
     //====================================CHECK-IN FILTERING AND DATAGRID==========================
     //Load checkIn datagrid for compiling
@@ -144,12 +214,12 @@
     $scope.initCheckInDataGrid = function () {
         $scope.initializeCheckInDataDefinition = function () {
             $scope.checkInDataDefinition = {
-                "Header": ['Transaction No', 'Shipment No', 'Check-In Type', 'Check-In Date', 'Check-In Time', 'Business Unit', 'Remarks', 'No.'],
-                "Keys": ['Id', 'ShipmentId', 'CheckInType.Name', 'CheckInDate', 'CheckInTime', 'BusinessUnit.Name', 'Remarks'],
-                "Type": ['ControlNo', 'ControlNo', 'ProperCase', 'Date', 'Time', 'ProperCase', 'Default'],
-                "ColWidth": [150, 150, 200, 150, 150, 200, 400],
+                "Header": ['Transaction No', 'Status', 'BL Number', 'Check-In Date', 'Check-In Time', 'Business Unit', 'Remarks', 'No.'],
+                "Keys": ['Id', 'Status', 'CheckInSourceId', 'CheckInDate', 'CheckInTime', 'BusinessUnit.Name', 'Remarks'],
+                "Type": ['ControlNo', 'TransportStatus', 'Default', 'Date', 'Time', 'ProperCase', 'Default'],
+                "ColWidth": [150, 150, 150, 150, 150, 200, 400],
                 "DataList": [],
-                "RequiredFields": ['CheckInTypeId-Check In Type', 'ShipmentId-Shipment', 'CheckInDate-Check In Date', 'CheckInTime-Check In Time', 'CheckInBusinessUnitId-Business Unit'],
+                "RequiredFields": ['CheckInSourceId-BL Number', 'CheckInDate-Check In Date', 'CheckInTime-Check In Time', 'CheckInBusinessUnitId-Business Unit'],
                 "CellTemplate": ["None"],
                 "RowTemplate": "Default",
                 "EnableScroll": true,
@@ -186,7 +256,7 @@
                     $scope.checkInSubmitDefinition.Type = "Create";
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.checkInResetData();
-                    $scope.checkInDetailsDataDefinition.DataList.splice(0, $scope.checkInDetailsDataDefinition.DataList.length);
+                    $scope.checkInShipmentsDataDefinition.DataList.splice(0, $scope.checkInShipmentsDataDefinition.DataList.length);
                     //$scope.checkInDetailsResetData();
                     $scope.enableSave = true;
                     $scope.viewOnly = false;
@@ -198,7 +268,7 @@
                     $scope.checkInSubmitDefinition.Type = "Create";
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.checkInResetData();
-                    $scope.checkInDetailsDataDefinition.DataList.splice(0, $scope.checkInDetailsDataDefinition.DataList.length);
+                    $scope.checkInShipmentsDataDefinition.DataList.splice(0, $scope.checkInShipmentsDataDefinition.DataList.length);
                     //$scope.checkInDetailsResetData();
                     $scope.enableSave = true;
                     $scope.viewOnly = false;
@@ -206,135 +276,126 @@
                 case "PostEditAction":
                     //If user choose edit-menu in listing
                     if (angular.isDefined($scope.checkInDataDefinition.DataItem.Id) && $scope.checkInItem.Id != $scope.checkInDataDefinition.DataItem.Id) {
-                        $scope.checkInDetailsDataDefinition.DataList.splice(0, $scope.checkInDetailsDataDefinition.DataList.length);
+                        $scope.checkInShipmentsDataDefinition.DataList.splice(0, $scope.checkInShipmentsDataDefinition.DataList.length);
                         $scope.checkInItem = angular.copy($scope.checkInDataDefinition.DataItem);
+                        $scope.checkInItem.CheckInDate = $filter('date')($scope.checkInItem.CheckInDate, "MM/dd/yyyy");
                         $scope.controlNoHolder = $scope.checkInItem.Id;
                         $scope.checkInItem.Id = $rootScope.formatControlNo('', 8, $scope.checkInItem.Id);
-                        $scope.checkInItem.CallDate = $filter('Date')($scope.checkInItem.CallDate);
-                        $scope.checkInItem.CourierCost = $filter('number')($scope.checkInItem.CourierCost, 2);
 
-                        $scope.getCourierTransactionDetails($scope.checkInItem.Id);
+                        $scope.getCheckInShipments($scope.checkInItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
                                 $scope.flagOnRetrieveDetails = false;
                                 $interval.cancel(promise);
                                 promise = undefined;
-                                $scope.viewOnly = false;
                                 $scope.submitButtonText = "Submit";
                                 $scope.selectedTab = $scope.tabPages[0];
                                 $scope.checkInSubmitDefinition.Type = "Edit";
-                                if ($scope.checkInDetailsDataDefinition.DataList.length > 0)
-                                    //Set control no holder in case user will add item in list
-                                    $scope.controlNoHolder = $scope.checkInDetailsDataDefinition.DataList[$scope.checkInDetailsDataDefinition.DataList.length - 1].Id + 1;
-                                //else
-                                //    $scope.checkInDetailsResetData();
                             }
                         }, 100);
                     }
-                    else {
-                        $scope.viewOnly = false;
+                    else { //user choose edit-menu in form
                         $scope.submitButtonText = "Submit";
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Edit";
                     }
+
+                    if ($scope.checkInItem.Status == 10)
+                        $scope.viewOnly = false;
+                    else
+                        $scope.viewOnly = true;
                     $scope.enableSave = true;
                     return true;
                 case "PostDeleteAction":
-                    //If user choose edit-menu in listing
+                    //If user choose cancel-menu in listing
                     if (angular.isDefined($scope.checkInDataDefinition.DataItem.Id) && $scope.checkInItem.Id != $scope.checkInDataDefinition.DataItem.Id) {
-                        $scope.checkInDetailsDataDefinition.DataList.splice(0, $scope.checkInDetailsDataDefinition.DataList.length);
+                        $scope.checkInShipmentsDataDefinition.DataList.splice(0, $scope.checkInShipmentsDataDefinition.DataList.length);
                         $scope.checkInItem = angular.copy($scope.checkInDataDefinition.DataItem);
+                        $scope.checkInItem.CheckInDate = $filter('date')($scope.checkInItem.CheckInDate, "MM/dd/yyyy");
                         $scope.controlNoHolder = $scope.checkInItem.Id;
                         $scope.checkInItem.Id = $rootScope.formatControlNo('', 8, $scope.checkInItem.Id);
-                        $scope.checkInItem.CallDate = $filter('Date')($scope.checkInItem.CallDate);
-                        $scope.checkInItem.CourierCost = $filter('number')($scope.checkInItem.CourierCost, 2);
 
-                        $scope.getCourierTransactionDetails($scope.checkInItem.Id);
+                        $scope.getCheckInShipments($scope.checkInItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
                                 $scope.flagOnRetrieveDetails = false;
                                 $interval.cancel(promise);
                                 promise = undefined;
                                 $scope.viewOnly = true;
-                                $scope.submitButtonText = "Cancel";
+                                $scope.submitButtonText = "Submit";
                                 $scope.selectedTab = $scope.tabPages[0];
                                 $scope.checkInSubmitDefinition.Type = "Edit";
                             }
                         }, 100);
                     }
-                    else {
+                    else { //user choose cancel-menu in form
                         $scope.viewOnly = true;
-                        $scope.submitButtonText = "Cancel";
+                        $scope.submitButtonText = "Submit";
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Edit";
                     }
+                    //Cancel Status
+                    $scope.checkInItem.Status = 50;
                     $scope.enableSave = true;
                     return true;
                 case "PostViewAction":
-                    //If user choose edit-menu in listing
+                    //If user choose View-menu in listing
                     if (angular.isDefined($scope.checkInDataDefinition.DataItem.Id) && $scope.checkInItem.Id != $scope.checkInDataDefinition.DataItem.Id) {
-                        $scope.checkInDetailsDataDefinition.DataList.splice(0, $scope.checkInDetailsDataDefinition.DataList.length);
+                        $scope.checkInShipmentsDataDefinition.DataList.splice(0, $scope.checkInShipmentsDataDefinition.DataList.length);
                         $scope.checkInItem = angular.copy($scope.checkInDataDefinition.DataItem);
+                        $scope.checkInItem.CheckInDate = $filter('date')($scope.checkInItem.CheckInDate, "MM/dd/yyyy");
                         $scope.controlNoHolder = $scope.checkInItem.Id;
                         $scope.checkInItem.Id = $rootScope.formatControlNo('', 8, $scope.checkInItem.Id);
-                        $scope.checkInItem.CallDate = $filter('Date')($scope.checkInItem.CallDate);
-                        $scope.checkInItem.CourierCost = $filter('number')($scope.checkInItem.CourierCost, 2);
 
-                        $scope.getCourierTransactionDetails($scope.checkInItem.Id);
+                        $scope.getCheckInShipments($scope.checkInItem.Id);
                         var promise = $interval(function () {
                             if ($scope.flagOnRetrieveDetails) {
                                 $scope.flagOnRetrieveDetails = false;
                                 $interval.cancel(promise);
                                 promise = undefined;
                                 $scope.viewOnly = true;
-                                $scope.submitButtonText = "Close";
+                                $scope.submitButtonText = "Submit";
                                 $scope.selectedTab = $scope.tabPages[0];
-                                $scope.checkInSubmitDefinition.Type = "View";
+                                $scope.checkInSubmitDefinition.Type = "Close";
                             }
                         }, 100);
-
                     }
-                    else {
+                    else { //user choose View-menu in form
                         $scope.viewOnly = true;
-                        $scope.submitButtonText = "Close";
+                        $scope.submitButtonText = "Submit";
                         $scope.selectedTab = $scope.tabPages[0];
-                        $scope.checkInSubmitDefinition.Type = "View";
+                        $scope.checkInSubmitDefinition.Type = "Close";
                     }
+                    $scope.enableSave = true;
                     return true;
                 case "PreSubmit":
                     $scope.checkInSubmitDefinition.DataItem = angular.copy($scope.checkInItem);
+                    $scope.checkInSubmitDefinition.DataItem.CheckInShipments = angular.copy($scope.checkInShipmentsDataDefinition.DataList);
                     return true;
                 case "PreSave":
                     delete $scope.checkInSubmitDefinition.DataItem.Id;
-                    delete $scope.checkInSubmitDefinition.DataItem.CheckInSourceId;
-                    delete $scope.checkInSubmitDefinition.DataItem.Shipment;
                     delete $scope.checkInSubmitDefinition.DataItem.BusinessUnit;
                     delete $scope.checkInSubmitDefinition.DataItem.CheckInType;
+                    for (var i = 0; i < $scope.checkInSubmitDefinition.DataItem.CheckInShipments.length; i++)
+                    {
+                        delete $scope.checkInSubmitDefinition.DataItem.CheckInShipments[i].Id;
+                        delete $scope.checkInSubmitDefinition.DataItem.CheckInShipments[i].CheckInId;
+                        delete $scope.checkInSubmitDefinition.DataItem.CheckInShipments[i].Shipment;
+                    }
                     return true;
                 case "PostSave":
                     //Initialize Courier Transaction Id
                     $scope.checkInItem.Id = $scope.checkInSubmitDefinition.DataItem.Id;
                     $scope.controlNoHolder = $scope.checkInItem.Id;
                     $scope.checkInItem.Id = $rootScope.formatControlNo('', 8, $scope.checkInItem.Id);
-                    $scope.checkInItem.CheckInSourceId = $scope.checkInSubmitDefinition.DataItem.CheckInSourceId;
-                    $scope.checkInItem.Shipment.LastCheckInId = $scope.checkInSubmitDefinition.DataItem.Shipment.LastCheckInId;
                     $scope.viewOnly = true;
                     $scope.checkInSubmitDefinition.Type = "Edit";
                     $scope.enableSave = false;
                     alert("Successfully Saved.");
                     return true;
                 case "PreUpdate":
-                    $scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails = angular.copy($scope.checkInDetailsDataDefinition.DataList);
-                    delete $scope.checkInSubmitDefinition.DataItem.Courier;
                     delete $scope.checkInSubmitDefinition.DataItem.BusinessUnit;
-                    for (var i = 0; i < $scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails.length; i++) {
-                        if ($scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails[i].CourierTransactionId == -1) {
-                            delete $scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails[i].Id;
-                            $scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails[i].CourierTransactionId = $scope.checkInItem.Id;
-                        }
-
-                        delete $scope.checkInSubmitDefinition.DataItem.CourierTransactionDetails[i].Shipment;
-                    }
+                    delete $scope.checkInSubmitDefinition.DataItem.CheckInType;
                     return true;
                 case "PostUpdate":
                     $scope.enableSave = false;
@@ -375,7 +436,7 @@
         $scope.checkInResetData = function () {
             $scope.checkInItem = {
                 "Id": null,
-                "CheckInTypeId": null,
+                "CheckInTypeId": 1,
                 "CheckInType": {
                     "Id": null,
                     "Name": null
@@ -388,13 +449,13 @@
                     "Code": null,
                     "Name": null
                 },
-                "ShipmentId": null,
-                "Shipment": {},
                 "CheckInSourceId": null,
+                "CheckInShipment": [],
+                "Status": 10,
                 "Remarks": null
             }
             //Temporary set BusinessUnit
-            $scope.checkInItem.BusinessUnit = [{
+            $scope.checkInItem.BusinessUnit = {
                 "Id": 17,
                 "Code": "BU0007",
                 "Name": "Manila",
@@ -407,8 +468,8 @@
                 "LastUpdatedDate": "2015-09-22 17:53:38.597",
                 "CreatedByUserId": null,
                 "LastUpdatedByUserId": null
-            }];
-            $scope.checkInItem.CheckInBusinessUnitId = $scope.checkInItem.BusinessUnit[0].Id;
+            };
+            $scope.checkInItem.CheckInBusinessUnitId = $scope.checkInItem.BusinessUnit.Id;
         };
 
         $scope.checkInShowFormError = function (error) {
@@ -456,9 +517,10 @@
                 "DataItem1": $scope.DataItem1, //Contains the parameter value index 0
                 "Source": [
                             { "Index": 0, "Label": "Transaction No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                            { "Index": 1, "Label": "Check-In Date", "Column": "CheckInDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 2, "Label": "Check-In Type", "Column": "CheckInTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+                            { "Index": 1, "Label": "BL Number", "Column": "CheckInSourceId", "Values": [], "From": null, "To": null, "Type": "Default" },
+                            { "Index": 2, "Label": "Check-In Date", "Column": "CheckInDate", "Values": [], "From": null, "To": null, "Type": "Date" },
                             { "Index": 3, "Label": "Business Unit", "Column": "BusinessUnitId", "Values": ['GetBusinessUnit'], "From": null, "To": null, "Type": "Modal" },
+                            { "Index": 4, "Label": "Status", "Column": "Status", "Values": [{ "Id": 10, "Name": "Open" }, { "Id": 50, "Name": "Cancelled" }], "From": null, "To": null, "Type": "DropDown" },
                 ],//Contains the Criteria definition
                 "Multiple": true,
                 "AutoLoad": false,
@@ -500,6 +562,9 @@
                             $scope.checkInDataDefinition.DataList = [];
                         $scope.checkInFilteringDefinition.Url = 'api/CheckIns?type=scroll&param1=' + $scope.checkInDataDefinition.DataList.length;
                     }
+                    //CheckInTypeId fore sea freight loading
+                    $scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInTypeId = 1;
+                    //$scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInBusinessUnitId = $scope.checkInItem.CheckInBusinessUnitId;
                     return true;
                 case 'PostFilterData':
                     /*Note: if pagination, initialize checkInDataDefinition DataList by copying the DataList of filterDefinition then 
@@ -552,6 +617,91 @@
         $scope.initCheckInDataItems();
     };
     //=====================================END OF CHECK-IN FILTERING AND DATAGRID===================
+
+
+    //=====================================CHECK-IN SHIPMENTS DETAIL DATAGRID=======================
+    //Load checkInShipments datagrid for compiling
+    $scope.loadCheckInShipmentsDataGrid = function () {
+        $scope.initCheckInShipmentsDataGrid();
+        $scope.compileCheckInShipmentsDataGrid();
+    };
+
+    //initialize checkInShipments datagrid parameters
+    $scope.initCheckInShipmentsDataGrid = function () {
+        $scope.initializeCheckInShipmentsDataDefinition = function () {
+            $scope.checkInShipmentsDataDefinition = {
+                "Header": ['Shipment No', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
+                "Keys": ['ShipmentId', 'Shipment.TransportStatusId', 'Shipment.CreatedDate', 'Shipment.BusinessUnit.Name', 'Shipment.BusinessUnit1.Name', 'Shipment.Service.Name', 'Shipment.ShipmentType.Name', 'Shipment.PaymentMode', 'Shipment.BookingRemarks', 'Shipment.Quantity', 'Shipment.TotalCBM', 'Shipment.Description', 'Shipment.OriginAddress', 'Shipment.PickupDate', 'Shipment.PickupTime', 'Shipment.Customer.Name', 'Shipment.Customer.CustomerAddresses[0].Line1', 'Shipment.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'Shipment.DeliverTo', 'Shipment.DeliveryAddress', 'Shipment.DeliverToContactNo'],
+                "Type": ['ControlNo', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
+                "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
+                "DataList": [],
+                "RequiredFields": ['ShipmentId-Shipment', 'CostAllocation-Cost'],
+                "CellTemplate": ["None"],
+                "RowTemplate": "Default",
+                "EnableScroll": true,
+                "EnablePagination": false,
+                "CurrentPage": 1, //By default
+                "PageSize": 20, //Should be the same in back-end
+                "DoPagination": false, //By default
+                "Retrieve": false, //By default
+                "DataItem": {},
+                "DataTarget": "CheckInShipmentsMenu",
+                "DataTarget2": "CheckInShipmentsMenu2",
+                "ShowCreate": false,
+                "ShowContextMenu": false,
+                "ContextMenu": [],
+                "ContextMenuLabel": [],
+                "IsDetail": true
+            }
+        };
+
+        $scope.initializeCheckInShipmentsSubmitDefinition = function () {
+            $scope.checkInShipmentsSubmitDefinition = {
+                "Submit": false, //By default
+                "APIUrl": '',
+                "Type": 'Create', //By Default
+                "DataItem": {},
+                "Index": -1 //By Default
+            }
+        };
+
+        $scope.checkInShipmentsOtheractions = function (action) {
+            switch (action) {
+                default: return true;
+            }
+        };
+
+        $scope.checkInShipmentsResetData = function () {
+            $scope.checkInShipmentsItem = {
+                "Id": null,
+                "CheckInId": null,
+                "ShipmentId": null,
+                "Shipment": {},
+                "IsDisplay": true
+            }
+        };
+
+        $scope.checkInShipmentsShowFormError = function (error) {
+            $scope.checkInIsError = true;
+            $scope.checkInErrorMessage = error;
+        };
+
+        $scope.initializeCheckInShipmentsDataDefinition();
+        $scope.initializeCheckInShipmentsSubmitDefinition();
+    };
+
+    //function that will be invoked during compiling datagrid to DOM
+    $scope.compileCheckInShipmentsDataGrid = function () {
+        var html = '<dir-data-grid2 datadefinition      = "checkInShipmentsDataDefinition"' +
+                                    'submitdefinition   = "checkInShipmentsSubmitDefinition"' +
+                                    'otheractions       = "checkInShipmentsOtheractions(action)"' +
+                                    'resetdata          = "checkInShipmentsResetData()"' +
+                                    'showformerror      = "checkInShipmentsShowFormError(error)">' +
+                    '</dir-data-grid2>';
+        $content = angular.element(document.querySelector('#checkInShipmentsContainer')).html(html);
+        $compile($content)($scope);
+    };
+    //=================================================END OF CHECK-IN DETAIL DATAGRID==============
 
     //=====================================BUSINESS UNIT MODAL======================================
     $scope.showBusinessUnit = function () {
@@ -735,218 +885,218 @@
     //=======================================END OF BUSINESS UNIT MODAL==============================
 
     //=====================================SHIPMENT MODAL/REPORT======================================
-    $scope.showShipment = function () {
-        openModalPanel2("#shipment-list-modal");
-        $scope.loadShipmentDataGrid();
-        $scope.loadShipmentFiltering();
+    //$scope.showShipment = function () {
+    //    openModalPanel2("#shipment-list-modal");
+    //    $scope.loadShipmentDataGrid();
+    //    $scope.loadShipmentFiltering();
 
-        $scope.shipmentFilteringDefinition.SetSourceToNull = true;
-        $scope.shipmentDataDefinition.Retrieve = true;
-    };
-    //Load shipment filtering for compiling
-    $scope.loadShipmentFiltering = function () {
-        $scope.initShipmentFilteringParameters();
-        $scope.initShipmentFilteringContainter();
-    };
+    //    $scope.shipmentFilteringDefinition.SetSourceToNull = true;
+    //    $scope.shipmentDataDefinition.Retrieve = true;
+    //};
+    ////Load shipment filtering for compiling
+    //$scope.loadShipmentFiltering = function () {
+    //    $scope.initShipmentFilteringParameters();
+    //    $scope.initShipmentFilteringContainter();
+    //};
 
-    //initialize shipment filtering parameters
-    $scope.initShipmentFilteringContainter = function () {
-        html = '<dir-filtering  id="shipmentFilter" filterdefinition="shipmentFilteringDefinition"' +
-                                'filterlistener="shipmentDataDefinition.Retrieve"' +
-                                'otheractions="shipmentOtherActionsFiltering(action)"' +
-               '</dir-filtering>';
-        $content = angular.element(document.querySelector('#shipmentFilterContainter')).html(html);
-        $compile($content)($scope);
-    };
+    ////initialize shipment filtering parameters
+    //$scope.initShipmentFilteringContainter = function () {
+    //    html = '<dir-filtering  id="shipmentFilter" filterdefinition="shipmentFilteringDefinition"' +
+    //                            'filterlistener="shipmentDataDefinition.Retrieve"' +
+    //                            'otheractions="shipmentOtherActionsFiltering(action)"' +
+    //           '</dir-filtering>';
+    //    $content = angular.element(document.querySelector('#shipmentFilterContainter')).html(html);
+    //    $compile($content)($scope);
+    //};
 
-    //function that will be called during compiling of shipment unit filtering to DOM
-    $scope.initShipmentFilteringParameters = function () {
-        $scope.initShipmentFilteringDefinition = function () {
-            $scope.shipmentFilteringDefinition = {
-                "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
-                "DataList": [], //Contains the data retrieved based on the criteria
-                "DataItem1": $scope.DataItem1, //Contains the parameter value index 
-                "Source": [
-                            { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                            { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 2, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 3, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 4, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
-                            { "Index": 5, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
-                            { "Index": 6, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
-                ],//Contains the Criteria definition
-                "Multiple": false,
-                "AutoLoad": false,
-                "ClearData": false,
-                "SetSourceToNull": false
-            }
-        };
+    ////function that will be called during compiling of shipment unit filtering to DOM
+    //$scope.initShipmentFilteringParameters = function () {
+    //    $scope.initShipmentFilteringDefinition = function () {
+    //        $scope.shipmentFilteringDefinition = {
+    //            "Url": ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length),//Url for retrieve
+    //            "DataList": [], //Contains the data retrieved based on the criteria
+    //            "DataItem1": $scope.DataItem1, //Contains the parameter value index 
+    //            "Source": [
+    //                        { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
+    //                        { "Index": 1, "Label": "Booking Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+    //                        { "Index": 2, "Label": "Service", "Column": "ServiceId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+    //                        { "Index": 3, "Label": "Shipment Type", "Column": "ShipmentTypeId", "Values": [], "From": null, "To": null, "Type": "DropDown" },
+    //                        { "Index": 4, "Label": "Payment Mode", "Column": "PaymentMode", "Values": $scope.paymentModeList, "From": null, "To": null, "Type": "DropDown" },
+    //                        { "Index": 5, "Label": "Target Pickup Date", "Column": "PickupDate", "Values": [], "From": null, "To": null, "Type": "Date" },
+    //                        { "Index": 6, "Label": "Status", "Column": "TransportStatusId", "Values": $rootScope.getTransportStatusList(), "From": null, "To": null, "Type": "DropDown" }
+    //            ],//Contains the Criteria definition
+    //            "Multiple": false,
+    //            "AutoLoad": false,
+    //            "ClearData": false,
+    //            "SetSourceToNull": false
+    //        }
+    //    };
 
-        $scope.shipmentOtherActionsFiltering = function (action) {
-            switch (action) {
-                //Initialize DataItem1 and DataItem2 for data filtering
-                case 'PreFilterData':
-                    $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
-                    //Optional in using this, can use switch if every source type has validation before filtering
-                    for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentSource[i].Type == "Date") {
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
-                        }
-                        else
-                            $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
-                    }
-                    //Delete keys that the value is null
-                    for (var i = 0; i < $scope.shipmentSource.length; i++) {
-                        if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {
-                            delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column];
-                            delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column];
-                        }
-                    }
-                    if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
-                        $scope.shipmentDataDefinition.CurrentPage = 1;
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
-                    }
-                    else if ($scope.shipmentDataDefinition.EnablePagination == true) {
-                        $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
-                    }
-                        //Scroll
-                    else {
-                        if ($scope.shipmentFilteringDefinition.ClearData)
-                            $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
-                    }
-                    //$scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.checkInItem.BusinessUnitId;
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].Id = 0;
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[1].Id = 0;
-                    return true;
-                case 'PostFilterData':
-                    /*
-                        Note:  if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then set DoPagination to true
-                               if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
-                    */
-                    //Required
-                    //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
-                    if ($scope.shipmentDataDefinition.EnableScroll == true) {
-                        for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
-                            $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
-                    }
+    //    $scope.shipmentOtherActionsFiltering = function (action) {
+    //        switch (action) {
+    //            //Initialize DataItem1 and DataItem2 for data filtering
+    //            case 'PreFilterData':
+    //                $scope.shipmentSource = $scope.shipmentFilteringDefinition.Source;
+    //                //Optional in using this, can use switch if every source type has validation before filtering
+    //                for (var i = 0; i < $scope.shipmentSource.length; i++) {
+    //                    if ($scope.shipmentSource[i].Type == "Date") {
+    //                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+    //                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].To;
+    //                    }
+    //                    else
+    //                        $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] = $scope.shipmentSource[i].From;
+    //                }
+    //                //Delete keys that the value is null
+    //                for (var i = 0; i < $scope.shipmentSource.length; i++) {
+    //                    if ($scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column] == null) {
+    //                        delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[0][$scope.shipmentSource[i].Column];
+    //                        delete $scope.shipmentFilteringDefinition.DataItem1.Shipment[1][$scope.shipmentSource[i].Column];
+    //                    }
+    //                }
+    //                if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
+    //                    $scope.shipmentDataDefinition.CurrentPage = 1;
+    //                    $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+    //                }
+    //                else if ($scope.shipmentDataDefinition.EnablePagination == true) {
+    //                    $scope.shipmentDataDefinition.DataList = [];
+    //                    $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+    //                }
+    //                    //Scroll
+    //                else {
+    //                    if ($scope.shipmentFilteringDefinition.ClearData)
+    //                        $scope.shipmentDataDefinition.DataList = [];
+    //                    $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+    //                }
+    //                //$scope.shipmentFilteringDefinition.DataItem1.Shipment[0].BusinessUnitId = $scope.checkInItem.BusinessUnitId;
+    //                $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].Id = 0;
+    //                $scope.shipmentFilteringDefinition.DataItem1.Shipment[1].Id = 0;
+    //                return true;
+    //            case 'PostFilterData':
+    //                /*
+    //                    Note:  if pagination, initialize businessUnitDataDefinition DataList by copying the DataList of filterDefinition then set DoPagination to true
+    //                           if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
+    //                */
+    //                //Required
+    //                //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+    //                if ($scope.shipmentDataDefinition.EnableScroll == true) {
+    //                    for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
+    //                        $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
+    //                }
 
-                    if ($scope.shipmentDataDefinition.EnablePagination == true) {
-                        $scope.shipmentDataDefinition.DataList = [];
-                        $scope.shipmentDataDefinition.DataList = $scope.shipmentFilteringDefinition.DataList;
-                        $scope.shipmentDataDefinition.DoPagination = true;
-                    }
+    //                if ($scope.shipmentDataDefinition.EnablePagination == true) {
+    //                    $scope.shipmentDataDefinition.DataList = [];
+    //                    $scope.shipmentDataDefinition.DataList = $scope.shipmentFilteringDefinition.DataList;
+    //                    $scope.shipmentDataDefinition.DoPagination = true;
+    //                }
 
-                    //Format OrginAddress and Delivery Address
-                    for (var i = 0; i < $scope.shipmentDataDefinition.DataList.length; i++) {
-                        //Initialize Pickup Address
-                        $scope.shipmentDataDefinition.DataList[i].OriginAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address1);
-                        //Initalize Consignee Address
-                        $scope.shipmentDataDefinition.DataList[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address);
-                    }
+    //                //Format OrginAddress and Delivery Address
+    //                for (var i = 0; i < $scope.shipmentDataDefinition.DataList.length; i++) {
+    //                    //Initialize Pickup Address
+    //                    $scope.shipmentDataDefinition.DataList[i].OriginAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address1);
+    //                    //Initalize Consignee Address
+    //                    $scope.shipmentDataDefinition.DataList[i].DeliveryAddress = $scope.initializeAddressField($scope.shipmentDataDefinition.DataList[i].Address);
+    //                }
 
-                    return true;
-                default: return true;
-            }
-        };
+    //                return true;
+    //            default: return true;
+    //        }
+    //    };
 
-        $scope.initShipmentDataItems = function () {
-            $scope.shipmentFilteringDefinition.DataItem1 = angular.copy($rootScope.shipmentObj());
-        };
+    //    $scope.initShipmentDataItems = function () {
+    //        $scope.shipmentFilteringDefinition.DataItem1 = angular.copy($rootScope.shipmentObj());
+    //    };
 
-        $scope.initShipmentFilteringDefinition();
-        $scope.initShipmentDataItems();
+    //    $scope.initShipmentFilteringDefinition();
+    //    $scope.initShipmentDataItems();
 
-        //Initialize filtering service
-        var promiseServiceList = $interval(function () {
-            if ($scope.serviceList.length > 0) {
-                $scope.shipmentFilteringDefinition.Source[2].Values = $scope.serviceList;
-                $interval.cancel(promiseServiceList);
-                promiseServiceList = undefined;
-            }
-        }, 100);
+    //    //Initialize filtering service
+    //    var promiseServiceList = $interval(function () {
+    //        if ($scope.serviceList.length > 0) {
+    //            $scope.shipmentFilteringDefinition.Source[2].Values = $scope.serviceList;
+    //            $interval.cancel(promiseServiceList);
+    //            promiseServiceList = undefined;
+    //        }
+    //    }, 100);
 
-        //Initialize filtering shipment type
-        var promiseShipmentTypeList = $interval(function () {
-            if ($scope.shipmentTypeList.length > 0) {
-                $scope.shipmentFilteringDefinition.Source[3].Values = $scope.shipmentTypeList;
-                $interval.cancel(promiseShipmentTypeList);
-                promiseShipmentTypeList = undefined;
-            }
-        }, 100);
-    };
+    //    //Initialize filtering shipment type
+    //    var promiseShipmentTypeList = $interval(function () {
+    //        if ($scope.shipmentTypeList.length > 0) {
+    //            $scope.shipmentFilteringDefinition.Source[3].Values = $scope.shipmentTypeList;
+    //            $interval.cancel(promiseShipmentTypeList);
+    //            promiseShipmentTypeList = undefined;
+    //        }
+    //    }, 100);
+    //};
 
-    //Load shipment datagrid for compiling
-    $scope.loadShipmentDataGrid = function () {
-        $scope.initShipmentDataGrid();
-        $scope.compileShipmentDataGrid();
-    };
+    ////Load shipment datagrid for compiling
+    //$scope.loadShipmentDataGrid = function () {
+    //    $scope.initShipmentDataGrid();
+    //    $scope.compileShipmentDataGrid();
+    //};
 
-    //initialize shipment datagrid parameters
-    $scope.initShipmentDataGrid = function () {
-        $scope.shipmentSubmitDefinition = undefined;
-        $scope.initializeShipmentDataDefinition = function () {
-            $scope.shipmentDataDefinition = {
-                "Header": ['Shipment No', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
-                "Keys": ['Id', 'TransportStatusId', 'CreatedDate', 'BusinessUnit.Name', 'BusinessUnit1.Name', 'Service.Name', 'ShipmentType.Name', 'PaymentMode', 'BookingRemarks', 'Quantity', 'TotalCBM', 'Description', 'OriginAddress', 'PickupDate', 'PickupTime', 'Customer.Name', 'Customer.CustomerAddresses[0].Line1', 'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'DeliverTo', 'DeliveryAddress', 'DeliverToContactNo'],
-                "Type": ['ControlNo', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
-                "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
-                "DataList": [],
-                "RequiredFields": [],
-                "CellTemplate": ["None"],
-                "RowTemplate": "Default",
-                "EnableScroll": true,
-                "EnablePagination": false,
-                "CurrentPage": 1, //By default
-                "PageSize": 20, //Should be the same in back-end
-                "DoPagination": false, //By default
-                "Retrieve": false, //By default
-                "DataItem": {},
-                "DataTarget": "ShipmentMenu",
-                "DataTarget2": "ShipmentMenu2",
-                "ShowCreate": false,
-                "ShowContextMenu": false,
-                "ContextMenu": [""],
-                "ContextMenuLabel": [""]
-            }
+    ////initialize shipment datagrid parameters
+    //$scope.initShipmentDataGrid = function () {
+    //    $scope.shipmentSubmitDefinition = undefined;
+    //    $scope.initializeShipmentDataDefinition = function () {
+    //        $scope.shipmentDataDefinition = {
+    //            "Header": ['Shipment No', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
+    //            "Keys": ['Id', 'TransportStatusId', 'CreatedDate', 'BusinessUnit.Name', 'BusinessUnit1.Name', 'Service.Name', 'ShipmentType.Name', 'PaymentMode', 'BookingRemarks', 'Quantity', 'TotalCBM', 'Description', 'OriginAddress', 'PickupDate', 'PickupTime', 'Customer.Name', 'Customer.CustomerAddresses[0].Line1', 'Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'DeliverTo', 'DeliveryAddress', 'DeliverToContactNo'],
+    //            "Type": ['ControlNo', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
+    //            "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
+    //            "DataList": [],
+    //            "RequiredFields": [],
+    //            "CellTemplate": ["None"],
+    //            "RowTemplate": "Default",
+    //            "EnableScroll": true,
+    //            "EnablePagination": false,
+    //            "CurrentPage": 1, //By default
+    //            "PageSize": 20, //Should be the same in back-end
+    //            "DoPagination": false, //By default
+    //            "Retrieve": false, //By default
+    //            "DataItem": {},
+    //            "DataTarget": "ShipmentMenu",
+    //            "DataTarget2": "ShipmentMenu2",
+    //            "ShowCreate": false,
+    //            "ShowContextMenu": false,
+    //            "ContextMenu": [""],
+    //            "ContextMenuLabel": [""]
+    //        }
 
-            //Optional if row template
-            $scope.shipmentDataDefinition.RowTemplate = '<div>' +
-                                                                ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
-                                                              '</div>';
-        };
-        $scope.shipmentOtherActions = function (action) {
-            switch (action) {
-                case 'PostEditAction':
-                    var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
-                    var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
-                    $scope.checkInItem.ShipmentId = $rootScope.formatControlNo('', 8, $scope.shipmentDataDefinition.DataItem.Id);
-                    $scope.checkInItem.Shipment = $scope.shipmentDataDefinition.DataItem;
-                    $scope.checkInItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
-                    $scope.checkInItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
-                    $scope.checkInItem.Shipment.CreatedDate = $filter('date')($scope.shipmentDataDefinition.DataItem.CreatedDate, "MM/dd/yyyy");
-                    $scope.checkInIsError = false;
-                    $scope.checkInErrorMessage = "";
-                    $scope.closeModal();
-                    return true;
-                default: return true;
-            }
-        };
+    //        //Optional if row template
+    //        $scope.shipmentDataDefinition.RowTemplate = '<div>' +
+    //                                                            ' <div  ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell"  ui-grid-cell ng-click="grid.appScope.setSelected(row.entity.Id); grid.appScope.actionForm(' + "'Edit'" + ')"></div>' +
+    //                                                          '</div>';
+    //    };
+    //    $scope.shipmentOtherActions = function (action) {
+    //        switch (action) {
+    //            case 'PostEditAction':
+    //                var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
+    //                var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
+    //                $scope.checkInItem.ShipmentId = $rootScope.formatControlNo('', 8, $scope.shipmentDataDefinition.DataItem.Id);
+    //                $scope.checkInItem.Shipment = $scope.shipmentDataDefinition.DataItem;
+    //                $scope.checkInItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
+    //                $scope.checkInItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
+    //                $scope.checkInItem.Shipment.CreatedDate = $filter('date')($scope.shipmentDataDefinition.DataItem.CreatedDate, "MM/dd/yyyy");
+    //                $scope.checkInIsError = false;
+    //                $scope.checkInErrorMessage = "";
+    //                $scope.closeModal();
+    //                return true;
+    //            default: return true;
+    //        }
+    //    };
 
-        $scope.initializeShipmentDataDefinition();
-    };
+    //    $scope.initializeShipmentDataDefinition();
+    //};
 
-    //function that will be invoked during compiling of datagrid to DOM
-    $scope.compileShipmentDataGrid = function () {
-        var html = '<dir-data-grid2 id = "shipmentGrid" datadefinition      = "shipmentDataDefinition"' +
-                                    'submitdefinition   = "shipmentSubmitDefinition"' +
-                                    'otheractions       = "shipmentOtherActions(action)">' +
-                    '</dir-data-grid2>';
-        $content = angular.element(document.querySelector('#shipmentContainer')).html(html);
-        $compile($content)($scope);
-    };
+    ////function that will be invoked during compiling of datagrid to DOM
+    //$scope.compileShipmentDataGrid = function () {
+    //    var html = '<dir-data-grid2 id = "shipmentGrid" datadefinition      = "shipmentDataDefinition"' +
+    //                                'submitdefinition   = "shipmentSubmitDefinition"' +
+    //                                'otheractions       = "shipmentOtherActions(action)">' +
+    //                '</dir-data-grid2>';
+    //    $content = angular.element(document.querySelector('#shipmentContainer')).html(html);
+    //    $compile($content)($scope);
+    //};
     //=======================================END OF SHIPMENT MODAL/REPORT==============================
 
     // Initialization routines
@@ -957,6 +1107,8 @@
         $scope.initShipmentTypeList();
         $scope.loadCheckInDataGrid();
         $scope.loadCheckInFiltering();
+        $scope.loadCheckInShipmentsDataGrid();
+        $scope.checkInShipmentsResetData();
         $rootScope.manipulateDOM();
 
         //Initialize Check In DataItem
@@ -964,14 +1116,6 @@
 
         if ($scope.checkInFilteringDefinition.AutoLoad == true)
             $scope.checkInDataDefinition.Retrieve = true;
-        //Initialize filtering service
-        var promiseCheckInTypeList = $interval(function () {
-            if ($scope.checkInTypeList.length > 0) {
-                $scope.checkInFilteringDefinition.Source[2].Values = $scope.checkInTypeList;
-                $interval.cancel(promiseCheckInTypeList);
-                promiseCheckInTypeList = undefined;
-            }
-        }, 100);
     };
 
     var listener = $interval(function () {

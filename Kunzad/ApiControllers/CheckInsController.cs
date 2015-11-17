@@ -54,35 +54,28 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutCheckIn(int id, CheckIn checkIn)
         {
-            if (!ModelState.IsValid)
+            response.status = "FAILURE";
+            if (!ModelState.IsValid || id != checkIn.Id)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request";
+                return Ok(response);
             }
-
-            if (id != checkIn.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(checkIn).State = EntityState.Modified;
 
             try
             {
+                var checkInRecord = db.CheckIns.Find(id);
+                db.Entry(checkInRecord).CurrentValues.SetValues(checkIn);
+                db.Entry(checkInRecord).State = EntityState.Modified;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = checkIn;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!CheckInExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+               response.message = e.Message.ToString();
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/CheckIns
@@ -92,24 +85,33 @@ namespace Kunzad.ApiControllers
             
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.status = "FAILURE";
+                response.message = "Bad request.";
+                return Ok(response);
             }
             try
             {
                 response.status = "SUCCESS";
                 dbTransaction = db.Database.BeginTransaction();
-                checkInShipment(checkIn, "Dummy");
+                db.CheckIns.Add(checkIn);
+                db.SaveChanges();
+
+                foreach (CheckInShipment checkInShipments in checkIn.CheckInShipments)
+                {
+                    checkInShipments.IsDisplay = true;
+                    iterateShipment(checkInShipments, checkIn.Id);
+                }
                 dbTransaction.Commit();
-                if (response.status != "FAILURE")
-                    response.objParam1 = checkIn;
             }
             catch(Exception e)
             {
-                dbTransaction.Rollback();
                 response.status = "FAILURE";
-                response.message = e.InnerException.InnerException.Message.ToString();
+                response.message = e.Message.ToString();
             }
-
+            if (response.status != "FAILURE")
+                response.objParam1 = checkIn;
+            else
+                dbTransaction.Rollback();
             dbTransaction.Dispose();
             return Ok(response);
         }
@@ -144,48 +146,40 @@ namespace Kunzad.ApiControllers
             return db.CheckIns.Count(e => e.Id == id) > 0;
         }
 
-        public void checkInShipment(CheckIn checkIn, string dummy)
+        public void iterateShipment(CheckInShipment checkInShipment, int checkInId)
         {
-            //Save Parent Shipment
-            if (checkIn.CheckInTypeId == 1) //CheckInTypeId for seafreight is 1
-            {
-                //get seaFreightId
-                var getSeaFreight = db.SeaFreightShipments.Where(sfs => sfs.ShipmentId == checkIn.ShipmentId).ToArray();
-                if (getSeaFreight.Length == 0) {
-                    response.message = "Please cargo load shipment in Sea Freight module under Transport.";
-                    response.status = "FAILURE";
-                    return;
-                }
-                var checkInSourceId = getSeaFreight.ElementAt(0).SeaFreightId;
-                checkIn.CheckInSourceId = checkInSourceId;
-                //Save parent shipment
-                db.CheckIns.Add(checkIn);
-                db.SaveChanges();
-                lastCheckInId = checkIn.Id;
 
-                //Update parent shipment last check-in id
-                var shipment = db.Shipments.Find(checkIn.ShipmentId);
-                var shipmentEdited = shipment;
-                shipment.LastCheckInId = lastCheckInId;
-                shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
-                db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
-                db.Entry(shipment).State = EntityState.Modified;
+            //Save parent shipment
+            if (!checkInShipment.IsDisplay)
+            {
+                checkInShipment.CheckInId = checkInId;
+                db.CheckInShipments.Add(checkInShipment);
                 db.SaveChanges();
             }
+            //Update parent shipment last check-in id
+            var shipment = db.Shipments.Find(checkInShipment.ShipmentId);
+            var shipmentEdited = shipment;
+            shipment.LastCheckInId = checkInId;
+            shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+            db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+            db.Entry(shipment).State = EntityState.Modified;
+            db.SaveChanges();
 
             //Save Child  Shipment
-            var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId).Count();
+            var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId).Count();
             if (checkIfParent > 0)
             {
-                CheckIn childShipmentForCheckIn = new CheckIn();
-                childShipmentForCheckIn = checkIn;
-                //Get child shipments in consolidation
-                var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId);
+                CheckInShipment childShipmentForCheckIn = new CheckInShipment();
 
+                //Get child shipments
+                var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId);
+                childShipmentForCheckIn = checkInShipment;
                 foreach (Shipment child in childShipments)
                 {
                     childShipmentForCheckIn.ShipmentId = child.Id;
-                    checkInShipment(childShipmentForCheckIn, "Dummy");
+                    childShipmentForCheckIn.CheckInId = checkInId;
+                    childShipmentForCheckIn.IsDisplay = false;
+                    iterateShipment(childShipmentForCheckIn, checkInId);
                 }
             }
         }
@@ -209,30 +203,18 @@ namespace Kunzad.ApiControllers
             }
             else
                 skip = param1;
+
             var filteredCheckIns = db.CheckIns
-                .Include(ci => ci.BusinessUnit)
-                .Include(ci => ci.CheckInType)
-                .Include(ci => ci.Shipment.Address.CityMunicipality.StateProvince)
-                .Include(ci => ci.Shipment.Address1)
-                .Include(ci => ci.Shipment.Address1.CityMunicipality.StateProvince)
-                .Include(ci => ci.Shipment.BusinessUnit)
-                .Include(ci => ci.Shipment.BusinessUnit1)
-                .Include(ci => ci.Shipment.Service)
-                .Include(ci => ci.Shipment.ShipmentType)
-                .Include(ci => ci.Shipment.Customer)
-                .Include(ci => ci.Shipment.Customer.CustomerAddresses)
-                .Include(ci => ci.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
-                .Include(ci => ci.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
-                .Include(ci => ci.Shipment.Customer.CustomerContacts)
-                .Include(ci => ci.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
-                .Include(ci => ci.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                .Where(ci => checkIn.Id == null || checkIn.Id == 0 ? true : ci.Id == checkIn.Id)
-                .Where(ci => checkIn.CheckInDate == null || checkIn.CheckInDate == defaultDate ? true : ci.CheckInDate >= checkIn.CheckInDate && ci.CheckInDate <= checkIn1.CheckInDate)
-                .Where(ci => checkIn.CheckInTypeId == null || checkIn.CheckInTypeId == 0 ? true : ci.CheckInTypeId == checkIn.CheckInTypeId)
-                .Where(ci => checkIn.CheckInBusinessUnitId == null || checkIn.CheckInBusinessUnitId == 0 ? true : ci.CheckInBusinessUnitId == checkIn.CheckInBusinessUnitId)
-                .Where(ci => checkIn.ShipmentId == null || checkIn.ShipmentId == 0 ? true : ci.ShipmentId == checkIn.ShipmentId)
-                .OrderBy(ci => ci.Id)
-                .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
+                 .Include(ci => ci.BusinessUnit)
+                 .Include(ci => ci.CheckInType)
+                 .Where(ci => checkIn.Id == null || checkIn.Id == 0 ? true : ci.Id == checkIn.Id)
+                 .Where(ci => checkIn.CheckInSourceId == null ? true : ci.CheckInSourceId == checkIn.CheckInSourceId)
+                 .Where(ci => checkIn.CheckInDate == null || checkIn.CheckInDate == defaultDate ? true : ci.CheckInDate >= checkIn.CheckInDate && ci.CheckInDate <= checkIn1.CheckInDate)
+                 .Where(ci => checkIn.CheckInTypeId == null || checkIn.CheckInTypeId == 0 ? true : ci.CheckInTypeId == checkIn.CheckInTypeId)
+                 .Where(ci => checkIn.CheckInBusinessUnitId == null || checkIn.CheckInBusinessUnitId == 0 ? true : ci.CheckInBusinessUnitId == checkIn.CheckInBusinessUnitId)
+                 .Where(ci => checkIn.Status == null || checkIn.Status == 0 ? true : ci.Status == checkIn.Status)
+                 .OrderBy(ci => ci.Id)
+                 .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             checkIns = filteredCheckIns;
         }
     }
