@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class TrucksController : ApiController
@@ -17,6 +17,7 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
         // GET: api/Trucks
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Truck> GetTrucks()
         {
             return db.Trucks;
@@ -24,6 +25,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetTrucks(string type, int param1, [FromUri]List<Truck> truck)
         {
             Truck[] trucks = new Truck[pageSize];
@@ -36,6 +38,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Trucks?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetTrucks(int page)
         {
             int skip;
@@ -66,6 +69,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Trucks/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Truck))]
         public IHttpActionResult GetTruck(int id)
         {
@@ -78,6 +82,7 @@ namespace Kunzad.ApiControllers
             return Ok(truck);
         }
         // GET: api/Trucks?truckerId=1&request="gettrucker"
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Truck))]
         public IHttpActionResult GetTruck(int truckerId, String request)
         {

@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
 using WebAPI.OutputCache;
+
 namespace Kunzad.ApiControllers
 {
     [AutoInvalidateCacheOutput]
@@ -26,6 +27,7 @@ namespace Kunzad.ApiControllers
         }
 
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetDrivers(string type, int param1, [FromUri]List<Driver> driver)
         {
             Driver[] drivers = new Driver[AppSettingsGet.PageSize];
@@ -38,6 +40,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Drivers?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Driver> GetDrivers(int page)
         {
             if (page > 1)
@@ -51,6 +54,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Drivers/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Driver))]
         public IHttpActionResult GetDriver(int id)
         {

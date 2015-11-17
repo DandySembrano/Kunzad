@@ -17,12 +17,13 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         // GET: api/CustomerAddresses
-         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<CustomerAddress> GetCustomerAddresses()
         {
             return db.CustomerAddresses.AsNoTracking();
         }
 
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCustomerAddresses(int customerId)
         {
             var customerAddresses = db.CustomerAddresses.Where(ca => ca.CustomerId == customerId).ToArray();
@@ -37,6 +38,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/CustomerAddresses/5
+          [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(CustomerAddress))]
         public IHttpActionResult GetCustomerAddress(int id)
         {
@@ -86,6 +88,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCustomerAddress(string type, int param1, [FromUri]List<CustomerAddress> customerAddress)
         {
             Object[] customerAddresses = new Object[AppSettingsGet.PageSize];

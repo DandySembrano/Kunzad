@@ -10,7 +10,6 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
 using WebAPI.OutputCache;
-
 namespace Kunzad.ApiControllers
 {
     //[AutoInvalidateCacheOutput]
@@ -20,6 +19,7 @@ namespace Kunzad.ApiControllers
         private Response response = new Response();
         private int pageSize = 20;
         // GET: api/Shipments
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Shipment> GetShipments()
         {
             var shipment = db.Shipments
@@ -79,6 +79,7 @@ namespace Kunzad.ApiControllers
         
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -91,6 +92,7 @@ namespace Kunzad.ApiControllers
         }
 
         [HttpGet]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
             /*
@@ -118,6 +120,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Shipments?page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult GetShipments(int page)
         {
@@ -218,6 +221,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/Shipments/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult GetShipment(int id)
         {

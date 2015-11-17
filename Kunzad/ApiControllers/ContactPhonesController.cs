@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
 namespace Kunzad.ApiControllers
 {
     public class ContactPhonesController : ApiController
@@ -17,12 +17,14 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private int pageSize = 20;
         // GET: api/ContactPhones
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<ContactPhone> GetContactPhones()
         {
             return db.ContactPhones;
         }
 
         // GET: api/ContactPhones?contactId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetContactPhones(int contactId)
         {
             var contactPhones = db.ContactPhones.Where(cp => cp.ContactId == contactId).ToArray();
@@ -34,6 +36,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/ContactPhones/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(ContactPhone))]
         public IHttpActionResult GetContactPhone(int id)
         {
@@ -47,6 +50,7 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/ContactPhones/5
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutContactPhone(int id, ContactPhone contactPhone)
         {
@@ -83,6 +87,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetContactPhone(string type, int param1, [FromUri]List<ContactPhone> contactPhone)
         {
             Object[] contactPhones = new Object[pageSize];
