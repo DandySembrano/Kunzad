@@ -17,7 +17,7 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
         private DbContextTransaction dbTransaction;
-        private int lastCheckInId = 0;
+
         // GET: api/CheckIns
         public IQueryable<CheckIn> GetCheckIns()
         {

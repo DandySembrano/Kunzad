@@ -575,6 +575,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'SeaFreightLoadingController'
         })
 
+        .when('/airfreightloading', {
+            templateUrl: '/References/AirFreightLoading',
+            controller: 'AirFreightLoadingController'
+        })
+
         .when('/pod', {
             templateUrl: '/References/POD',
             controller: 'PODController'
