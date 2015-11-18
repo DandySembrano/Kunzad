@@ -65,16 +65,16 @@ namespace Kunzad.ApiControllers
 
         // GET: api/Consolidation?shipmentId=1&serviceCategoryId=1&page=1
         [HttpGet]
-        public IHttpActionResult GetShipment(int shipmentId,int serviceCatId,string dummy)
+        public Boolean GetShipment(int shipmentId,int serviceCatId,string dummy)
         {
             serviceCategoryId = serviceCatId;
 
             Shipment shipment = db.Shipments.Find(shipmentId);
 
-            if (this.checkShipment(shipment, "xXx"))
-                return Ok(shipment);
+            if (this.checkShipment(shipment, "batch"))
+                return true;
             else
-                return Ok();
+                return false;
         }   
 
         //for batching
