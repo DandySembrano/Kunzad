@@ -119,7 +119,8 @@ namespace Kunzad.Controllers
             return View();
         }
 
-        public ActionResult CheckIn(){
+        public ActionResult SeaFreightLoading()
+        {
             return View();
         }
         public ActionResult POD()

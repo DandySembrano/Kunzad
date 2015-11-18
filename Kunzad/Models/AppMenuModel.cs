@@ -42,7 +42,6 @@ namespace Kunzad.Models
             m.MenuItems.Add(new MenuItem("Sea Freight", "glyphicons glyphicons-boat", "#/seafreight"));
             m.MenuItems.Add(new MenuItem("Air Freight", "glyphicons glyphicons-airplane", "#/airfreight"));
             m.MenuItems.Add(new MenuItem("Courier Delivery", "glyphicons glyphicons-truck", "#/courierdelivery"));
-            m.MenuItems.Add(new MenuItem("POD", "glyphicons glyphicons-truck", "#/pod"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Consolidate
@@ -63,7 +62,8 @@ namespace Kunzad.Models
             m.IsSubMenu = true;
             m.Link = "#";
             m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Check-In", "fa fa-th", "#/checkin"));
+            m.MenuItems.Add(new MenuItem("Sea Freight Loading", "fa fa-th", "#/seafreightloading"));
+            m.MenuItems.Add(new MenuItem("Delivery", "glyphicons glyphicons-truck", "#/pod"));
             menuGroup.MenuGroupItems.Add(m);
 
             MenuGroups.Add(menuGroup);

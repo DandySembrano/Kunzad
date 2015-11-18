@@ -36,7 +36,7 @@
                     @*Transaction No*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Transaction No</label>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <input type="text"
                                    class="form-control"
                                    placeholder="System Generated"
@@ -47,7 +47,7 @@
                     @*Check-In Date*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Check-In Date</label>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <div class='input-group date'>
                                 <input type='text'
                                        id='checkindate'
@@ -63,7 +63,7 @@
                     @*Check-In Time*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Check-In Time</label>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <div class='input-group date'>
                                 <input type='text'
                                        id='checkintime'
@@ -76,9 +76,22 @@
                             </div>
                         </div>
                     </div>  
-                    @*Check-In Type*@
+                    @*Check-In Source*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Check-In Type</label>
+                        <label class="col-md-3 control-label small">BL Number</label>
+                        <div class="col-md-5">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="Press enter after typing..."
+                                   ng-model="checkInItem.CheckInSourceId"
+                                   ng-disabled="checkInItem.Id == null ? false : true"
+                                   ng-enter="fetchShipment()"
+                                   ng-change="removeCheckInShipment()">
+                        </div>
+                    </div>
+                    @*Check-In Type*@
+                    @*<div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">BL Number</label>
                         <div class="col-md-4">
                             <select class="form-control"
                                     placeholder=""
@@ -86,19 +99,29 @@
                                     ng-model="checkInItem.CheckInTypeId"
                                     ng-options="item.Id as item.Name for item in checkInTypeList"></select>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
                 <div class="col-lg-6">
+                    @*Status*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Status</label>
+                        <div class="col-md-7">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="{{ checkInItem.Status == 10 ? 'Open': 'Cancelled' }}"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
                     @*Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Business Unit</label>
+                        <label class="col-md-5 control-label small">Business Unit</label>
                         <div class="col-md-7">
                             <div class="input-group date">
                                 <input id="businessUnit"
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="checkInItem.BusinessUnit[0].Name"
+                                       ng-model="checkInItem.BusinessUnit.Name"
                                        ng-disabled="viewOnly">
                                 <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="showBusinessUnit()">
                                     <span class=" glyphicon glyphicon-search"></span>
@@ -108,9 +131,9 @@
                     </div>
                     @*Booking Remarks*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Remarks</label>
+                        <label class="col-md-5 control-label small">Remarks</label>
                         <div class="col-md-7">
-                            <textarea rows="6" style="height:auto;"
+                            <textarea rows="4" style="height:auto;"
                                       class="form-control"
                                       placeholder=""
                                       ng-model="checkInItem.Remarks"
@@ -120,10 +143,20 @@
                 </div>
             </form>
         </div>
+        @*End of Master*@
+
+        <!--Detail-->
         <div class="row">
+            <div class="col-lg-12">
+                <div id="checkInShipmentsContainer"></div>
+            </div>
+        </div>
+        <!--End of Detail-->
+
+        @*<div class="row">
             <form class="form-horizontal" role="form">
                 <div class="col-lg-6">
-                    @*Shipment*@
+                   
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Shipment No</label>
                         <div class="col-md-4">
@@ -140,7 +173,6 @@
                             </div>
                         </div>
                     </div>
-                    @*Shipper/Customer Code*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Shipper Code</label>
                         <div class="col-md-4">
@@ -150,7 +182,6 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Shipper/Customer Name*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Shipper Name</label>
                         <div class="col-md-8">
@@ -160,7 +191,6 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Cargo Description*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">Cargo Description</label>
                         <div class="col-md-8">
@@ -173,7 +203,6 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    @*Shipment Date*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-4 control-label small">Shipment Date</label>
                         <div class="col-md-7">
@@ -185,7 +214,6 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Consignee*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-4 control-label small">Consignee Name</label>
                         <div class="col-md-7">
@@ -197,7 +225,6 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Consignee Contact No*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-4 control-label small">Consignee Contact No</label>
                         <div class="col-md-7">
@@ -209,7 +236,6 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Consignee Address*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-4 control-label small">Consignee Address</label>
                         <div class="col-md-7">
@@ -222,7 +248,7 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </div>*@
     </div>
 }
 
