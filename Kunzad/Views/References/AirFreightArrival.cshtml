@@ -1,0 +1,197 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown" style="z-index: 1000">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="checkInOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="checkInOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{checkInItem.Id != null && checkInSubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="checkInOtheractions(checkInItem.Id != null && checkInSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{checkInItem.Id != null && checkInSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="checkInOtheractions(checkInItem.Id != null && checkInSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+        </li>
+    </ul>
+</div>
+
+@*General*@
+@section tab1Content{
+    <div context-menu="" data-target="FormMenu">
+        <div class="alert alert-danger alert-sm" ng-show="checkInIsError">
+            <i class="fa fa-remove pr10" ng-click="checkInIsError=false;checkInErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + checkInErrorMessage}}
+        </div>
+        @*Master*@
+        <div class="row">
+            <form class="form-horizontal" role="form">
+                <div class="col-lg-6">
+                    @*Transaction No*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Transaction No</label>
+                        <div class="col-md-5">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="System Generated"
+                                   ng-model="checkInItem.Id"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                    @*Check-In Date*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Check-In Date</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='checkindate'
+                                       class="form-control"
+                                       ng-model="checkInItem.CheckInDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Check-In Time*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Check-In Time</label>
+                        <div class="col-md-5">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='checkintime'
+                                       class="form-control"
+                                       ng-model="checkInItem.CheckInTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Check-In Source*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Waybill Number</label>
+                        <div class="col-md-5">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="Press enter after typing..."
+                                   ng-model="checkInItem.CheckInSourceId"
+                                   ng-disabled="checkInItem.Id == null ? false : true"
+                                   ng-enter="fetchShipment()"
+                                   ng-change="removeCheckInShipment()">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    @*Status*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Status</label>
+                        <div class="col-md-7">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="{{ checkInItem.Status == 10 ? 'Open': 'Cancelled' }}"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                    @*Business Unit*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Business Unit</label>
+                        <div class="col-md-7">
+                            <div class="input-group date">
+                                <input id="businessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="checkInItem.BusinessUnit.Name"
+                                       ng-disabled="viewOnly">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="showBusinessUnit()">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Booking Remarks*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Remarks</label>
+                        <div class="col-md-7">
+                            <textarea rows="4" style="height:auto;"
+                                      class="form-control"
+                                      placeholder=""
+                                      ng-model="checkInItem.Remarks"
+                                      ng-disabled="viewOnly"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @*End of Master*@
+
+        <!--Detail-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="checkInShipmentsContainer"></div>
+            </div>
+        </div>
+        <!--End of Detail-->
+    </div>
+}
+
+@*List*@
+@section tab2Content{
+    <div style="padding:0 10px 0 10px">
+        <div class="text-right toggle-hide" ng-click="hideCheckInToggle()" ng-show="checkInToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
+        <div id="checkInToggle">
+            <div id="checkInFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="checkInContainer"></div>
+    </div>
+}
+
+<!-- Shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Shipment List Modal -->
+<!-- BusinessUnit List Modal -->
+<div id="businessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>BusinessUnit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of BusinessUnit List Modal -->

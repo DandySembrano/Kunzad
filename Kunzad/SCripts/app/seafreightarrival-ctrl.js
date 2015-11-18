@@ -546,7 +546,7 @@
                             $scope.checkInDataDefinition.DataList = [];
                         $scope.checkInFilteringDefinition.Url = 'api/CheckIns?type=scroll&param1=' + $scope.checkInDataDefinition.DataList.length;
                     }
-                    //CheckInTypeId fore sea freight arrival
+                    //CheckInTypeId for sea freight arrival
                     $scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInTypeId = 3;
                     //$scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInBusinessUnitId = $scope.checkInItem.CheckInBusinessUnitId;
                     return true;
