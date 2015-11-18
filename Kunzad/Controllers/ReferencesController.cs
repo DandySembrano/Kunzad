@@ -124,6 +124,11 @@ namespace Kunzad.Controllers
             return View();
         }
 
+        public ActionResult SeaFreightArrival()
+        {
+            return View();
+        }
+
         public ActionResult AirFreightLoading()
         {
             return View();
