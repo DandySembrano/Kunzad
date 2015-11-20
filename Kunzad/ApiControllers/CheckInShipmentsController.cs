@@ -9,9 +9,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
+using WebAPI.OutputCache;
 
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class CheckInShipmentsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
@@ -23,6 +25,7 @@ namespace Kunzad.ApiControllers
         }
 
         // GET: api/CheckInShipments?length=0&masterId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         [ResponseType(typeof(CheckInShipment))]
         public IHttpActionResult GetCheckInShipment(int length, int masterId)
         {
