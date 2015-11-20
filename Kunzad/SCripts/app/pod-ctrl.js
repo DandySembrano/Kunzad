@@ -156,7 +156,6 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
         };
 
         $scope.shipmentOtheractions = function (action) {
-            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.shipmentResetData();
@@ -179,15 +178,24 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
                     return false;
                 case "PostEditAction":
                     $scope.onEDV();
+                    //$scope.CheckIn.CheckInTypeId = '4';
+                    //$scope.CheckIn.CheckInBusinessUnitId = $scope.shipmentItem.DeliveryAddressId;
+                    //$scope.CheckIn.CheckInSourceId = $scope.shipmentItem.Id;
+                    //$scope.CheckIn.CheckInShipment.ShipmentId = $scope.shipmentItem.Id;
+                    
                     $scope.viewOnly = false;
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Edit";
+
+                    //console.log($scope.CheckIn);
+
                     return true;
                 case "PreUpdate":
                     $scope.validateShipment();
                     $scope.shipmentSubmitDefinition.DataItem = angular.copy($scope.shipmentItem);
+                    //$scope.shipmentSubmitDefinition.DataItem.CheckIn = angular.copy($scope.CheckIn);
                     $scope.shipmentDataDefinition.DataItem = $scope.shipmentSubmitDefinition.DataItem;
-
+                    
                     delete $scope.shipmentSubmitDefinition.DataItem.Address;
                     delete $scope.shipmentSubmitDefinition.DataItem.Address1;
                     delete $scope.shipmentSubmitDefinition.DataItem.BusinessUnit;
@@ -195,7 +203,11 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
                     delete $scope.shipmentSubmitDefinition.DataItem.Customer;
                     delete $scope.shipmentSubmitDefinition.DataItem.Service;
                     delete $scope.shipmentSubmitDefinition.DataItem.ShipmentType;
-
+                    delete $scope.shipmentSubmitDefinition.DataItem.CheckInShipments;
+                    //delete $scope.shipmentSubmitDefinition.DataItem.CheckIn.Id;
+                    //delete $scope.shipmentSubmitDefinition.DataItem.CheckIn.CheckInShipment.CheckInId;
+                    
+                    //console.log($scope.shipmentSubmitDefinition.DataItem);
                     return true;
                 case "PostUpdate":
                         $scope.viewOnly = true;
@@ -238,6 +250,18 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile) 
                 "DeliveryDate": null,
                 "DeliveryTime": null,
                 "ReceivedByName": null
+            }
+            $scope.CheckIn = {
+                "Id": null,
+                "CheckInTypeId": null,
+                "CheckInBusinessUnitId": null,
+                "CheckInSourceId": null,
+                "CheckInShipment": {
+                    "Id": null,
+                    "CheckInId": null,
+                    "ShipmentId": null,
+                    "IsDisplay": null
+                }
             }
         };
 

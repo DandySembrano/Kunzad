@@ -16,6 +16,7 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
+        private DbContextTransaction dbTransaction;
         private int pageSize = 20;
 
         // GET: api/POD
@@ -239,6 +240,7 @@ namespace Kunzad.ApiControllers
         public IHttpActionResult PutShipment(int id, Shipment shipment)
         {
             response.status = "FAILURE";
+            //var shipmentIdHolder = (int)id;
             if (!ModelState.IsValid || id != shipment.Id)
             {
                 response.message = "Bad request.";
@@ -248,6 +250,17 @@ namespace Kunzad.ApiControllers
             db.Entry(shipment).State = EntityState.Modified;
             try
             {
+                CheckIn checkIn = new CheckIn();
+                checkIn.CheckInDate = DateTime.Now;
+                checkIn.CheckInTime = DateTime.Now.TimeOfDay;
+                checkIn.CheckInTypeId = 4;
+                checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
+                checkIn.CheckInSourceId = shipment.Id.ToString();
+                checkIn.Remarks = "Delivered to Consignee";
+                dbTransaction = db.Database.BeginTransaction();
+                checkInShipment(checkIn, "Dummy");
+                dbTransaction.Commit();
+                db.CheckIns.Add(checkIn);
 
                 shipment.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
@@ -348,6 +361,57 @@ namespace Kunzad.ApiControllers
         private bool ShipmentExists(int id)
         {
             return db.Shipments.Count(e => e.Id == id) > 0;
+        }
+
+        public void checkInShipment(CheckIn checkIn, string dummy)
+        {
+            //Save Parent Shipment
+            if (checkIn.CheckInTypeId == 4) //CheckInTypeId for POD is 4
+            {
+                //get seaFreightId
+                //var getSeaFreight = db.SeaFreightShipments.Where(sfs => sfs.ShipmentId == checkIn.ShipmentId).ToArray();
+                var getShipment = db.Shipments.Find(checkIn.CheckInSourceId);
+                if (getShipment == null)
+                {
+                    response.message = "Please cargo load shipment in Sea Freight module under Transport.";
+                    response.status = "FAILURE";
+                    return;
+                }
+                //var checkInSourceId = getShipment.Id;
+                checkIn.CheckInDate = DateTime.Now.Date;
+                checkIn.CheckInTime = DateTime.Now.TimeOfDay;
+                checkIn.Remarks = "Delivered to Consignee";
+
+                //Save parent shipment
+                db.CheckIns.Add(checkIn);
+                db.SaveChanges();
+                var lastCheckInId = checkIn.Id;
+
+                //Update parent shipment last check-in id
+                var shipment = db.Shipments.Find(checkIn.CheckInSourceId);
+                var shipmentEdited = shipment;
+                shipment.LastCheckInId = lastCheckInId;
+                //shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+                db.Entry(shipment).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            ////Save Child  Shipment
+            //var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId).Count();
+            //if (checkIfParent > 0)
+            //{
+            //    CheckIn childShipmentForCheckIn = new CheckIn();
+            //    childShipmentForCheckIn = checkIn;
+            //    //Get child shipments in consolidation
+            //    var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId);
+
+            //    foreach (Shipment child in childShipments)
+            //    {
+            //        childShipmentForCheckIn.ShipmentId = child.Id;
+            //        checkInShipment(childShipmentForCheckIn, "Dummy");
+            //    }
+            //}
         }
 
         public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, ref Shipment[] shipments)
