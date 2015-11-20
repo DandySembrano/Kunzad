@@ -67,6 +67,8 @@ namespace Kunzad.Models
             m.MenuItems.Add(new MenuItem("Air Freight Loading", "fa fa-th", "#/airfreightloading"));
             m.MenuItems.Add(new MenuItem("Air Freight Arrival", "fa fa-th", "#/airfreightarrival"));
             m.MenuItems.Add(new MenuItem("Delivery", "glyphicons glyphicons-truck", "#/pod"));
+            m.MenuItems.Add(new MenuItem("Delivery Exception", "glyphicons glyphicons-truck", "#/deliveryexception"));
+            m.MenuItems.Add(new MenuItem("Delivery Exception-Batching", "glyphicons glyphicons-truck", "#/deliveryexceptionbatching"));
             menuGroup.MenuGroupItems.Add(m);
 
             MenuGroups.Add(menuGroup);

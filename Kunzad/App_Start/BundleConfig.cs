@@ -80,7 +80,9 @@ namespace Kunzad
                         "~/Scripts/app/seafreightarrival-ctrl.js",
                         "~/Scripts/app/airfreightloading-ctrl.js",
                         "~/Scripts/app/airfreightarrival-ctrl.js",
-                        "~/Scripts/app/pod-ctrl.js"
+                        "~/Scripts/app/pod-ctrl.js",
+                        "~/Scripts/app/deliveryexception-ctrl.js",
+                        "~/Scripts/app/deliveryexceptionbatching-ctrl.js"
                         ));
         }
     }

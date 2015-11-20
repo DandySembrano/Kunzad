@@ -595,6 +595,14 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'PODController'
         })
 
+       .when('/deliveryexception', {
+            templateUrl: '/References/DeliveryException',
+            controller: 'DeliveryExceptionController'
+       })
+        .when('/deliveryexceptionbatching', {
+            templateUrl: '/References/DeliveryExceptionBatching',
+            controller: 'DeliveryExceptionBatchingController'
+        })
         .otherwise({
             redirectTo: '/home'
         });
