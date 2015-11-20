@@ -143,5 +143,14 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult DeliveryException() {
+            return View();
+        }
+
+        public ActionResult DeliveryExceptionBatching()
+        {
+            return View();
+        }
     }
 }
