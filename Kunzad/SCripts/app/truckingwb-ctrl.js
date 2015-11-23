@@ -703,7 +703,7 @@ function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $c
                 "DataItem1": $scope.DataItem1, //Contains the parameter value
                 "Source": [
                             { "Index": 0, "Label": "Dispatch No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
-                            { "Index": 1, "Label": "Document No", "Column": "DocumentNo", "Values": [], "From": null, "To": null, "Type": "ProperCase" },
+                            { "Index": 1, "Label": "Document No", "Column": "DocumentNo", "Values": [], "From": null, "To": null, "Type": "Default" },
                             { "Index": 2, "Label": "Dispatch Date", "Column": "CreatedDate", "Values": [], "From": null, "To": null, "Type": "Date" },
                             { "Index": 3, "Label": "Origin", "Column": "OriginServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },
                             { "Index": 4, "Label": "Destination", "Column": "DestinationServiceableAreaId", "Values": ['GetServiceableAreaList'], "From": null, "To": null, "Type": "Modal" },

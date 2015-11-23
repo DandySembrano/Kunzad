@@ -575,11 +575,34 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             controller: 'SeaFreightLoadingController'
         })
 
+        .when('/seafreightarrival', {
+            templateUrl: '/References/SeaFreightArrival',
+            controller: 'SeaFreightArrivalController'
+        })
+
+        .when('/airfreightloading', {
+            templateUrl: '/References/AirFreightLoading',
+            controller: 'AirFreightLoadingController'
+        })
+
+         .when('/airfreightarrival', {
+             templateUrl: '/References/AirFreightArrival',
+             controller: 'AirFreightArrivalController'
+         })
+
         .when('/pod', {
             templateUrl: '/References/POD',
             controller: 'PODController'
         })
 
+       .when('/deliveryexception', {
+            templateUrl: '/References/DeliveryException',
+            controller: 'DeliveryExceptionController'
+       })
+        .when('/deliveryexceptionbatching', {
+            templateUrl: '/References/DeliveryExceptionBatching',
+            controller: 'DeliveryExceptionBatchingController'
+        })
         .otherwise({
             redirectTo: '/home'
         });

@@ -123,7 +123,32 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult SeaFreightArrival()
+        {
+            return View();
+        }
+
+        public ActionResult AirFreightLoading()
+        {
+            return View();
+        }
+
+        public ActionResult AirFreightArrival()
+        {
+            return View();
+        }
+        
         public ActionResult POD()
+        {
+            return View();
+        }
+
+        public ActionResult DeliveryException() {
+            return View();
+        }
+
+        public ActionResult DeliveryExceptionBatching()
         {
             return View();
         }

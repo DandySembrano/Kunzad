@@ -1,6 +1,6 @@
-﻿kunzadApp.controller("SeaFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter) {
-    $scope.modelName = "Sea Freight Loading";
-    $scope.modelhref = "#/seafreightloading";
+﻿kunzadApp.controller("SeaFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter) {
+    $scope.modelName = "Sea Freight Arrival";
+    $scope.modelhref = "#/seafreightarrival";
     $scope.withDirective = true;
     $scope.checkinItem = {};
     $scope.viewOnly = false;
@@ -420,7 +420,7 @@
         $scope.checkInResetData = function () {
             $scope.checkInItem = {
                 "Id": null,
-                "CheckInTypeId": 1,
+                "CheckInTypeId": 3,
                 "CheckInType": {
                     "Id": null,
                     "Name": null
@@ -546,8 +546,8 @@
                             $scope.checkInDataDefinition.DataList = [];
                         $scope.checkInFilteringDefinition.Url = 'api/CheckIns?type=scroll&param1=' + $scope.checkInDataDefinition.DataList.length;
                     }
-                    //CheckInTypeId for sea freight loading
-                    $scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInTypeId = 1;
+                    //CheckInTypeId for sea freight arrival
+                    $scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInTypeId = 3;
                     //$scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInBusinessUnitId = $scope.checkInItem.CheckInBusinessUnitId;
                     return true;
                 case 'PostFilterData':

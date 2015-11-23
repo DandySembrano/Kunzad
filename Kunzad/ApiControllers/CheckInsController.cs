@@ -9,15 +9,17 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
+using WebAPI.OutputCache;
 
 namespace Kunzad.ApiControllers
 {
+    [AutoInvalidateCacheOutput]
     public class CheckInsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
         private DbContextTransaction dbTransaction;
-        private int lastCheckInId = 0;
+
         // GET: api/CheckIns
         public IQueryable<CheckIn> GetCheckIns()
         {
@@ -39,6 +41,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCheckIn(string type, int param1, [FromUri]List<CheckIn> checkIn)
         {
             Object[] GetCheckIns = new Object[AppSettingsGet.PageSize];
