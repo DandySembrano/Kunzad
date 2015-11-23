@@ -251,34 +251,42 @@ namespace Kunzad.ApiControllers
             try
             {
                 CheckIn checkIn = new CheckIn();
+                CheckInShipment checkInShipment = new CheckInShipment();
                 checkIn.CheckInDate = DateTime.Now;
                 checkIn.CheckInTime = DateTime.Now.TimeOfDay;
                 checkIn.CheckInTypeId = 4;
                 checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
                 checkIn.CheckInSourceId = shipment.Id.ToString();
                 checkIn.Remarks = "Delivered to Consignee";
-                dbTransaction = db.Database.BeginTransaction();
-                checkInShipment(checkIn, "Dummy");
-                dbTransaction.Commit();
-                db.CheckIns.Add(checkIn);
+                //Initialize check in  checkin shipment
+                checkInShipment.ShipmentId = shipment.Id;
+                checkInShipment.IsDisplay = true;
 
-                shipment.LastUpdatedDate = DateTime.Now;
-                db.SaveChanges();
+                checkIn.CheckInShipments.Add(checkInShipment);
+
                 response.status = "SUCCESS";
+                dbTransaction = db.Database.BeginTransaction();
+                db.CheckIns.Add(checkIn);
+                db.SaveChanges();
+
+                foreach (CheckInShipment checkInShipments in checkIn.CheckInShipments)
+                {
+                    checkInShipments.IsDisplay = true;
+                    iterateShipment(checkInShipments, checkIn.Id);
+                }
+                dbTransaction.Commit();
                 response.objParam1 = shipment;
             }
             catch (Exception e)
             {
-                if (!ShipmentExists(id))
-                {
-                    response.message = "Shipment doesn't exist.";
-                }
-                else
-                {
-                    response.message = e.InnerException.InnerException.Message.ToString();
-                }
+                response.status = "FAILURE";
+                response.message = e.Message.ToString();
             }
-
+            if (response.status != "FAILURE")
+                response.objParam1 = shipment;
+            else
+                dbTransaction.Rollback();
+            dbTransaction.Dispose();
             return Ok(response);
         }
 
@@ -361,57 +369,6 @@ namespace Kunzad.ApiControllers
         private bool ShipmentExists(int id)
         {
             return db.Shipments.Count(e => e.Id == id) > 0;
-        }
-
-        public void checkInShipment(CheckIn checkIn, string dummy)
-        {
-            //Save Parent Shipment
-            if (checkIn.CheckInTypeId == 4) //CheckInTypeId for POD is 4
-            {
-                //get seaFreightId
-                //var getSeaFreight = db.SeaFreightShipments.Where(sfs => sfs.ShipmentId == checkIn.ShipmentId).ToArray();
-                var getShipment = db.Shipments.Find(checkIn.CheckInSourceId);
-                if (getShipment == null)
-                {
-                    response.message = "Please cargo load shipment in Sea Freight module under Transport.";
-                    response.status = "FAILURE";
-                    return;
-                }
-                //var checkInSourceId = getShipment.Id;
-                checkIn.CheckInDate = DateTime.Now.Date;
-                checkIn.CheckInTime = DateTime.Now.TimeOfDay;
-                checkIn.Remarks = "Delivered to Consignee";
-
-                //Save parent shipment
-                db.CheckIns.Add(checkIn);
-                db.SaveChanges();
-                var lastCheckInId = checkIn.Id;
-
-                //Update parent shipment last check-in id
-                var shipment = db.Shipments.Find(checkIn.CheckInSourceId);
-                var shipmentEdited = shipment;
-                shipment.LastCheckInId = lastCheckInId;
-                //shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
-                db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
-                db.Entry(shipment).State = EntityState.Modified;
-                db.SaveChanges();
-            }
-
-            ////Save Child  Shipment
-            //var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId).Count();
-            //if (checkIfParent > 0)
-            //{
-            //    CheckIn childShipmentForCheckIn = new CheckIn();
-            //    childShipmentForCheckIn = checkIn;
-            //    //Get child shipments in consolidation
-            //    var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkIn.ShipmentId);
-
-            //    foreach (Shipment child in childShipments)
-            //    {
-            //        childShipmentForCheckIn.ShipmentId = child.Id;
-            //        checkInShipment(childShipmentForCheckIn, "Dummy");
-            //    }
-            //}
         }
 
         public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, ref Shipment[] shipments)
@@ -516,6 +473,44 @@ namespace Kunzad.ApiControllers
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(AppSettingsGet.PageSize).AsQueryable().AsNoTracking().ToArray();
             shipments = filteredShipments;
+        }
+
+        public void iterateShipment(CheckInShipment checkInShipment, int checkInId)
+        {
+
+            //Save parent shipment
+            if (!checkInShipment.IsDisplay)
+            {
+                checkInShipment.CheckInId = checkInId;
+                db.CheckInShipments.Add(checkInShipment);
+                db.SaveChanges();
+            }
+            //Update parent shipment last check-in id
+            var shipment = db.Shipments.Find(checkInShipment.ShipmentId);
+            var shipmentEdited = shipment;
+            shipment.LastCheckInId = checkInId;
+            shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+            db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+            db.Entry(shipment).State = EntityState.Modified;
+            db.SaveChanges();
+
+            //Save Child  Shipment
+            var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId).Count();
+            if (checkIfParent > 0)
+            {
+                CheckInShipment childShipmentForCheckIn = new CheckInShipment();
+
+                //Get child shipments
+                var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId);
+                childShipmentForCheckIn = checkInShipment;
+                foreach (Shipment child in childShipments)
+                {
+                    childShipmentForCheckIn.ShipmentId = child.Id;
+                    childShipmentForCheckIn.CheckInId = checkInId;
+                    childShipmentForCheckIn.IsDisplay = false;
+                    iterateShipment(childShipmentForCheckIn, checkInId);
+                }
+            }
         }
     }
 }
