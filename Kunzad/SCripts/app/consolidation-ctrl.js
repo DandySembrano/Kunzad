@@ -18,10 +18,6 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
     }
      
     $scope.withDirective = true; //this will remove the create and pagination buttons in list tab
-    $scope.consolidationGridOptions = {};
-    $scope.consolidationGridOptions.data = [];
-    $scope.consolidationShipmentGridOptions = {};
-    $scope.consolidationShipmentGridOptions.data = [];
     $scope.consolidationShipmentItem = {};
     $scope.consolidationShipmentDetail = [];
     $scope.isPrevPage = false;
@@ -140,7 +136,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
         $scope.loadDetail = function (shipmentId) {
             var spinner = new Spinner(opts).spin(spinnerTarget);
             var i = 0;
-            $http.get("/api/Consolidation?parentShipmentId=" + shipmentId + "&page=1")
+            $http.get("/api/Consolidations?parentShipmentId=" + shipmentId + "&page=1")
                 .success(function (data, status) {
                     //initialize detail shipments
                     for (var i = 0; i < data.length; i++) {
@@ -360,7 +356,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             $scope.initconsolidationSubmitDefinition = function () {
                 $scope.consolidationSubmitDefinition = {
                     "Submit": false, //By default
-                    "APIUrl": '/api/Consolidation',
+                    "APIUrl": '/api/Consolidations',
                     "Type": 'Create', //By Default
                     "DataItem": [],
                     "Index": -1 //By Default
@@ -368,7 +364,6 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             };
 
             $scope.consolidationOtheractions = function (action) {
-                console.log(action);
                 switch (action) {
                     case "FormCreate":
                         $scope.submitButtonText = "Submit";
@@ -394,7 +389,6 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                         return true;
                     case "PostEditAction":
                         //If user choose edit-menu in listing
-                        console.log($scope.consolidationDataDefinition.DataList);
                         if (angular.isDefined($scope.consolidationDataDefinition.DataItem.Id) && $scope.consolidationItem.Id != $scope.consolidationDataDefinition.DataItem.Id) {
                             $scope.consolidationDetailDataDefinition.DataList.splice(0, $scope.consolidationDetailDataDefinition.DataList.length);
                             $scope.consolidationItem = angular.copy($scope.consolidationDataDefinition.DataItem);
@@ -489,19 +483,20 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                         }
                         return true;
                     case "PreSubmit":
-                        //initialize master holder
-                        $scope.consolidationShipmentItem = angular.copy($scope.consolidationItem);
-                                                
                         if (!$scope.validconsolidationDetail())
                             return false;
 
+                        //initialize holder
+                        $scope.consolidationShipmentItem = angular.copy($scope.consolidationItem);
+
                         $scope.consolidationSubmitDefinition.DataItem.push($scope.consolidationItem);
-                        return true;
-                    case "PreSave":
+
                         for (var i = 0; i < $scope.consolidationDetailDataDefinition.DataList.length; i++) {
                             $scope.consolidationSubmitDefinition.DataItem.push($scope.consolidationDetailDataDefinition.DataList[i]);
                         }
 
+                        return true;
+                    case "PreSave":
                         for (var i = 0; i < $scope.consolidationSubmitDefinition.DataItem.length; i++)
                         {
                             if (i == 0) {
@@ -524,24 +519,22 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                             delete $scope.consolidationSubmitDefinition.DataItem[i].ShipmentType;
                             delete $scope.consolidationSubmitDefinition.DataItem[i].Customer;
                         }
+                        
                         //$scope.consolidationDetailDataDefinition.DataList.splice(0, $scope.consolidationDetailDataDefinition.DataList.length);
-
                         return true;
                     case "PostSave":
                         //Initialize Consolidation Master/Detail
                         $scope.consolidationItem = angular.copy($scope.consolidationShipmentItem);
                         $scope.consolidationItem.Id = $scope.consolidationSubmitDefinition.DataItem[0].Id;
+                        $scope.controlNoHolder = $scope.consolidationItem.Id;
                         $scope.consolidationItem.Id = $rootScope.formatControlNo('', 9, $scope.consolidationItem.Id);
-                        console.log($scope.consolidationSubmitDefinition.DataItem[0]);
-
-                        $scope.consolidationDetailDataDefinition.DataList = angular.copy($scope.consolidationShipmentDetail);
+                        
+                        //$scope.consolidationDetailDataDefinition.DataList = angular.copy($scope.consolidationShipmentDetail);
                         for (var i = 0 ; i < $scope.consolidationShipmentDetail.length; i++) {
                             $scope.indexHolder = i;
+                            $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder] = $scope.consolidationShipmentDetail[$scope.indexHolder];
                             $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].ParentShipmentId = $scope.consolidationItem.Id;
                             $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].IsConsolidated = true;
-
-                            console.log($scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder]);
-                            console.log($scope.consolidationShipmentDetail[$scope.indexHolder]);
                         }
                         $scope.viewOnly = true;
                         $scope.consolidationSubmitDefinition.Type = "Edit";
@@ -568,7 +561,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                             delete $scope.consolidationSubmitDefinition.DataItem[i].ShipmentType;
                         }
 
-                        $http.put('/api/Consolidation/' + $scope.controlNoHolder, $scope.consolidationSubmitDefinition.DataItem)
+                        $http.put('/api/Consolidations/' + $scope.controlNoHolder, $scope.consolidationSubmitDefinition.DataItem)
                             .success(function (data, status, headers) {
                                 $scope.enableSave = false;
                                 $scope.viewOnly = true;
@@ -582,7 +575,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     case "PreDelete":
                         $scope.selectedTab = $scope.tabPages[0];
 
-                        $http.delete('/api/Consolidation/' + $scope.controlNoHolder)
+                        $http.delete('/api/Consolidations/' + $scope.controlNoHolder)
                             .success(function (data, status, headers) {
                                 $scope.consolidationItem.TrasportStatusId = $scope.consolidationSubmitDefinition.DataItem.TrasportStatusId;
                                 if ($scope.consolidationSubmitDefinition.Index != -1)
@@ -688,7 +681,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     "SetSourceToNull": false
                 }
                 if ($scope.currentUrl == '/consolidation/vanstuff') {
-                    $scope.consolidationFilteringDefinition.Url = ($scope.consolidationDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&consolidationType=20&param1=' + $scope.consolidationDataDefinition.DataList.length);
+                    $scope.consolidationFilteringDefinition.Url = ($scope.consolidationDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&consolidationType=20&param1=' + $scope.consolidationDataDefinition.DataList.length);
                     $scope.consolidationFilteringDefinition.Source = [
                                                                         { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                                                                         { "Index": 1, "Label": "Van Number", "Column": "ConsolidationNo1", "Values": [], "From": null, "To": null, "Type": "Default" },
@@ -699,7 +692,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                                                                      ];
                 }
                 else{
-                    $scope.consolidationFilteringDefinition.Url = ($scope.consolidationDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&consolidationType=10&param1=' + $scope.consolidationDataDefinition.DataList.length);
+                    $scope.consolidationFilteringDefinition.Url = ($scope.consolidationDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&consolidationType=10&param1=' + $scope.consolidationDataDefinition.DataList.length);
                     $scope.consolidationFilteringDefinition.Source = [
                                                                         { "Index": 0, "Label": "Shipment No", "Column": "Id", "Values": [], "From": null, "To": null, "Type": "Default" },
                                                                         { "Index": 1, "Label": "Docket Number", "Column": "ConsolidationNo1", "Values": [], "From": null, "To": null, "Type": "Default" },
@@ -736,33 +729,33 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                         if ($scope.currentUrl == '/consolidation/vanstuff'){
                             if ($scope.consolidationDataDefinition.EnablePagination == true && $scope.consolidationFilteringDefinition.ClearData) {
                                 $scope.consolidationDataDefinition.CurrentPage = 1;
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage;
                             }
                             else if ($scope.consolidationDataDefinition.EnablePagination == true) {
                                 $scope.consolidationDataDefinition.DataList = [];
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=paginate&consolidationType=20&param1=' + $scope.consolidationDataDefinition.CurrentPage;
                             }
                             //Scroll
                             else {
                                 if ($scope.consolidationFilteringDefinition.ClearData)
                                     $scope.consolidationDataDefinition.DataList = [];
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=scroll&consolidationType=20&param1=' + $scope.consolidationDataDefinition.DataList.length;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=scroll&consolidationType=20&param1=' + $scope.consolidationDataDefinition.DataList.length;
                             }
                         }
                         else{
                             if ($scope.consolidationDataDefinition.EnablePagination == true && $scope.consolidationFilteringDefinition.ClearData) {
                                 $scope.consolidationDataDefinition.CurrentPage = 1;
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage;
                             }
                             else if ($scope.consolidationDataDefinition.EnablePagination == true) {
                                 $scope.consolidationDataDefinition.DataList = [];
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=paginate&consolidationType=10&param1=' + $scope.consolidationDataDefinition.CurrentPage;
                             }
                             //Scroll
                             else {
                                 if ($scope.consolidationFilteringDefinition.ClearData)
                                     $scope.consolidationDataDefinition.DataList = [];
-                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidation?type=scroll&consolidationType=10&param1=' + $scope.consolidationDataDefinition.DataList.length;
+                                $scope.consolidationFilteringDefinition.Url = 'api/Consolidations?type=scroll&consolidationType=10&param1=' + $scope.consolidationDataDefinition.DataList.length;
                             }
                         }
 
@@ -795,8 +788,6 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
                         if ($scope.consolidationToggle == true)
                             $scope.hideconsolidationToggle();
-
-                       
 
                         return true;
                     case 'GetBusinessList':
@@ -887,6 +878,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                             //    $scope.focusOnTop();
                             //    return false;
                             //}
+                            $scope.consolidationDetailDataDefinition.DataList.push($scope.consolidationDetailItem);
                             $scope.consolidationDetailOtheractions("Shipment No");
                             return true;
                         }
@@ -1272,7 +1264,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
         $scope.initShipmentFilteringParameters = function () {
             $scope.initShipmentFilteringDefinition = function () {
                 $scope.shipmentFilteringDefinition = {
-                    "Url": null,//($scope.currentUrl == '/consolidation/vanstuff' ? ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length) : ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length)),
+                    "Url": null,//($scope.currentUrl == '/consolidation/vanstuff' ? ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length) : ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length)),
                     "DataList": [], //Contains the data retrieved based on the criteria
                     "DataItem1": $scope.DataItem1, //Contains the parameter value index 
                     "Source": [
@@ -1293,10 +1285,10 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                 //Url for retrieve
                 //vanstuff
                 if($scope.currentUrl =='/consolidation/vanstuff')
-                    $scope.shipmentFilteringDefinition.Url = ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length);
+                    $scope.shipmentFilteringDefinition.Url = ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length);
                 //batch
                 else
-                    $scope.shipmentFilteringDefinition.Url = ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidation?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidation?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length);
+                    $scope.shipmentFilteringDefinition.Url = ($scope.shipmentDataDefinition.EnablePagination == true ? 'api/Consolidations?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage : 'api/Consolidations?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length);
             };
 
             $scope.shipmentOtherActionsFiltering = function (action) {
@@ -1325,35 +1317,34 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                         if ($scope.currentUrl == '/consolidation/vanstuff'){
                             if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                                 $scope.shipmentDataDefinition.CurrentPage = 1;
-                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                             }
                             else if ($scope.shipmentDataDefinition.EnablePagination == true) {
                                 $scope.shipmentDataDefinition.DataList = [];
-                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=paginate&source=sea&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                             }
                             //Scroll
                             else {
                                 if ($scope.shipmentFilteringDefinition.ClearData)
                                     $scope.shipmentDataDefinition.DataList = [];
-                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length;
-                                console.log('scroll!');
+                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=scroll&source=sea&param1=' + $scope.shipmentDataDefinition.DataList.length;
                             }
                         }
                         //batch
                         else {
                             if ($scope.shipmentDataDefinition.EnablePagination == true && $scope.shipmentFilteringDefinition.ClearData) {
                                 $scope.shipmentDataDefinition.CurrentPage = 1;
-                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                             }
                             else if ($scope.shipmentDataDefinition.EnablePagination == true) {
                                 $scope.shipmentDataDefinition.DataList = [];
-                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
+                                $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=paginate&param1=' + $scope.shipmentDataDefinition.CurrentPage;
                             }
                             //Scroll
                             else {
                                 if ($scope.shipmentFilteringDefinition.ClearData)
                                     $scope.shipmentDataDefinition.DataList = [];
-                                    $scope.shipmentFilteringDefinition.Url = 'api/Consolidation?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
+                                    $scope.shipmentFilteringDefinition.Url = 'api/Consolidations?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
                             }
                         }
 
@@ -1434,54 +1425,85 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     case 'PostEditAction':
                         var found = false;
                         var sameServiceCat = true;
-                        //$scope.consolidationShipmentDetail = $scope.consolidationDetailDataDefinition.DataList;
+
                         //Check if Shipment is already in the list
                         for (var i = 0; i < $scope.consolidationDetailDataDefinition.DataList.length; i++) {
-                            
                             if ($scope.consolidationDetailDataDefinition.DataList[i].Id == $scope.shipmentDataDefinition.DataItem.Id) {
                                 found = true;
                                 i = $scope.consolidationDetailDataDefinition.DataList;
                             }
                             //else if ($scope.consolidationDetailDataDefinition.DataList[0].Service.ServiceCategoryId != $scope.shipmentDataDefinition.DataItem.Service.ServiceCategoryId) {
-                            else {
-                                var flag = $scope.checkShipment($scope.shipmentDataDefinition.DataItem.Id, $scope.consolidationDetailDataDefinition.DataList[0].Service.ServiceCategoryId);
-                                console.log(flag);
-                                if (!flag) {
-                                    sameServiceCat = false;
-                                    i = $scope.consolidationDetailDataDefinition.DataList;
-                                }
-                            }
-                                
                         }
-                        //Check if shipment is not yet in the list and not the same service category
-                        if (!found && sameServiceCat) {
+
+                        if ($scope.consolidationDetailDataDefinition.DataList.length > 1) {
+                            $scope.flag = undefined;
+                            $scope.checkShipment($scope.consolidationDetailDataDefinition.DataList[0].Id, $scope.shipmentDataDefinition.DataItem.Id);
+                            var promise = $interval(function () {
+                                if (angular.isDefined($scope.flag)) {
+                                    $interval.cancel(promise);
+                                    promise = undefined;
+
+                                    if ($scope.flag != 'SUCCESS') {
+                                        sameServiceCat = false;
+                                        i = $scope.consolidationDetailDataDefinition.DataList;
+                                    }
+
+                                    //Check if shipment is not yet in the list and not the same service category
+                                    if (!found && sameServiceCat) {
+                                        var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
+                                        var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
+                                        $scope.indexHolder = $scope.consolidationDetailDataDefinition.DataList.length - 1;
+                                        $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder] = $scope.shipmentDataDefinition.DataItem;
+                                        if (originAddress != null && deliveryAddress != null) {
+                                            $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].OriginAddress = $scope.initializeAddressField(originAddress);
+                                            $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
+                                        }
+
+                                        //initialize detail
+                                        $scope.consolidationShipmentDetail.push($scope.consolidationDetailItem);
+                                        $scope.consolidationShipmentDetail[$scope.indexHolder] = angular.copy($scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder]);
+
+                                        $scope.consolidationIsError = false;
+                                        $scope.consolidationErrorMessage = "";
+
+                                    }
+                                    else if (found) {
+                                        $scope.consolidationIsError = true;
+                                        $scope.consolidationErrorMessage = "Shipment is already in the list.";
+                                    }
+                                    else if (!sameServiceCat) {
+                                        $scope.getServiceCategory($scope.shipmentDataDefinition.DataItem.Service.ServiceCategoryId);
+                                        $scope.consolidationIsError = true;
+                                        $scope.consolidationErrorMessage = "Details must have the same service category. Please refer to the 1st Shipment's Service Category: " + $scope.consolidationDetailDataDefinition.DataList[0].Service.ServiceCategory.Name;
+                                    }
+                                }
+                            }, 100);
+                        }                   
+                        
+                        //Check if shipment is not yet in the list
+                        if (!found && $scope.consolidationDetailDataDefinition.DataList.length == 1) {
                             var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
                             var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
-                            $scope.consolidationDetailDataDefinition.DataList.push($scope.consolidationDetailItem);
                             $scope.indexHolder = $scope.consolidationDetailDataDefinition.DataList.length - 1;
                             $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder] = $scope.shipmentDataDefinition.DataItem;
                             if (originAddress != null && deliveryAddress != null) {
                                 $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].OriginAddress = $scope.initializeAddressField(originAddress);
                                 $scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder].DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
                             }
-                            
+
+                            //initialize detail
+                            $scope.consolidationShipmentDetail.push($scope.consolidationDetailItem);
+                            $scope.consolidationShipmentDetail[$scope.indexHolder] = angular.copy($scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder]);
+
                             $scope.consolidationIsError = false;
                             $scope.consolidationErrorMessage = "";
 
-                            //initialize holder
-                            $scope.consolidationShipmentDetail.push($scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder]);
-                            console.log($scope.consolidationDetailDataDefinition.DataList[$scope.indexHolder]);
-                            console.log($scope.consolidationShipmentDetail[$scope.indexHolder]);
                         }
-                        else if(found){
+                        else if (found) {
                             $scope.consolidationIsError = true;
                             $scope.consolidationErrorMessage = "Shipment is already in the list.";
                         }
-                        else if(!sameServiceCat) {
-                            $scope.getServiceCategory($scope.shipmentDataDefinition.DataItem.Service.ServiceCategoryId);
-                            $scope.consolidationIsError = true;
-                            $scope.consolidationErrorMessage = "Details must have the same service category. Please refer to the 1st Shipment's Service Category: " + $scope.consolidationDetailDataDefinition.DataList[0].Service.ServiceCategory.Name;
-                        }
+
                         $scope.closeModal();
                         return true;
                     default: return true;
@@ -1536,15 +1558,13 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             });
         };
         
-        //used in batching; after filtering 1st shipment for detail
-        $scope.checkShipment = function (shipmentId, serviceCategoryId) {
-            $http.get("/api/Consolidation?shipmentId=" + shipmentId + "&serviceCategoryId=" + serviceCategoryId + "&page=1")
-            //$http.get("/api/Consolidation?parentShipmentId=" + shipmentId  + "&page=1") -- used to verify if the url above was the only one that will get an error but after testing, this one also gets error 405.
+        //returns SUCCESS or FAILURE
+        $scope.checkShipment = function (firstShipmentId,newShipmentId) {
+            $http.get("/api/Consolidations?firstShipmentId=" + firstShipmentId + "&newShipmentId=" + newShipmentId)
             .success(function (data, status) {
-                console.log(data);
-                return data;
+                $scope.flag = data.status;
             });
-        };
+        }
 
         //don't allow input
         $('#origin,#destination').keypress(function (key) {

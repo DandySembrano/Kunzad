@@ -9,10 +9,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
+using WebAPI.OutputCache;
 
 namespace Kunzad.ApiControllers
 {
-    public class ConsolidationController : ApiController
+    public class ConsolidationsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private DbContextTransaction transaction;
@@ -20,19 +21,50 @@ namespace Kunzad.ApiControllers
         private int pageSize = AppSettingsGet.PageSize;
         private int serviceCategoryId = 0;
         private int x = 0;
+        private int[] shipmentType = { 1, 2, 6 }; //changeable
         private Boolean isConsolidated = false;
         private Boolean parent = true;
         private Boolean vanstuff = false;
 
-        
-        // GET: api/Consolidation
-        //public IQueryable<Shipment> GetShipments()
-        //{
-        //    return db.Shipments;
-        //}
+        // GET: api/Consolidations
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        public IQueryable<Shipment> GetShipments()
+        {
+            return db.Shipments;
+        }
 
-        // GET: api/Consolidation?parentShipmentId=1&page=1
-        public IHttpActionResult GetShipment(int parentShipmentId, int page)
+        // GET: /api/Consolidations?firstShipmentId=1&newShipmentId=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        public IHttpActionResult GetShipment(int firstShipmentId, string newShipmentId)
+        {
+            Shipment[] shipment = new Shipment[0];
+            int newId = Convert.ToInt32(newShipmentId);
+
+            //first shipment's info in detail
+            var firstShipment = db.Shipments
+                                .Include(shipmentChild => shipmentChild.Service)
+                                .Where(shipmentChild => shipmentChild.Id == firstShipmentId).FirstOrDefault();
+
+            serviceCategoryId = this.getFirstShipmentInfo(firstShipment.Id, firstShipment.ServiceId);
+
+            //for new shipment to be added in detail
+            var newShipment = db.Shipments
+                              .Include(s => s.Service)
+                              .Where(s => s.Id == newId).AsNoTracking().ToArray();
+
+            shipment = newShipment;
+
+            if (this.checkShipment(shipment[0], "batch"))
+                response.status = "SUCCESS";
+            else
+                response.status = "FAILURE";
+
+            return Ok(response);
+        }
+
+        //  GET: api/Consolidations?parentShipmentId=1&page=1
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        public IHttpActionResult GetShipment(int parentShipmentId, int page) 
         {
             int skip;
             if (page > 1)
@@ -63,23 +95,10 @@ namespace Kunzad.ApiControllers
             return Ok(vanStuffing);
         }
 
-        // GET: api/Consolidation?shipmentId=1&serviceCategoryId=1&page=1
-        [HttpGet]
-        public Boolean GetShipment(int shipmentId,int serviceCatId,string dummy)
-        {
-            serviceCategoryId = serviceCatId;
-
-            Shipment shipment = db.Shipments.Find(shipmentId);
-
-            if (this.checkShipment(shipment, "batch"))
-                return true;
-            else
-                return false;
-        }   
-
         //for batching
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -94,6 +113,7 @@ namespace Kunzad.ApiControllers
 
         //for vanstuffing
         [HttpGet]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -111,6 +131,7 @@ namespace Kunzad.ApiControllers
 
         //for master list
         [HttpGet]
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
         public IHttpActionResult GetShipment(string type, int consolidationType, int param1, [FromUri]List<Shipment> shipment)
         {
@@ -124,9 +145,9 @@ namespace Kunzad.ApiControllers
                 return Ok();
         }
 
-        // PUT: api/Consolidation/5
+        // PUT: api/Consolidations/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutShipment(int id,List<Shipment> shipment)
+        public IHttpActionResult PutShipment(int id, List<Shipment> shipment)
         {
             parent = true;
             vanstuff = false;
@@ -142,6 +163,8 @@ namespace Kunzad.ApiControllers
             }
             try
             {
+                transaction = db.Database.BeginTransaction();
+
                 Consolidation consolidation = new Consolidation();
                 foreach (Shipment s in shipment)
                 {
@@ -150,7 +173,7 @@ namespace Kunzad.ApiControllers
                         s.LastUpdatedDate = DateTime.Now;
 
                         var shipmentCurrentHolder = db.Shipments.Find(s.Id);
-                        
+
                         db.Entry(shipmentCurrentHolder).CurrentValues.SetValues(s);
                         db.Entry(shipmentCurrentHolder).State = EntityState.Modified;
 
@@ -161,19 +184,19 @@ namespace Kunzad.ApiControllers
 
                         //vanstuff
                         if (s.ConsolidationNo2 != null)
-                             vanstuff = true;
-                           
+                            vanstuff = true;
+
                         parent = false;
                     }
                     else
                     {
                         var currentConsolidationDetails = db.Shipments.Where(currentDetails => currentDetails.ParentShipmentId == parentShipmentId);
-                        
+
                         foreach (Shipment s1 in currentConsolidationDetails)
                         {
                             flag = false;
-                                                      
-                            if(s.Id == s1.Id)
+
+                            if (s.Id == s1.Id)
                             {
                                 flag = true;
                                 break;
@@ -206,13 +229,13 @@ namespace Kunzad.ApiControllers
 
                             consolidation.CreatedDate = DateTime.Now;
                             db.Consolidations.Add(consolidation);
-                        } 
-                        
-                        foreach(Shipment s2 in currentConsolidationDetails)
+                        }
+
+                        foreach (Shipment s2 in currentConsolidationDetails)
                         {
                             var shipmentCurrentHolder = db.Shipments.Find(s2.Id);
 
-                            if(s2.Id != s.Id)
+                            if (s2.Id != s.Id)
                             {
                                 //Shipment that is removed in Consolidation Detail
                                 var shipmentInConsolidationToBeRemoved = db.Consolidations.Where(c => c.ShipmentId == s2.Id && c.ParentShipmentId == s2.ParentShipmentId);
@@ -227,7 +250,7 @@ namespace Kunzad.ApiControllers
 
                                 db.Entry(shipmentCurrentHolder).CurrentValues.SetValues(shipmentToBeRemovedInConsolidationHolder);
                                 db.Entry(shipmentCurrentHolder).State = EntityState.Modified;
-                             }
+                            }
                         }
 
                         db.SaveChanges();
@@ -265,7 +288,7 @@ namespace Kunzad.ApiControllers
             return Ok(response);
         }
 
-        // POST: api/Consolidation
+        // POST: api/Consolidations
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult PostShipment(List<Shipment> shipment)
         {
@@ -273,7 +296,7 @@ namespace Kunzad.ApiControllers
             vanstuff = true;
 
             int parentShipmentId = 0;
-            
+
             response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
@@ -282,8 +305,10 @@ namespace Kunzad.ApiControllers
             }
             try
             {
+                transaction = db.Database.BeginTransaction();
+
                 Consolidation consolidation = new Consolidation();
-                foreach(Shipment s in shipment)
+                foreach (Shipment s in shipment)
                 {
                     if (parent == true)
                     {
@@ -305,7 +330,7 @@ namespace Kunzad.ApiControllers
                         consolidation.ParentShipmentId = 0;
 
                         //vanstuff
-                        if(s.ConsolidationNo2 != null)
+                        if (s.ConsolidationNo2 != null)
                             consolidation.ConsolidationTypeId = 20;
                         //batch
                         else
@@ -338,7 +363,7 @@ namespace Kunzad.ApiControllers
                         //consolidate detail
                         consolidation.ShipmentId = s.Id;
                         consolidation.ParentShipmentId = parentShipmentId;
-                        
+
                         //vanstuff
                         if (vanstuff)
                             consolidation.ConsolidationTypeId = 20;
@@ -362,7 +387,7 @@ namespace Kunzad.ApiControllers
             {
                 response.message = e.InnerException.InnerException.Message.ToString();
                 transaction.Rollback();
-             }
+            }
             //catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
             //{
             //    Exception raise = dbEx;
@@ -384,7 +409,7 @@ namespace Kunzad.ApiControllers
             return Ok(response);
         }
 
-        // DELETE: api/Consolidation/5
+        // DELETE: api/Consolidations/5
         [ResponseType(typeof(Shipment))]
         public IHttpActionResult DeleteShipment(int id)
         {
@@ -439,7 +464,7 @@ namespace Kunzad.ApiControllers
                 db.Entry(shipment).State = EntityState.Modified;
 
                 db.SaveChanges();
-                
+
                 response.status = "SUCCESS";
                 response.objParam1 = shipmentEdited;
             }
@@ -507,6 +532,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => s.LastCheckInId == null ? true : (from ci in db.CheckIns where ci.Id == s.LastCheckInId select new { ci.CheckInBusinessUnitId }).FirstOrDefault().CheckInBusinessUnitId == s.BusinessUnitId)
                 .Where(s => s.LoadingStatusId == (int)Status.LoadingStatus.Open)
                 .Where(s => s.TransportStatusId != (int)Status.TransportStatus.Cancel && s.TransportStatusId != (int)Status.TransportStatus.Close)
+                .Where(s => !shipmentType.Contains(s.ShipmentTypeId))
                 .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)
                 .Where(s => shipment.CreatedDate == null || shipment.CreatedDate == defaultDate ? true : s.CreatedDate >= shipment.CreatedDate && s.CreatedDate <= shipment1.CreatedDate)
                 .Where(s => shipment.PickupDate == null || shipment.PickupDate == defaultDate ? true : s.PickupDate >= shipment.PickupDate && s.PickupDate <= shipment1.PickupDate)
@@ -564,6 +590,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => s.LastCheckInId == null ? true : (from ci in db.CheckIns where ci.Id == s.LastCheckInId select new { ci.CheckInBusinessUnitId }).FirstOrDefault().CheckInBusinessUnitId == s.BusinessUnitId)
                 .Where(s => s.LoadingStatusId == (int)Status.LoadingStatus.Open)
                 .Where(s => s.TransportStatusId != (int)Status.TransportStatus.Cancel && s.TransportStatusId != (int)Status.TransportStatus.Close)
+                .Where(s => shipmentType.Contains(s.ShipmentTypeId))
                 .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)
                 .Where(s => shipment.CreatedDate == null || shipment.CreatedDate == defaultDate ? true : s.CreatedDate >= shipment.CreatedDate && s.CreatedDate <= shipment1.CreatedDate)
                 .Where(s => shipment.PickupDate == null || shipment.PickupDate == defaultDate ? true : s.PickupDate >= shipment.PickupDate && s.PickupDate <= shipment1.PickupDate)
@@ -575,14 +602,14 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(AppSettingsGet.PageSize).AsQueryable().AsNoTracking().ToArray();
-            
+
             shipmentArrTemp = filteredShipments;
-            
+
             for (var i = 0; i < shipmentArrTemp.Length; i++)
             {
                 if (this.checkShipment(shipmentArrTemp[i], "vanstuff"))
                 {
-                    shipmentArrFinal = new Shipment[x+1];
+                    shipmentArrFinal = new Shipment[x + 1];
                     shipmentArrFinal[x] = shipmentArrTemp[i];
                     x++;
                 }
@@ -636,35 +663,60 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.ConsolidationNo1 == null || shipment.ConsolidationNo1 == 0 ? true : s.ConsolidationNo1 == shipment.ConsolidationNo1)
                 .Where(s => shipment.ConsolidationNo2 == null || shipment.ConsolidationNo2 == 0 ? true : s.ConsolidationNo2 == shipment.ConsolidationNo2)
                 .Where(s => shipment.Id == null ? true : (from c in db.Consolidations
-                                                          where c.ShipmentId == s.Id && c.ParentShipmentId ==0 && c.ConsolidationTypeId == consolidationType
+                                                          where c.ShipmentId == s.Id && c.ParentShipmentId == 0 && c.ConsolidationTypeId == consolidationType
                                                           select new { c.ShipmentId }).FirstOrDefault().ShipmentId == s.Id)
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
             shipments = filteredShipments;
         }
 
-        //this will be used in vanstuffing; this will check the validity of the shipments to be displayed/choosed
-        public Boolean checkShipment(Shipment shipment,String dummy)
+        //this will check the validity of the shipments to be displayed and or be choosed return true/false
+        public bool checkShipment(Shipment shipment, String dummy)
         {
+            bool check = true;
             if (shipment.Service.ServiceCategoryId == serviceCategoryId)
-                return true;
+                check = true;
             else if (shipment.ServiceId == 9)//Consolidation
             {
                 var shipmentChildHolder = db.Shipments.Include(shipmentChild => shipmentChild.Service).Where(shipmentChild => shipmentChild.ParentShipmentId == shipment.Id);
                 foreach (Shipment sChild in shipmentChildHolder)
                 {
-                    if (sChild.Service.ServiceCategoryId == serviceCategoryId)
+                    if (sChild.ServiceId == 9)//Consolidation
+                        return this.checkShipment(sChild, "xXx");
+                    else if (sChild.Service.ServiceCategoryId == serviceCategoryId)
                         continue;
-                    else if (sChild.ServiceId == 9)//Consolidation
-                        this.checkShipment(sChild, "xXx");
                     else
-                        return false;
+                        check = false;
                 }
             }
             else
-                return false;
+                check = false;
 
-            return true;
+            return check;
+        }
+
+        //this will get and check if the shipment is consolidated then return the serviceCategory Id
+        public int getFirstShipmentInfo(int shipmentId, int serviceId)
+        {
+            int serviceCatId = 0;
+            var service = db.Services.Find(serviceId);
+
+            serviceCatId = service.ServiceCategoryId;
+
+            if (serviceId == 9)//Consolidation
+            {
+                var shipmentChildHolder = db.Shipments
+                                          .Include(shipmentChild => shipmentChild.Service)
+                                          .Where(shipmentChild => shipmentChild.ParentShipmentId == shipmentId).FirstOrDefault();
+
+                if (shipmentChildHolder.ServiceId == 9)
+                    return this.getFirstShipmentInfo(shipmentChildHolder.Id, shipmentChildHolder.ServiceId);
+                else
+                    serviceCatId = shipmentChildHolder.Service.ServiceCategoryId;
+            }
+
+            return serviceCatId;
+
         }
     }
 
