@@ -7,56 +7,67 @@
 @section tab1Content{
     <div context-menu="formContextMenu()" data-target="FormMenu">
         <!--Master-->
-        <div class="alert alert-danger alert-sm" ng-show="seaFreightIsError">
-            <i class="fa fa-remove pr10" ng-click="seaFreightIsError=false;seaFreightErrorMessage=''"></i>
-            <strong>ERROR!</strong>{{" " + seaFreightErrorMessage}}
-        </div>
+        @*<div class="alert alert-danger alert-sm" ng-show="dexIsError">
+            <i class="fa fa-remove pr10" ng-click="dexIsError=false;dexErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + dexErrorMessage}}
+        </div>*@
         @*Column 1*@
 
         <form class="form-horizontal" role="form">
-            <div class="col-lg-4">
+            <div class="col-md-6">
                 <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Date</label>
+                    <label class="col-md-2 control-label small">Dex Date</label>
                     <div class="col-md-4">
-                        <input type="text"
-                               class="form-control"
-                               placeholder=""
-                               ng-model="shipmentItem.Id"
-                               ng-disabled="false">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id="dexDate"
+                                   class="form-control"
+                                   ng-disabled="viewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Time</label>
+                    <label class="col-md-2 control-label small">Dex Time</label>
                     <div class="col-md-4">
-                        <input type="text"
-                               class="form-control"
-                               placeholder=""
-                               ng-model="shipmentItem.Customer.Code"
-                               ng-disabled="false">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id="dexTime"
+                                   class="form-control"
+                                   ng-disabled="viewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Type</label>
-                    <div class="col-md-8">
-                        <input type="text"
-                               class="form-control"
-                               placeholder=""
-                               ng-model="shipmentItem.Customer.Name"
-                               ng-disabled="false">
+                    <label class="col-md-2 control-label small">Type</label>
+                    <div class="col-md-10">
+                        <select class="form-control"
+                                id="dexType"
+                                placeholder=""
+                                ng-disabled="viewOnly"
+                                ng-model="DeliveryException.DexType"
+                                ng-click="setDexType(DeliveryException.DexType)"
+                                ng-options="item.Id as item.Name for item in dexTypeList"></select>
                     </div>
                 </div>
        
                 <div class="form-group form-group-sm">
-                    <label class="col-md-3 control-label small">Remarks</label>
-                    <div class="col-md-8">
+                    <label class="col-md-2 control-label small">Remarks</label>
+                    <div class="col-md-10">
                         <textarea rows="3" style="height:auto;"
+                                  id="dexRemarks"
                                   class="form-control"
                                   placeholder=""
-                                  ng-model="shipmentItem.DeliveryAddress"
                                   ng-disabled="false"></textarea>
                     </div>
                 </div>
             </div>
+            <div class="col-md-6"></div>
         </form>
     </div>
 
@@ -64,102 +75,25 @@
     <!--Detail-->
     <div class="row">
         <div class="col-lg-12">
-            <div id="seaFreightShipmentsContainer"></div>
+            <div id="dexShipmentsContainer"></div>
         </div>
     </div>
     <!--End of Detail-->
 }
 <!-- List -->
 @section tab2Content{
-    <div style="padding:0 10px">
-        <div class="text-right toggle-hide" ng-click="hideSeaFreightToggle()" ng-show="seaFreightToggle">
+    @*<div style="padding:0 10px">
+        <div class="text-right toggle-hide" ng-click="hideDexToggle()" ng-show="dexToggle">
             <span class="fa fa-minus" title="Hide"></span>
         </div>
-        <div id="seaFreightToggle">
-            <div id="seaFreightFilterContainter" style="padding-left:10px;"></div>
+        <div id="dexToggle">
+            <div id="dexFilterContainter" style="padding-left:10px;"></div>
         </div><br>
-        <div id="seaFreightContainer"></div>
-    </div>
+        <div id="dexContainer"></div>
+    </div>*@
 }
 <!--End of List-->
-@*Directive if module has vesselvoyage input*@
 
-<!-- Business Unit List Modal -->
-<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
-            <div id="businessUnitContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Business Unit List Modal -->
-<!-- Shippingline List Modal -->
-<div id="shippingline-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shippingline List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="shippingLineFilterContainter" style="padding-left:10px;"></div>
-            <div id="shippingLineContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Shippingline List Modal -->
-<!-- Vessel List Modal -->
-<div id="vessels-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Vessel List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="vesselFilterContainter" style="padding-left:10px;"></div>
-            <div id="vesselContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Vessel List Modal -->
-<!-- Vessel Voyage List Modal -->
-<div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
-    <div class="panel">
-        <!--Modal Header-->
-        <div class="panel-heading">
-            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Vessel Voyage List</span>
-        </div>
-        <!--Modal Body-->
-        <div class="panel-body">
-            <div id="vesselVoyageFilterContainter" style="padding-left:10px;"></div>
-            <div id="vesselVoyageContainer"></div>
-        </div>
-        <!-- Panel Footer -->
-        <div class="panel-footer text-right">
-            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
-        </div>
-    </div>
-</div>
-<!--End of Vessel Voyage List Modal -->
 <!-- Shipment List Modal -->
 <div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -180,28 +114,17 @@
 </div>
 <!--End of Shipment List Modal -->
 
-<dir-vessel-voyage datadefinition="updateVesselVoyageDataDefinition" showmodal="showUpdateVesselVoyage" otheractions="otherActionsUpdateVesselVoyage(action)"></dir-vessel-voyage>
-
 @*Form Context-Menu*@
 <div class="dropdown position-fixed" id="FormMenu">
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="seaFreightOtheractions('Find')">Find</a>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="dexOtheractions('Find')">Find</a>
         </li>
         <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="seaFreightOtheractions('FormCreate')">Create</a>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="dexOtheractions('FormCreate')">Create</a>
         </li>
         <li>
             <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.Id != null && actionMode != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="seaFreightOtheractions(seafreightItem.Id != null && seaFreightSubmitDefinition.Type == 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
-        </li>
-        <li>
-            <a style="{{seafreightItem.VesselVoyage.Id != null ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="showUpdateVesselVoyage = true">Update Voyage Schedule</a>
         </li>
     </ul>
 </div>
