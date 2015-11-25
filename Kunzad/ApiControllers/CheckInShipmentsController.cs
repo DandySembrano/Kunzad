@@ -60,11 +60,10 @@ namespace Kunzad.ApiControllers
                         var getSeaFreight = db.SeaFreights.Where(sf => sf.Id == (from ci in db.CheckIns where ci.Id == masterId select ci).FirstOrDefault().CheckInSourceId).FirstOrDefault();
                         response.stringParam1 = getSeaFreight.BLNumber;
                         break;
-                    //case 2:
-                    //case 4:
-                    //    var getAirFreight = db.AirFreights.Where(sf => sf.Id == (from ci in db.CheckIns where ci.Id == masterId select ci).FirstOrDefault().CheckInSourceId).FirstOrDefault();
-                    //    response.intParam1 = getAirFreight.Id;
-                    //    break;                    
+                    case 2:
+                        var getAirFreight = db.AirFreights.Where(sf => sf.Id == (from ci in db.CheckIns where ci.Id == masterId select ci).FirstOrDefault().CheckInSourceId).FirstOrDefault();
+                        response.stringParam1 = getAirFreight.AirWaybillNumber;
+                        break;                      
                     default: break;
                 }
 

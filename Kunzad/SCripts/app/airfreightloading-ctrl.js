@@ -86,9 +86,10 @@
     //get sea freight shipments
     $scope.fetchShipment = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('/api/AirFreightShipments?wbno=' + $scope.checkInItem.CheckInSourceId)
+        $http.get('/api/AirFreightShipments?wbno=' + $scope.checkInItem.WbNo)
         .success(function (data, status) {
             if (data.status == "SUCCESS") {
+                $scope.checkInItem.CheckInSourceId = data.intParam1;
                 for (var i = 0; i < data.objParam1.length; i++) {
                     //Initialize Pickup Address
                     data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
@@ -132,6 +133,7 @@
         $http.get('/api/CheckInShipments?length=' + $scope.checkInShipmentsDataDefinition.DataList.length + '&masterId=' + id)
             .success(function (data, status) {
                 if (data.status == "SUCCESS") {
+                    $scope.checkInItem.WbNo = data.stringParam1;
                     for (var i = 0; i < data.objParam1.length; i++) {
                         //Initialize Pickup Address
                         data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
@@ -198,12 +200,12 @@
     $scope.initCheckInDataGrid = function () {
         $scope.initializeCheckInDataDefinition = function () {
             $scope.checkInDataDefinition = {
-                "Header": ['Transaction No', 'Status', 'BL Number', 'Check-In Date', 'Check-In Time', 'Business Unit', 'Remarks', 'No.'],
-                "Keys": ['Id', 'Status', 'CheckInSourceId', 'CheckInDate', 'CheckInTime', 'BusinessUnit.Name', 'Remarks'],
-                "Type": ['ControlNo', 'TransportStatus', 'Default', 'Date', 'Time', 'ProperCase', 'Default'],
-                "ColWidth": [150, 150, 150, 150, 150, 200, 400],
+                "Header": ['Transaction No', 'Status', 'Check-In Date', 'Check-In Time', 'Business Unit', 'Remarks', 'No.'],
+                "Keys": ['Id', 'Status', 'CheckInDate', 'CheckInTime', 'BusinessUnit.Name', 'Remarks'],
+                "Type": ['ControlNo', 'TransportStatus', 'Date', 'Time', 'ProperCase', 'Default'],
+                "ColWidth": [150, 150, 150, 150, 200, 400],
                 "DataList": [],
-                "RequiredFields": ['CheckInSourceId-BL Number', 'CheckInDate-Check In Date', 'CheckInTime-Check In Time', 'CheckInBusinessUnitId-Business Unit'],
+                "RequiredFields": ['CheckInSourceId-Waybill Number', 'CheckInDate-Check In Date', 'CheckInTime-Check In Time', 'CheckInBusinessUnitId-Business Unit'],
                 "CellTemplate": ["None"],
                 "RowTemplate": "Default",
                 "EnableScroll": true,
@@ -433,6 +435,7 @@
                     "Name": null
                 },
                 "CheckInSourceId": null,
+                "WbNo": null,
                 "CheckInShipment": [],
                 "Status": 10,
                 "Remarks": null
