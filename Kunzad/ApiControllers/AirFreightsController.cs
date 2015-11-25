@@ -30,32 +30,27 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-        public IHttpActionResult GetAirFreight(string type, int param1, [FromUri]List<AirFreight> pAirFreight)
+        public IHttpActionResult GetAirFreight(string type, int param1, [FromUri]List<AirFreight> airFreight)
         {
-            //AirFreight[] airfreight = new AirFreight[pageSize];
+            Object[] getAirFreights = new Object[AppSettingsGet.PageSize];
+            this.filterRecord(param1, type, airFreight.ElementAt(0), airFreight.ElementAt(1), ref getAirFreights);
 
-            ////this.filterRecord(param1, type, pAirFreight.ElementAt(0), pAirFreight.ElementAt(1), ref airfreight);
-            //if (airfreight != null)
-            //    return Ok(airfreight);
-            //else
-            //    return Ok();
-
-            /*
-                             return db.Customers
-                    .Include(c => c.CustomerGroup)
-                    .Include(c => c.Industry)
-                    .Include(c => c.CustomerAddresses.Select(e => e.CityMunicipality.StateProvince.Country))
-                    .Include(c => c.CustomerContacts.Select(d => d.Contact.ContactPhones))
-                    .OrderBy(c => c.Name).Take(AppSettingsGet.PageSize).AsNoTracking();
-             */
-
-            return Ok(db.AirFreights
-                .Include(a => a.AirLine)
-                .Include(a => a.BusinessUnit1)
-                .Include(a => a.BusinessUnit)
-                .Include(a => a.AirFreightShipments.Select(e => e.Shipment.Customer)).AsNoTracking());
+            if (getAirFreights != null)
+                return Ok(getAirFreights);
+            else
+                return Ok();
         }
+        
+        public IHttpActionResult GetAirFreight(string type, int param1, string source, [FromUri]List<AirFreight> airFreight)
+        {
+            Object[] getAirFreights = new Object[AppSettingsGet.PageSize];
+            this.filterRecordForSeaFreightArrival(param1, type, airFreight.ElementAt(0), airFreight.ElementAt(1), ref getAirFreights);
 
+            if (getAirFreights != null)
+                return Ok(getAirFreights);
+            else
+                return Ok();
+        }
         // GET: api/AirFreights/5
         [ResponseType(typeof(AirFreight))]
         public IHttpActionResult GetAirFreight(int id)
@@ -194,7 +189,7 @@ namespace Kunzad.ApiControllers
             return Ok(airFreight);
         }
 
-        protected override void Dispose(bool disposing)
+         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -208,7 +203,7 @@ namespace Kunzad.ApiControllers
             return db.AirFreights.Count(e => e.Id == id) > 0;
         }
 
-        public void filterRecord(int param1, string type, AirFreight pAirFreight, AirFreight airFreight1, ref AirFreight[] pAirFreights)
+        public void filterRecord(int param1, string type, AirFreight pAirFreight, AirFreight pAirFreight1, ref Object[] pAirFreights)
         {
             /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
             if integer value is not nullable in table equate to 0 else null*/
@@ -232,46 +227,48 @@ namespace Kunzad.ApiControllers
                          .Include(a => a.BusinessUnit)
                          .Include(a => a.AirFreightShipments)
                          .Where(a => pAirFreight.Id == null || pAirFreight.Id == 0 ? true : a.Id == pAirFreight.Id)
-                //.Where(a => pAirFreight.AirLineId == null || pAirFreight.AirLineId == 0 ? true : a.AirLineId == pAirFreight.AirLineId)
-                //.Where(a => pAirFreight.AirWaybillNumber == null || pAirFreight.AirWaybillNumber == null ? true : a.AirWaybillNumber == pAirFreight.AirWaybillNumber)
-                          .OrderBy(a => a.Id)
+                         .Where(a => pAirFreight.OriginBusinessUnitId == null || pAirFreight.OriginBusinessUnitId == 0 ? true : a.OriginBusinessUnitId == pAirFreight.OriginBusinessUnitId)
+                         .Where(a => pAirFreight.DestinationBusinessUnitId == null || pAirFreight.DestinationBusinessUnitId == 0 ? true : a.DestinationBusinessUnitId == pAirFreight.DestinationBusinessUnitId)
+                         .Where(a => pAirFreight.DepartureDate == null || pAirFreight.DepartureDate == defaultDate ? true : a.DepartureDate >= pAirFreight.DepartureDate && a.DepartureDate <= pAirFreight.DepartureDate)
+                         .Where(a => pAirFreight.ArrivalDate == null || pAirFreight.ArrivalDate == defaultDate ? true : a.ArrivalDate >= pAirFreight.ArrivalDate && a.ArrivalDate <= pAirFreight.ArrivalDate)
+                         .OrderBy(a => a.Id)
                          .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
 
             pAirFreights = filteredAirFreights;
-
-
-            /*
-                  var filteredShipments = db.Shipments
-                .Include(s => s.Address.CityMunicipality.StateProvince)
-                .Include(s => s.Address1)
-                .Include(s => s.Address1.CityMunicipality.StateProvince)
-                .Include(s => s.BusinessUnit)
-                .Include(s => s.BusinessUnit1)
-                .Include(s => s.Service)
-                .Include(s => s.ShipmentType)
-                .Include(s => s.Customer)
-                .Include(s => s.Customer.CustomerAddresses)
-                .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
-                .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
-                .Include(s => s.Customer.CustomerContacts)
-                .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
-                .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)
-                .Where(s => shipment.CreatedDate == null || shipment.CreatedDate == defaultDate ? true : s.CreatedDate >= shipment.CreatedDate && s.CreatedDate <= shipment1.CreatedDate)
-                .Where(s => shipment.PickupDate == null || shipment.PickupDate == defaultDate ? true : s.PickupDate >= shipment.PickupDate && s.PickupDate <= shipment1.PickupDate)
-                .Where(s => shipment.BusinessUnitId == null || shipment.BusinessUnitId == 0 ? true : s.BusinessUnitId == shipment.BusinessUnitId)
-                .Where(s => shipment.CustomerId == null || shipment.CustomerId == 0 ? true : s.CustomerId == shipment.CustomerId)
-                .Where(s => shipment.ServiceId == null || shipment.ServiceId == 0 ? true : s.ServiceId == shipment.ServiceId)
-                .Where(s => shipment.ShipmentTypeId == null || shipment.ShipmentTypeId == 0 ? true : s.ShipmentTypeId == shipment.ShipmentTypeId)
-                .Where(s => shipment.PickUpBussinessUnitId == null || shipment.PickUpBussinessUnitId == 0 ? true : s.PickUpBussinessUnitId == shipment.PickUpBussinessUnitId)
-                .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
-                .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
-                .OrderBy(s => s.Id)
-                .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
-            shipments = filteredShipments;
-             */
         }
+        public void filterRecordForSeaFreightArrival(int param1, string type, AirFreight pAirFreight, AirFreight pAirFreight1, ref Object[] pAirFreights)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
 
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+
+            var filteredAirFreights = db.AirFreights
+                         .Include(a => a.AirLine)
+                         .Include(a => a.BusinessUnit1)
+                         .Include(a => a.BusinessUnit)
+                         .Include(a => a.AirFreightShipments)
+                         .Where(a => pAirFreight.Id == null || pAirFreight.Id == 0 ? true : a.Id == pAirFreight.Id)
+                         .Where(a => pAirFreight.OriginBusinessUnitId == null || pAirFreight.OriginBusinessUnitId == 0 ? true : a.OriginBusinessUnitId == pAirFreight.OriginBusinessUnitId)
+                         .Where(a => pAirFreight.DestinationBusinessUnitId == null || pAirFreight.DestinationBusinessUnitId == 0 ? true : a.DestinationBusinessUnitId == pAirFreight.DestinationBusinessUnitId)
+                         .Where(a => pAirFreight.DepartureDate == null || pAirFreight.DepartureDate == defaultDate ? true : a.DepartureDate >= pAirFreight.DepartureDate && a.DepartureDate <= pAirFreight.DepartureDate)
+                         .Where(a => a.ArrivalDate == null)
+                         .OrderBy(a => a.Id)
+                         .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
+
+            pAirFreights = filteredAirFreights;
+        }
         public void filterRecord(int param1, string type, AirFreight airfreight, AirFreight shipment1, int serviceCategoryId, ref AirFreight[] airfreights)
         {
 

@@ -458,12 +458,19 @@
                     alert("Successfully Saved.");
                     return true;
                 case "PreUpdate":
+                    var remarks = "Arrived at " + $scope.checkInSubmitDefinition.DataItem.BusinessUnit.Name + " on " + $scope.checkInSubmitDefinition.DataItem.CheckInDate + " " + $scope.checkInSubmitDefinition.DataItem.CheckInTime + " \n \n";
+                    var userRemarks = $scope.checkInSubmitDefinition.DataItem.Remarks;
+
+                    //Format Remarks
+                    $scope.checkInSubmitDefinition.DataItem.Remarks = remarks + userRemarks;
+
                     delete $scope.checkInSubmitDefinition.DataItem.BusinessUnit;
                     delete $scope.checkInSubmitDefinition.DataItem.CheckInType;
                     return true;
                 case "PostUpdate":
                     $scope.enableSave = false;
                     $scope.viewOnly = true;
+                    $scope.checkInItem.Remarks = $scope.checkInSubmitDefinition.DataItem.Remarks;
                     alert("Successfully Updated.");
                     return true;
                 case "PreDelete":
@@ -804,12 +811,12 @@
 
     //function that will be invoked during compiling datagrid to DOM
     $scope.compileCheckInShipmentsDataGrid = function () {
-        var html = '<dir-data-grid3 datadefinition      = "checkInShipmentsDataDefinition"' +
+        var html = '<dir-data-grid2 datadefinition      = "checkInShipmentsDataDefinition"' +
                                     'submitdefinition   = "checkInShipmentsSubmitDefinition"' +
                                     'otheractions       = "checkInShipmentsOtheractions(action)"' +
                                     'resetdata          = "checkInShipmentsResetData()"' +
                                     'showformerror      = "checkInShipmentsShowFormError(error)">' +
-                    '</dir-data-grid3>';
+                    '</dir-data-grid2>';
         $content = angular.element(document.querySelector('#checkInShipmentsContainer')).html(html);
         $compile($content)($scope);
     };

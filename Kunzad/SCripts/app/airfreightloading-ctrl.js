@@ -285,7 +285,7 @@
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Edit";
                     }
-
+                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     if ($scope.checkInItem.Status == 10)
                         $scope.viewOnly = false;
                     else
@@ -352,6 +352,7 @@
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Close";
                     }
+                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     $scope.enableSave = true;
                     return true;
                 case "PreSubmit":

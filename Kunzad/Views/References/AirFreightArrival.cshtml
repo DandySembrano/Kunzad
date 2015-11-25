@@ -76,17 +76,15 @@
                             </div>
                         </div>
                     </div>
-                    @*Check-In Source*@
+                    @*Booking Remarks*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Waybill Number</label>
-                        <div class="col-md-5">
-                            <input type="text"
-                                   class="form-control"
-                                   placeholder="Press enter after typing..."
-                                   ng-model="checkInItem.CheckInSourceId"
-                                   ng-disabled="checkInItem.Id == null ? false : true"
-                                   ng-enter="fetchShipment()"
-                                   ng-change="removeCheckInShipment()">
+                        <label class="col-md-3 control-label small">Remarks</label>
+                        <div class="col-md-8">
+                            <textarea rows="4" style="height:auto;"
+                                      class="form-control"
+                                      placeholder=""
+                                      ng-model="checkInItem.Remarks"
+                                      ng-disabled="viewOnly"></textarea>
                         </div>
                     </div>
                 </div>
@@ -101,32 +99,55 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Business Unit*@
+                    @*Origin Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-5 control-label small">Business Unit</label>
+                        <label class="col-md-5 control-label small">Origin</label>
                         <div class="col-md-7">
                             <div class="input-group date">
-                                <input id="businessUnit"
+                                <input id="originBusinessUnit"
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="checkInItem.BusinessUnit.Name"
-                                       ng-disabled="viewOnly">
-                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="showBusinessUnit()">
+                                       ng-model="checkInItem.BusinessUnit1.Name"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="isOriginBusinessUnit = true; checkInItem.Id == null ? showBusinessUnit() : ''">
                                     <span class=" glyphicon glyphicon-search"></span>
                                 </span>
                             </div>
                         </div>
                     </div>
-                    @*Booking Remarks*@
+                    @*Destination Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-5 control-label small">Remarks</label>
+                        <label class="col-md-5 control-label small">Business Unit</label>
                         <div class="col-md-7">
-                            <textarea rows="4" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="checkInItem.Remarks"
-                                      ng-disabled="viewOnly"></textarea>
+                            <div class="input-group date">
+                                <input id="destinationBusinessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="checkInItem.BusinessUnit.Name"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="isOriginBusinessUnit = false; checkInItem.Id == null ? showBusinessUnit() : ''">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Air Freight*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Air Freight No</label>
+                        <div class="col-md-7">
+                            <div class="input-group date">
+                                <input id="checkInSourceId"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="checkInItem.CheckInSourceId"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" title="Select Air Freight" ng-click="checkInItem.Id == null ? showAirFreight() : ''">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,6 +162,7 @@
             </div>
         </div>
         <!--End of Detail-->
+
     </div>
 }
 
@@ -176,6 +198,7 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
+
 <!-- BusinessUnit List Modal -->
 <div id="businessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -195,3 +218,23 @@
     </div>
 </div>
 <!--End of BusinessUnit List Modal -->
+
+<!-- AirFreight List Modal -->
+<div id="airFreight-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Air Freight List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="airFreightFilterContainter" style="padding-left:10px;"></div>
+            <div id="airFreightContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of AirFreight List Modal -->

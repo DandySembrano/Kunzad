@@ -70,6 +70,54 @@ namespace Kunzad.ApiControllers
             return Ok(response);
         }
 
+        // GET: api/AirFreightShipments?airFreightId=1
+        [ResponseType(typeof(AirFreightShipment))]
+        public IHttpActionResult GetAirFreightShipment(int airFreightId)
+        {
+            response.status = "FAILURE";
+            try
+            {
+                var airFreightShipment = db.AirFreightShipments
+                                        .Include(afs => afs.Shipment)
+                                        .Include(afs => afs.Shipment.Address.CityMunicipality.StateProvince)
+                                        .Include(afs => afs.Shipment.Address1)
+                                        .Include(afs => afs.Shipment.Address1.CityMunicipality.StateProvince)
+                                        .Include(afs => afs.Shipment.BusinessUnit)
+                                        .Include(afs => afs.Shipment.BusinessUnit1)
+                                        .Include(afs => afs.Shipment.Service)
+                                        .Include(afs => afs.Shipment.ShipmentType)
+                                        .Include(afs => afs.Shipment.Customer)
+                                        .Include(afs => afs.Shipment.Customer.CustomerAddresses)
+                                        .Include(afs => afs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                                        .Include(afs => afs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                                        .Include(afs => afs.Shipment.Customer.CustomerContacts)
+                                        .Include(afs => afs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
+                                        .Include(afs => afs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                                        .Where(afs => afs.AirFreightId == airFreightId)
+                                        .AsNoTracking().ToArray();
+
+                if (airFreightShipment.Length == 0)
+                    response.message = "Waybill number not found.";
+                else
+                {
+                    CheckInShipment[] checkInShipments = new CheckInShipment[airFreightShipment.Length];
+                    for (int i = 0; i < checkInShipments.Length; i++)
+                    {
+                        checkInShipments[i] = new CheckInShipment();
+                        checkInShipments[i].ShipmentId = airFreightShipment[i].Shipment.Id;
+                        checkInShipments[i].Shipment = airFreightShipment[i].Shipment;
+                    }
+                    response.status = "SUCCESS";
+                    response.objParam1 = checkInShipments;
+                }
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
+        }
+
         // PUT: api/AirFreightShipments/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutAirFreightShipment(int id, AirFreightShipment airFreightShipment)
