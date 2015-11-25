@@ -15,6 +15,8 @@ namespace Kunzad.ApiControllers
     public class DeliveryExceptionsBatchingController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
+        private DbContextTransaction dbTransaction;
+        private Response response = new Response();
 
         // GET: api/DeliveryExceptionsBatching
         public IQueryable<DeliveryException> GetDeliveryExceptions()
@@ -74,12 +76,36 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(DeliveryException))]
         public IHttpActionResult PostDeliveryException(List<DeliveryException> deliveryException)
         {
+            dbTransaction = db.Database.BeginTransaction();
             foreach (DeliveryException de in deliveryException)
             {
                 de.CreatedDate = DateTime.Now;
                 db.DeliveryExceptions.Add(de);
+                db.SaveChanges();
+
+                CheckIn checkIn = new CheckIn();
+                CheckInShipment checkInShipment = new CheckInShipment();
+                Shipment shipment = db.Shipments.Find(de.ShipmentId);
+
+                checkIn.CheckInDate = DateTime.Now;
+                checkIn.CheckInTime = DateTime.Now.TimeOfDay;
+                checkIn.CheckInTypeId = 6;
+                checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
+                checkIn.CheckInSourceId = de.Id.ToString();
+                checkIn.Remarks = "Delivery Exception";
+                //Initialize check in  checkin shipment
+                checkInShipment.ShipmentId = shipment.Id;
+                checkInShipment.IsDisplay = true;
+
+                db.CheckIns.Add(checkIn);
+                checkIn.CheckInShipments.Add(checkInShipment);
+                db.SaveChanges();
+
+                iterateShipment(checkInShipment, checkIn.Id);
+
             }
-            db.SaveChanges();
+            
+            dbTransaction.Commit();
 
             return Ok();
         }
@@ -98,6 +124,44 @@ namespace Kunzad.ApiControllers
             db.SaveChanges();
 
             return Ok(deliveryException);
+        }
+
+        public void iterateShipment(CheckInShipment checkInShipment, int checkInId)
+        {
+
+            //Save parent shipment
+            if (!checkInShipment.IsDisplay)
+            {
+                checkInShipment.CheckInId = checkInId;
+                db.CheckInShipments.Add(checkInShipment);
+                db.SaveChanges();
+            }
+            //Update parent shipment last check-in id
+            var shipment = db.Shipments.Find(checkInShipment.ShipmentId);
+            var shipmentEdited = shipment;
+            shipment.LastCheckInId = checkInId;
+            shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+            db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
+            db.Entry(shipment).State = EntityState.Modified;
+            db.SaveChanges();
+
+            //Save Child  Shipment
+            var checkIfParent = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId).Count();
+            if (checkIfParent > 0)
+            {
+                CheckInShipment childShipmentForCheckIn = new CheckInShipment();
+
+                //Get child shipments
+                var childShipments = db.Shipments.Where(s => s.ParentShipmentId == checkInShipment.ShipmentId);
+                childShipmentForCheckIn = checkInShipment;
+                foreach (Shipment child in childShipments)
+                {
+                    childShipmentForCheckIn.ShipmentId = child.Id;
+                    childShipmentForCheckIn.CheckInId = checkInId;
+                    childShipmentForCheckIn.IsDisplay = false;
+                    iterateShipment(childShipmentForCheckIn, checkInId);
+                }
+            }
         }
 
         protected override void Dispose(bool disposing)
