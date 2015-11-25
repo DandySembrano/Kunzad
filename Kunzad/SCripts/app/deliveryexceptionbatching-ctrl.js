@@ -54,7 +54,7 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
             "DexDate": null,
             "DexTime": null,
             "DexRemarks": null,
-            "DexType": null
+            "DexTypeId": null
         }]
     }
 
@@ -66,17 +66,6 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
             }
         }
     }
-
-    //Initialize service type
-    $scope.setDexType = function (id) {
-        for (var i = 0; i < $scope.dexTypeList.length; i++) {
-            if (id == $scope.dexTypeList[i].Id) {
-                $scope.selectedDexTypeId = $scope.dexTypeList[i];
-                console.log($scope.selectedDexTypeId);
-                return true;
-            }
-        }
-    };
 
     //=================================================DEX SHIPMENT DATAGRID=================================================
     //Load dexShipments datagrid for compiling
@@ -174,10 +163,9 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
                         $scope.DeliveryException[i].DexDate = $("#dexDate").val();
                         $scope.DeliveryException[i].DexTime = $("#dexTime").val();
                         $scope.DeliveryException[i].DexRemarks = $("#dexRemarks").val();
-                        $scope.DeliveryException[i].DexType = $("#dexType").val();
+                        $scope.DeliveryException[i].DexTypeId = $scope.DeliveryException.DexType;
                     }
                     $scope.dexShipmentsSubmitDefinition.DataItem = angular.copy($scope.DeliveryException);
-                    console.log();
                     alert("Delivery Exception successfully saved.");
                     $scope.submitButtonText = "Submit";
                     return true;
