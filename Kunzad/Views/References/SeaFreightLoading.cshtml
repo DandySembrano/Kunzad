@@ -83,23 +83,12 @@
                             <input type="text"
                                    class="form-control"
                                    placeholder="Press enter after typing..."
-                                   ng-model="checkInItem.CheckInSourceId"
+                                   ng-model="checkInItem.BLNo"
                                    ng-disabled="checkInItem.Id == null ? false : true"
                                    ng-enter="fetchShipment()"
                                    ng-change="removeCheckInShipment()">
                         </div>
                     </div>
-                    @*Check-In Type*@
-                    @*<div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">BL Number</label>
-                        <div class="col-md-4">
-                            <select class="form-control"
-                                    placeholder=""
-                                    ng-disabled="viewOnly"
-                                    ng-model="checkInItem.CheckInTypeId"
-                                    ng-options="item.Id as item.Name for item in checkInTypeList"></select>
-                        </div>
-                    </div>*@
                 </div>
                 <div class="col-lg-6">
                     @*Status*@

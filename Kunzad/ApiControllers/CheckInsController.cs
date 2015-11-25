@@ -41,7 +41,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetCheckIn(string type, int param1, [FromUri]List<CheckIn> checkIn)
         {
             Object[] GetCheckIns = new Object[AppSettingsGet.PageSize];
@@ -97,6 +97,28 @@ namespace Kunzad.ApiControllers
                 response.status = "SUCCESS";
                 dbTransaction = db.Database.BeginTransaction();
                 db.CheckIns.Add(checkIn);
+
+                //Sea freight arrival
+                if (checkIn.CheckInTypeId == 3)
+                {
+                    var voyage = db.VesselVoyages.Find(checkIn.CheckInSourceId);
+                    var voyageEdited = voyage;
+                    voyageEdited.ArrivalDate = checkIn.CheckInDate;
+                    voyageEdited.ArrivalTime = checkIn.CheckInTime;
+                    db.Entry(voyage).CurrentValues.SetValues(voyageEdited);
+                    db.Entry(voyage).State = EntityState.Modified;
+                }
+                //Air freight arrival
+                else if (checkIn.CheckInTypeId == 4)
+                {
+                    var airFreight = db.AirFreights.Find(checkIn.CheckInSourceId);
+                    var airFreightEdited = airFreight;
+                    airFreightEdited.ArrivalDate = checkIn.CheckInDate;
+                    airFreightEdited.ArrivalTime = checkIn.CheckInTime;
+                    db.Entry(airFreight).CurrentValues.SetValues(airFreightEdited);
+                    db.Entry(airFreight).State = EntityState.Modified;
+                }
+
                 db.SaveChanges();
 
                 foreach (CheckInShipment checkInShipments in checkIn.CheckInShipments)
