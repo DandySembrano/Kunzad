@@ -293,7 +293,8 @@
                         $scope.viewOnly = false;
                     else
                         $scope.viewOnly = true;
-                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
+                    if (angular.isDefined($scope.checkInDataDefinition.DataItem.Status))
+                        $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     $scope.enableSave = true;
                     return true;
                 case "PostDeleteAction":
@@ -358,7 +359,8 @@
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Close";
                     }
-                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
+                    if (angular.isDefined($scope.checkInDataDefinition.DataItem.Status))
+                        $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     $scope.enableSave = true;
                     return true;
                 case "PreSubmit":
@@ -393,12 +395,6 @@
                     alert("Successfully Saved.");
                     return true;
                 case "PreUpdate":
-                    var remarks = "Arrived at " + $scope.checkInSubmitDefinition.DataItem.BusinessUnit.Name + " on " + $scope.checkInSubmitDefinition.DataItem.CheckInDate + " " + $scope.checkInSubmitDefinition.DataItem.CheckInTime + " \n \n";
-                    var userRemarks = $scope.checkInSubmitDefinition.DataItem.Remarks;
-
-                    //Format Remarks
-                    $scope.checkInSubmitDefinition.DataItem.Remarks = remarks + userRemarks;
-
                     delete $scope.checkInSubmitDefinition.DataItem.BusinessUnit;
                     delete $scope.checkInSubmitDefinition.DataItem.CheckInType;
                     return true;
@@ -1022,7 +1018,6 @@
                     $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0].OriginBusinessUnitId = $scope.checkInItem.OriginBusinessUnitId;
                     $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0].DestinationBusinessUnitId = $scope.checkInItem.CheckInBusinessUnitId;
                     $scope.airFreightFilteringDefinition.DataItem1.AirFreight[0].ArrivalDate = null;
-                    console.log($scope.airFreightFilteringDefinition.DataItem1);
                     return true;
                 case 'PostFilterData':
                     /*
@@ -1202,8 +1197,6 @@
                             $scope.shipmentDataDefinition.DataList = [];
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].Id = 0;
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[1].Id = 0;
                     return true;
                 case 'PostFilterData':
                     /*

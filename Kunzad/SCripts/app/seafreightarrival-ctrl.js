@@ -318,8 +318,9 @@
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Edit";
                     }
+                    if (angular.isDefined($scope.checkInDataDefinition.DataItem.Status))
+                        $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
 
-                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     if ($scope.checkInItem.Status == 10)
                         $scope.viewOnly = false;
                     else
@@ -338,7 +339,6 @@
                         $http.get('/api/VesselVoyages?id=' + $scope.checkInDataDefinition.DataItem.CheckInSourceId)
                         .success(function (data, status) {
                             if (data.status == "SUCCESS") {
-                                console.log(data.objParam1);
                                 $scope.checkInItem.BusinessUnit1 = data.objParam1[0].BusinessUnit1;
                                 $scope.checkInItem.OriginBusinessUnitId = data.objParam1[0].OriginBusinessUnitId;
                                 $scope.checkInItem.VoyageNo = data.objParam1[0].VoyageNo;
@@ -388,7 +388,6 @@
                         $http.get('/api/VesselVoyages?id=' + $scope.checkInDataDefinition.DataItem.CheckInSourceId)
                         .success(function (data, status) {
                             if (data.status == "SUCCESS") {
-                                console.log(data.objParam1);
                                 $scope.checkInItem.BusinessUnit1 = data.objParam1[0].BusinessUnit1;
                                 $scope.checkInItem.OriginBusinessUnitId = data.objParam1[0].OriginBusinessUnitId;
                                 $scope.checkInItem.VoyageNo = data.objParam1[0].VoyageNo;
@@ -422,7 +421,8 @@
                         $scope.selectedTab = $scope.tabPages[0];
                         $scope.checkInSubmitDefinition.Type = "Close";
                     }
-                    $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
+                    if (angular.isDefined($scope.checkInDataDefinition.DataItem.Status))
+                        $scope.checkInItem.Status = $scope.checkInDataDefinition.DataItem.Status;
                     $scope.enableSave = true;
                     return true;
                 case "PreSubmit":
@@ -458,12 +458,6 @@
                     alert("Successfully Saved.");
                     return true;
                 case "PreUpdate":
-                    var remarks = "Arrived at " + $scope.checkInSubmitDefinition.DataItem.BusinessUnit.Name + " on " + $scope.checkInSubmitDefinition.DataItem.CheckInDate + " " + $scope.checkInSubmitDefinition.DataItem.CheckInTime + " \n \n";
-                    var userRemarks = $scope.checkInSubmitDefinition.DataItem.Remarks;
-
-                    //Format Remarks
-                    $scope.checkInSubmitDefinition.DataItem.Remarks = remarks + userRemarks;
-
                     delete $scope.checkInSubmitDefinition.DataItem.BusinessUnit;
                     delete $scope.checkInSubmitDefinition.DataItem.CheckInType;
                     return true;
@@ -641,7 +635,6 @@
                     }
                     //CheckInTypeId for sea freight arrival
                     $scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInTypeId = 3;
-                    console.log($scope.checkInFilteringDefinition.DataItem1);
                     //$scope.checkInFilteringDefinition.DataItem1.CheckIn[0].CheckInBusinessUnitId = $scope.checkInItem.CheckInBusinessUnitId;
                     return true;
                 case 'PostFilterData':
@@ -768,7 +761,6 @@
                         $scope.checkInErrorMessage = "Deleting of shipment is allowed for newly added shipment only.";
                         return false;
                     }
-                    console.log($scope.checkInShipmentsSubmitDefinition.Index);
                     $scope.checkInShipmentsDataDefinition.DataList.splice($scope.checkInShipmentsSubmitDefinition.Index, 1);
                     if ($scope.checkInShipmentsDataDefinition.DataList.length == 0)
                         $scope.checkInShipmentsResetData();
@@ -1286,8 +1278,6 @@
                             $scope.shipmentDataDefinition.DataList = [];
                         $scope.shipmentFilteringDefinition.Url = 'api/Shipments?type=scroll&param1=' + $scope.shipmentDataDefinition.DataList.length;
                     }
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].Id = 0;
-                    $scope.shipmentFilteringDefinition.DataItem1.Shipment[1].Id = 0;
                     return true;
                 case 'PostFilterData':
                     /*

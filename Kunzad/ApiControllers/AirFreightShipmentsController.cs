@@ -47,11 +47,12 @@ namespace Kunzad.ApiControllers
                                         .Include(afs => afs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
                                         .Where(afs => afs.AirFreight.AirWaybillNumber.ToLower().Equals(wbno.ToLower()))
                                         .AsNoTracking().ToArray();
-                response.intParam1 = db.AirFreights.Where(af => af.AirWaybillNumber == wbno).FirstOrDefault().Id;
+                
                 if (airFreightShipment.Length == 0)
                     response.message = "Waybill number not found.";
                 else
                 {
+                    response.intParam1 = db.AirFreights.Where(af => af.AirWaybillNumber == wbno).FirstOrDefault().Id;
                     CheckInShipment[] checkInShipments = new CheckInShipment[airFreightShipment.Length];
                     for (int i = 0; i < checkInShipments.Length; i++)
                     {

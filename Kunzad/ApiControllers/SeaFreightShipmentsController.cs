@@ -82,11 +82,12 @@ namespace Kunzad.ApiControllers
                                         .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
                                         .Where(sfs => sfs.SeaFreight.BLNumber.ToLower().Equals(blno.ToLower()))
                                         .AsNoTracking().ToArray();
-                response.intParam1 = db.SeaFreights.Where(sf => sf.BLNumber == blno).FirstOrDefault().Id;
+                
                 if(seaFreightShipment.Length == 0)
                     response.message = "BL number not found.";
                 else
                 {
+                    response.intParam1 = db.SeaFreights.Where(sf => sf.BLNumber == blno).FirstOrDefault().Id;
                     CheckInShipment[] checkInShipments = new CheckInShipment[seaFreightShipment.Length];
                     for (int i = 0; i < checkInShipments.Length; i++)
                     {
