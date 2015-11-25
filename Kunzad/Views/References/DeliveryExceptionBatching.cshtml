@@ -47,11 +47,9 @@
                     <label class="col-md-2 control-label small">Type</label>
                     <div class="col-md-10">
                         <select class="form-control"
-                                id="dexType"
                                 placeholder=""
                                 ng-disabled="viewOnly"
                                 ng-model="DeliveryException.DexType"
-                                ng-click="setDexType(DeliveryException.DexType)"
                                 ng-options="item.Id as item.Name for item in dexTypeList"></select>
                     </div>
                 </div>
