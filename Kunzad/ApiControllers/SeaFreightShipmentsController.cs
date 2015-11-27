@@ -82,10 +82,12 @@ namespace Kunzad.ApiControllers
                                         .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
                                         .Where(sfs => sfs.SeaFreight.BLNumber.ToLower().Equals(blno.ToLower()))
                                         .AsNoTracking().ToArray();
+                
                 if(seaFreightShipment.Length == 0)
                     response.message = "BL number not found.";
                 else
                 {
+                    response.intParam1 = db.SeaFreights.Where(sf => sf.BLNumber == blno).FirstOrDefault().Id;
                     CheckInShipment[] checkInShipments = new CheckInShipment[seaFreightShipment.Length];
                     for (int i = 0; i < checkInShipments.Length; i++)
                     {
@@ -96,6 +98,50 @@ namespace Kunzad.ApiControllers
                     response.status = "SUCCESS";
                     response.objParam1 = checkInShipments;
                 }
+            }
+            catch (Exception e) 
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
+        }
+
+        // GET: api/SeaFreightShipments?vesselVoyageId=1
+        [ResponseType(typeof(SeaFreightShipment))]
+        public IHttpActionResult GetSeaFreightShipment(int vesselVoyageId)
+        {
+            response.status = "FAILURE";
+            try
+            {
+                var seaFreightShipment = db.SeaFreightShipments
+                                        .Include(sfs => sfs.Shipment)
+                                        .Include(sfs => sfs.Shipment.Address.CityMunicipality.StateProvince)
+                                        .Include(sfs => sfs.Shipment.Address1)
+                                        .Include(sfs => sfs.Shipment.Address1.CityMunicipality.StateProvince)
+                                        .Include(sfs => sfs.Shipment.BusinessUnit)
+                                        .Include(sfs => sfs.Shipment.BusinessUnit1)
+                                        .Include(sfs => sfs.Shipment.Service)
+                                        .Include(sfs => sfs.Shipment.ShipmentType)
+                                        .Include(sfs => sfs.Shipment.Customer)
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerAddresses)
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerContacts)
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact))
+                                        .Include(sfs => sfs.Shipment.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                                        .Where(sfs => sfs.SeaFreight.VesselVoyageId == vesselVoyageId)
+                                        .AsNoTracking().ToArray();
+ 
+                CheckInShipment[] checkInShipments = new CheckInShipment[seaFreightShipment.Length];
+                for (int i = 0; i < checkInShipments.Length; i++)
+                {
+                    checkInShipments[i] = new CheckInShipment();
+                    checkInShipments[i].Id = i + 1;
+                    checkInShipments[i].ShipmentId = seaFreightShipment[i].Shipment.Id;
+                    checkInShipments[i].Shipment = seaFreightShipment[i].Shipment;
+                }
+                response.status = "SUCCESS";
+                response.objParam1 = checkInShipments;
             }
             catch (Exception e) 
             {

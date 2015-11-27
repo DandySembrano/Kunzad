@@ -77,7 +77,7 @@
                         </div>
                     </div>  
                     @*Check-In Source*@
-                    <div class="form-group form-group-sm">
+                    @*<div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">BL Number</label>
                         <div class="col-md-5">
                             <input type="text"
@@ -88,18 +88,18 @@
                                    ng-enter="fetchShipment()"
                                    ng-change="removeCheckInShipment()">
                         </div>
-                    </div>
-                    @*Check-In Type*@
-                    @*<div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">BL Number</label>
-                        <div class="col-md-4">
-                            <select class="form-control"
-                                    placeholder=""
-                                    ng-disabled="viewOnly"
-                                    ng-model="checkInItem.CheckInTypeId"
-                                    ng-options="item.Id as item.Name for item in checkInTypeList"></select>
-                        </div>
                     </div>*@
+                    @*Booking Remarks*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Remarks</label>
+                        <div class="col-md-8">
+                            <textarea rows="4" style="height:auto;"
+                                      class="form-control"
+                                      placeholder=""
+                                      ng-model="checkInItem.Remarks"
+                                      ng-disabled="viewOnly"></textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     @*Status*@
@@ -112,32 +112,55 @@
                                    ng-disabled="true">
                         </div>
                     </div>
-                    @*Business Unit*@
+                    @*Origin Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-5 control-label small">Business Unit</label>
+                        <label class="col-md-5 control-label small">Origin</label>
                         <div class="col-md-7">
                             <div class="input-group date">
-                                <input id="businessUnit"
+                                <input id="originBusinessUnit"
                                        type="text"
                                        class="form-control"
                                        placeholder=""
-                                       ng-model="checkInItem.BusinessUnit.Name"
-                                       ng-disabled="viewOnly">
-                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="showBusinessUnit()">
+                                       ng-model="checkInItem.BusinessUnit1.Name"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="isOriginBusinessUnit = true; checkInItem.Id == null ? showBusinessUnit() : ''">
                                     <span class=" glyphicon glyphicon-search"></span>
                                 </span>
                             </div>
                         </div>
                     </div>
-                    @*Booking Remarks*@
+                    @*Destination Business Unit*@
                     <div class="form-group form-group-sm">
-                        <label class="col-md-5 control-label small">Remarks</label>
+                        <label class="col-md-5 control-label small">Business Unit</label>
                         <div class="col-md-7">
-                            <textarea rows="4" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="checkInItem.Remarks"
-                                      ng-disabled="viewOnly"></textarea>
+                            <div class="input-group date">
+                                <input id="destinationBusinessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="checkInItem.BusinessUnit.Name"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="isOriginBusinessUnit = false; checkInItem.Id == null ? showBusinessUnit() : ''">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Voyage*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-5 control-label small">Voyage No</label>
+                        <div class="col-md-7">
+                            <div class="input-group date">
+                                <input id="voyageNo"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="checkInItem.VoyageNo"
+                                       ng-disabled="checkInItem.Id == null ? false : true">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" title="Select Voyage" ng-click="checkInItem.Id == null ? showVoyage() : ''">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,102 +176,6 @@
         </div>
         <!--End of Detail-->
 
-        @*<div class="row">
-            <form class="form-horizontal" role="form">
-                <div class="col-lg-6">
-                   
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Shipment No</label>
-                        <div class="col-md-4">
-                            <div class="input-group date">
-                                <input id="shipmentId"
-                                       type="text"
-                                       class="form-control"
-                                       placeholder=""
-                                       ng-model="checkInItem.ShipmentId"
-                                       ng-disabled="viewOnly">
-                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Shipment" ng-click="showShipment()">
-                                    <span class=" glyphicon glyphicon-search"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Shipper Code</label>
-                        <div class="col-md-4">
-                            <input type="text"
-                                   class="form-control"
-                                   ng-model="checkInItem.Shipment.Customer.Code"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Shipper Name</label>
-                        <div class="col-md-8">
-                            <input type="text"
-                                   class="form-control"
-                                   ng-model="checkInItem.Shipment.Customer.Name"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-3 control-label small">Cargo Description</label>
-                        <div class="col-md-8">
-                            <textarea rows="3" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="checkInItem.Shipment.Description"
-                                      ng-disabled="true"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Shipment Date</label>
-                        <div class="col-md-7">
-                            <input id="shimentdate"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="checkInItem.Shipment.CreatedDate"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Consignee Name</label>
-                        <div class="col-md-7">
-                            <input id="consigneename"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="checkInItem.Shipment.DeliverTo"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Consignee Contact No</label>
-                        <div class="col-md-7">
-                            <input id="consigneecontactno"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder=""
-                                   ng-model="checkInItem.Shipment.DeliverToContactNo"
-                                   ng-disabled="true">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-md-4 control-label small">Consignee Address</label>
-                        <div class="col-md-7">
-                            <textarea rows="3" style="height:auto;"
-                                      class="form-control"
-                                      placeholder=""
-                                      ng-model="checkInItem.Shipment.DeliveryAddress"
-                                      ng-disabled="true"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>*@
     </div>
 }
 
@@ -284,6 +211,7 @@
     </div>
 </div>
 <!--End of Shipment List Modal -->
+
 <!-- BusinessUnit List Modal -->
 <div id="businessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
     <div class="panel">
@@ -303,3 +231,23 @@
     </div>
 </div>
 <!--End of BusinessUnit List Modal -->
+
+<!-- Vessel Voyage List Modal -->
+<div id="vesselVoyages-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Vessel Voyage List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div id="vesselVoyageFilterContainter" style="padding-left:10px;"></div>
+            <div id="vesselVoyageContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Vessel Voyage List Modal -->

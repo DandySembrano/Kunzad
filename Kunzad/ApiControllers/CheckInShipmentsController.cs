@@ -53,6 +53,30 @@ namespace Kunzad.ApiControllers
                        .OrderBy(cis => cis.Id)
                        .Skip(length).Take(AppSettingsGet.PageSize)
                        .AsNoTracking().ToArray();
+                var checkInMaster = db.CheckIns.Find(masterId);
+                switch (checkInMaster.CheckInTypeId)
+                {
+                    case 1: //Sea freight Loading
+                        var getSeaFreight = db.SeaFreights.Where(sf => sf.Id == (from ci in db.CheckIns where ci.Id == masterId select ci).FirstOrDefault().CheckInSourceId).FirstOrDefault();
+                        response.stringParam1 = getSeaFreight.BLNumber;
+                        break;
+                    case 2: //Air freight loading
+                        var getAirFreight = db.AirFreights.Where(sf => sf.Id == (from ci in db.CheckIns where ci.Id == masterId select ci).FirstOrDefault().CheckInSourceId).FirstOrDefault();
+                        response.stringParam1 = getAirFreight.AirWaybillNumber;
+                        break;        
+                    case 4: //Air freight arrival
+                        var getBusinessUnit = db.BusinessUnits.Where(b => b.Id == (from af in db.AirFreights 
+                                                                                   where af.Id == (from ci in db.CheckIns 
+                                                                                                   where ci.Id == masterId 
+                                                                                                   select ci).FirstOrDefault().CheckInSourceId 
+                                                                                   select af).FirstOrDefault().OriginBusinessUnitId)
+                                                            .FirstOrDefault();
+                        response.stringParam1 = getBusinessUnit.Name;
+                        break;
+                    default: break;
+                }
+
+                
                 response.status = "SUCCESS";
                 response.objParam1 = checkInShipments;
             }

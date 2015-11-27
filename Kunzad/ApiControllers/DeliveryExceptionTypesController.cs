@@ -20,7 +20,7 @@ namespace Kunzad.ApiControllers
         // GET: api/DeliveryExceptionTypes
         public IQueryable<DeliveryExceptionType> GetDeliveryExceptionTypes()
         {
-            return db.DeliveryExceptionTypes.AsNoTracking();
+            return db.DeliveryExceptionTypes.OrderBy(d => d.Name).AsNoTracking();
         }
 
         // GET: api/DeliveryExceptionTypes/5

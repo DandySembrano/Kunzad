@@ -256,7 +256,7 @@ namespace Kunzad.ApiControllers
                 checkIn.CheckInTime = DateTime.Now.TimeOfDay;
                 checkIn.CheckInTypeId = 4;
                 checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
-                checkIn.CheckInSourceId = shipment.Id.ToString();
+                checkIn.CheckInSourceId = shipment.Id;
                 checkIn.Remarks = "Delivered to Consignee";
                 //Initialize check in  checkin shipment
                 checkInShipment.ShipmentId = shipment.Id;
@@ -302,8 +302,6 @@ namespace Kunzad.ApiControllers
             }
             try
             {
-                //for (int i = 0; i < 100; i++)
-                //{
                 shipment.CreatedDate = DateTime.Now;
                 shipment.Address.CreatedDate = DateTime.Now;
                 shipment.Address1.CreatedDate = DateTime.Now;
@@ -315,7 +313,7 @@ namespace Kunzad.ApiControllers
                 db.Addresses.Add(shipment.Address1);
                 db.Shipments.Add(shipment);
                 db.SaveChanges();
-                //}
+
                 response.status = "SUCCESS";
                 response.objParam1 = shipment;
             }
