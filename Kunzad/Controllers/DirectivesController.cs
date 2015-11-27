@@ -21,6 +21,10 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+        public ActionResult DataGrid3()
+        {
+            return View();
+        }
         public ActionResult DataFiltering()
         {
             return View();

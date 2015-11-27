@@ -23,7 +23,9 @@ namespace Kunzad
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                         "~/Scripts/angular.js",
+                        "~/Scripts/angular-animate.js",
                         "~/Scripts/angular-route.js",
+                        "~/Scripts/angular-touch.js",
                         "~/Scripts/angular-ng-grid.js",
                         "~/Scripts/angular-resource.js",
                         "~/Scripts/localforage.min.js",
@@ -50,6 +52,7 @@ namespace Kunzad
                         "~/Scripts/directive/vesselVoyageModal.js",
                         "~/Scripts/directive/dataGrid1.js",
                         "~/Scripts/directive/dataGrid2.js",
+                        "~/Scripts/directive/dataGrid3.js",
                         "~/Scripts/directive/dataExport.js",
                         "~/Scripts/directive/ngEnter.js",
                         "~/Scripts/app/booking-ctrl.js",

@@ -15,6 +15,7 @@ namespace Kunzad.ApiControllers
     public class DeliveryExceptionTypesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
+        private int pageSize = AppSettingsGet.PageSize;
 
         // GET: api/DeliveryExceptionTypes
         public IQueryable<DeliveryExceptionType> GetDeliveryExceptionTypes()
@@ -34,6 +35,20 @@ namespace Kunzad.ApiControllers
 
             return Ok(deliveryExceptionType);
         }
+
+        [HttpGet]
+        //Dynamic Filtering
+        public IHttpActionResult GetDeliveryExceptionType(string type, int param1, [FromUri]List<DeliveryExceptionType> deliveryExceptionType)
+        {
+            Object[] dexTypes = new Object[pageSize];
+            this.filterRecord(param1, type, deliveryExceptionType.ElementAt(0), deliveryExceptionType.ElementAt(1), ref dexTypes);
+
+            if (dexTypes != null)
+                return Ok(dexTypes);
+            else
+                return Ok();
+        }
+
 
         // PUT: api/DeliveryExceptionTypes/5
         [ResponseType(typeof(void))]
@@ -113,6 +128,36 @@ namespace Kunzad.ApiControllers
         private bool DeliveryExceptionTypeExists(int id)
         {
             return db.DeliveryExceptionTypes.Count(e => e.Id == id) > 0;
+        }
+
+        public void filterRecord(int param1, string type, DeliveryExceptionType dexType, DeliveryExceptionType dexType1, ref Object[] dexTypes)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * pageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredDexTypes = (from dt in db.DeliveryExceptionTypes
+                                    where dexType.Name == null ? !dexType.Name.Equals("") : (dt.Name.ToLower().Equals(dexType.Name) || dt.Name.ToLower().Contains(dexType.Name))
+                                       select new
+                                       {
+                                           dt.Id,
+                                           dt.Name,
+                                           dt.Status
+                                       })
+                                       .OrderBy(dt => dt.Id).Skip(skip).Take(pageSize).ToArray();
+
+            dexTypes = filteredDexTypes;
         }
     }
 }

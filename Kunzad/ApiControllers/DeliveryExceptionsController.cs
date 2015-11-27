@@ -15,6 +15,9 @@ namespace Kunzad.ApiControllers
     public class DeliveryExceptionsController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
+        private DbContextTransaction transaction;
+        private Response response = new Response();
+        private int pageSize = AppSettingsGet.PageSize;
 
         // GET: api/DeliveryExceptions
         public IQueryable<DeliveryException> GetDeliveryExceptions()
@@ -35,39 +38,141 @@ namespace Kunzad.ApiControllers
             return Ok(deliveryException);
         }
 
+        //  GET: api/DeliveryExceptions?shipmentId=1&page=1
+        public IHttpActionResult GetDeliveryException(int shipmentId, int page)
+        {
+            int skip;
+            if (page > 1)
+                skip = (page - 1) * pageSize;
+            else
+                skip = 0;
+
+            var deliveryException = db.DeliveryExceptions
+                .Include(de => de.DeliveryExceptionType)
+                .Where(de => de.ShipmentId == shipmentId)
+                .OrderBy(de => de.Id)
+                .Skip(skip).Take(pageSize).AsNoTracking().ToArray();
+
+            return Ok(deliveryException);
+        }
+
         // PUT: api/DeliveryExceptions/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutDeliveryException(int id, DeliveryException deliveryException)
+        public IHttpActionResult PutDeliveryException(int id, List<DeliveryException> deliveryException)
         {
+            int DexShipmentId = 0;
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            if (id != deliveryException.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(deliveryException).State = EntityState.Modified;
-
             try
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DeliveryExceptionExists(id))
+                transaction = db.Database.BeginTransaction();
+                DexShipmentId = deliveryException.FirstOrDefault().ShipmentId;
+
+                Shipment shipment = db.Shipments.Find(DexShipmentId);
+
+                CheckIn checkIn = new CheckIn();
+                CheckInShipment checkInShipment = new CheckInShipment();
+                CheckInsController checkInCtrl = new CheckInsController();
+
+                var shipmentDexInfo = db.DeliveryExceptions.Where(de => de.ShipmentId == DexShipmentId);
+                
+                /*
+                 * check if shipment has already existing DEX;
+                 * check if existing DEX's time != new DEX's time then insert new DEX
+                 */
+                if (shipmentDexInfo.Count() > 0)
                 {
-                    return NotFound();
+                    foreach (DeliveryException shipmentDex in shipmentDexInfo)
+                    {
+                        foreach (DeliveryException de in deliveryException)
+                        {
+                            if (shipmentDex.DexTime != de.DexTime)
+                            {
+                                de.CreatedDate = DateTime.Now;
+
+                                db.DeliveryExceptions.Add(de);
+
+                                checkIn.CheckInTypeId = 6; //Delivery Exception
+                                checkIn.CheckInDate = DateTime.Now;
+                                checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
+                                checkIn.CheckInSourceId = de.Id;
+                                db.CheckIns.Add(checkIn);
+
+                                //checkInShipment.CheckInId = checkIn.Id;
+                                checkInShipment.ShipmentId = DexShipmentId;
+                                checkInShipment.IsDisplay = true;
+                                db.CheckInShipments.Add(checkInShipment);
+
+
+                                db.SaveChanges();
+
+                                checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    throw;
+                    foreach (DeliveryException de in deliveryException)
+                    {
+                        de.CreatedDate = DateTime.Now;
+
+                        db.DeliveryExceptions.Add(de);
+
+                        db.SaveChanges();
+                        checkIn.CheckInTypeId = 6; //Delivery Exception
+                        checkIn.CheckInDate = DateTime.Now;
+                        checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
+                        checkIn.CheckInSourceId = de.Id;
+                        db.CheckIns.Add(checkIn);
+
+
+                        //checkInShipment.CheckInId = checkIn.Id;
+                        checkInShipment.ShipmentId = DexShipmentId;
+                        checkInShipment.IsDisplay = true;
+                        db.CheckInShipments.Add(checkInShipment);
+
+
+                        db.SaveChanges();
+                        checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
+
+                    }
                 }
+
+                transaction.Commit();
+
+                response.status = "SUCCESS";
+                response.objParam1 = deliveryException;
+            }
+            //catch (Exception e)
+            //{
+            //    response.message = e.InnerException.InnerException.Message.ToString();
+            //    transaction.Rollback();
+            //}
+            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            {
+                Exception raise = dbEx;
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        string message = string.Format("{0}:{1}",
+                            validationErrors.Entry.Entity.ToString(),
+                            validationError.ErrorMessage);
+                        // raise a new exception nesting
+                        // the current instance as InnerException
+                        raise = new InvalidOperationException(message, raise);
+                    }
+                }
+                throw raise;
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
+            
         }
 
         // POST: api/DeliveryExceptions
@@ -83,6 +188,79 @@ namespace Kunzad.ApiControllers
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = deliveryException.Id }, deliveryException);
+
+            //int DexShipmentId = 0;
+            //response.status = "FAILURE";
+            //if (!ModelState.IsValid)
+            //{
+            //    response.message = "Bad request.";
+            //    return Ok(response);
+            //}
+            //try
+            //{
+            //    transaction = db.Database.BeginTransaction();
+            //    DexShipmentId = deliveryException.FirstOrDefault().ShipmentId;
+
+            //    Shipment shipment = db.Shipments.Find(DexShipmentId);
+
+            //    CheckIn checkIn = new CheckIn();
+            //    CheckInShipment checkInShipment = new CheckInShipment();
+            //    CheckInsController checkInCtrl = new CheckInsController();
+
+            //    foreach(DeliveryException de in deliveryException)
+            //    {
+            //        de.CreatedDate = DateTime.Now;
+                    
+            //        db.DeliveryExceptions.Add(de);
+
+            //        checkIn.CheckInTypeId = 6; //Delivery Exception
+            //        checkIn.CheckInDate = DateTime.Now;
+            //        checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
+            //        checkIn.CheckInSourceId = de.Id;
+            //        db.CheckIns.Add(checkIn);
+
+            //        //checkInShipment.CheckInId = checkIn.Id;
+            //        checkInShipment.ShipmentId = DexShipmentId;
+            //        checkInShipment.IsDisplay = true;
+            //        db.CheckInShipments.Add(checkInShipment);
+
+            //        checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
+
+            //    }
+
+
+            //    db.SaveChanges();
+
+
+            //    transaction.Commit();
+
+            //    response.status = "SUCCESS";
+            //    response.objParam1 = deliveryException;
+            //}
+            ////catch (Exception e)
+            ////{
+            ////    response.message = e.InnerException.InnerException.Message.ToString();
+            ////    transaction.Rollback();
+            ////}
+            //catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            //{
+            //    Exception raise = dbEx;
+            //    foreach (var validationErrors in dbEx.EntityValidationErrors)
+            //    {
+            //        foreach (var validationError in validationErrors.ValidationErrors)
+            //        {
+            //            string message = string.Format("{0}:{1}",
+            //                validationErrors.Entry.Entity.ToString(),
+            //                validationError.ErrorMessage);
+            //            // raise a new exception nesting
+            //            // the current instance as InnerException
+            //            raise = new InvalidOperationException(message, raise);
+            //        }
+            //    }
+            //    throw raise;
+            //}
+
+            //return Ok(response);
         }
 
         // DELETE: api/DeliveryExceptions/5
