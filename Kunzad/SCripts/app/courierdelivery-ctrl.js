@@ -457,8 +457,8 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             }
             //Temporary set BusinessUnit
             $scope.courierDeliveryItem.BusinessUnit = [{
-                "Id": 17,
-                "Code": "BU0007",
+                "Id": 1,
+                "Code": "BU0001",
                 "Name": "Manila",
                 "BusinessUnitTypeId": 1,
                 "ParentBusinessUnitId": null,

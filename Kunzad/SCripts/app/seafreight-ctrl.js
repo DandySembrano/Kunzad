@@ -305,8 +305,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             };
             //Temporary set BusinessUnit
             $scope.seafreightItem.BusinessUnit1[0] = {
-                "Id": 17,
-                "Code": "BU0007",
+                "Id": 1,
+                "Code": "BU0001",
                 "Name": "Manila"
             };
             $scope.seafreightItem.OriginBusinessUnitId = $scope.seafreightItem.BusinessUnit1[0].Id;

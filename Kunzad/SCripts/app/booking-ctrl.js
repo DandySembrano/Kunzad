@@ -515,8 +515,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             }
             //Temporary set BusinessUnit
             $scope.shipmentItem.BusinessUnit = {
-                "Id": 17,
-                "Code": "BU0007",
+                "Id": 1,
+                "Code": "BU0001",
                 "Name": "Manila",
                 "BusinessUnitTypeId": 1,
                 "ParentBusinessUnitId": null,

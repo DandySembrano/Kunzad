@@ -189,7 +189,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                         "Name": null
                     }
                 },
-                "ShipmentTypeId": 10,//bundle/batch
+                "ShipmentTypeId": 7,//bundle/batch
                 "ShipmentType": {
                     "Id": null,
                     "Name": null
@@ -286,8 +286,8 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             };
             //Temporary set BusinessUnit
             $scope.consolidationItem.BusinessUnit = {
-                "Id": 17,
-                "Code": "BU0007",
+                "Id": 1,
+                "Code": "BU0001",
                 "Name": "Manila",
                 "BusinessUnitTypeId": 1,
                 "ParentBusinessUnitId": null,
@@ -364,6 +364,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
             };
 
             $scope.consolidationOtheractions = function (action) {
+                console.log(action);
                 switch (action) {
                     case "FormCreate":
                         $scope.submitButtonText = "Submit";
@@ -629,12 +630,12 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
         //function that will be invoked during compiling of consolidation datagrid to DOM
         $scope.compileconsolidationDataGrid = function () {
-            var html = '<dir-data-grid2 datadefinition      = "consolidationDataDefinition"' +
+            var html = '<dir-data-grid3 datadefinition      = "consolidationDataDefinition"' +
                                         'submitdefinition   = "consolidationSubmitDefinition"' +
                                         'otheractions       = "consolidationOtheractions(action)"' +
                                         'resetdata          = "consolidationResetData()"' +
                                         'showformerror      = "consolidationShowFormError(error)">' +
-                        '</dir-data-grid2>';
+                        '</dir-data-grid3>';
             $content = angular.element(document.querySelector('#consolidationContainer')).html(html);
             $compile($content)($scope);
         };
