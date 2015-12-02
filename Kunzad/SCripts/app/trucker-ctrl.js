@@ -376,7 +376,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
         var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
-        dataModel.Trucks = angular.copy($scope.truckerGridOptions.data);
+        dataModel.Trucks = angular.copy($scope.truckGridOptions.data);
 
         for (i = 0; i < dataModel.Trucks.length; i++) {
             //initialize truckerId to 1 as dummy
@@ -422,7 +422,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         var i = 0, j = 0;
 
         var dataModel = angular.copy($scope.truckerGridOptions.dataItem);
-        dataModel.Trucks = angular.copy($scope.truckerGridOptions.data);
+        dataModel.Trucks = angular.copy($scope.truckGridOptions.data);
         for (i = 0; i < dataModel.Trucks.length; i++) {
             //delete if truckId if newly added truck
             if (dataModel.Trucks[i].Id == null)
