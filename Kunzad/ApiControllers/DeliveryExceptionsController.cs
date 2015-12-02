@@ -62,6 +62,7 @@ namespace Kunzad.ApiControllers
         {
             int DexShipmentId = 0;
             response.status = "FAILURE";
+            bool flag;
             if (!ModelState.IsValid)
             {
                 response.message = "Bad request.";
@@ -78,68 +79,75 @@ namespace Kunzad.ApiControllers
                 CheckInShipment checkInShipment = new CheckInShipment();
                 CheckInsController checkInCtrl = new CheckInsController();
 
-                var shipmentDexInfo = db.DeliveryExceptions.Where(de => de.ShipmentId == DexShipmentId);
+                var currentShipmentDex = db.DeliveryExceptions
+                                         .Where(de => de.ShipmentId == DexShipmentId).ToArray();
                 
-                /*
-                 * check if shipment has already existing DEX;
-                 * check if existing DEX's time != new DEX's time then insert new DEX
-                 */
-                if (shipmentDexInfo.Count() > 0)
+                //DEX that are removed
+                foreach(DeliveryException currentDex in currentShipmentDex)
                 {
-                    foreach (DeliveryException shipmentDex in shipmentDexInfo)
+                    flag = false;
+                    foreach(DeliveryException newDex in deliveryException)
                     {
-                        foreach (DeliveryException de in deliveryException)
+                        if(currentDex.Id == newDex.Id)
                         {
-                            if (shipmentDex.DexTime != de.DexTime)
-                            {
-                                de.CreatedDate = DateTime.Now;
-
-                                db.DeliveryExceptions.Add(de);
-
-                                checkIn.CheckInTypeId = 6; //Delivery Exception
-                                checkIn.CheckInDate = DateTime.Now;
-                                checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
-                                checkIn.CheckInSourceId = de.Id;
-                                db.CheckIns.Add(checkIn);
-
-                                //checkInShipment.CheckInId = checkIn.Id;
-                                checkInShipment.ShipmentId = DexShipmentId;
-                                checkInShipment.IsDisplay = true;
-                                db.CheckInShipments.Add(checkInShipment);
-
-
-                                db.SaveChanges();
-
-                                checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
-                            }
+                            flag = true;
+                            break;
                         }
                     }
-                }
-                else
-                {
-                    foreach (DeliveryException de in deliveryException)
+                    if (!flag)
                     {
-                        de.CreatedDate = DateTime.Now;
-
-                        db.DeliveryExceptions.Add(de);
+                        var checkInHolder = db.CheckIns
+                                            .Where(ci => ci.CheckInSourceId == currentDex.Id);
+                        if (checkInHolder.Count() > 0)
+                        {
+                            foreach (CheckIn check in checkInHolder)
+                                db.CheckIns.Remove(check);
+                        }
+                        db.DeliveryExceptions.Remove(currentDex);
 
                         db.SaveChanges();
+                    }
+                }
+                //adding or updating DEX
+                foreach (DeliveryException newDex in deliveryException)
+                {
+                    flag = false;
+                    foreach (DeliveryException currentDex in currentShipmentDex)
+                    {
+                        if (newDex.Id == currentDex.Id)
+                        {
+                            flag = true;
+                            //Set DEX changes
+                            var dexHolder = db.DeliveryExceptions.Find(currentDex.Id);
+                            currentDex.LastUpdatedDate = DateTime.Now;
+                            db.Entry(dexHolder).CurrentValues.SetValues(currentDex);
+                            db.Entry(dexHolder).State = EntityState.Modified;
+
+                            db.SaveChanges();
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        //add new DEX
+                        newDex.CreatedDate = DateTime.Now;
+
+                        db.DeliveryExceptions.Add(newDex);
+                        db.SaveChanges();
+
                         checkIn.CheckInTypeId = 6; //Delivery Exception
                         checkIn.CheckInDate = DateTime.Now;
                         checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
-                        checkIn.CheckInSourceId = de.Id;
+                        checkIn.CheckInSourceId = newDex.Id;
                         db.CheckIns.Add(checkIn);
-
 
                         //checkInShipment.CheckInId = checkIn.Id;
                         checkInShipment.ShipmentId = DexShipmentId;
                         checkInShipment.IsDisplay = true;
                         db.CheckInShipments.Add(checkInShipment);
 
-
                         db.SaveChanges();
                         checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
-
                     }
                 }
 
@@ -148,28 +156,28 @@ namespace Kunzad.ApiControllers
                 response.status = "SUCCESS";
                 response.objParam1 = deliveryException;
             }
-            //catch (Exception e)
-            //{
-            //    response.message = e.InnerException.InnerException.Message.ToString();
-            //    transaction.Rollback();
-            //}
-            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            catch (Exception e)
             {
-                Exception raise = dbEx;
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        string message = string.Format("{0}:{1}",
-                            validationErrors.Entry.Entity.ToString(),
-                            validationError.ErrorMessage);
-                        // raise a new exception nesting
-                        // the current instance as InnerException
-                        raise = new InvalidOperationException(message, raise);
-                    }
-                }
-                throw raise;
+                response.message = e.InnerException.InnerException.Message.ToString();
+                transaction.Rollback();
             }
+            //catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            //{
+            //    Exception raise = dbEx;
+            //    foreach (var validationErrors in dbEx.EntityValidationErrors)
+            //    {
+            //        foreach (var validationError in validationErrors.ValidationErrors)
+            //        {
+            //            string message = string.Format("{0}:{1}",
+            //                validationErrors.Entry.Entity.ToString(),
+            //                validationError.ErrorMessage);
+            //            // raise a new exception nesting
+            //            // the current instance as InnerException
+            //            raise = new InvalidOperationException(message, raise);
+            //        }
+            //    }
+            //    throw raise;
+            //}
 
             return Ok(response);
             
