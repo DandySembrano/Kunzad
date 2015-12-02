@@ -124,7 +124,7 @@ namespace Kunzad.ApiControllers
                 foreach (CheckInShipment checkInShipments in checkIn.CheckInShipments)
                 {
                     checkInShipments.IsDisplay = true;
-                    iterateShipment(checkInShipments, checkIn.Id);
+                    iterateShipment(checkInShipments, checkIn.Id, checkIn.CheckInTypeId);
                 }
                 dbTransaction.Commit();
             }
@@ -171,7 +171,7 @@ namespace Kunzad.ApiControllers
             return db.CheckIns.Count(e => e.Id == id) > 0;
         }
 
-        public void iterateShipment(CheckInShipment checkInShipment, int checkInId)
+        public void iterateShipment(CheckInShipment checkInShipment, int checkInId, int? checkInTypeId)
         {
 
             //Save parent shipment
@@ -185,7 +185,8 @@ namespace Kunzad.ApiControllers
             var shipment = db.Shipments.Find(checkInShipment.ShipmentId);
             var shipmentEdited = shipment;
             shipment.LastCheckInId = checkInId;
-            shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+            if (checkInTypeId == 3 || checkInTypeId == 4)
+                shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
             db.Entry(shipment).CurrentValues.SetValues(shipmentEdited);
             db.Entry(shipment).State = EntityState.Modified;
             db.SaveChanges();
@@ -204,7 +205,7 @@ namespace Kunzad.ApiControllers
                     childShipmentForCheckIn.ShipmentId = child.Id;
                     childShipmentForCheckIn.CheckInId = checkInId;
                     childShipmentForCheckIn.IsDisplay = false;
-                    iterateShipment(childShipmentForCheckIn, checkInId);
+                    iterateShipment(childShipmentForCheckIn, checkInId, checkInTypeId);
                 }
             }
         }
