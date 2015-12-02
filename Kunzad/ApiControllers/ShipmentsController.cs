@@ -447,7 +447,7 @@ namespace Kunzad.ApiControllers
                 .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
                 .Where(s => s.LastCheckInId == null ? true : (from ci in db.CheckIns where ci.Id == s.LastCheckInId select new { ci.CheckInBusinessUnitId }).FirstOrDefault().CheckInBusinessUnitId == s.BusinessUnitId)
                 //Allow if service is consolidation and service category is Non-Revenue
-                .Where(s => s.Service.ServiceCategoryId == 8 ? true : s.Service.ServiceCategoryId == serviceCategoryId)
+                .Where(s => s.Service.ServiceCategoryId == 6 ? true : s.Service.ServiceCategoryId == serviceCategoryId)
                 .Where(s => s.LoadingStatusId == (int)Status.LoadingStatus.Open)
                 .Where(s => s.TransportStatusId != (int)Status.TransportStatus.Cancel && s.TransportStatusId != (int)Status.TransportStatus.Close)
                 .Where(s => shipment.Id == null || shipment.Id == 0 ? true : s.Id == shipment.Id)

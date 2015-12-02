@@ -178,7 +178,7 @@ namespace Kunzad.ApiControllers
             //    }
             //    throw raise;
             //}
-
+            transaction.Dispose();
             return Ok(response);
             
         }
