@@ -105,7 +105,7 @@ namespace Kunzad.ApiControllers
             if (source.ToLower().Equals("air"))
                 serviceCategoryId = 1;
             else if (source.ToLower().Equals("sea"))
-                serviceCategoryId = 7;
+                serviceCategoryId = 5;
             else //courier
                 serviceCategoryId = 6;
 
@@ -254,7 +254,7 @@ namespace Kunzad.ApiControllers
                 CheckInShipment checkInShipment = new CheckInShipment();
                 checkIn.CheckInDate = DateTime.Now;
                 checkIn.CheckInTime = DateTime.Now.TimeOfDay;
-                checkIn.CheckInTypeId = 4;
+                checkIn.CheckInTypeId = 7;
                 checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
                 checkIn.CheckInSourceId = shipment.Id;
                 checkIn.Remarks = "Delivered to Consignee";

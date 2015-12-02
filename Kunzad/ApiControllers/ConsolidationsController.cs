@@ -21,7 +21,7 @@ namespace Kunzad.ApiControllers
         private int pageSize = AppSettingsGet.PageSize;
         private int serviceCategoryId = 0;
         private int x = 0;
-        private int[] shipmentType = { 1, 2, 6 }; //changeable
+        private int[] shipmentType = { 1, 2, 3 }; //changeable
         private Boolean isConsolidated = false;
         private Boolean parent = true;
         private Boolean vanstuff = false;
@@ -262,29 +262,30 @@ namespace Kunzad.ApiControllers
                 response.status = "SUCCESS";
                 response.objParam1 = shipment;
             }
-            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            //catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            //{
+            //    transaction.Rollback();
+            //    Exception raise = dbEx;
+            //    foreach (var validationErrors in dbEx.EntityValidationErrors)
+            //    {
+            //        foreach (var validationError in validationErrors.ValidationErrors)
+            //        {
+            //            string message = string.Format("{0}:{1}",
+            //                validationErrors.Entry.Entity.ToString(),
+            //                validationError.ErrorMessage);
+            //            // raise a new exception nesting
+            //            // the current instance as InnerException
+            //            raise = new InvalidOperationException(message, raise);
+            //        }
+            //    }
+            //    throw raise;
+            //}
+            catch (Exception e)
             {
                 transaction.Rollback();
-                Exception raise = dbEx;
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        string message = string.Format("{0}:{1}",
-                            validationErrors.Entry.Entity.ToString(),
-                            validationError.ErrorMessage);
-                        // raise a new exception nesting
-                        // the current instance as InnerException
-                        raise = new InvalidOperationException(message, raise);
-                    }
-                }
-                throw raise;
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
-            //catch (Exception e)
-            //{
-            //    response.message = e.InnerException.InnerException.Message.ToString();
-            //}
-
+            transaction.Dispose();
             return Ok(response);
         }
 
@@ -405,7 +406,7 @@ namespace Kunzad.ApiControllers
             //    }
             //    throw raise;
             //}
-
+            transaction.Dispose();
             return Ok(response);
         }
 
