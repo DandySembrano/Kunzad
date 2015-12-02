@@ -111,7 +111,6 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
                 $scope.paginatedTrucks.push($scope.truckGridOptions.data[i]);
             }
         }
-        console.log($scope.paginatedTrucks)
     };
     //-------------------------------------------------------------------------------
     //Initialize ui-grid options---------------------------------------
@@ -668,7 +667,7 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
         $scope.Truck.PlateNo = angular.uppercase($scope.Truck.PlateNo);
         $scope.Truck.WeightCapacity = $scope.Truck.TruckType.WeightCapacity;
         $scope.Truck.VolumeCapacity = $scope.Truck.TruckType.VolumeCapacity;
-        $scope.truckerGridOptions.data.push($scope.Truck);
+        $scope.truckGridOptions.data.push($scope.Truck);
         $scope.processTruckPagination($scope.truckCurrentPage, 'LASTPAGE');
         $scope.closeModalForm();
     };
@@ -735,8 +734,9 @@ kunzadApp.controller("TruckerController", function ($rootScope, $scope, $http) {
     $scope.saveTruck = function (action) {
         switch (action) {
             case "Create":
-                if (validateTruck())
+                if (validateTruck()) {
                     $scope.apiCreateTruck();
+                }
                 break;
             case "Edit":
                 if (validateTruck())

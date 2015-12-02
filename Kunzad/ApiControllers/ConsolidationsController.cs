@@ -119,7 +119,7 @@ namespace Kunzad.ApiControllers
             Shipment[] shipments = new Shipment[pageSize];
 
             if (source.ToLower().Equals("sea"))
-                serviceCategoryId = 7;
+                serviceCategoryId = 5;
 
             this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), serviceCategoryId, ref shipments);
 

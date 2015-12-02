@@ -107,9 +107,9 @@ namespace Kunzad.ApiControllers
             if(source.ToLower().Equals("air"))
                 serviceCategoryId = 1;
             else if(source.ToLower().Equals("sea"))
-                serviceCategoryId = 7;
+                serviceCategoryId = 5;
             else //courier
-                serviceCategoryId = 6;
+                serviceCategoryId = 4;
 
             this.filterRecord(param1, type, shipment.ElementAt(0), shipment.ElementAt(1), serviceCategoryId, ref shipments);
 

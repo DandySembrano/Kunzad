@@ -1380,6 +1380,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                     $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].Id = 0;
                     $scope.shipmentFilteringDefinition.DataItem1.Shipment[1].Id = 0;
                     $scope.shipmentFilteringDefinition.DataItem1.Shipment[0].TransportStatusId = 10;
+                    
                     return true;
                 case 'PostFilterData':
                     /*
@@ -1387,7 +1388,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
                                if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList
                     */
                     //Required
-                    $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                    //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);

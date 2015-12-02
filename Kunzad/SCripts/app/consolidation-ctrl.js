@@ -630,12 +630,12 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
         //function that will be invoked during compiling of consolidation datagrid to DOM
         $scope.compileconsolidationDataGrid = function () {
-            var html = '<dir-data-grid3 datadefinition      = "consolidationDataDefinition"' +
+            var html = '<dir-data-grid2 datadefinition      = "consolidationDataDefinition"' +
                                         'submitdefinition   = "consolidationSubmitDefinition"' +
                                         'otheractions       = "consolidationOtheractions(action)"' +
                                         'resetdata          = "consolidationResetData()"' +
                                         'showformerror      = "consolidationShowFormError(error)">' +
-                        '</dir-data-grid3>';
+                        '</dir-data-grid2>';
             $content = angular.element(document.querySelector('#consolidationContainer')).html(html);
             $compile($content)($scope);
         };
