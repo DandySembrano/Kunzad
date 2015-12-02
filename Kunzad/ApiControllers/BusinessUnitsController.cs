@@ -83,7 +83,7 @@ namespace Kunzad.ApiControllers
 
         [HttpGet]
         //Dynamic filtering
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetBusinessUnit(string type, int param1, [FromUri]List<BusinessUnit> businessUnit)
         {
             Object[] businessUnits = new Object[AppSettingsGet.PageSize];

@@ -98,7 +98,7 @@ namespace Kunzad.ApiControllers
         //for batching
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -113,7 +113,7 @@ namespace Kunzad.ApiControllers
 
         //for vanstuffing
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -131,7 +131,7 @@ namespace Kunzad.ApiControllers
 
         //for master list
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
         public IHttpActionResult GetShipment(string type, int consolidationType, int param1, [FromUri]List<Shipment> shipment)
         {

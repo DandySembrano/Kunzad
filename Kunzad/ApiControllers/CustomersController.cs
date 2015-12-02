@@ -71,7 +71,7 @@ namespace Kunzad.ApiControllers
 
        
         [HttpGet]
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         //Dynamic filtering
         public IHttpActionResult GetCustomer(string type, int param1, [FromUri]List<Customer> customer)
         {

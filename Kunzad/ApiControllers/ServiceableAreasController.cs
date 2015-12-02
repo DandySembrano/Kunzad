@@ -40,7 +40,7 @@ namespace Kunzad.ApiControllers
         }
 
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetServiceableAreas(string type, int param1, [FromUri]List<ServiceableArea> serviceableArea)
         {
             ServiceableArea[] serviceableAreas = new ServiceableArea[AppSettingsGet.PageSize];
