@@ -71,7 +71,7 @@ namespace Kunzad.ApiControllers
             return Ok(trucking);
         }
 
-        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetTruckings(string type, int param1, [FromUri]List<Trucking> trucking)
         {
             Trucking[] truckings = new Trucking[AppSettingsGet.PageSize];
