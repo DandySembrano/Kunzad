@@ -14,8 +14,8 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
     $scope.isError = false;
     $scope.errorMessage = "";
     $scope.submitButtonText = "Submit";
-    $scope.tabPages = ["Information", "List"];
-    $scope.selectedTab = "Information";
+    $scope.tabPages = ["General"];
+    $scope.selectedTab = "General";
     $scope.enableSave = true;
     $scope.selectedDexTypeId = null;
     var dateNow = new Date();
@@ -49,21 +49,12 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
     }
 
     $scope.DeliveryExceptionResetData = function () {
-        $scope.DeliveryException = [{
+        $scope.DeliveryExceptionItem = {
             "ShipmentId": null,
             "DexDate": null,
             "DexTime": null,
             "DexRemarks": null,
             "DexTypeId": null
-        }]
-    }
-
-    $scope.validateDex = function () {
-        for (var i = 0; i < $scope.dexShipmentsItem.length; i++) {
-            if ($scope.dexShipmentsItem[i].ShipmentId == "" || $scope.dexShipmentsItem[i].ShipmentId == null) {
-                alert("Please select shipment!");
-                return false;
-            }
         }
     }
 
@@ -117,62 +108,57 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
         $scope.dexShipmentsOtheractions = function (action) {
             switch (action) {
                 case "FormCreate":
-                    return true;
-
-                case "PreAction":
+                    $scope.DeliveryExceptionResetData();
+                    $scope.dexShipmentsDataDefinition.DataList.splice(0, $scope.dexShipmentsDataDefinition.DataList.length);
                     return true;
 
                 case "PreCreateAction":
                     $scope.showModal('#shipment-list-modal');
                     return true;
 
-                case "PostEditAction":
-                    if (!$scope.viewOnly)
-                        return true;
-                    else
-                        return false;
-
-                case "PreDeleteAction":
-                    if (!$scope.viewOnly)
-                        return true;
-                    else
-                        return false;
-
                 case "PostDeleteAction":
                     $scope.dexShipmentsDataDefinition.DataList.splice($scope.dexShipmentsSubmitDefinition.Index, 1);
                     if ($scope.dexShipmentsDataDefinition.DataList.length == 0)
                         $scope.dexShipmentsResetData();
-
-                    return true;
-                case "PostViewAction":
                     return true;
 
-                case "Clear":
-                    $scope.dexShipmentsDataDefinition.DataList = [];
-                    //Required if pagination is enabled
-                    if ($scope.dexShipmentsDataDefinition.EnablePagination == true) {
-                        $scope.dexShipmentsDataDefinition.CurrentPage = 1;
-                        $scope.dexShipmentsDataDefinition.DoPagination = true;
-                    }
-                    return true;
                 case "PreSave":
-
-                    $scope.validateDex();
-                    for (var i = 0; i < $scope.dexShipmentsDataDefinition.DataList.length; i++) {
-                        $scope.DeliveryException[i].ShipmentId = $scope.dexShipmentsDataDefinition.DataList[i].ShipmentId;
-                        $scope.DeliveryException[i].DexDate = $("#dexDate").val();
-                        $scope.DeliveryException[i].DexTime = $("#dexTime").val();
-                        $scope.DeliveryException[i].DexRemarks = $("#dexRemarks").val();
-                        $scope.DeliveryException[i].DexTypeId = $scope.DeliveryException.DexType;
+                    if ($scope.DeliveryExceptionItem.DexTypeId == undefined) {
+                        alert("Please select dex type!");
+                        return false;
                     }
-                    $scope.dexShipmentsSubmitDefinition.DataItem = angular.copy($scope.DeliveryException);
+                    if ($scope.DeliveryExceptionItem.DexRemarks == undefined) {
+                        alert("Please enter dex remarks!");
+                        return false;
+                    }
+                    if ($scope.dexShipmentsDataDefinition.DataList.length == 0) {
+                        alert("Please select shipment!");
+                        return false;
+                    }
+                    
+                    var dexRemarks = $scope.DeliveryExceptionItem.DexRemarks;
+                    var dexType = $scope.DeliveryExceptionItem.DexTypeId;
+                    var dexDate = $("#dexDate").val();
+                    var dexTime = $("#dexTime").val();
+
+                    $scope.DeliveryExceptionList = [];
+                    for (var i = 0; i < $scope.dexShipmentsDataDefinition.DataList.length; i++) {
+                        $scope.DeliveryExceptionList.push($scope.DeliveryExceptionItem);
+                        
+                        $scope.DeliveryExceptionList[i].ShipmentId = $scope.dexShipmentsDataDefinition.DataList[i].ShipmentId;
+                        $scope.DeliveryExceptionResetData();
+
+                        $scope.DeliveryExceptionList[i].DexDate = dexDate;
+                        $scope.DeliveryExceptionList[i].DexTime = dexTime;
+                        $scope.DeliveryExceptionList[i].DexRemarks = dexRemarks;
+                        $scope.DeliveryExceptionList[i].DexTypeId = dexType;
+                    }
+
+                    $scope.DeliveryExceptionItem.DexRemarks = dexRemarks;
+                    $scope.DeliveryExceptionItem.DexTypeId = dexType;
+                    $scope.dexShipmentsSubmitDefinition.DataItem = angular.copy($scope.DeliveryExceptionList);
                     alert("Delivery Exception successfully saved.");
                     $scope.submitButtonText = "Submit";
-                    return true;
-
-                case "Shipment No":
-                    //if datalist is only 1 then directly insert
-                    $scope.showModal('#shipment-list-modal');
                     return true;
 
                 default: return true;
@@ -180,9 +166,10 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
         };
 
         $scope.dexShipmentsResetData = function () {
-            $scope.dexShipmentsItem = {
-                "ShipmentId": null
-            }
+            $scope.dexShipmentsItem = [{
+                "ShipmentId": null,
+                "Shipment": { }
+            }]
 
             $scope.dexIsError = false;
             $scope.dexErrorMessage = "";
@@ -373,9 +360,7 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
                         $scope.dexShipmentsDataDefinition.DataList.push($scope.dexShipmentsItem);
                     }
                     else {
-                        $scope.dexIsError = true;
-                        $scope.dexErrorMessage = "Shipment is already in the list.";
-
+                        alert("Shipment is already in the list.");
                     }
                     $scope.closeModal();
                     return true;

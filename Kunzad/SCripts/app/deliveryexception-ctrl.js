@@ -100,10 +100,13 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         $http.get("/api/DeliveryExceptions?shipmentId=" + shipmentId + "&page=1")
             .success(function (data, status) {
                 //initialize dex detail
+                $scope.deliveryExceptionDetailDataDefinition.DataList.length = 0;
                 for (var i = 0; i < data.length; i++) {
-                    $scope.deliveryExceptionDetailDataDefinition.DataList.push(data[i]);
-                    console.log($scope.deliveryExceptionDetailDataDefinition.DataList[i]);
-                    //$scope.deliveryExceptionDetailDataDefinition.DataList[i].DexType.Name = angular.copy(data[i].DeliveryExceptionType.Name);
+                    $scope.deliveryExceptionDetailDataDefinition.DataList.push($scope.dexItem);
+                    $scope.indexHolder = $scope.deliveryExceptionDetailDataDefinition.DataList.length - 1;
+                    $scope.deliveryExceptionDetailDataDefinition.DataList[i] = angular.copy(data[i]);
+                    $scope.deliveryExceptionDetailDataDefinition.DataList[i].DeliveryExceptionType.Name = angular.copy(data[i].DeliveryExceptionType.Name);
+                    //$scope.dexItem.DexType.Name = angular.copy(data[i].DeliveryExceptionType.Name);
                 }
                 $scope.flagOnRetrieveDetails = true;
                 spinner.stop();
@@ -287,7 +290,6 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         };
 
         $scope.deliveryExceptionOtheractions = function (action) {
-            console.log(action);
             switch (action) {
                 case "FormCreate":
                     $scope.submitButtonText = "Submit";
@@ -295,7 +297,7 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
                     $scope.selectedTab = $scope.tabPages[0];
                     $scope.deliveryExceptionResetData();
                     $scope.deliveryExceptionDetailDataDefinition.DataList.splice(0, $scope.consolidationDetailDataDefinition.DataList.length);
-                    $scope.deliveryExceptionDetailResetData();
+                 //   $scope.deliveryExceptionDetailResetData();
                     $scope.enableSave = true;
                     $scope.viewOnly = false;
                     return true;
@@ -327,9 +329,11 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
 
                     return true;
                 case "PreSave":
+                    $scope.dexTypeName = [];
                     for (var i = 0; i < $scope.deliveryExceptionSubmitDefinition.DataItem.length; i++) {
+                        $scope.dexTypeName[i] = $scope.deliveryExceptionSubmitDefinition.DataItem[i].DeliveryExceptionType;
                         delete $scope.deliveryExceptionSubmitDefinition.DataItem[i].id;
-                        delete $scope.deliveryExceptionSubmitDefinition.DataItem[i].DexType;
+                        delete $scope.deliveryExceptionSubmitDefinition.DataItem[i].DeliveryExceptionType;
                     }
                     $http.put('/api/DeliveryExceptions/' + $scope.controlNoHolder, $scope.deliveryExceptionSubmitDefinition.DataItem)
                             .success(function (data, status, headers) {
@@ -340,6 +344,9 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
                             });
                     return false;
                 case "PostSave":
+                    for (var i = 0; i < $scope.deliveryExceptionDetailDataDefinition.DataList.length; i++) {
+                        $scope.deliveryExceptionDetailDataDefinition.DataList[i].DeliveryExceptionType.Name = $scope.dexTypeName[i];
+                    }
                     $scope.viewOnly = true;
                     $scope.deliveryExceptionSubmitDefinition.Type = "Edit";
                     $scope.enableSave = false;
@@ -398,7 +405,7 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         $scope.initializeDeliveryExceptionDetailDataDefinition = function () {
             $scope.deliveryExceptionDetailDataDefinition = {
                 "Header": ['DEX Type', 'Date', 'Time', 'Remarks', 'No'],
-                "Keys": ['DexType.Name', 'DexDate', 'DexTime', 'DexRemarks'],
+                "Keys": ['DeliveryExceptionType.Name', 'DexDate', 'DexTime', 'DexRemarks'],
                 "Type": ['ProperCase', 'Date', 'Time', 'ProperCase'],
                 "ColWidth": [200, 200, 200, 400],
                 "DataList": [],
@@ -417,8 +424,8 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
                 "DataTarget2": "DexDetailMenu2",
                 "ShowContextMenu": true,
                 "ContextMenu": ["'Create'", "'Delete'"],
-                "ContextMenuLabel": ['Add Delivery Exception', 'Delete'],
-                "IsUpdated": false //default,
+                "ContextMenuLabel": ['Add Delivery Exception', 'Delete']
+                //"IsUpdated": false //default,
                 //"IsDetail":true
 
             }
@@ -444,16 +451,20 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
 
                 case "PreCreateAction":
                     if (!$scope.viewOnly) {
-                        //var upperRow = $scope.dexDetailDataDefinition.DataList.length - 1;
-                        //if ($scope.dexDetailDataDefinition.DataList[upperRow].DexDate == null) {
-                        //    $scope.dexIsError = true;
-                        //    $scope.dexErrorMessage = "Please fill in existing row before adding a new one.";
-                        //    $scope.focusOnTop();
-                        //    return false;
-                        //}
-                        //$scope.dexDetailDataDefinition.DataList.push($scope.shipmentItem);
+                        if ($scope.deliveryExceptionDetailDataDefinition.DataList.length > 0) {
+                            var upperRow = $scope.deliveryExceptionDetailDataDefinition.DataList.length - 1;
+                            if ($scope.deliveryExceptionDetailDataDefinition.DataList[upperRow].DeliveryExceptionType.Name == null) {
+                                $scope.dexIsError = true;
+                                $scope.dexErrorMessage = "Please fill in existing row before adding a new one.";
+                                $scope.focusOnTop();
+                                return false;
+                            }
+                        }
+                        $scope.deliveryExceptionDetailDataDefinition.DataList.push($scope.dexItem);
+                        $scope.indexHolder = $scope.deliveryExceptionDetailDataDefinition.DataList.length - 1;
+
                         $scope.deliveryExceptionDetailOtheractions('D E X Type');
-                        $scope.deliveryExceptionDetailDataDefinition.IsUpdated = true;
+                        // $scope.deliveryExceptionDetailDataDefinition.IsUpdated = true;
                         return true;
                     }
 
@@ -498,16 +509,21 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         $scope.deliveryExceptionDetailResetData = function () {
             $scope.dexItem = {
                 "Id": 0,
+                "ShipementId":null,
                 "DexDate": null,
                 "DexTime": null,
                 "DexTypeId": null,
-                "DexType": { "Name": null },
+                "DeliveryExceptionType": {
+                    "Id": null,
+                    "Name": null,
+                    "Status": null
+                },
                 "DexRemarks": null,
                 "Status": null
             }
 
-            $scope.deliveryExceptionDetailDataDefinition.DataList.push($scope.dexItem);
-            $scope.indexHolder = $scope.deliveryExceptionDetailDataDefinition.DataList.length - 1;
+            //$scope.deliveryExceptionDetailDataDefinition.DataList.push($scope.dexItem);
+            //$scope.indexHolder = $scope.deliveryExceptionDetailDataDefinition.DataList.length - 1;
         };
 
         $scope.deliveryExceptionDetailShowFormError = function (error) {
@@ -522,7 +538,7 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
     //function that will be invoked during compiling datagrid to DOM
     $scope.compileDeliveryExceptionDetailDataGrid = function () {
         var html = '<dir-data-grid3 datadefinition      = "deliveryExceptionDetailDataDefinition"' +
-                                    'submitdefinition   = "deelExceptionDetailSubmitDefinition"' +
+                                    'submitdefinition   = "deliveryExceptionDetailSubmitDefinition"' +
                                     'otheractions       = "deliveryExceptionDetailOtheractions(action)"' +
                                     'resetdata          = "deliveryExceptionDetailResetData()"' +
                                     'showformerror      = "deliveryExceptionDetailShowFormError(error)">' +
@@ -706,7 +722,6 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
                 default: return true;
             }
         };
-
         $scope.initializeShipmentDataDefinition();
     };
 
@@ -860,11 +875,11 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         $scope.dexTypeOtherActions = function (action) {
             switch (action) {
                 case 'PostEditAction':
-                    $scope.dexItem.DexTypeId = angular.copy($scope.dexTypeDataDefinition.DataItem.Id);
-                    $scope.dexItem.DexType.Name = angular.copy($scope.dexTypeDataDefinition.DataItem.Name);
-                    console.log($scope.dexItem);
-                    //$scope.dexDetailDataDefinition.DataList[$scope.indexHolder].DexTypeId = angular.copy($scope.dexTypeDataDefinition.DataItem.Id);
-                    //$scope.dexDetailDataDefinition.DataList[$scope.indexHolder].DexType.Name = angular.copy($scope.dexTypeDataDefinition.DataItem.Name);
+                    //$scope.dexItem.DexTypeId = angular.copy($scope.dexTypeDataDefinition.DataItem.Id);
+                    //$scope.dexItem.DeliveryExceptionType = angular.copy($scope.dexTypeDataDefinition.DataItem);
+                    $scope.deliveryExceptionDetailDataDefinition.DataList[$scope.indexHolder].DeliveryExceptionType = angular.copy($scope.dexTypeDataDefinition.DataItem);
+                    $scope.deliveryExceptionDetailDataDefinition.DataList[$scope.indexHolder].DexTypeId = angular.copy($scope.dexTypeDataDefinition.DataItem.Id);
+
                     //console.log($scope.dexDetailDataDefinition.DataList[$scope.indexHolder].DexType.Name);
                     $scope.dexIsError = false;
                     $scope.dexErrorMessage = "";
@@ -903,6 +918,7 @@ function DeliveryExceptionController($scope, $http, $interval, $filter, $rootSco
         $scope.loadDeliveryExceptionDataGrid();
         $scope.loadDeliveryExceptionDetailDataGrid();
         $scope.deliveryExceptionResetData();
+        $scope.deliveryExceptionDetailResetData();
     };
 
     init();

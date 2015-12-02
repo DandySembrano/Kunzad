@@ -5,7 +5,7 @@
 
 <!-- General -->
 @section tab1Content{
-    <div context-menu="formContextMenu()" data-target="FormMenu">
+    <div context-menu="formContextMenu()" data-target="FormMenu" class="row">
         <!--Master-->
         @*<div class="alert alert-danger alert-sm" ng-show="dexIsError">
             <i class="fa fa-remove pr10" ng-click="dexIsError=false;dexErrorMessage=''"></i>
@@ -49,7 +49,7 @@
                         <select class="form-control"
                                 placeholder=""
                                 ng-disabled="viewOnly"
-                                ng-model="DeliveryException.DexType"
+                                ng-model="DeliveryExceptionItem.DexTypeId"
                                 ng-options="item.Id as item.Name for item in dexTypeList"></select>
                     </div>
                 </div>
@@ -59,13 +59,14 @@
                     <div class="col-md-10">
                         <textarea rows="3" style="height:auto;"
                                   id="dexRemarks"
+                                  ng-model="DeliveryExceptionItem.DexRemarks"
                                   class="form-control"
                                   placeholder=""
                                   ng-disabled="false"></textarea>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-6">&nbsp;</div>
         </form>
     </div>
 
@@ -116,10 +117,7 @@
 <div class="dropdown position-fixed" id="FormMenu">
     <ul class="dropdown-menu" role="menu">
         <li>
-            <a class="pointer small" role="menuitem" tabindex="0" ng-click="dexOtheractions('Find')">Find</a>
-        </li>
-        <li>
-            <a class="pointer small" role="menuitem" tabindex="1" ng-click="dexOtheractions('FormCreate')">Create</a>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="dexShipmentsOtheractions('FormCreate')">Create</a>
         </li>
         <li>
             <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
