@@ -21,7 +21,7 @@ namespace Kunzad.ApiControllers
         private int pageSize = AppSettingsGet.PageSize;
         private int serviceCategoryId = 0;
         private int x = 0;
-        private int[] shipmentType = { 1, 2, 3 }; //changeable
+        private int[] shipmentType = { 1, 2, 3 }; //changeable; containerized type
         private Boolean isConsolidated = false;
         private Boolean parent = true;
         private Boolean vanstuff = false;
@@ -554,6 +554,7 @@ namespace Kunzad.ApiControllers
 
             Shipment[] shipmentArrTemp = new Shipment[0];
             Shipment[] shipmentArrFinal = new Shipment[0];
+            
             /*
              * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
              * If integer value is not nullable in table equate to 0 else null
@@ -606,17 +607,18 @@ namespace Kunzad.ApiControllers
 
             shipmentArrTemp = filteredShipments;
 
+            shipmentArrFinal = new Shipment[shipmentArrTemp.Length];
+            
+            //shipmentArrFinal = new Shipment[x + 1];
             for (var i = 0; i < shipmentArrTemp.Length; i++)
             {
                 if (this.checkShipment(shipmentArrTemp[i], "vanstuff"))
                 {
-                    shipmentArrFinal = new Shipment[x + 1];
-                    shipmentArrFinal[x] = shipmentArrTemp[i];
-                    x++;
+                    shipmentArrFinal[i] = new Shipment();
+                    shipmentArrFinal[i] = shipmentArrTemp[i];
                 }
             }
-
-
+            
             shipments = shipmentArrFinal;
         }
 
