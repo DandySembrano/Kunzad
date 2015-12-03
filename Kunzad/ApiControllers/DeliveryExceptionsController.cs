@@ -147,7 +147,7 @@ namespace Kunzad.ApiControllers
                         db.CheckInShipments.Add(checkInShipment);
 
                         db.SaveChanges();
-                        checkInCtrl.iterateShipment(checkInShipment, checkIn.Id);
+                        checkInCtrl.iterateShipment(checkInShipment, checkIn.Id, checkIn.CheckInTypeId);
                     }
                 }
 

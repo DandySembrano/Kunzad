@@ -893,7 +893,7 @@
                     if ($scope.modalWatcher != "GetBusinessUnit") {
                         if ($scope.isOriginBusinessUnit == false) {
                             $scope.checkInItem.BusinessUnit = $scope.businessUnitDataDefinition.DataItem;
-                            $scope.checkInItem.BusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
+                            $scope.checkInItem.CheckInBusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
                         }
                         else {
                             $scope.checkInItem.BusinessUnit1 = $scope.businessUnitDataDefinition.DataItem;
