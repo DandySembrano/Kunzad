@@ -91,7 +91,7 @@ namespace Kunzad.ApiControllers
                 checkIn.CheckInTime = DateTime.Now.TimeOfDay;
                 checkIn.CheckInTypeId = 6;
                 checkIn.CheckInBusinessUnitId = shipment.BusinessUnitId;
-                checkIn.CheckInSourceId = de.Id.ToString();
+                checkIn.CheckInSourceId = de.Id;
                 checkIn.Remarks = "Delivery Exception";
                 //Initialize check in  checkin shipment
                 checkInShipment.ShipmentId = shipment.Id;
@@ -106,7 +106,7 @@ namespace Kunzad.ApiControllers
             }
             
             dbTransaction.Commit();
-
+            dbTransaction.Dispose();
             return Ok();
         }
 

@@ -14,8 +14,8 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
     $scope.isError = false;
     $scope.errorMessage = "";
     $scope.submitButtonText = "Submit";
-    $scope.tabPages = ["General"];
-    $scope.selectedTab = "General";
+    $scope.tabPages = ["Information"];
+    $scope.selectedTab = "Information";
     $scope.enableSave = true;
     $scope.selectedDexTypeId = null;
     var dateNow = new Date();
@@ -275,7 +275,7 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
                             set DoPagination to true
                       if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList*/
                     //Required
-                    $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                    //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
@@ -383,6 +383,7 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
     //=================================================END OF SHIPMENT MODAL=================================================
 
     $scope.showModal = function (panel) {
+        $scope.shipmentDataDefinition.Retrieve = true;
         openModalPanel(panel);
     };
 
