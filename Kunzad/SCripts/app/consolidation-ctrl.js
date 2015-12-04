@@ -195,10 +195,10 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     "Name": null
                 },
                 "PaymentMode": null, //Account
-                "CustomerId": null, // FAST CARGO
-                "CustomerContactId": null,
-                "CustomerContactPhoneId": null,
-                "CustomerAddressId": null,
+                "CustomerId": 1, // FAST CARGO
+                "CustomerContactId": 1,
+                "CustomerContactPhoneId": 1,
+                "CustomerAddressId": 1,
                 "CustomerAddress": null,
                 "Customer": {
                     "Id": null,
@@ -227,7 +227,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     }],
                 },
                 "DeliverTo": "FastCargo Logistics Corp.",
-                "DeliveryAddressId": null,
+                "DeliveryAddressId": 1,
                 "DeliveryAddress": null,
                 //DeliveryAddress
                 "Address": {
@@ -254,7 +254,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                 "ConsolidationNo1": null,
                 "ConsolidationNo2": null,
                 "Description": null,
-                "OriginAddressId": null,
+                "OriginAddressId": 1,
                 "OriginAddress": null,
                 //OriginAddress
                 "Address1": {
