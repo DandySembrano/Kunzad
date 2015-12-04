@@ -659,17 +659,17 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
     function openModalPanel (panelName) {
         //Open Modal Form/Panel
         jQuery.magnificPopup.open({
-            removalDelay: 500, //delay removal by X to allow out-animation,
+            //removalDelay: 500, //delay removal by X to allow out-animation,
             items: { src: panelName },
-            callbacks: {
-                beforeOpen: function (e) {
-                    var Animation = "mfp-flipInY";
-                    this.st.mainClass = Animation;
-                },
-                afterClose: function () {
+            //callbacks: {
+            //    beforeOpen: function (e) {
+            //        var Animation = "mfp-flipInY";
+            //        this.st.mainClass = Animation;
+            //    },
+            //    afterClose: function () {
 
-                }
-            },
+            //    }
+            //},
             midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
         })
     }
@@ -679,18 +679,18 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
     function openModalPanel2(panelName) {
         //Open Modal Form/Panel
         jQuery.magnificPopup.open({
-            removalDelay: 500, //delay removal by X to allow out-animation,
+            //removalDelay: 500, //delay removal by X to allow out-animation,
             items: { src: panelName },
             modal: true, //the popup will have a modal-like behavior: it won’t be possible to dismiss it by usual means (close button, escape key, or clicking in the overlay).
-            callbacks: {
-                beforeOpen: function (e) {
-                    var Animation = "mfp-flipInY";
-                    this.st.mainClass = Animation;
-                },
-                afterClose: function () {
+            //callbacks: {
+            //    beforeOpen: function (e) {
+            //        var Animation = "mfp-flipInY";
+            //        this.st.mainClass = Animation;
+            //    },
+            //    afterClose: function () {
 
-                }
-            },
+            //    }
+            //},
             midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
         })
     }
