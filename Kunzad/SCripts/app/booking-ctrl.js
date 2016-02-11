@@ -1705,4 +1705,63 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.modalStyle = "height:450px; max-height:100%";
         }
     }, 100);
+
+    var scannerWatcher = $scope.$watch(function () {
+            return $rootScope.scannerWatcher;
+    }, function () {
+        if ($rootScope.scannerWatcher == true)
+        {
+            $rootScope.scannerWatcher = false;
+
+            ////Broadcast to scanner that it was scanned successfully
+            //$.connection.hub.start()
+            //.done(function () {
+            //    $rootScope.scanning.server.successfullyScanned($rootScope.scannerConnectionId).done(function () { })
+            //    .fail(function () {
+            //        $rootScope.scanning = $.connection.scanningHub;
+            //        console.log("Failed to add user in the hub.");
+            //    });
+            //})
+            //.fail(function () {
+            //    console.log("Connection to hub failed.");
+            //})
+
+            $http.get("/api/Shipments?text=" + $rootScope.scannedText)
+            .success(function (response, status) {
+                if (response.status == "SUCCESS") {
+                    var snd = undefined;
+                    var snd = new Audio($rootScope.baseUrl + "/audio/notification.mp3"); // buffers automatically when created
+                    snd.play();
+
+                    $scope.shipmentItem = [];
+                    $scope.shipmentItem = angular.copy(response.objParam1[0]);
+
+                    //Initialize Pickup Address
+                    $scope.shipmentItem.OriginAddress = $scope.initializeAddressField($scope.shipmentItem.Address1, 'MasterList');
+                    //Initalize Consignee Address
+                    $scope.shipmentItem.DeliveryAddress = $scope.initializeAddressField($scope.shipmentItem.Address, 'MasterList');
+
+                    $scope.shipmentItem.CustomerAddress = $scope.shipmentItem.Customer.CustomerAddresses[0].Line1 + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].Line2 + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.Name + "," + $scope.shipmentItem.Customer.CustomerAddresses[0].CityMunicipality.StateProvince.Name + "\n" + $scope.shipmentItem.Customer.CustomerAddresses[0].PostalCode + ", " + $scope.country.Name;
+                    $scope.shipmentItem.PickupDate = $filter('Date')($scope.shipmentItem.PickupDate);
+                    $scope.controlNoHolder = $scope.shipmentItem.Id;
+                    $scope.shipmentItem.Id = $rootScope.formatControlNo('', 8, $scope.shipmentItem.Id);
+                }
+                else {
+                    $scope.shipmentIsError = false;
+                    $scope.shipmentErrorMessage = "Shipment not found.";
+                }
+            })
+            .error(function (err) {
+                alert("Error");
+            })
+        }
+    });
+
+    var deregisterScannerWatcher = function () {
+        scannerWatcher();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterScannerWatcher();
+    });
 };

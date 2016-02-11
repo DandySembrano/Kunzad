@@ -69,7 +69,7 @@ kunzadApp.directive('dirDataGrid2', function () {
             showformerror: '&'         //function that will trigger when an error occured
         },
         templateUrl: '/Directives/DataGrid2',
-        controller: function ($filter, $scope, $http, $interval, $parse, $compile) {
+        controller: function ($filter, $scope, $http, $interval, $parse, $compile, $localForage, $rootScope) {
             var stop;
             $scope.pageSize = $scope.datadefinition.PageSize;
             $scope.datadefinition.Scrolled = false;
@@ -241,6 +241,16 @@ kunzadApp.directive('dirDataGrid2', function () {
                         break;
                     case 'View':
                         $scope.datadefinition.DataItem = $scope.datadefinition.DataList[$scope.selectedIndex];
+                    case 'ShowShipmentDetails':
+                        if ($scope.selectedIndex != null) {
+                            $scope.datadefinition.DataItem = $scope.datadefinition.DataList[$scope.selectedIndex];
+                            $localForage.setItem('PopUpData', $scope.datadefinition.DataItem[$scope.datadefinition.PopUpDetails[0]])
+                            .then(function () {
+                                window.open($rootScope.baseUrl + $scope.datadefinition.PopUpDetails[1], "",
+                                "width=" + (screen.width * .7) + ", height=" + (screen.height * .7) + ", left=" + (screen.height * .25) + ", top=" + (screen.height * .1) + ", titlebar=0");       
+                                $scope.otheractions({ action: 'ShowShipmentDetails' });
+                            });
+                        }
                         break;
                 }
                 return true;
@@ -286,6 +296,8 @@ kunzadApp.directive('dirDataGrid2', function () {
                                     $scope.otheractions({ action: 'PostViewAction' })
                                 }
                                 break;
+                            case 'ShowShipmentDetails':
+                                $scope.action(action);
                             default:
                                 $scope.otheractions({ action: action });
                                 break;

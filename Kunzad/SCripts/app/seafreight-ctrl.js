@@ -319,7 +319,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
             $scope.initSeaFreightDataGrid();
             $scope.compileSeaFreightDataGrid();
         };
-
+        
         //initialized seafreight data grid
         $scope.initSeaFreightDataGrid = function () {
             $scope.initSeaFreightDataDefinition = function () {
@@ -1490,8 +1490,9 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                     "DataTarget2": "SeaFreightShipmentsMenu2",
                     "ShowCreate": false,
                     "ShowContextMenu": true,
-                    "ContextMenu": ["'Create'", "'Delete'"],
-                    "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                    "PopUpDetails": ["Shipment", "References/ShipmentDetails"],
+                    "ContextMenu": ["'Create'", "'Delete'", "'ShowShipmentDetails'"],
+                    "ContextMenuLabel": ['Add Shipment', 'Delete', 'Show Details'],
                     "IsDetail": true
                 }
             };
@@ -1568,14 +1569,13 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                         //if datalist is only 1 then directly insert
                         $scope.showModal('#shipment-list-modal','shipment');
                         return true;
-
                     default: return true;
                 }
             };
 
             $scope.seaFreightShipmentsResetData = function () {
                 $scope.seaFreightShipmentsItem = {
-                    "Id": null,
+                    "Id": $scope.seaFreightSubmitDefinition.Type == "Create" ? $scope.seaFreightShipmentsDataDefinition.DataList.length + 1 : $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1,
                     "SeaFreightId": -1,
                     "ShipmentId": null,
                     "Shipment": [{}],

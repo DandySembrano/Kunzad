@@ -17,7 +17,44 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
+        private QRHandling qrHandling = new QRHandling();
+        private string dir;
         private int pageSize = 20;
+
+        //GET: api/Shipments?text=qrCode
+        public IHttpActionResult GetShipments(string text)
+        {
+
+            Response response = new Response();
+            response.status = "FAILURE";
+            try
+            {
+                var shipment = db.Shipments
+                            .Include(s => s.Address.CityMunicipality.StateProvince)
+                            .Include(s => s.Address1)
+                            .Include(s => s.Address1.CityMunicipality.StateProvince)
+                            .Include(s => s.BusinessUnit)
+                            .Include(s => s.BusinessUnit1)
+                            .Include(s => s.Service)
+                            .Include(s => s.ShipmentType)
+                            .Include(s => s.Customer)
+                            .Include(s => s.Customer.CustomerAddresses)
+                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+                            .Include(s => s.Customer.CustomerContacts)
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
+                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+                            .Where(s => s.QRCode.Equals(text) == true ? true : false).AsQueryable().AsNoTracking().ToArray();
+                response.status = "SUCCESS";
+                response.objParam1 = shipment;
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
+            return Ok(response);
+        }
+
         // GET: api/Shipments
         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Shipment> GetShipments()
@@ -76,10 +113,10 @@ namespace Kunzad.ApiControllers
             }
             return shipment;
         }
-        
+
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
-       // [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        // [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
             Shipment[] shipments = new Shipment[pageSize];
@@ -92,7 +129,7 @@ namespace Kunzad.ApiControllers
         }
 
         [HttpGet]
-     //   [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        //   [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
             /*
@@ -104,9 +141,9 @@ namespace Kunzad.ApiControllers
             Shipment[] shipments = new Shipment[pageSize];
             int serviceCategoryId;
 
-            if(source.ToLower().Equals("air"))
+            if (source.ToLower().Equals("air"))
                 serviceCategoryId = 1;
-            else if(source.ToLower().Equals("sea"))
+            else if (source.ToLower().Equals("sea"))
                 serviceCategoryId = 5;
             else //courier
                 serviceCategoryId = 4;
@@ -151,7 +188,7 @@ namespace Kunzad.ApiControllers
             if (shipment.Length == 0)
                 return Ok(shipment);
             for (int i = 0; i < shipment.Length; i++)
-            {   
+            {
                 shipment[i].Address.Shipments = null;
                 shipment[i].Address.Shipments1 = null;
                 shipment[i].Address.CityMunicipality.Addresses = null;
@@ -255,7 +292,7 @@ namespace Kunzad.ApiControllers
             db.Entry(shipment.Address1).State = EntityState.Modified;
             try
             {
-                
+
                 shipment.LastUpdatedDate = DateTime.Now;
                 shipment.Address.LastUpdatedDate = DateTime.Now;
                 shipment.Address1.LastUpdatedDate = DateTime.Now;
@@ -290,26 +327,30 @@ namespace Kunzad.ApiControllers
             }
             try
             {
+                //dir = AppDomain.CurrentDomain.BaseDirectory + @"QRImage\" + DateTime.Now.ToString("yyyyMMdd");
+                //System.IO.Directory.CreateDirectory(dir);
                 //for (int i = 0; i < 100; i++)
                 //{
-                    shipment.CreatedDate = DateTime.Now;
-                    shipment.Address.CreatedDate = DateTime.Now;
-                    shipment.Address1.CreatedDate = DateTime.Now;
-                    shipment.TransportStatusId = (int)Status.TransportStatus.Open;
-                    shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
-                    shipment.TransportStatusRemarks = "For pickup from customer";
-
-                    db.Addresses.Add(shipment.Address);
-                    db.Addresses.Add(shipment.Address1);
-                    db.Shipments.Add(shipment);
-                    db.SaveChanges();
+                shipment.CreatedDate = DateTime.Now;
+                shipment.Address.CreatedDate = DateTime.Now;
+                shipment.Address1.CreatedDate = DateTime.Now;
+                shipment.TransportStatusId = (int)Status.TransportStatus.Open;
+                shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
+                shipment.TransportStatusRemarks = "For pickup from customer";
+                shipment.QRCode = qrHandling.generateCode(10);
+                //Encode QR Code and save as png
+                //qrHandling.saveQRImageToFile(dir, shipment.Id.ToString(), qrHandling.encode(shipment.QRCode));
+                db.Addresses.Add(shipment.Address);
+                db.Addresses.Add(shipment.Address1);
+                db.Shipments.Add(shipment);
+                db.SaveChanges();
                 //}
                 response.status = "SUCCESS";
                 response.objParam1 = shipment;
             }
             catch (Exception e)
             {
-                response.message = e.InnerException.InnerException.Message.ToString();
+                response.message = e.Message.ToString();
             }
 
             return Ok(response);
@@ -405,6 +446,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.PickUpBussinessUnitId == null || shipment.PickUpBussinessUnitId == 0 ? true : s.PickUpBussinessUnitId == shipment.PickUpBussinessUnitId)
                 .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
+                .Where(s => shipment.QRCode == null ? true : s.QRCode.Equals(shipment.QRCode) == true ? true : false)
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             shipments = filteredShipments;
@@ -412,7 +454,7 @@ namespace Kunzad.ApiControllers
 
         public void filterRecord(int param1, string type, Shipment shipment, Shipment shipment1, int serviceCategoryId, ref Shipment[] shipments)
         {
-           
+
             /*
              * If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
              * If integer value is not nullable in table equate to 0 else null

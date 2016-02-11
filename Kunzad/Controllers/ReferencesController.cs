@@ -152,5 +152,10 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult ShipmentDetails()
+        {
+            return View();
+        }
     }
 }

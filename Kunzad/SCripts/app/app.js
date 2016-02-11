@@ -1,5 +1,56 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
 kunzadApp.run(function ($rootScope) {
+    //----------------------------------------SignalR Socketing-----------------------------------------
+    $rootScope.baseUrl = "http://localhost:24008/";
+    $rootScope.scanning = null;
+    $rootScope.scannedData = null;
+    $rootScope.scannerWatcher = false;
+
+    $rootScope.scanning = $.connection.scanningHub;
+    $.connection.hub.url = "http://localhost:24008/signalr";
+    
+    //remove the connection id
+    $rootScope.removeClient = function () {
+        $.connection.hub.start().done(function () {
+            $rootScope.scanning.server.removeClient($.connection.hub.id)
+            .done(function () { })
+            .fail(function () { });
+        })
+    };
+    $rootScope.connectoToHub = function () {
+        if ($rootScope.scanning != null) {
+            //Add user to hub
+            $.connection.hub.start()
+            .done(function () {
+                $rootScope.scanning.server.addClient($.connection.hub.id, "KENNETHCY").done(function () {
+                    console.log("Success");
+                    console.log($.connection.hub.id);
+                })
+                .fail(function () {
+                    $rootScope.scanning = $.connection.scanningHub;
+                    console.log("Failed to add user in the hub.");
+                });
+            })
+            .fail(function () {
+                console.log("Connection to hub failed.");
+            })
+
+            //Receiver function from scanningHub that broadcast shipmentDetails
+            $rootScope.scanning.client.broadcastShipmentDetails = function (text, access, connectionId) {
+                if (access == "AUTHENTICATED") {
+                    $rootScope.scannerWatcher = true;
+                    $rootScope.scannedText = text;
+                    $rootScope.scannerConnectionId = connectionId;
+                }
+            };
+        }
+        else
+            console.log("Hub not found.");
+    };
+
+    $rootScope.connectoToHub();
+    //-------------------------------------End if SignalR Socketing-------------------------------------
+
     //Triggers before actionForm function
     $rootScope.formatControlNo = function (prefix, length, value) {
         var formattedValue = prefix + value.toString();
@@ -184,72 +235,6 @@ kunzadApp.run(function ($rootScope) {
             }]
         };
     };
-
-    //$rootScope.airFreightObj = function () {
-    //    return {
-    //        "AirFreight": [
-    //            {
-    //                "Id": null,
-    //                "AirlineId": null,
-    //                "Airline": {
-    //                    "Id": null,
-    //                    "Name": null
-    //                },
-    //                "AirlineWaybillNumber": null,
-    //                "AirlineWaybillDate": null,
-    //                "EstimatedDepartureDate": null,
-    //                "EstimatedDepartureTime": null,
-    //                "EstimatedArrivalDate": null,
-    //                "EstimatedArrivalTime": null,
-    //                "OriginBusinessUnitId": null,
-    //                "BusinessUnit": {
-    //                    "Id": null,
-    //                    "Code": null,
-    //                    "Name": null
-    //                },
-    //                "DestinationBusinessUnitId": null,
-    //                "BusinessUnit1": {
-    //                    "Id": null,
-    //                    "Code": null,
-    //                    "Name": null
-    //                },
-    //                "DepartureDate": null,
-    //                "DepartureTime": null,
-    //                "ArrivalDate": null,
-    //                "ArrivalTime": null
-    //            },
-    //            {
-    //                "Id": null,
-    //                "AirlineId": null,
-    //                "Airline": {
-    //                    "Id": null,
-    //                    "Name": null
-    //                },
-    //                "AirlineWaybillNumber": null,
-    //                "AirlineWaybillDate": null,
-    //                "EstimatedDepartureDate": null,
-    //                "EstimatedDepartureTime": null,
-    //                "EstimatedArrivalDate": null,
-    //                "EstimatedArrivalTime": null,
-    //                "OriginBusinessUnitId": null,
-    //                "BusinessUnit": {
-    //                    "Id": null,
-    //                    "Code": null,
-    //                    "Name": null
-    //                },
-    //                "DestinationBusinessUnitId": null,
-    //                "BusinessUnit1": {
-    //                    "Id": null,
-    //                    "Code": null,
-    //                    "Name": null
-    //                },
-    //                "DepartureDate": null,
-    //                "DepartureTime": null,
-    //                "ArrivalDate": null,
-    //                "ArrivalTime": null
-    //            }]
-    //    }
-    //};
 
     //Payment Mode List
     $rootScope.getPaymentModeList = function () {
@@ -494,7 +479,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             templateUrl: '/References/ShipmentType',
             controller: 'ShipmentTypeController'
         })
-    
+
         .when('/servicecategory', {
             templateUrl: '/References/ServiceCategory',
             controller: 'ServiceCategoryController'
@@ -596,13 +581,15 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         })
 
        .when('/deliveryexception', {
-            templateUrl: '/References/DeliveryException',
-            controller: 'DeliveryExceptionController'
+           templateUrl: '/References/DeliveryException',
+           controller: 'DeliveryExceptionController'
        })
-        .when('/deliveryexceptionbatching', {
-            templateUrl: '/References/DeliveryExceptionBatching',
-            controller: 'DeliveryExceptionBatchingController'
-        })
+
+       .when('/deliveryexceptionbatching', {
+           templateUrl: '/References/DeliveryExceptionBatching',
+           controller: 'DeliveryExceptionBatchingController'
+       })
+
         .otherwise({
             redirectTo: '/home'
         });
@@ -637,7 +624,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
 
             // Get List of CityMunicipalities
             var getCityMunicipalitiesFromApi = function () {
-                $http.get("/api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+                $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
                     .success(function (data, status) {
                         cityMunicipalities = data;
                     })
