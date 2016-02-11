@@ -58,6 +58,14 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
         }
     }
 
+    //Initialize Address fields
+    $scope.initializeAddressField = function (addressItem) {
+        $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
+        $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
+        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+        return $scope.formattedAddress;
+    };
+
     //=================================================DEX SHIPMENT DATAGRID=================================================
     //Load dexShipments datagrid for compiling
     $scope.loadDexShipmentsDataGrid = function () {
@@ -89,8 +97,9 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
                 "DataTarget2": "DexShipmentsMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": true,
-                "ContextMenu": ["'Create'", "'Delete'"],
-                "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                "PopUpDetails": ["Shipment", "References/ShipmentDetails"],
+                "ContextMenu": ["'Create'", "'Delete'", "'ShowShipmentDetails'"],
+                "ContextMenuLabel": ['Add Shipment', 'Delete', 'Show Details'],
                 "IsDetail": true
             }
         };
@@ -167,6 +176,7 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
 
         $scope.dexShipmentsResetData = function () {
             $scope.dexShipmentsItem = [{
+                "Id": null,
                 "ShipmentId": null,
                 "Shipment": { }
             }]
@@ -353,8 +363,13 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
                     }
                     //Check if shipment is not yet in the list
                     if (!found) {
+                        var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
+                        var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
+                        $scope.dexShipmentsItem.Id = $scope.dexShipmentsSubmitDefinition.Type == "Create" ? $scope.dexShipmentsDataDefinition.DataList.length + 1 : $scope.dexShipmentsDataDefinition.DataList.length > 0 ? $scope.dexShipmentsDataDefinition.DataList[$scope.dexShipmentsDataDefinition.DataList.length - 1].Id + 1 : $scope.dexShipmentsDataDefinition.DataList.length + 1;
                         $scope.dexShipmentsItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
                         $scope.dexShipmentsItem.Shipment = $scope.shipmentDataDefinition.DataItem;
+                        $scope.dexShipmentsItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
+                        $scope.dexShipmentsItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
                         $scope.dexIsError = false;
                         $scope.dexErrorMessage = "";
                         $scope.dexShipmentsDataDefinition.DataList.push($scope.dexShipmentsItem);
