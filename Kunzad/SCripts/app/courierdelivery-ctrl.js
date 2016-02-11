@@ -632,7 +632,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         $scope.initializeCourierDeliveryDetailsDataDefinition = function () {
             $scope.courierDeliveryDetailsDataDefinition = {
                 "Header": ['Shipment No', 'Cost Allocation', 'Transport Status', 'Booking Date', 'Business Unit', 'Operating Site', 'Service', 'Shipment Type', 'Payment Mode', 'Booking Remarks', 'Qty', 'Total CBM', 'Cargo Description', 'Pickup Address', 'Target Pickup Date', 'Target Pickup Time', 'Customer', 'Customer Address', 'Customer Contact No', 'Consignee', 'Consignee Address', 'Consignee Contact No', 'No.'],
-                "Keys": ['ShipmentId', 'CostAllocation', 'Shipment[0].TransportStatusId', 'Shipment[0].CreatedDate', 'Shipment[0].BusinessUnit.Name', 'Shipment[0].BusinessUnit1.Name', 'Shipment[0].Service.Name', 'Shipment[0].ShipmentType.Name', 'Shipment[0].PaymentMode', 'Shipment[0].BookingRemarks', 'Shipment[0].Quantity', 'Shipment[0].TotalCBM', 'Shipment[0].Description', 'Shipment[0].OriginAddress', 'Shipment[0].PickupDate', 'Shipment[0].PickupTime', 'Shipment[0].Customer.Name', 'Shipment[0].Customer.CustomerAddresses[0].Line1', 'Shipment[0].Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'Shipment[0].DeliverTo', 'Shipment[0].DeliveryAddress', 'Shipment[0].DeliverToContactNo'],
+                "Keys": ['ShipmentId', 'CostAllocation', 'Shipment.TransportStatusId', 'Shipment.CreatedDate', 'Shipment.BusinessUnit.Name', 'Shipment.BusinessUnit1.Name', 'Shipment.Service.Name', 'Shipment.ShipmentType.Name', 'Shipment.PaymentMode', 'Shipment.BookingRemarks', 'Shipment.Quantity', 'Shipment.TotalCBM', 'Shipment.Description', 'Shipment.OriginAddress', 'Shipment.PickupDate', 'Shipment.PickupTime', 'Shipment.Customer.Name', 'Shipment.Customer.CustomerAddresses[0].Line1', 'Shipment.Customer.CustomerContacts[0].Contact.ContactPhones[0].ContactNumber', 'Shipment.DeliverTo', 'Shipment.DeliveryAddress', 'Shipment.DeliverToContactNo'],
                 "Type": ['ControlNo', 'Decimal', 'TransportStatus', 'Date', 'ProperCase', 'ProperCase', 'ProperCase', 'ProperCase', 'PaymentMode', 'Default', 'Default', 'Decimal', 'Default', 'ProperCase', 'Date', 'Time', 'ProperCase', 'ProperCase', 'Default', 'ProperCase', 'ProperCase', 'Default'],
                 "ColWidth": [150, 150, 150, 150, 150, 150, 150, 150, 150, 200, 100, 150, 200, 300, 150, 150, 200, 200, 200, 200, 300, 200],
                 "DataList": [],
@@ -651,8 +651,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 "DataTarget2": "CourierDeliveryDetailsMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": true,
-                "ContextMenu": ["'Create'", "'Delete'"],
-                "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                "PopUpDetails": ["Shipment", "References/ShipmentDetails"],
+                "ContextMenu": ["'Create'", "'Delete'", "'ShowShipmentDetails'"],
+                "ContextMenuLabel": ['Add Shipment', 'Delete', 'Show Details'],
                 "IsDetail": true
             }
         };
@@ -674,26 +675,28 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                 case "PreAction":
                     return true;
                 case "PreCreateAction":
-                    if (!$scope.viewOnly) {
-                        if ($scope.courierDeliveryDetailsDataDefinition.DataList.length > 0) {
-                            var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
-                            if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0) {
-                                $scope.courierDeliveryIsError = true;
-                                $scope.courierDeliveryErrorMessage = "Shipment is required.";
-                                $scope.focusOnTop();
-                                return false;
-                            }
-                            else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
-                                $scope.courierDeliveryIsError = true;
-                                $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
-                                $scope.focusOnTop();
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                    else
-                        return false;
+                    //if (!$scope.viewOnly) {
+                    //    if ($scope.courierDeliveryDetailsDataDefinition.DataList.length > 0) {
+                    //        var upperRow = $scope.courierDeliveryDetailsDataDefinition.DataList.length - 1;
+                    //        if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].ShipmentId == 0) {
+                    //            $scope.courierDeliveryIsError = true;
+                    //            $scope.courierDeliveryErrorMessage = "Shipment is required.";
+                    //            $scope.focusOnTop();
+                    //            return false;
+                    //        }
+                    //        else if ($scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == null || $scope.courierDeliveryDetailsDataDefinition.DataList[upperRow].CostAllocation == 0) {
+                    //            $scope.courierDeliveryIsError = true;
+                    //            $scope.courierDeliveryErrorMessage = "Cost Allocation must be greater than zero.";
+                    //            $scope.focusOnTop();
+                    //            return false;
+                    //        }
+                    //    }
+                    //    return true;
+                    //}
+                    //else
+                    //    return false;
+                    $scope.showShipment();
+                    return true;
                 case "PreEditAction":
                     if (!$scope.viewOnly)
                         return true;
@@ -721,18 +724,18 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryDetailsDataDefinition.DoPagination = true;
                     }
                     return true;
-                case "Shipment No":
-                    if(!$scope.viewOnly)
-                        //if datalist is only 1 then directly insert
-                        $scope.showShipment();
-                    return true;
+                //case "Shipment No":
+                //    if(!$scope.viewOnly)
+                //        //if datalist is only 1 then directly insert
+                //        $scope.showShipment();
+                //    return true;
                 default: return true;
             }
         };
 
         $scope.courierDeliveryDetailsResetData = function () {
             $scope.courierDeliveryDetailsItem = {
-                "Id": null,
+                "Id": $scope.courierDeliverySubmitDefinition.Type == "Create" ? $scope.courierDeliveryDetailsDataDefinition.DataList.length + 1 : $scope.courierDeliveryDetailsDataDefinition.DataList.length > 0 ? $scope.courierDeliveryDetailsDataDefinition.DataList[$scope.courierDeliveryDetailsDataDefinition.DataList.length - 1].Id + 1 : $scope.courierDeliveryDetailsDataDefinition.DataList.length + 1,
                 "CourierTransactionId": -1,
                 "ShipmentId": 0,
                 "Shipment": [{}],
@@ -742,9 +745,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
             $scope.courierDeliveryIsError = false;
             $scope.courierDeliveryErrorMessage = "";
             //Added 1 row in Courier Delivery Details
-            $scope.courierDeliveryDetailsTemporyId = $scope.courierDeliveryDetailsTemporyId + 1;
-            $scope.courierDeliveryDetailsItem.Id = $scope.courierDeliveryDetailsTemporyId;
-            $scope.courierDeliveryDetailsDataDefinition.DataList.push($scope.courierDeliveryDetailsItem);
+            //$scope.courierDeliveryDetailsTemporyId = $scope.courierDeliveryDetailsTemporyId + 1;
+            //$scope.courierDeliveryDetailsItem.Id = $scope.courierDeliveryDetailsTemporyId;
+            //$scope.courierDeliveryDetailsDataDefinition.DataList.push($scope.courierDeliveryDetailsItem);
 
         };
 
@@ -1149,16 +1152,17 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     }
                     //Check if shipment is not yet in the list
                     if (!found) {
-                        var shipmentHolder = [];
+                        //$scope.seafreightshipmentstemporyid++;
+                        //$scope.seafreightshipmentsitem.id = $scope.seafreightshipmentstemporyid;
                         var originAddress = $scope.shipmentDataDefinition.DataItem.Address1;
                         var deliveryAddress = $scope.shipmentDataDefinition.DataItem.Address;
-                        shipmentHolder.push($scope.shipmentDataDefinition.DataItem);
                         $scope.courierDeliveryDetailsItem.ShipmentId = $scope.shipmentDataDefinition.DataItem.Id;
-                        $scope.courierDeliveryDetailsItem.Shipment = shipmentHolder;
-                        $scope.courierDeliveryDetailsItem.Shipment[0].OriginAddress = $scope.initializeAddressField(originAddress);
-                        $scope.courierDeliveryDetailsItem.Shipment[0].DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
+                        $scope.courierDeliveryDetailsItem.Shipment = $scope.shipmentDataDefinition.DataItem;
+                        $scope.courierDeliveryDetailsItem.Shipment.OriginAddress = $scope.initializeAddressField(originAddress);
+                        $scope.courierDeliveryDetailsItem.Shipment.DeliveryAddress = $scope.initializeAddressField(deliveryAddress);
                         $scope.courierDeliveryIsError = false;
                         $scope.courierDeliveryErrorMessage = "";
+                        $scope.courierDeliveryDetailsDataDefinition.DataList.push($scope.courierDeliveryDetailsItem);
                     }
                     else {
                         $scope.courierDeliveryIsError = true;
@@ -1379,7 +1383,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         //Initialize Courier Delivery DataItem
         $scope.courierDeliveryResetData();
         //Initialize Courier Delivery Details DataItem
-        //$scope.courierDeliveryDetailsResetData();
+        $scope.courierDeliveryDetailsResetData();
         
         if ($scope.courierDeliveryFilteringDefinition.AutoLoad == true)
             $scope.courierDeliveryDataDefinition.Retrieve = true;

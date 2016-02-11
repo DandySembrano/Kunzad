@@ -1575,7 +1575,7 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
 
             $scope.seaFreightShipmentsResetData = function () {
                 $scope.seaFreightShipmentsItem = {
-                    "Id": $scope.seaFreightSubmitDefinition.Type == "Create" ? $scope.seaFreightShipmentsDataDefinition.DataList.length + 1 : $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1,
+                    "Id": $scope.seaFreightSubmitDefinition.Type == "Create" ? $scope.seaFreightShipmentsDataDefinition.DataList.length + 1 : $scope.seaFreightShipmentsDataDefinition.DataList.length > 0 ? $scope.seaFreightShipmentsDataDefinition.DataList[$scope.seaFreightShipmentsDataDefinition.DataList.length - 1].Id + 1 : $scope.seaFreightShipmentsDataDefinition.DataList.length + 1,
                     "SeaFreightId": -1,
                     "ShipmentId": null,
                     "Shipment": [{}],
