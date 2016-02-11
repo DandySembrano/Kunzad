@@ -724,11 +724,11 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                         $scope.courierDeliveryDetailsDataDefinition.DoPagination = true;
                     }
                     return true;
-                //case "Shipment No":
-                //    if(!$scope.viewOnly)
-                //        //if datalist is only 1 then directly insert
-                //        $scope.showShipment();
-                //    return true;
+                case "Shipment No":
+                    if(!$scope.viewOnly)
+                        //if datalist is only 1 then directly insert
+                        $scope.showShipment();
+                    return true;
                 default: return true;
             }
         };

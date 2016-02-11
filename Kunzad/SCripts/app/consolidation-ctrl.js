@@ -846,8 +846,9 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                     "DataTarget2": "ConsolidationDetailMenu2",
                     "ShowCreate": false,
                     "ShowContextMenu": true,
-                    "ContextMenu": ["'Create'", "'Delete'"],
-                    "ContextMenuLabel": ['Add Shipment', 'Delete'],
+                    "PopUpDetails": ["DataItem", "References/ShipmentDetails"],
+                    "ContextMenu": ["'Create'", "'Delete'", "'ShowShipmentDetails'"],
+                    "ContextMenuLabel": ['Add Shipment', 'Delete', 'Show Details'],
                     "IsDetail": true
                 }
             };
@@ -925,7 +926,8 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
             $scope.consolidateShipmentResetData = function () {
                 $scope.consolidateShipmentItem = {
-                    "Id": 0,
+                    
+                    "Id": $scope.consolidationDataDefinition.Type == "Create" ? $scope.consolidationDetailDataDefinition.DataList.length + 1 : $scope.consolidationDetailDataDefinition.DataList.length > 0 ? $scope.consolidationDetailDataDefinition.DataList[$scope.consolidationDetailDataDefinition.DataList.length - 1].Id + 1 : $scope.consolidationDetailDataDefinition.DataList.length + 1,
                     "ParentShipmentId": null,
                     "ConsolidationTypeId": null,
                     "ShipmentId": null
