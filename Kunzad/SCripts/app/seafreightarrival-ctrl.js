@@ -110,6 +110,7 @@
                     data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
                     $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
                     $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                    $scope.checkInShipmentsDataDefinition.DataList[i].Id = $scope.checkInShipmentsDataDefinition.DataList.length + 1;
                 }
                 $scope.checkInIsError = false;
                 $scope.checkInErrorMessage = "";
@@ -719,8 +720,9 @@
                 "DataTarget2": "CheckInShipmentsMenu2",
                 "ShowCreate": false,
                 "ShowContextMenu": true,
-                "ContextMenu": ["'Create'", "'Delete'"],
-                "ContextMenuLabel": ['Add Shipment', 'Remove Shipment'],
+                "PopUpDetails": ["Shipment", "References/ShipmentDetails"],
+                "ContextMenu": ["'Create'", "'Delete'", "'ShowShipmentDetails'"],
+                "ContextMenuLabel": ['Add Shipment', 'Delete', 'Show Details'],
                 "IsDetail": true
             }
         };
@@ -784,7 +786,7 @@
 
         $scope.checkInShipmentsResetData = function () {
             $scope.checkInShipmentsItem = {
-                "Id": null,
+                "Id": $scope.checkInSubmitDefinition.Type == "Create" ? $scope.checkInShipmentsDataDefinition.DataList.length + 1 : $scope.checkInShipmentsDataDefinition.DataList.length > 0 ? $scope.checkInShipmentsDataDefinition.DataList[$scope.checkInShipmentsDataDefinition.DataList.length - 1].Id + 1 : $scope.checkInShipmentsDataDefinition.DataList.length + 1,
                 "CheckInId": null,
                 "ShipmentId": null,
                 "Shipment": {},

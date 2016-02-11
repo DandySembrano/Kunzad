@@ -28,6 +28,9 @@ kunzadApp.directive('dirDataGrid2', function () {
                                             DataTarget2         - Contains the data target for the context-menu if no row in the data grid
                                             ShowCreate          - True if create button will be shown
                                             ShowContextMenu     - True if show context menu, else false
+                                            PopUpDetails        - Details for popup window
+                                                                  * first index is the property name - if value is DataItem then use datadefinition.DataItem Property
+                                                                  * second index is the url for the popup window
                                             ContextMenu         - Actions to be passed in each context menu item (Ex: ["'actionName'"])
                                             ContextMenuLabel    - Lable for each context menu item (Ex: ['actionLabel'])
                                             IsDetail            - true if datagrid used as detail else false if master
@@ -244,7 +247,7 @@ kunzadApp.directive('dirDataGrid2', function () {
                     case 'ShowShipmentDetails':
                         if ($scope.selectedIndex != null) {
                             $scope.datadefinition.DataItem = $scope.datadefinition.DataList[$scope.selectedIndex];
-                            $localForage.setItem('PopUpData', $scope.datadefinition.DataItem[$scope.datadefinition.PopUpDetails[0]])
+                            $localForage.setItem('PopUpData', $scope.datadefinition.PopUpDetails[0] == "DataItem" ? $scope.datadefinition.DataItem : $scope.datadefinition.DataItem[$scope.datadefinition.PopUpDetails[0]])
                             .then(function () {
                                 window.open($rootScope.baseUrl + $scope.datadefinition.PopUpDetails[1], "",
                                 "width=" + (screen.width * .7) + ", height=" + (screen.height * .7) + ", left=" + (screen.height * .25) + ", top=" + (screen.height * .1) + ", titlebar=0");       

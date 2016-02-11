@@ -97,6 +97,7 @@
                     data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
                     $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
                     $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                    $scope.checkInShipmentsDataDefinition.DataList[i].Id = $scope.checkInShipmentsDataDefinition.DataList.length + 1;
                 }
                 $scope.checkInIsError = false;
                 $scope.checkInErrorMessage = "";
@@ -637,9 +638,10 @@
                 "DataTarget": "CheckInShipmentsMenu",
                 "DataTarget2": "CheckInShipmentsMenu2",
                 "ShowCreate": false,
-                "ShowContextMenu": false,
-                "ContextMenu": [],
-                "ContextMenuLabel": [],
+                "ShowContextMenu": true,
+                "PopUpDetails": ["Shipment", "References/ShipmentDetails"],
+                "ContextMenu": ["'ShowShipmentDetails'"],
+                "ContextMenuLabel": ['Show Details'],
                 "IsDetail": true
             }
         };
