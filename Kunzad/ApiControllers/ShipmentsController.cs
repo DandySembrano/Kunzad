@@ -22,38 +22,38 @@ namespace Kunzad.ApiControllers
         private int pageSize = 20;
 
         //GET: api/Shipments?text=qrCode
-        public IHttpActionResult GetShipments(string text)
-        {
+        //public IHttpActionResult GetShipments(string text)
+        //{
 
-            Response response = new Response();
-            response.status = "FAILURE";
-            try
-            {
-                var shipment = db.Shipments
-                            .Include(s => s.Address.CityMunicipality.StateProvince)
-                            .Include(s => s.Address1)
-                            .Include(s => s.Address1.CityMunicipality.StateProvince)
-                            .Include(s => s.BusinessUnit)
-                            .Include(s => s.BusinessUnit1)
-                            .Include(s => s.Service)
-                            .Include(s => s.ShipmentType)
-                            .Include(s => s.Customer)
-                            .Include(s => s.Customer.CustomerAddresses)
-                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
-                            .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
-                            .Include(s => s.Customer.CustomerContacts)
-                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
-                            .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
-                            .Where(s => s.QRCode.Equals(text) == true ? true : false).AsQueryable().AsNoTracking().ToArray();
-                response.status = "SUCCESS";
-                response.objParam1 = shipment;
-            }
-            catch (Exception e)
-            {
-                response.message = e.InnerException.InnerException.Message.ToString();
-            }
-            return Ok(response);
-        }
+        //    Response response = new Response();
+        //    response.status = "FAILURE";
+        //    try
+        //    {
+        //        var shipment = db.Shipments
+        //                    .Include(s => s.Address.CityMunicipality.StateProvince)
+        //                    .Include(s => s.Address1)
+        //                    .Include(s => s.Address1.CityMunicipality.StateProvince)
+        //                    .Include(s => s.BusinessUnit)
+        //                    .Include(s => s.BusinessUnit1)
+        //                    .Include(s => s.Service)
+        //                    .Include(s => s.ShipmentType)
+        //                    .Include(s => s.Customer)
+        //                    .Include(s => s.Customer.CustomerAddresses)
+        //                    .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality))
+        //                    .Include(s => s.Customer.CustomerAddresses.Select(ca => ca.CityMunicipality.StateProvince))
+        //                    .Include(s => s.Customer.CustomerContacts)
+        //                    .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact))
+        //                    .Include(s => s.Customer.CustomerContacts.Select(cc => cc.Contact.ContactPhones))
+        //                    .Where(s => s.QRCode.Equals(text) == true ? true : false).AsQueryable().AsNoTracking().ToArray();
+        //        response.status = "SUCCESS";
+        //        response.objParam1 = shipment;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        response.message = e.InnerException.InnerException.Message.ToString();
+        //    }
+        //    return Ok(response);
+        //}
 
         // GET: api/Shipments
         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
@@ -446,7 +446,7 @@ namespace Kunzad.ApiControllers
                 .Where(s => shipment.PickUpBussinessUnitId == null || shipment.PickUpBussinessUnitId == 0 ? true : s.PickUpBussinessUnitId == shipment.PickUpBussinessUnitId)
                 .Where(s => shipment.TransportStatusId == null || shipment.TransportStatusId == 0 ? true : s.TransportStatusId == shipment.TransportStatusId)
                 .Where(s => shipment.PaymentMode == null ? true : s.PaymentMode.Equals(shipment.PaymentMode) == true)
-                .Where(s => shipment.QRCode == null ? true : s.QRCode.Equals(shipment.QRCode) == true ? true : false)
+                //.Where(s => shipment.QRCode == null ? true : s.QRCode.Equals(shipment.QRCode) == true ? true : false)
                 .OrderBy(s => s.Id)
                 .Skip(skip).Take(AppSettingsGet.PageSize).AsNoTracking().ToArray();
             shipments = filteredShipments;
