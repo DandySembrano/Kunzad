@@ -17,8 +17,8 @@ namespace Kunzad.ApiControllers
     {
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
-        private QRHandling qrHandling = new QRHandling();
-        private string dir;
+        //private QRHandling qrHandling = new QRHandling();
+        //private string dir;
         private int pageSize = 20;
 
         //GET: api/Shipments?text=qrCode
@@ -337,7 +337,7 @@ namespace Kunzad.ApiControllers
                 shipment.TransportStatusId = (int)Status.TransportStatus.Open;
                 shipment.LoadingStatusId = (int)Status.LoadingStatus.Open;
                 shipment.TransportStatusRemarks = "For pickup from customer";
-                shipment.QRCode = qrHandling.generateCode(10);
+                //shipment.QRCode = qrHandling.generateCode(10);
                 //Encode QR Code and save as png
                 //qrHandling.saveQRImageToFile(dir, shipment.Id.ToString(), qrHandling.encode(shipment.QRCode));
                 db.Addresses.Add(shipment.Address);
