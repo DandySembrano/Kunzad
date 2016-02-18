@@ -81,7 +81,7 @@ kunzadApp.directive('dirDataGrid2', function () {
             $scope.selectedIndex = null;
             $scope.gridOptions = {};
             $scope.scrolled = false;
-
+            $http.defaults.headers.common['Token'] = $rootScope.token.toString();
             //function that focus on top of the page
             $scope.focusOnTop = function () {
                 $(document).ready(function () {

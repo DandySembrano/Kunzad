@@ -1,13 +1,13 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
-kunzadApp.run(function ($rootScope) {
+kunzadApp.run(function ($rootScope, $http) {
     //----------------------------------------SignalR Socketing-----------------------------------------
-    $rootScope.baseUrl = "http://localhost:24008/";
+    $rootScope.baseUrl = "http://localhost/";
     $rootScope.scanning = null;
     $rootScope.scannedData = null;
     $rootScope.scannerWatcher = false;
 
     $rootScope.scanning = $.connection.scanningHub;
-    $.connection.hub.url = "http://localhost:24008/signalr";
+    $.connection.hub.url = "http://localhost/signalr";
     
     //remove the connection id
     $rootScope.removeClient = function () {
@@ -48,8 +48,27 @@ kunzadApp.run(function ($rootScope) {
             console.log("Hub not found.");
     };
 
-    $rootScope.connectoToHub();
-    //-------------------------------------End if SignalR Socketing-------------------------------------
+    //$rootScope.connectoToHub();
+    //-------------------------------------End of SignalR Socketing-------------------------------------
+
+    //
+
+    //Use UserId number 1 temporarily
+    $http.get("/api/users?id=1")
+    .success(function (response, status) {
+        if (response.status == "SUCCESS") {
+            $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
+            $http.get("/api/authenticate")
+            .success(function (response, status, headers) {
+                $rootScope.token = headers().token;
+            })
+            .error(function (err) {
+                console.log("Login failure");
+            })
+        }
+        
+    })
+    .error(function (err) { })
 
     //Triggers before actionForm function
     $rootScope.formatControlNo = function (prefix, length, value) {
@@ -264,7 +283,6 @@ kunzadApp.run(function ($rootScope) {
         ]; 
     };
 
-    //Remove unnecessary 
     $rootScope.formatShipment = function (shipments) {
         for (var i = 0; i < shipments.length; i++) {
             var holder = {};
@@ -595,112 +613,112 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         });
     }])
 
-   .config(['$localForageProvider', function($localForageProvider){
-        $localForageProvider.config({
-            name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
-            version     : 1.0, // version of the database, you shouldn't have to use this
-            storeName   : 'keyvaluepairs', // name of the table
-            description : 'some description'
-        })
-    }])
+.config(['$localForageProvider', function($localForageProvider){
+    $localForageProvider.config({
+        name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
+        version     : 1.0, // version of the database, you shouldn't have to use this
+        storeName   : 'keyvaluepairs', // name of the table
+        description : 'some description'
+    })
+}])
 
-    .controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
-        function ($rootScope, $scope, $route, $routeParams, $location, $http) {
+.controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
+    function ($rootScope, $scope, $route, $routeParams, $location, $http) {
 
-            $scope.$on('$routeChangeSuccess', function (e, current, previous) {
-                $scope.activeViewPath = $location.path();
-            });
+        $scope.$on('$routeChangeSuccess', function (e, current, previous) {
+            $scope.activeViewPath = $location.path();
+        });
 
-            // Temporary - support one country only (Philippines)
-            $rootScope.country = {
-                "Id": 1,
-                "Name": "Philippines",
-            }
+        // Temporary - support one country only (Philippines)
+        $rootScope.country = {
+            "Id": 1,
+            "Name": "Philippines",
+        }
             
-            var cityMunicipalities = [];
-            $rootScope.getCityMunicipalities = function () {
-                return cityMunicipalities;
-            }
+        var cityMunicipalities = [];
+        $rootScope.getCityMunicipalities = function () {
+            return cityMunicipalities;
+        }
 
-            // Get List of CityMunicipalities
-            var getCityMunicipalitiesFromApi = function () {
-                $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
-                    .success(function (data, status) {
-                        cityMunicipalities = data;
-                    })
-                    .error(function (data, status) {
-                    });
-            }
+        // Get List of CityMunicipalities
+        var getCityMunicipalitiesFromApi = function () {
+            $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+                .success(function (data, status) {
+                    cityMunicipalities = data;
+                })
+                .error(function (data, status) {
+                });
+        }
 
-            function init() {
-                getCityMunicipalitiesFromApi();
-            }
+        function init() {
+            getCityMunicipalitiesFromApi();
+        }
 
-            init();
+        init();
 
-        }]);
-
-
-    // -------------------------------------------------------------------------//
-    // Open Modal Panel - Use in DataTable //
-    function openModalPanel (panelName) {
-        //Open Modal Form/Panel
-        jQuery.magnificPopup.open({
-            //removalDelay: 500, //delay removal by X to allow out-animation,
-            items: { src: panelName },
-            //callbacks: {
-            //    beforeOpen: function (e) {
-            //        var Animation = "mfp-flipInY";
-            //        this.st.mainClass = Animation;
-            //    },
-            //    afterClose: function () {
-
-            //    }
-            //},
-            midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
-        })
-    }
-
-    // -------------------------------------------------------------------------//
-    // Open Modal Panel - Use if popup will be close only by triggering the jQuery.magnificPopup.close(); //
-    function openModalPanel2(panelName) {
-        //Open Modal Form/Panel
-        jQuery.magnificPopup.open({
-            //removalDelay: 500, //delay removal by X to allow out-animation,
-            items: { src: panelName },
-            modal: true, //the popup will have a modal-like behavior: it won’t be possible to dismiss it by usual means (close button, escape key, or clicking in the overlay).
-            //callbacks: {
-            //    beforeOpen: function (e) {
-            //        var Animation = "mfp-flipInY";
-            //        this.st.mainClass = Animation;
-            //    },
-            //    afterClose: function () {
-
-            //    }
-            //},
-            midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
-        })
-    }
+    }]);
 
 
-    // -------------------------------------------------------------------------//
-    // Usage for spin.js
-    var opts = {
-        lines: 11, // The number of lines to draw
-        length: 11, // The length of each line
-        width: 4, // The line thickness
-        radius: 11, // The radius of the inner circle
-        corners: 1, // Corner roundness (0..1)
-        rotate: 0, // The rotation offset
-        direction: 1, // 1: clockwise, -1: counterclockwise
-        color: '#000', // #rgb or #rrggbb or array of colors
-        speed: 1, // Rounds per second
-        trail: 46, // Afterglow percentage
-        shadow: true, // Whether to render a shadow
-        hwaccel: false, // Whether to use hardware acceleration
-        className: 'spinner', // The CSS class to assign to the spinner
-        zIndex: 2e9, // The z-index (defaults to 2000000000)
-        top: '50%', // Top position relative to parent
-        left: '50%' // Left position relative to parent
-    };
-    var spinnerTarget = document.getElementById('spinnerTarget');
+// -------------------------------------------------------------------------//
+// Open Modal Panel - Use in DataTable //
+function openModalPanel (panelName) {
+    //Open Modal Form/Panel
+    jQuery.magnificPopup.open({
+        //removalDelay: 500, //delay removal by X to allow out-animation,
+        items: { src: panelName },
+        //callbacks: {
+        //    beforeOpen: function (e) {
+        //        var Animation = "mfp-flipInY";
+        //        this.st.mainClass = Animation;
+        //    },
+        //    afterClose: function () {
+
+        //    }
+        //},
+        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+    })
+}
+
+// -------------------------------------------------------------------------//
+// Open Modal Panel - Use if popup will be close only by triggering the jQuery.magnificPopup.close(); //
+function openModalPanel2(panelName) {
+    //Open Modal Form/Panel
+    jQuery.magnificPopup.open({
+        //removalDelay: 500, //delay removal by X to allow out-animation,
+        items: { src: panelName },
+        modal: true, //the popup will have a modal-like behavior: it won’t be possible to dismiss it by usual means (close button, escape key, or clicking in the overlay).
+        //callbacks: {
+        //    beforeOpen: function (e) {
+        //        var Animation = "mfp-flipInY";
+        //        this.st.mainClass = Animation;
+        //    },
+        //    afterClose: function () {
+
+        //    }
+        //},
+        midClick: true // allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source.
+    })
+}
+
+
+// -------------------------------------------------------------------------//
+// Usage for spin.js
+var opts = {
+    lines: 11, // The number of lines to draw
+    length: 11, // The length of each line
+    width: 4, // The line thickness
+    radius: 11, // The radius of the inner circle
+    corners: 1, // Corner roundness (0..1)
+    rotate: 0, // The rotation offset
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    color: '#000', // #rgb or #rrggbb or array of colors
+    speed: 1, // Rounds per second
+    trail: 46, // Afterglow percentage
+    shadow: true, // Whether to render a shadow
+    hwaccel: false, // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    top: '50%', // Top position relative to parent
+    left: '50%' // Left position relative to parent
+};
+var spinnerTarget = document.getElementById('spinnerTarget');

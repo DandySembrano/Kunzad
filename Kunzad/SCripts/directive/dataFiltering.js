@@ -25,7 +25,7 @@ kunzadApp.directive('dirFiltering', function () {
                                         */
         },
         templateUrl: '/Directives/DataFiltering',
-        controller: function ($scope, $http, $interval, $filter, $parse, $compile,$localForage) {
+        controller: function ($scope, $http, $interval, $filter, $parse, $compile,$localForage, $rootScope) {
             $scope.countFilteredCriteria = 0;
             $scope.criteriaIndex = 0;
             $scope.search = false;
@@ -205,6 +205,7 @@ kunzadApp.directive('dirFiltering', function () {
                                 type: "GET",
                                 beforeSend: function (request) {
                                     request.setRequestHeader("If-None-Match", eTagId);
+                                    request.setRequestHeader("Token", $rootScope.token.toString());
                                 },
                                 data: dataModel1,
                                 success: function (result, status, xhr) {

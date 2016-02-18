@@ -1,5 +1,6 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
 function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
+    $http.defaults.headers.common['Token'] = $rootScope.token.toString();
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
