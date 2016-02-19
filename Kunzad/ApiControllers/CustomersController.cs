@@ -11,8 +11,10 @@ using System.Web.Http.Description;
 using Kunzad.Models;
 using System.Reflection;
 using WebAPI.OutputCache;
+using Kunzad.ActionFilters;
 namespace Kunzad.ApiControllers
 {
+    [AuthorizationRequired]
     [AutoInvalidateCacheOutput]
     public class CustomersController : ApiController
     {

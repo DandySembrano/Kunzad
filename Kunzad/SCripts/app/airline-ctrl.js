@@ -4,7 +4,7 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("AirlineController", function ($scope, $http) {
+kunzadApp.controller("AirlineController", function ($rootScope, $scope, $http) {
     $scope.modelName = "Airline";
     $scope.modelhref = "#/airlines";
 

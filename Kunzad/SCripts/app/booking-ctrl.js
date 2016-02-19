@@ -1,6 +1,5 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
-function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
-    $http.defaults.headers.common['Token'] = $rootScope.token.toString();
+function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage) {
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
@@ -148,7 +147,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     //Initialize shipment type
     $scope.setShipmentType = function (id) {
         for (var i = 0; i < $scope.shipmentTypeList.length; i++) {
-            if (id == $scope.serviceList[i].Id) {
+            if (id == $scope.shipmentTypeList[i].Id) {
                 $scope.shipmentItem.ShipmentType = $scope.shipmentTypeList[i];
                 return true;
             }
@@ -1652,9 +1651,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     // Initialization routines
     var init = function () {
-        $scope.initPaymentModeList();
-        $scope.initServiceList();
-        $scope.initShipmentTypeList();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.initPaymentModeList();
+            $scope.initServiceList();
+            $scope.initShipmentTypeList();
+        });
+        
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
         $scope.shipmentResetData();

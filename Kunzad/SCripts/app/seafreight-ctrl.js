@@ -1,6 +1,9 @@
 ﻿
 kunzadApp.controller("SeaFreightController", SeaFreightController);
-function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Sea Freight";
     $scope.modelhref = "#/seafreight";
     $scope.withDirective = true; //this will remove the create and pagination buttons in list tab

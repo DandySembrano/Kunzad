@@ -4,8 +4,7 @@
 // Author: Dandy Sembrano
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) {
-
+kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http, $localForage) {
     //------------------------------------------------------------------------------//
     // Required controller properties. should be present in all dataTable controller
     $scope.modelName = "Customer";
@@ -767,10 +766,14 @@ kunzadApp.controller("CustomerController", function ($rootScope, $scope, $http) 
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
-        $scope.loadData($scope.currentPage);
-        getCustomerGroups();
-        getIndustries();
-        getContactType();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.loadData($scope.currentPage);
+            getCustomerGroups();
+            getIndustries();
+            getContactType();
+        });
+        
     }
     init();
 

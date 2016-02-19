@@ -1,5 +1,5 @@
 ﻿
-var restAPI = function ($http, $localForage) {
+var restAPI = function ($rootScope, $http, $localForage) {
     var service = this;
     var objData = undefined;
 
@@ -16,39 +16,42 @@ var restAPI = function ($http, $localForage) {
             if (eTagId == null) {
                 eTagId = "dummy"
             }
+            $localForage.getItem("Token").then(function (value) {
+                $.ajax(url, {
+                    type: "GET",
+                    beforeSend: function (request) {
+                        request.setRequestHeader("If-None-Match", eTagId);
+                        request.setRequestHeader('Token', value.toString());
+                    },
+                    success: function (result, status, xhr) {
+                        if (xhr.readyState == 4) {
+                            if (status == 'success') { //200
+                                if (etagKey != null) {
+                                    //remove first existing just in case it is expire on server
+                                    $localForage.removeItem(etagKey);
+                                }
+                                var newETagId = xhr.getResponseHeader("ETag");
+                                $localForage.setItem(url + "+" + newETagId, xhr.responseText);
+                                objData = angular.copy(xhr.responseJSON)
 
-            $.ajax(url, {
-                type: "GET",
-                beforeSend: function (request) {
-                    request.setRequestHeader("If-None-Match", eTagId);
-                },
-                success: function (result, status, xhr) {
-                    if (xhr.readyState == 4) {
-                        if (status == 'success') { //200
-                            if (etagKey != null) {
-                                //remove first existing just in case it is expire on server
-                                $localForage.removeItem(etagKey);
+                            } else if (status == 'notmodified') { //304
+                                $localForage.getItem(etagKey).then(function (data) {
+
+                                    objData = JSON.parse(data);
+                                    objData = angular.copy(objData);
+
+                                });
                             }
-                            var newETagId = xhr.getResponseHeader("ETag");
-                            $localForage.setItem(url + "+" + newETagId, xhr.responseText);
-                            objData = angular.copy(xhr.responseJSON)
-
-                        } else if (status == 'notmodified') { //304
-                            $localForage.getItem(etagKey).then(function (data) {
-
-                                objData = JSON.parse(data);
-                                objData = angular.copy(objData);
-
-                            });
+                            eTagId = null
+                            etagKey = null
                         }
-                        eTagId = null
-                        etagKey = null
-                    }
-                },
-                error: function (xhr) {
+                    },
+                    error: function (xhr) {
 
-                }
+                    }
+                });
             });
+
         });
 
     }

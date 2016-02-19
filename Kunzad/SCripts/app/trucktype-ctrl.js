@@ -4,7 +4,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("TruckTypeController", function ($scope, $http) {
+kunzadApp.controller("TruckTypeController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Truck Type";
     $scope.modelhref = "#/trucktype";
 

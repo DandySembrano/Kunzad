@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("AirFreightsController", AirFreightsController);
-function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
     $scope.modelName = "Air Freight";
     $scope.modelhref = "#/airfreight";
     $scope.isPrevPage = false;
@@ -1022,14 +1022,18 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     // Initialization routines
     var init = function () {
         $scope.focusOnTop();
-        $scope.initBusinessUnits();
-
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value.toString();
+            $scope.initAirlines();
+            $scope.initBusinessUnits();
+        });
         // SHIPMENTS
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
 
+
         // AIRLINES
-        $scope.initAirlines();
+       
         //$scope.loadAirlineDataGrid();
         //$scope.loadAirlineFiltering();
         //$scope.airlineDataDefinition.Retrieve = true;

@@ -3,7 +3,7 @@
 // Description: Controller for Courier Delivery module
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
-kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $interval, $filter, $rootScope, $compile) {
+kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
     $scope.modelName = "Courier Delivery";
     $scope.modelhref = "#/courierdelivery";
     $scope.withDirective = true;
@@ -1372,9 +1372,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     // Initialization routines
     var init = function () {
-        $scope.initPaymentModeList();
-        $scope.initServiceList();
-        $scope.initShipmentTypeList();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.initPaymentModeList();
+            $scope.initServiceList();
+            $scope.initShipmentTypeList();
+        });
+        
         $scope.loadCourierDeliveryDataGrid();
         $scope.loadCourierDeliveryFiltering();
         $scope.loadCourierDeliveryDetailsDataGrid();

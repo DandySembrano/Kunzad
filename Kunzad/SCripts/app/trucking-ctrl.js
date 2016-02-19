@@ -1,6 +1,6 @@
 ﻿
 kunzadApp.controller("TruckingController", TruckingController);
-function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
+function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage) {
     $scope.modelName = "Dispatching";
     $scope.modelhref = "#/trucking";
     $scope.withDirective = true;
@@ -1538,7 +1538,12 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
 
     // Initialization routines
     var init = function () {
-        $scope.getTruckTypes();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.getTruckTypes();
+            //init trucking type
+            $scope.truckingTypeList = $rootScope.getTruckingTypeList();
+        });
         $scope.loadTruckingDataGrid();
         $scope.loadTruckingFiltering();
         $scope.addNewBooking();
@@ -1547,8 +1552,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
         //Initialize Trucking DataItem
         $scope.truckingResetData();
 
-        //init trucking type
-        $scope.truckingTypeList = $rootScope.getTruckingTypeList();
+        
 
         if ($scope.truckingFilteringDefinition.AutoLoad == true)
             $scope.truckingDataDefinition.Retrieve = true;

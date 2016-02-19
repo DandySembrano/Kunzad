@@ -1,4 +1,4 @@
-﻿kunzadApp.controller("AirFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter) {
+﻿kunzadApp.controller("AirFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage) {
     $scope.modelName = "Air Freight Arrival";
     $scope.modelhref = "#/airfreightarrival";
     $scope.withDirective = true;
@@ -1349,10 +1349,14 @@
 
     // Initialization routines
     var init = function () {
-        $scope.initCheckInTypeList();
-        $scope.initPaymentModeList();
-        $scope.initServiceList();
-        $scope.initShipmentTypeList();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.initCheckInTypeList();
+            $scope.initPaymentModeList();
+            $scope.initServiceList();
+            $scope.initShipmentTypeList();
+        });
+        
         $scope.loadCheckInDataGrid();
         $scope.loadCheckInFiltering();
         $scope.loadCheckInShipmentsDataGrid();

@@ -5,7 +5,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("ShipmentTypeController", function ($scope, $http) {
+kunzadApp.controller("ShipmentTypeController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Shipment Type";
     $scope.modelhref = "#/shipmenttype";
 

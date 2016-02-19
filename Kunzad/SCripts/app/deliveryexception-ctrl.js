@@ -1,6 +1,9 @@
 ﻿
 kunzadApp.controller("DeliveryExceptionController", DeliveryExceptionController);
-function DeliveryExceptionController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function DeliveryExceptionController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Delivery Exception";
     $scope.modelhref = "#/deliveryexception";
     $scope.withDirective = true; //this will remove the create and pagination buttons in list tab

@@ -10,9 +10,11 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
 using WebAPI.OutputCache;
+using Kunzad.ActionFilters;
 
 namespace Kunzad.ApiControllers
 {
+    [AuthorizationRequired]
     [AutoInvalidateCacheOutput]
     public class CheckInsController : ApiController
     {

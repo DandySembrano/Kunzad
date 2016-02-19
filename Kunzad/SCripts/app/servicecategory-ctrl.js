@@ -4,7 +4,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("ServiceCategoryController", function ($scope, $http) {
+kunzadApp.controller("ServiceCategoryController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Service Category";
     //-------------------------dirDataGrid1 Paramaters-------------------------
     $scope.submitButtonText = "";

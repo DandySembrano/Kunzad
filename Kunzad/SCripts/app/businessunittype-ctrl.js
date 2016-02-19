@@ -4,7 +4,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("BusinessUnitTypeController", function ($scope, $http) {
+kunzadApp.controller("BusinessUnitTypeController", function ($localForage, $rootScope, $scope, $http) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Business Unit Type";
     $scope.modelhref = "#/businessunittype";
 

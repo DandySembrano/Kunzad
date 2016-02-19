@@ -4,7 +4,7 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $http, $interval) {
+kunzadApp.controller("BusinessUnitController", function ($localForage, $rootScope, $scope, $http, $interval) {
     $scope.modelName = "Business Unit";
     $scope.modelhref = "#/businessunit";
     $scope.businessUnitGridOptions = {};
@@ -568,7 +568,10 @@ kunzadApp.controller("BusinessUnitController", function ($rootScope, $scope, $ht
     };
 
     var init = function () {
-        $scope.loadData($scope.currentPage);
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.loadData($scope.currentPage);
+        });
         $scope.initAddressModal();
         $scope.initBusinessUnitGridOptions();
     };

@@ -4,7 +4,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, $http) {
+kunzadApp.controller("ServiceableAreaController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Delivery Area";
     $scope.modelhref = "#/serviceablearea";
 

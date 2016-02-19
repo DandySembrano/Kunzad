@@ -4,8 +4,10 @@
 // Author: Dandy Sembrano
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("CustomerGroupController", function ($scope, $http) {
-
+kunzadApp.controller("CustomerGroupController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Customer Group";
     $scope.modelhref = "#/customergroups";
 

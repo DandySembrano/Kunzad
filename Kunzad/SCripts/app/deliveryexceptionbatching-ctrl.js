@@ -1,6 +1,6 @@
 ﻿
 kunzadApp.controller("DeliveryExceptionBatchingController", DeliveryExceptionBatchingController);
-function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
     $scope.modelName = "Delivery Exception Batching";
     $scope.modelhref = "#/deliveryexceptionbatching";
     $scope.withDirective = true; //this will remove the create and pagination buttons in list tab
@@ -416,7 +416,11 @@ function DeliveryExceptionBatchingController($scope, $http, $interval, $filter, 
     // Initialization routines
     var init = function () {
         $scope.focusOnTop();
-        $scope.initDexTypeList();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.initDexTypeList();
+        });
+        
         $scope.loadDexShipmentsDataGrid();
         $scope.dexShipmentsResetData();
         $scope.loadShipmentDataGrid();

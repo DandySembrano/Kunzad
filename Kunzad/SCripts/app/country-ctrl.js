@@ -4,7 +4,7 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("CountryController", function ($scope, $http) {
+kunzadApp.controller("CountryController", function ($rootScope, $scope, $http, $localForage) {
     //------------------------------------------------------------------------------//
     // Required controller properties. should be present in all dataTable controller
     $scope.modelName = "Country";
@@ -1076,10 +1076,14 @@ kunzadApp.controller("CountryController", function ($scope, $http) {
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
-        $scope.loadData($scope.currentPage);
-        $scope.processCountrySorting($scope.countryCriteria);
-        $scope.processSPSorting($scope.spCriteria);
-        $scope.processCMSorting($scope.cmCriteria);
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.loadData($scope.currentPage);
+            $scope.processCountrySorting($scope.countryCriteria);
+            $scope.processSPSorting($scope.spCriteria);
+            $scope.processCMSorting($scope.cmCriteria);
+        });
+        
     }
     init();
 });

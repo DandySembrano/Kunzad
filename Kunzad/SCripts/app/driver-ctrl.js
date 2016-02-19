@@ -4,7 +4,10 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("DriverController", function ($scope, $http) {
+kunzadApp.controller("DriverController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Driver";
     $scope.modelhref = "#/driver";
 

@@ -1,5 +1,8 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['LocalForageModule']);
 kunzadApp.run(function ($rootScope, $localForage, $filter) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $rootScope.formatControlNo = function (prefix, length, value) {
         var formattedValue = prefix + value.toString();
         while (formattedValue.length < length) {

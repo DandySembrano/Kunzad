@@ -1,440 +1,54 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
-kunzadApp.run(function ($rootScope, $http) {
-    //----------------------------------------SignalR Socketing-----------------------------------------
-    $rootScope.baseUrl = "http://localhost/";
-    $rootScope.scanning = null;
-    $rootScope.scannedData = null;
-    $rootScope.scannerWatcher = false;
-
-    $rootScope.scanning = $.connection.scanningHub;
-    $.connection.hub.url = "http://localhost/signalr";
-    
-    //remove the connection id
-    $rootScope.removeClient = function () {
-        $.connection.hub.start().done(function () {
-            $rootScope.scanning.server.removeClient($.connection.hub.id)
-            .done(function () { })
-            .fail(function () { });
-        })
-    };
-    $rootScope.connectoToHub = function () {
-        if ($rootScope.scanning != null) {
-            //Add user to hub
-            $.connection.hub.start()
-            .done(function () {
-                $rootScope.scanning.server.addClient($.connection.hub.id, "KENNETHCY").done(function () {
-                    console.log("Success");
-                    console.log($.connection.hub.id);
-                })
-                .fail(function () {
-                    $rootScope.scanning = $.connection.scanningHub;
-                    console.log("Failed to add user in the hub.");
-                });
+kunzadApp.run(function ($rootScope, $http, $localForage) {
+    $rootScope.token = null;
+    // Get List of CityMunicipalities
+    var getCityMunicipalitiesFromApi = function () {
+        $http.defaults.headers.common['Token'] = $rootScope.token.toString();
+        $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+            .success(function (data, status) {
+                cityMunicipalities = data;
             })
-            .fail(function () {
-                console.log("Connection to hub failed.");
-            })
+            .error(function (data, status) {
+            });
+    }
 
-            //Receiver function from scanningHub that broadcast shipmentDetails
-            $rootScope.scanning.client.broadcastShipmentDetails = function (text, access, connectionId) {
-                if (access == "AUTHENTICATED") {
-                    $rootScope.scannerWatcher = true;
-                    $rootScope.scannedText = text;
-                    $rootScope.scannerConnectionId = connectionId;
-                }
-            };
-        }
-        else
-            console.log("Hub not found.");
-    };
+    var cityMunicipalities = [];
+    $rootScope.getCityMunicipalities = function () {
+        return cityMunicipalities;
+    }
 
-    //$rootScope.connectoToHub();
-    //-------------------------------------End of SignalR Socketing-------------------------------------
-
-    //
-
-    //Use UserId number 1 temporarily
-    $http.get("/api/users?id=1")
-    .success(function (response, status) {
-        if (response.status == "SUCCESS") {
-            $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
-            $http.get("/api/authenticate")
-            .success(function (response, status, headers) {
-                $rootScope.token = headers().token;
-            })
-            .error(function (err) {
-                console.log("Login failure");
-            })
-        }
-        
-    })
-    .error(function (err) { })
-
-    //Triggers before actionForm function
-    $rootScope.formatControlNo = function (prefix, length, value) {
-        var formattedValue = prefix + value.toString();
-        while (formattedValue.length < length) {
-            formattedValue = "0" + formattedValue;
-        }
-        return formattedValue;
-    };
-
-    //Reusable object for filtering shipment/booking so that other module can directly access
-    $rootScope.shipmentObj = function () {
-        return {
-            "Shipment": [{
-                "Id": null,
-                "CreatedDate": null,
-                "CustomerId": null,
-                "BusinessUnitId": null,
-                "ServiceId": null,
-                "ShipmentTypeId": null,
-                "PaymentMode": null,
-                "PickupDate": null,
-                "PickUpBussinessUnitId": null,
-                "TransportStatusId": null
-            },
-            {
-                "Id": null,
-                "CreatedDate": null,
-                "CustomerId": null,
-                "BusinessUnitId": null,
-                "ServiceId": null,
-                "ShipmentTypeId": null,
-                "PaymentMode": null,
-                "PickupDate": null,
-                "PickUpBussinessUnitId": null,
-                "TransportStatusId": null
-            }]
-        };
-    };
-
-    //Reusable object for filtering business unit so that other module can directly access
-    $rootScope.businessUnitObj = function () {
-        return {
-            "BusinessUnit": [{
-                "Name": null,
-                "Code": null,
-                "ParentBusinessUnitId": null
-            }, {
-                "Name": null,
-                "Code": null,
-                "ParentBusinessUnitId": null
-            }]
-        };
-    };
-
-    //Reusable object for filtering customer so that other module can directly access
-    $rootScope.customerObj = function () {
-        return {
-            "Customer": [{
-                        "Name": null,
-                        "Title": null
-                        },
+    function init() {
+        //Use UserId number 1 temporarily
+        $http.get("/api/users?id=1")
+        .success(function (response, status) {
+            if (response.status == "SUCCESS") {
+                $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
+                $http.get("/api/authenticate")
+                .success(function (response, status, headers) {
+                    $localForage.getItem("Token").then(function (value) {
+                        if (angular.isUndefined(value))
                         {
-                            "Name": null,
-                            "Title": null
-                        }]
-            
-        };
-    };
-
-    //Reusable object for filtering customer contacts so that other module can directly access
-    $rootScope.customerContactsObj = function () {
-        return {
-            "CustomerContact": [{
-                "Contact": {
-                    "Name": null,
-                    "Title": null
-                }
-            }, {
-                "Contact": {
-                    "Name": null,
-                    "Title": null
-                }
-            }]
-        }
-    };
-    
-    //Reusable object for filtering customer contacts so that other module can directly access
-    $rootScope.customerContactPhonesObj = function () {
-        return {
-            "ContactPhone": [{
-                "ContactNumber": null,
-                "ContactId": null
-            }, {
-                "ContactNumber": null,
-                "ContactId": null
-            }]
-        }
-    };
-
-    //Reusable object for filtering customer addresses so that other module can directly access
-    $rootScope.customerAddressObj = function () {
-        return {
-            "CustomerAddress": [{
-                "Line1": null,
-                "Line2": null,
-                "CityMunicipality": {
-                    "Name": null
-                },
-                "PostalCode": null,
-                "IsBillingAddress": null,
-                "IsDeliveryAddress": null,
-                "IsPickupAddress": null
-            }, {
-                "Line1": null,
-                "Line2": null,
-                "CityMunicipality": {
-                    "Name": null
-                },
-                "PostalCode": null,
-                "IsBillingAddress": null,
-                "IsDeliveryAddress": null,
-                "IsPickupAddress": null
-            }]
-        }
-    };
-
-    //Reusable object for filtering courier so that other module can directly access
-    $rootScope.courierObj = function () {
-        return {
-            "Courier": [
-                {
-                    "Id": null,
-                    "Name": null,
-                    "TIN": null,
-                    "Line1": null,
-                    "Line2": null,
-                    "PostalCode": null
-                },
-                {
-                    "Id": null,
-                    "Name": null,
-                    "TIN": null,
-                    "Line1": null,
-                    "Line2": null,
-                    "PostalCode": null
-                }]
-        }
-    };
-
-    //Reusable object for filtering airline so that other module can directly access
-    $rootScope.airlineObj = function () {
-        return {
-            "AirLine": [
-                {
-                    "Name": "Philippine Airlines",
-                    "CreatedDate": "2015-06-05T10:44:07.767",
-                    "LastUpdatedDate": "2015-06-07T08:29:35.213",
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
-                },
-                {
-                    "Name": "Philippine Airlines",
-                    "CreatedDate": "2015-06-05T10:44:07.767",
-                    "LastUpdatedDate": "2015-06-07T08:29:35.213",
-                    "CreatedByUserId": null,
-                    "LastUpdatedByUserId": null
-                }]
-        };
-    };
-
-    //Reusable object for filtering airfreight so that other module can directly access
-
-    $rootScope.airFreightObj = function () {
-        return {
-            "AirFreight": [{
-                "Id": null,
-                "CreatedDate": null
-            },
-            {
-                "Id": null,
-                "CreatedDate": null
-            }]
-        };
-    };
-
-    //Payment Mode List
-    $rootScope.getPaymentModeList = function () {
-        return [{ "Id": "A", "Name": "Account" },
-                { "Id": "P", "Name": "Prepaid" },
-                { "Id": "C", "Name": "Collect Account" },
-                { "Id": "D", "Name": "Cash On Delivery" }
-        ];
-    };
-
-    //Transport Status List
-    $rootScope.getTransportStatusList = function () {
-        return [{ "Id": "10", "Name": "Open" },
-                { "Id": "20", "Name": "Partial" },
-                { "Id": "30", "Name": "Dispatched" },
-                { "Id": "40", "Name": "Closed" },
-                { "Id": "50", "Name": "Cancelled" }
-        ];
-    };
-
-    //Trucking Status List
-    $rootScope.getTruckingStatusList = function () {
-        return [{ "Id": "10", "Name": "Dispatch" },
-                { "Id": "20", "Name": "Waybill" },
-                { "Id": "30", "Name": "DeliveryUpdate" },
-                { "Id": "40", "Name": "Cancelled" },
-        ]; 
-    };
-
-    $rootScope.formatShipment = function (shipments) {
-        for (var i = 0; i < shipments.length; i++) {
-            var holder = {};
-
-            //Format Address
-            holder = shipments[i].Address;
-            holder1 = shipments[i].Address.CityMunicipality;
-            holder2 = shipments[i].Address.CityMunicipality.StateProvince;
-            shipments[i].Address = {};
-            shipments[i].Address = {
-                "Id": holder.Id,
-                "Line1": holder.Line1,
-                "Line2": holder.Line2,
-                "PostalCode": holder.PostalCode,
-                "CityMunicipalityId": holder.CityMunicipalityId,
-                "CityMunicipality": {
-                    "Name": holder1.Name,
-                    "StateProvince": {
-                        "Name": holder2.Name
-                    }
-                }
-            }
-
-            //Format Address
-            holder = shipments[i].Address1;
-            holder1 = shipments[i].Address1.CityMunicipality;
-            holder2 = shipments[i].Address1.CityMunicipality.StateProvince;
-            shipments[i].Address1 = {};
-            shipments[i].Address1 = {
-                "Id": holder.Id,
-                "Line1": holder.Line1,
-                "Line2": holder.Line2,
-                "PostalCode": holder.PostalCode,
-                "CityMunicipalityId": holder.CityMunicipalityId,
-                "CityMunicipality": {
-                    "Name": holder1.Name,
-                    "StateProvince": {
-                        "Name": holder2.Name
-                    }
-                }
-            }
-
-            //BusinessUnit
-            holder = shipments[i].BusinessUnit;
-            shipments[i].BusinessUnit = {};
-            shipments[i].BusinessUnit = {
-                "Id": holder.Id,
-                "Name": holder.Name
-            }
-
-            //BusinessUnit1
-            holder = shipments[i].BusinessUnit1;
-            shipments[i].BusinessUnit1 = {};
-            shipments[i].BusinessUnit1 = {
-                "Id": holder.Id,
-                "Name": holder.Name
-            }
-
-            //Service
-            holder = shipments[i].Service;
-            shipments[i].Service = {};
-            shipments[i].Service = {
-                "Id": holder.Id,
-                "Name": holder.Name
-            }
-
-            //ShipmentType
-            holder = shipments[i].ShipmentType;
-            shipments[i].ShipmentType = {};
-            shipments[i].ShipmentType = {
-                "Id": holder.Id,
-                "Name": holder.Name
-            }
-
-            //Customer
-            holder = shipments[i].Customer;
-            holder1 = shipments[i].Customer.CustomerAddresses;
-            holder2 = shipments[i].Customer.CustomerContacts[0].Contact;
-            holder3 = shipments[i].Customer.CustomerContacts[0].Contact.ContactPhones;
-            shipments[i].Customer = {};
-
-            shipments[i].Customer = {
-                "Id": holder.Id,
-                "Code": holder.Code,
-                "Name": holder.Name,
-                //CustomerAddresses
-                "CustomerAddresses": [{
-                    "Id": holder1[0].Id,
-                    "Line1": holder1[0].Line1,
-                    "Line2": holder1[0].Line2,
-                    "PostalCode": holder1[0].PostalCode,
-                    "CityMunicipality": {
-                        "Id": holder1[0].Id,
-                        "Name": holder1[0].CityMunicipality.Name,
-                        "StateProvince": {
-                            "Name": holder1[0].CityMunicipality.StateProvince.Name
+                            $localForage.setItem("Token", headers().token);
+                            $rootScope.token = headers().token;
+                            // Temporary - support one country only (Philippines)
+                            $rootScope.country = {
+                                "Id": 1,
+                                "Name": "Philippines",
+                            }
+                            getCityMunicipalitiesFromApi();
+                            //$rootScope.connectoToHub();
                         }
-                    }
-                }],
-                //CustomerContacts
-                "CustomerContacts": [{
-                    "Contact": {
-                        "Id": holder2.Id,
-                        "Email": holder2.Email,
-                        "Name": holder2.Name,
-                        "Title": holder2.Title,
-                        //ContactPhones
-                        "ContactPhones": [{
-                            "Id": holder3[0].Id,
-                            "ContactNumber": holder3[0].ContactNumber
-                        }]
-                    }
-                }]
+                    })
+                })
+                .error(function (err) {
+                    console.log("Login failure");
+                })
             }
-            delete shipments[i].SeaFreightShipments;
-            delete shipments[i].ShipmentCharges;
-            delete shipments[i].ShipmentDimensions;
-            delete shipments[i].TruckingDeliveries;
-            delete shipments[i].AirFreightShipments;
-            delete shipments[i].CourierTransactionDetails;
-        }
-        return shipments;
-    };
+        })
+        .error(function (err) { })
+    }
 
-    $rootScope.getTruckingTypeList = function () {
-        return [
-            { "Id": 10, "Name": "Pick up" },
-            { "Id": 20, "Name": "Trucking Delivery" }
-        ]
-    };
-
-    //Manipulate DOM for removing an element
-    $rootScope.manipulateDOM = function () {
-        Element.prototype.remove = function () {
-            this.parentElement.removeChild(this);
-        }
-        NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
-            for (var i = this.length - 1; i >= 0; i--) {
-                if (this[i] && this[i].parentElement) {
-                    this[i].parentElement.removeChild(this[i]);
-                }
-            }
-        }
-    };
-
-    //Remove element in DOM
-    $rootScope.removeElement = function (id) {
-        var element = document.getElementById(id);
-        if (element != null) {
-            element.parentNode.removeChild(element);
-        }
-    };
+    init();
 });
 kunzadApp.config(['$routeProvider', function ($routeProvider) {
     //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
@@ -512,6 +126,12 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             templateUrl: '/References/Driver',
             controller: 'DriverController'
         })
+
+        .when('/rates', {
+            templateUrl: '/References/Rates',
+            controller: 'RatesController'
+        })
+
 
         .when('/country', {
             templateUrl: '/References/Country',
@@ -608,22 +228,17 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
            controller: 'DeliveryExceptionBatchingController'
        })
 
-        .when('/rates', {
-            templateUrl: '/References/Rates',
-            controller: 'RatesController'
-        })
-
         .otherwise({
-            redirectTo: '/home'
+            redirectTo: '/home/'
         });
-    }])
+}])
 
-.config(['$localForageProvider', function($localForageProvider){
+.config(['$localForageProvider', function ($localForageProvider) {
     $localForageProvider.config({
-        name        : 'myApp', // name of the database and prefix for your data, it is "lf" by default
-        version     : 1.0, // version of the database, you shouldn't have to use this
-        storeName   : 'keyvaluepairs', // name of the table
-        description : 'some description'
+        name: 'myApp', // name of the database and prefix for your data, it is "lf" by default
+        version: 1.0, // version of the database, you shouldn't have to use this
+        storeName: 'keyvaluepairs', // name of the table
+        description: 'some description'
     })
 }])
 
@@ -633,40 +248,431 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $scope.$on('$routeChangeSuccess', function (e, current, previous) {
             $scope.activeViewPath = $location.path();
         });
+        
+        //----------------------------------------SignalR Socketing-----------------------------------------
+        $rootScope.baseUrl = "http://localhost/";
+        $rootScope.scanning = null;
+        $rootScope.scannedData = null;
+        $rootScope.scannerWatcher = false;
 
-        // Temporary - support one country only (Philippines)
-        $rootScope.country = {
-            "Id": 1,
-            "Name": "Philippines",
-        }
-            
-        var cityMunicipalities = [];
-        $rootScope.getCityMunicipalities = function () {
-            return cityMunicipalities;
-        }
+        $rootScope.scanning = $.connection.scanningHub;
+        $.connection.hub.url = "http://localhost/signalr";
 
-        // Get List of CityMunicipalities
-        var getCityMunicipalitiesFromApi = function () {
-            $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
-                .success(function (data, status) {
-                    cityMunicipalities = data;
+        //remove the connection id
+        $rootScope.removeClient = function () {
+            $.connection.hub.start().done(function () {
+                $rootScope.scanning.server.removeClient($.connection.hub.id)
+                .done(function () { })
+                .fail(function () { });
+            })
+        };
+        $rootScope.connectoToHub = function () {
+            if ($rootScope.scanning != null) {
+                //Add user to hub
+                $.connection.hub.start()
+                .done(function () {
+                    $rootScope.scanning.server.addClient($.connection.hub.id, "KENNETHCY").done(function () {
+                        console.log("Success");
+                        console.log($.connection.hub.id);
+                    })
+                    .fail(function () {
+                        $rootScope.scanning = $.connection.scanningHub;
+                        console.log("Failed to add user in the hub.");
+                    });
                 })
-                .error(function (data, status) {
-                });
-        }
+                .fail(function () {
+                    console.log("Connection to hub failed.");
+                })
 
-        function init() {
-            getCityMunicipalitiesFromApi();
-        }
+                //Receiver function from scanningHub that broadcast shipmentDetails
+                $rootScope.scanning.client.broadcastShipmentDetails = function (text, access, connectionId) {
+                    if (access == "AUTHENTICATED") {
+                        $rootScope.scannerWatcher = true;
+                        $rootScope.scannedText = text;
+                        $rootScope.scannerConnectionId = connectionId;
+                    }
+                };
+            }
+            else
+                console.log("Hub not found.");
+        };
 
-        init();
+        //-------------------------------------End of SignalR Socketing-------------------------------------
+
+        //Triggers before actionForm function
+        $rootScope.formatControlNo = function (prefix, length, value) {
+            var formattedValue = prefix + value.toString();
+            while (formattedValue.length < length) {
+                formattedValue = "0" + formattedValue;
+            }
+            return formattedValue;
+        };
+
+        //Reusable object for filtering shipment/booking so that other module can directly access
+        $rootScope.shipmentObj = function () {
+            return {
+                "Shipment": [{
+                    "Id": null,
+                    "CreatedDate": null,
+                    "CustomerId": null,
+                    "BusinessUnitId": null,
+                    "ServiceId": null,
+                    "ShipmentTypeId": null,
+                    "PaymentMode": null,
+                    "PickupDate": null,
+                    "PickUpBussinessUnitId": null,
+                    "TransportStatusId": null
+                },
+                {
+                    "Id": null,
+                    "CreatedDate": null,
+                    "CustomerId": null,
+                    "BusinessUnitId": null,
+                    "ServiceId": null,
+                    "ShipmentTypeId": null,
+                    "PaymentMode": null,
+                    "PickupDate": null,
+                    "PickUpBussinessUnitId": null,
+                    "TransportStatusId": null
+                }]
+            };
+        };
+
+        //Reusable object for filtering business unit so that other module can directly access
+        $rootScope.businessUnitObj = function () {
+            return {
+                "BusinessUnit": [{
+                    "Name": null,
+                    "Code": null,
+                    "ParentBusinessUnitId": null
+                }, {
+                    "Name": null,
+                    "Code": null,
+                    "ParentBusinessUnitId": null
+                }]
+            };
+        };
+
+        //Reusable object for filtering customer so that other module can directly access
+        $rootScope.customerObj = function () {
+            return {
+                "Customer": [{
+                    "Name": null,
+                    "Title": null
+                },
+                            {
+                                "Name": null,
+                                "Title": null
+                            }]
+
+            };
+        };
+
+        //Reusable object for filtering customer contacts so that other module can directly access
+        $rootScope.customerContactsObj = function () {
+            return {
+                "CustomerContact": [{
+                    "Contact": {
+                        "Name": null,
+                        "Title": null
+                    }
+                }, {
+                    "Contact": {
+                        "Name": null,
+                        "Title": null
+                    }
+                }]
+            }
+        };
+
+        //Reusable object for filtering customer contacts so that other module can directly access
+        $rootScope.customerContactPhonesObj = function () {
+            return {
+                "ContactPhone": [{
+                    "ContactNumber": null,
+                    "ContactId": null
+                }, {
+                    "ContactNumber": null,
+                    "ContactId": null
+                }]
+            }
+        };
+
+        //Reusable object for filtering customer addresses so that other module can directly access
+        $rootScope.customerAddressObj = function () {
+            return {
+                "CustomerAddress": [{
+                    "Line1": null,
+                    "Line2": null,
+                    "CityMunicipality": {
+                        "Name": null
+                    },
+                    "PostalCode": null,
+                    "IsBillingAddress": null,
+                    "IsDeliveryAddress": null,
+                    "IsPickupAddress": null
+                }, {
+                    "Line1": null,
+                    "Line2": null,
+                    "CityMunicipality": {
+                        "Name": null
+                    },
+                    "PostalCode": null,
+                    "IsBillingAddress": null,
+                    "IsDeliveryAddress": null,
+                    "IsPickupAddress": null
+                }]
+            }
+        };
+
+        //Reusable object for filtering courier so that other module can directly access
+        $rootScope.courierObj = function () {
+            return {
+                "Courier": [
+                    {
+                        "Id": null,
+                        "Name": null,
+                        "TIN": null,
+                        "Line1": null,
+                        "Line2": null,
+                        "PostalCode": null
+                    },
+                    {
+                        "Id": null,
+                        "Name": null,
+                        "TIN": null,
+                        "Line1": null,
+                        "Line2": null,
+                        "PostalCode": null
+                    }]
+            }
+        };
+
+        //Reusable object for filtering airline so that other module can directly access
+        $rootScope.airlineObj = function () {
+            return {
+                "AirLine": [
+                    {
+                        "Name": "Philippine Airlines",
+                        "CreatedDate": "2015-06-05T10:44:07.767",
+                        "LastUpdatedDate": "2015-06-07T08:29:35.213",
+                        "CreatedByUserId": null,
+                        "LastUpdatedByUserId": null
+                    },
+                    {
+                        "Name": "Philippine Airlines",
+                        "CreatedDate": "2015-06-05T10:44:07.767",
+                        "LastUpdatedDate": "2015-06-07T08:29:35.213",
+                        "CreatedByUserId": null,
+                        "LastUpdatedByUserId": null
+                    }]
+            };
+        };
+
+        //Reusable object for filtering airfreight so that other module can directly access
+
+        $rootScope.airFreightObj = function () {
+            return {
+                "AirFreight": [{
+                    "Id": null,
+                    "CreatedDate": null
+                },
+                {
+                    "Id": null,
+                    "CreatedDate": null
+                }]
+            };
+        };
+
+        //Payment Mode List
+        $rootScope.getPaymentModeList = function () {
+            return [{ "Id": "A", "Name": "Account" },
+                    { "Id": "P", "Name": "Prepaid" },
+                    { "Id": "C", "Name": "Collect Account" },
+                    { "Id": "D", "Name": "Cash On Delivery" }
+            ];
+        };
+
+        //Transport Status List
+        $rootScope.getTransportStatusList = function () {
+            return [{ "Id": "10", "Name": "Open" },
+                    { "Id": "20", "Name": "Partial" },
+                    { "Id": "30", "Name": "Dispatched" },
+                    { "Id": "40", "Name": "Closed" },
+                    { "Id": "50", "Name": "Cancelled" }
+            ];
+        };
+
+        //Trucking Status List
+        $rootScope.getTruckingStatusList = function () {
+            return [{ "Id": "10", "Name": "Dispatch" },
+                    { "Id": "20", "Name": "Waybill" },
+                    { "Id": "30", "Name": "DeliveryUpdate" },
+                    { "Id": "40", "Name": "Cancelled" },
+            ];
+        };
+
+        $rootScope.formatShipment = function (shipments) {
+            for (var i = 0; i < shipments.length; i++) {
+                var holder = {};
+
+                //Format Address
+                holder = shipments[i].Address;
+                holder1 = shipments[i].Address.CityMunicipality;
+                holder2 = shipments[i].Address.CityMunicipality.StateProvince;
+                shipments[i].Address = {};
+                shipments[i].Address = {
+                    "Id": holder.Id,
+                    "Line1": holder.Line1,
+                    "Line2": holder.Line2,
+                    "PostalCode": holder.PostalCode,
+                    "CityMunicipalityId": holder.CityMunicipalityId,
+                    "CityMunicipality": {
+                        "Name": holder1.Name,
+                        "StateProvince": {
+                            "Name": holder2.Name
+                        }
+                    }
+                }
+
+                //Format Address
+                holder = shipments[i].Address1;
+                holder1 = shipments[i].Address1.CityMunicipality;
+                holder2 = shipments[i].Address1.CityMunicipality.StateProvince;
+                shipments[i].Address1 = {};
+                shipments[i].Address1 = {
+                    "Id": holder.Id,
+                    "Line1": holder.Line1,
+                    "Line2": holder.Line2,
+                    "PostalCode": holder.PostalCode,
+                    "CityMunicipalityId": holder.CityMunicipalityId,
+                    "CityMunicipality": {
+                        "Name": holder1.Name,
+                        "StateProvince": {
+                            "Name": holder2.Name
+                        }
+                    }
+                }
+
+                //BusinessUnit
+                holder = shipments[i].BusinessUnit;
+                shipments[i].BusinessUnit = {};
+                shipments[i].BusinessUnit = {
+                    "Id": holder.Id,
+                    "Name": holder.Name
+                }
+
+                //BusinessUnit1
+                holder = shipments[i].BusinessUnit1;
+                shipments[i].BusinessUnit1 = {};
+                shipments[i].BusinessUnit1 = {
+                    "Id": holder.Id,
+                    "Name": holder.Name
+                }
+
+                //Service
+                holder = shipments[i].Service;
+                shipments[i].Service = {};
+                shipments[i].Service = {
+                    "Id": holder.Id,
+                    "Name": holder.Name
+                }
+
+                //ShipmentType
+                holder = shipments[i].ShipmentType;
+                shipments[i].ShipmentType = {};
+                shipments[i].ShipmentType = {
+                    "Id": holder.Id,
+                    "Name": holder.Name
+                }
+
+                //Customer
+                holder = shipments[i].Customer;
+                holder1 = shipments[i].Customer.CustomerAddresses;
+                holder2 = shipments[i].Customer.CustomerContacts[0].Contact;
+                holder3 = shipments[i].Customer.CustomerContacts[0].Contact.ContactPhones;
+                shipments[i].Customer = {};
+
+                shipments[i].Customer = {
+                    "Id": holder.Id,
+                    "Code": holder.Code,
+                    "Name": holder.Name,
+                    //CustomerAddresses
+                    "CustomerAddresses": [{
+                        "Id": holder1[0].Id,
+                        "Line1": holder1[0].Line1,
+                        "Line2": holder1[0].Line2,
+                        "PostalCode": holder1[0].PostalCode,
+                        "CityMunicipality": {
+                            "Id": holder1[0].Id,
+                            "Name": holder1[0].CityMunicipality.Name,
+                            "StateProvince": {
+                                "Name": holder1[0].CityMunicipality.StateProvince.Name
+                            }
+                        }
+                    }],
+                    //CustomerContacts
+                    "CustomerContacts": [{
+                        "Contact": {
+                            "Id": holder2.Id,
+                            "Email": holder2.Email,
+                            "Name": holder2.Name,
+                            "Title": holder2.Title,
+                            //ContactPhones
+                            "ContactPhones": [{
+                                "Id": holder3[0].Id,
+                                "ContactNumber": holder3[0].ContactNumber
+                            }]
+                        }
+                    }]
+                }
+                delete shipments[i].SeaFreightShipments;
+                delete shipments[i].ShipmentCharges;
+                delete shipments[i].ShipmentDimensions;
+                delete shipments[i].TruckingDeliveries;
+                delete shipments[i].AirFreightShipments;
+                delete shipments[i].CourierTransactionDetails;
+            }
+            return shipments;
+        };
+
+        $rootScope.getTruckingTypeList = function () {
+            return [
+                { "Id": 10, "Name": "Pick up" },
+                { "Id": 20, "Name": "Trucking Delivery" }
+            ]
+        };
+
+        //Manipulate DOM for removing an element
+        $rootScope.manipulateDOM = function () {
+            Element.prototype.remove = function () {
+                this.parentElement.removeChild(this);
+            }
+            NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+                for (var i = this.length - 1; i >= 0; i--) {
+                    if (this[i] && this[i].parentElement) {
+                        this[i].parentElement.removeChild(this[i]);
+                    }
+                }
+            }
+        };
+
+        //Remove element in DOM
+        $rootScope.removeElement = function (id) {
+            var element = document.getElementById(id);
+            if (element != null) {
+                element.parentNode.removeChild(element);
+            }
+        };
+
+        
 
     }]);
 
 
 // -------------------------------------------------------------------------//
 // Open Modal Panel - Use in DataTable //
-function openModalPanel (panelName) {
+function openModalPanel(panelName) {
     //Open Modal Form/Panel
     jQuery.magnificPopup.open({
         //removalDelay: 500, //delay removal by X to allow out-animation,

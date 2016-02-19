@@ -1,5 +1,8 @@
 ﻿kunzadApp.controller("PODController", PODController);
-function PODController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function PODController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "POD";
     $scope.modelhref = "#/pod";
     $scope.isPrevPage = false;

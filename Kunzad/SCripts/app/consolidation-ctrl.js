@@ -4,8 +4,7 @@
 // Author: John Crismund Elumbaring
 //---------------------------------------------------------------------------------//
 kunzadApp.controller("ConsolidationController", ConsolidationController);
-function ConsolidationController($scope, $http, $interval, $filter, $rootScope, $compile, $location) {
-
+function ConsolidationController($scope, $http, $interval, $filter, $rootScope, $compile, $location, $localForage) {
     $scope.currentUrl = $location.path();
 
     if ($scope.currentUrl == '/consolidation/vanstuff') {
@@ -1583,12 +1582,16 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
         // Initialization routines
         var init = function () {
+            $localForage.getItem("Token").then(function (value) {
+                $http.defaults.headers.common['Token'] = value;
+                $scope.initShipmentTypeList();
+            });
             // Call function to load data during content load
             $scope.focusOnTop();
             $scope.loadconsolidationDataGrid();
             $scope.loadconsolidationFiltering();
             $scope.loadConsolidationDetailDataGrid();
-            $scope.initShipmentTypeList();
+            
             $scope.consolidationResetData()
             $scope.consolidationDetailResetData();
 

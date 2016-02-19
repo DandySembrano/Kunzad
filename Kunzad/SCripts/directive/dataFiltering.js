@@ -205,7 +205,9 @@ kunzadApp.directive('dirFiltering', function () {
                                 type: "GET",
                                 beforeSend: function (request) {
                                     request.setRequestHeader("If-None-Match", eTagId);
-                                    request.setRequestHeader("Token", $rootScope.token.toString());
+                                    $localForage.getItem("Token").then(function (value) {
+                                        request.setRequestHeader("Token", value.toString());
+                                    });
                                 },
                                 data: dataModel1,
                                 success: function (result, status, xhr) {

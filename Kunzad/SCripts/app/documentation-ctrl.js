@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("DocumentationController", DocumentationController);
-function DocumentationController($scope, $http, $interval, $filter, $rootScope, $compile) {
+function DocumentationController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
     $scope.modelName = "Documentation";
     $scope.modelhref = "#/documentation";
     $scope.isPrevPage = false;
@@ -558,8 +558,13 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
 
     // Initialization routines
     var init = function () {
+
         $scope.focusOnTop();
-        $scope.initPaymentModeList();
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.initPaymentModeList();
+        });
+       
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
         $scope.shipmentResetData();

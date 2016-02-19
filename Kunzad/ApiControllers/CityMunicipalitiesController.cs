@@ -9,9 +9,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
+using Kunzad.ActionFilters;
 
 namespace Kunzad.Controllers
 {
+    [AuthorizationRequired]
     public class CityMunicipalitiesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();

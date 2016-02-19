@@ -69,7 +69,10 @@
             showformerror: '&',         //function that will trigger when an error occured
         },
         templateUrl: '/Directives/DataGrid1',
-        controller: function ($scope, $http, $interval, $filter, $parse, $compile, restAPI) {
+        controller: function ($rootScope, $scope, $http, $interval, $filter, $parse, $compile, restAPI, $localForage) {
+            $localForage.getItem("Token").then(function (value) {
+                $http.defaults.headers.common['Token'] = value.toString();
+            });
             var stop;
             $scope.currentPage = 1;
             $scope.pageSize = 20;

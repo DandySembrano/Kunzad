@@ -4,7 +4,7 @@
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
 
-kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter) {
+kunzadApp.controller("ShippingLinesController", function ($rootScope, $scope, $http, $filter, $localForage) {
     //------------------------------------------------------------------------------//
     $scope.modelName = "Shipping Lines";
     $scope.modelhref = "#/shippinglines";
@@ -1195,12 +1195,16 @@ kunzadApp.controller("ShippingLinesController", function ($scope, $http, $filter
     // Initialization routines
     var init = function () {
         // Call function to load data during content load
-        $scope.loadData($scope.currentPage);
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $scope.loadData($scope.currentPage);
+            //Retrieve Business Units
+            $scope.getBusinessUnits();
+        });
+        
         $scope.initShippingLineGridOptions();
         $scope.initVesselGridOptions();
         $scope.initVoyageGridOptions();
-        //Retrieve Business Units
-        $scope.getBusinessUnits();
     }
     init();
 });

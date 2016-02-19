@@ -1,6 +1,9 @@
 ﻿
 kunzadApp.controller("TruckingsWBController", TruckingsWBController);
-function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI) {
+function TruckingsWBController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
     $scope.modelName = "Trucking Info";
     $scope.modelhref = "#/truckingwb";
     $scope.isPrevPage = false;
