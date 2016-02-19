@@ -136,6 +136,7 @@ namespace Kunzad.Models
             m.MenuItems.Add(new MenuItem("Service Category", "glyphicons glyphicons-file", "#/servicecategory"));
             m.MenuItems.Add(new MenuItem("Shipment Type", "glyphicons glyphicons-file", "#/shipmenttype"));
             m.MenuItems.Add(new MenuItem("Truck Type", "glyphicons glyphicons-file", "#/trucktype"));
+            m.MenuItems.Add(new MenuItem("Rates Maintenance", "glyphicons glyphicons-file", "#/rates"));
             menuGroup.MenuGroupItems.Add(m);
 
             // Security

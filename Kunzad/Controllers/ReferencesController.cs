@@ -157,5 +157,10 @@ namespace Kunzad.Controllers
         {
             return View();
         }
+
+        public ActionResult Rates()
+        {
+            return View();
+        }
     }
 }

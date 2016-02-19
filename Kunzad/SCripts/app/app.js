@@ -608,6 +608,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
            controller: 'DeliveryExceptionBatchingController'
        })
 
+        .when('/rates', {
+            templateUrl: '/References/Rates',
+            controller: 'RatesController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });
