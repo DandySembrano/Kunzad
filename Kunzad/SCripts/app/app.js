@@ -1,59 +1,8 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
-kunzadApp.run(function ($rootScope, $http, $localForage) {
-    $rootScope.token = null;
-    // Get List of CityMunicipalities
-    var getCityMunicipalitiesFromApi = function () {
-        $http.defaults.headers.common['Token'] = $rootScope.token.toString();
-        $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
-            .success(function (data, status) {
-                cityMunicipalities = data;
-            })
-            .error(function (data, status) {
-            });
-    }
-
-    var cityMunicipalities = [];
-    $rootScope.getCityMunicipalities = function () {
-        return cityMunicipalities;
-    }
-
-    function init() {
-        //Use UserId number 1 temporarily
-        $http.get("/api/users?id=1")
-        .success(function (response, status) {
-            if (response.status == "SUCCESS") {
-                $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
-                $http.get("/api/authenticate")
-                .success(function (response, status, headers) {
-                    $localForage.getItem("Token").then(function (value) {
-                        if (angular.isUndefined(value))
-                        {
-                            $localForage.setItem("Token", headers().token);
-                            $rootScope.token = headers().token;
-                            // Temporary - support one country only (Philippines)
-                            $rootScope.country = {
-                                "Id": 1,
-                                "Name": "Philippines",
-                            }
-                            getCityMunicipalitiesFromApi();
-                            //$rootScope.connectoToHub();
-                        }
-                    })
-                })
-                .error(function (err) {
-                    console.log("Login failure");
-                })
-            }
-        })
-        .error(function (err) { })
-    }
-
-    init();
-});
+kunzadApp.run(function () {});
 kunzadApp.config(['$routeProvider', function ($routeProvider) {
     //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
     $routeProvider
-
         .when('/home', {
             templateUrl: '/Home/Main'
         })
@@ -229,7 +178,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
        })
 
         .otherwise({
-            redirectTo: '/home/'
+            redirectTo: '/home'
         });
 }])
 
@@ -242,11 +191,44 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
     })
 }])
 
-.controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http',
-    function ($rootScope, $scope, $route, $routeParams, $location, $http) {
+.controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http', '$localForage', '$compile',
+    function ($rootScope, $scope, $route, $routeParams, $location, $http, $localForage, $compile) {
 
-        $scope.$on('$routeChangeSuccess', function (e, current, previous) {
-            $scope.activeViewPath = $location.path();
+        $rootScope.isLogged = true;
+        $rootScope.flag = false;
+
+        $scope.checkAccess = function (e, currentUrl) {
+            $localForage.getItem("Token").then(function (value) {
+                if (angular.isUndefined(value)) {
+                    alert("Session Expired. Please re-login(Temporarily redirected to " + document.URL.split("#")[0] + ")")
+                    window.location = document.URL.split("#")[0];
+                }
+                else {
+                    
+                    if ($scope.hasAccess(currentUrl) == false) {
+                        e.preventDefault();
+                        window.location = document.URL.split("#")[0] + "Authentication/Denied";
+                    }
+                }
+            });
+        }
+
+        $scope.$on('$routeChangeStart', function (angularEvent, current, next) {
+            if (angular.isUndefined(current.$$route)) {
+                $rootScope.flag = true;
+            }
+            else {
+                if ($rootScope.flag)
+                    $rootScope.flag = false;
+                else {
+                    if ($rootScope.isLogged) { //Check if user has logged in
+                        if (current.$$route.originalPath != "/home")
+                            $scope.checkAccess(angularEvent, current.$$route.originalPath);
+                    }
+                    else//Redirect to login page
+                        window.location = document.URL.split("#")[0];
+                }
+            }
         });
         
         //----------------------------------------SignalR Socketing-----------------------------------------
@@ -298,6 +280,67 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         };
 
         //-------------------------------------End of SignalR Socketing-------------------------------------
+
+        //-------------------------------------Menu Manipulation--------------------------------------------
+        $scope.userMenuList = [];
+        $scope.groupMenu = [];
+        $scope.groupMenuItem = [];
+
+        $scope.hasAccess = function (url) {
+            console.log($scope.userMenuList);
+            for (var i = 0; i < $scope.userMenuList.length; i++) {
+                if ($scope.userMenuList[i].Link.toString().replace('#/', '') == url.toString().replace('/', ''))
+                    return true;
+            }
+            return false;
+        }
+
+        $scope.checkIfHasAccess = function (menuId) {
+            for (var i = 0; i < $scope.userMenuAccess.length; i++) {
+                if ($scope.userMenuAccess[i].MenuId == menuId)
+                    return true;
+            }
+            return false;
+        };
+
+        $scope.getUserMenu = function () {
+            for (var i = 0; i < $scope.menu.length; i++) {
+                if ($scope.checkIfHasAccess($scope.menu[i].Id)) {
+                    $scope.userMenuList.push($scope.menu[i]);
+                }
+                if ($scope.menu[i].ParentId == null)
+                    $scope.groupMenu.push($scope.menu[i]);
+                if($scope.menu[i].ParentId != null && $scope.menu[i].IsParent == "Y")
+                    $scope.groupMenuItem.push($scope.menu[i]);
+            }
+        };
+
+        $scope.hasMenu = function (menuId) {
+            for (var i = 0; i < $scope.userMenuList.length; i++) {
+                if ($scope.userMenuList[i].Id == menuId)
+                    return true;
+            }
+            return false;
+        };
+
+        $scope.hasChild = function (menuId) {
+            for (var i = 0; i < $scope.userMenuList.length; i++) {
+                if ($scope.userMenuList[i].ParentId == menuId)
+                    return true;
+            }
+            return false;
+        };
+
+        $scope.showGroupMenu = function (menuId) {
+            //Show Group Menu if at least one of it's item(Group Menu Item) has child
+            for (var i = 0; i < $scope.groupMenuItem.length; i++) {
+                if ($scope.hasChild($scope.groupMenuItem[i].Id))
+                    return true;
+            }
+            return false;
+        };
+
+        //------------------------------End of Menu Manipulation--------------------------------------------
 
         //Triggers before actionForm function
         $rootScope.formatControlNo = function (prefix, length, value) {
@@ -665,8 +708,57 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             }
         };
 
-        
+        $rootScope.token = null;
+        // Get List of CityMunicipalities
+        var getCityMunicipalitiesFromApi = function () {
+            $http.defaults.headers.common['Token'] = $rootScope.token.toString();
+            $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+                .success(function (data, status) {
+                    cityMunicipalities = data;
+                })
+                .error(function (data, status) {
+                });
+        }
 
+        var cityMunicipalities = [];
+        $rootScope.getCityMunicipalities = function () {
+            return cityMunicipalities;
+        };
+
+        function init() {
+            //Use UserId number 1 temporarily
+            $http.get("/api/users?id=1")
+            .success(function (response, status) {
+                if (response.status == "SUCCESS") {
+                    $scope.menu = response.objParam2;
+                    $scope.userMenuAccess = response.objParam1;
+                    $scope.getUserMenu();
+                    $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
+                    $http.get("/api/authenticate")
+                    .success(function (response, status, headers) {
+                        $localForage.getItem("Token").then(function (value) {
+                            if (angular.isUndefined(value)) {
+                                $localForage.setItem("Token", headers().token);
+                                $rootScope.token = headers().token;
+                                // Temporary - support one country only (Philippines)
+                                $rootScope.country = {
+                                    "Id": 1,
+                                    "Name": "Philippines",
+                                }
+                                getCityMunicipalitiesFromApi();
+                                //$rootScope.connectoToHub();
+                            }
+                        })
+                    })
+                    .error(function (err) {
+                        console.log("Login failure");
+                    })
+                }
+            })
+            .error(function (err) { })
+        }
+
+        init();
     }]);
 
 

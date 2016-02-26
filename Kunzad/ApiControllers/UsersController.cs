@@ -29,14 +29,37 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(User))]
         public IHttpActionResult GetUser(int id)
         {
-            response.status = "FAILURE";
-            User user = db.Users.Find(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                response.status = "FAILURE";
+                User user = db.Users.Find(id);
+                if (user == null)
+                {
+                    response.message = "User not found.";
+
+                }
+                else
+                {
+                    //Return objects are format this way for better performance
+                    AppMenuModel appMenu = new AppMenuModel();
+                    appMenu.setUserId(id);
+                    response.status = "SUCCESS";
+                    response.stringParam1 = tokenGenerator.Encrypt(user.LoginName) + ":" + tokenGenerator.Encrypt(user.Password);
+                    response.objParam1 = (from um in db.UserMenus
+                                          where um.UserId == id
+                                          where (from m in db.Menus where m.Id == um.MenuId && m.Status == 1 select m).Count() > 0
+                                          select new
+                                          {
+                                              um.MenuId,
+                                              MenuAccess = (from ma in db.MenuAccesses where ma.Id == um.MenuAccessId select new { ma.Access}).FirstOrDefault().Access
+                                          }).ToArray();
+                    response.objParam2 = db.Menus.Where(menu => menu.Status == 1).AsNoTracking().OrderBy(m => m.Sequence).ToArray();
+                }
             }
-            response.status = "SUCCESS";
-            response.stringParam1 = tokenGenerator.Encrypt(user.LoginName) + ":" + tokenGenerator.Encrypt(user.Password);
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
+            }
             return Ok(response);
         }
 
