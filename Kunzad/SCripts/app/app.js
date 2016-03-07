@@ -287,7 +287,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $scope.groupMenuItem = [];
 
         $scope.hasAccess = function (url) {
-            console.log($scope.userMenuList);
             for (var i = 0; i < $scope.userMenuList.length; i++) {
                 if ($scope.userMenuList[i].Link.toString().replace('#/', '') == url.toString().replace('/', ''))
                     return true;
@@ -711,6 +710,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $rootScope.token = null;
         // Get List of CityMunicipalities
         var getCityMunicipalitiesFromApi = function () {
+            console.log('xxx');
             $http.defaults.headers.common['Token'] = $rootScope.token.toString();
             $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
                 .success(function (data, status) {
@@ -736,19 +736,15 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                     $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
                     $http.get("/api/authenticate")
                     .success(function (response, status, headers) {
-                        $localForage.getItem("Token").then(function (value) {
-                            if (angular.isUndefined(value)) {
-                                $localForage.setItem("Token", headers().token);
-                                $rootScope.token = headers().token;
-                                // Temporary - support one country only (Philippines)
-                                $rootScope.country = {
-                                    "Id": 1,
-                                    "Name": "Philippines",
-                                }
-                                getCityMunicipalitiesFromApi();
-                                //$rootScope.connectoToHub();
-                            }
-                        })
+                        $localForage.setItem("Token", headers().token);
+                        $rootScope.token = headers().token;
+                        // Temporary - support one country only (Philippines)
+                        $rootScope.country = {
+                            "Id": 1,
+                            "Name": "Philippines",
+                        }
+                        console.log('here');
+                        getCityMunicipalitiesFromApi();
                     })
                     .error(function (err) {
                         console.log("Login failure");
