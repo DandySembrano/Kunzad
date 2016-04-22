@@ -19,6 +19,7 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
         private TokenGenerator tokenGenerator = new TokenGenerator();
+        private DbContextTransaction dbTransaction;
         // GET: api/Users
         public IQueryable<User> GetUsers()
         {
@@ -27,24 +28,23 @@ namespace Kunzad.ApiControllers
 
         // GET: api/Users/5
         [ResponseType(typeof(User))]
-        public IHttpActionResult GetUser(int id)
+        public IHttpActionResult GetUser(string loginname, string password)
         {
             try
-            {
+            { 
                 response.status = "FAILURE";
-                User user = db.Users.Find(id);
-                if (user == null)
+                var user = db.Users.Where(u => u.LoginName.Equals(loginname.ToUpper()) && u.Password.Equals(password.ToUpper())).ToArray();
+                if (user.Length == 0)
                 {
                     response.message = "User not found.";
 
                 }
                 else
                 {
+                    int id = user[0].Id;
                     //Return objects are format this way for better performance
-                    AppMenuModel appMenu = new AppMenuModel();
-                    appMenu.setUserId(id);
                     response.status = "SUCCESS";
-                    response.stringParam1 = tokenGenerator.Encrypt(user.LoginName) + ":" + tokenGenerator.Encrypt(user.Password);
+                    response.stringParam1 = tokenGenerator.Encrypt(user[0].LoginName) + ":" + tokenGenerator.Encrypt(user[0].Password);
                     response.objParam1 = (from um in db.UserMenus
                                           where um.UserId == id
                                           where (from m in db.Menus where m.Id == um.MenuId && m.Status == 1 select m).Count() > 0
@@ -54,6 +54,8 @@ namespace Kunzad.ApiControllers
                                               MenuAccess = (from ma in db.MenuAccesses where ma.Id == um.MenuAccessId select new { ma.Access}).FirstOrDefault().Access
                                           }).ToArray();
                     response.objParam2 = db.Menus.Where(menu => menu.Status == 1).AsNoTracking().OrderBy(m => m.Sequence).ToArray();
+                    response.objParam3 = db.Users.Where(user1 => user1.Id == id).ToArray();
+                    response.objParam4 = db.MenuAccesses.AsNoTracking().OrderBy(m => m.MenuId).ToArray();
                 }
             }
             catch (Exception e)
@@ -61,6 +63,20 @@ namespace Kunzad.ApiControllers
                 response.message = e.InnerException.InnerException.Message.ToString();
             }
             return Ok(response);
+        }
+
+        [HttpGet]
+        //Dynamic filtering
+        //[CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        public IHttpActionResult GetUser(string type, int param1, [FromUri]List<User> User)
+        {
+            Object[] users = new Object[AppSettingsGet.PageSize];
+            this.filterRecord(param1, type, User.ElementAt(0), User.ElementAt(1), ref users);
+
+            if (users != null)
+                return Ok(users);
+            else
+                return Ok();
         }
 
         // PUT: api/Users/5
@@ -104,31 +120,119 @@ namespace Kunzad.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.status = "FAILURE";
+                response.message = "Bad request.";
+                return Ok(response);
             }
+            try {
+                dbTransaction = db.Database.BeginTransaction();
+                int validateLoginName = db.Users.Where(u => u.LoginName.Equals(user.LoginName)).Count();
+                if (validateLoginName == 0)
+                {
+                    response.status = "SUCCESS";
+                    user.CreatedDate = DateTime.Now;
+                    db.Users.Add(user);
+                    user.Password = user.LoginName;
+                    db.SaveChanges();
+                    foreach (UserMenu userMenu in user.UserMenus)
+                    {
+                        userMenu.UserId = user.Id;
+                        var userMenu1 = db.UserMenus.Where(um => um.UserId == user.Id && um.MenuAccessId == userMenu.MenuAccessId).Count();
+                        if (userMenu1 == 0)
+                            db.UserMenus.Add(userMenu);
+                    }
+                    db.SaveChanges();
+                }
+                else
+                {
+                    response.status = "FAILURE";
+                    response.message = "Login Name is already used.";
+                }
+            }
+            catch (Exception e)
+            {
+                response.status = "FAILURE";
+                response.message = e.Message.ToString();
+            }
+            if (response.status != "FAILURE")
+            {
+                dbTransaction.Commit();
+                response.objParam1 = user;
+                response.objParam2 = db.UserMenus.Where(um => um.UserId == user.Id).ToArray();
+            }
+            else
+                dbTransaction.Rollback();
+            dbTransaction.Dispose();
+            return Ok(response);
 
-            db.Users.Add(user);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = user.Id }, user);
         }
 
         // DELETE: api/Users/5
         [ResponseType(typeof(User))]
         public IHttpActionResult DeleteUser(int id)
         {
+            Response response = new Response();
+            response.status = "FAILURE";
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return NotFound();
+                response.message = "User not found.";
+            }
+            else
+            {
+                var deleteTokens = db.Tokens.Where(t => t.LoginName.Equals(user.LoginName));
+                db.Tokens.RemoveRange(deleteTokens);
+                db.SaveChanges();
+                response.status = "SUCCESS";
             }
 
-            db.Users.Remove(user);
-            db.SaveChanges();
-
-            return Ok(user);
+            return Ok(response);
         }
 
+        public void filterRecord(int param1, string type, User user, User user1, ref Object[] users)
+        {
+            /*If date is not nullable in table equate to "1/1/0001 12:00:00 AM" else null
+            if integer value is not nullable in table equate to 0 else null*/
+            DateTime defaultDate = new DateTime(0001, 01, 01, 00, 00, 00);
+            int skip;
+
+            if (type.Equals("paginate"))
+            {
+                if (param1 > 1)
+                    skip = (param1 - 1) * AppSettingsGet.PageSize;
+                else
+                    skip = 0;
+            }
+            else
+                skip = param1;
+
+            var filteredUsers = (from u in db.Users
+                                         select new
+                                         {
+                                             u.Id,
+                                             u.UserTypeId,
+                                             u.LoginName,
+                                             u.Password,
+                                             u.FirstName,
+                                             u.MiddleName,
+                                             u.LastName,
+                                             u.Email,
+                                             u.BusinessUnitId,
+                                             u.ImageName,
+                                             u.Status,
+                                             UserType = (from ut in db.UserTypes where ut.Id == u.UserTypeId select new { ut.Id, ut.Name }),
+                                             BusinessUnit = (from bu1 in db.BusinessUnits where bu1.Id == u.BusinessUnitId select new { bu1.Id, bu1.Code, bu1.Name }),
+                                             UserMenus = (from um in db.UserMenus where um.UserId == u.Id select um)
+                                         })
+                                            .Where(u => user.Id == null || user.Id == 0 ? true : u.Id == user.Id)
+                                            .Where(u => user.LoginName == null ? !user.LoginName.Equals("") : (u.LoginName.ToLower().Equals(user.LoginName.ToLower())))
+                                            .Where(u => user.FirstName == null ? !user.FirstName.Equals("") : (u.FirstName.ToLower().Equals(user.FirstName.ToLower())))
+                                            .Where(u => user.MiddleName == null ? !user.MiddleName.Equals("") : (u.MiddleName.ToLower().Equals(user.MiddleName.ToLower())))
+                                            .Where(u => user.LastName == null ? !user.LastName.Equals("") : (u.LastName.ToLower().Equals(user.LastName.ToLower())))
+                                            .OrderBy(u => u.Id)
+                                            .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
+            users = filteredUsers;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

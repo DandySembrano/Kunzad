@@ -28,22 +28,22 @@ namespace Kunzad
                         "~/Scripts/angular-touch.js",
                         "~/Scripts/angular-ng-grid.js",
                         "~/Scripts/angular-resource.js",
+                        "~/vendor/plugins/uigrid/js/ui-grid.js",
+                        "~/vendor/plugins/uigrid/js/csv.js",
+                        "~/vendor/plugins/uigrid/js/pdfmake.js",
+                        "~/vendor/plugins/uigrid/js/vfs_fonts.js",
+                        "~/Scripts/ng-context-menu.js",
                         "~/Scripts/localforage.min.js",
-                        "~/Scripts/angular-localForage.js"
+                        "~/Scripts/angular-localForage.js",
+                        "~/Scripts/app/app.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/utils").Include(
-                        "~/Scripts/ng-context-menu.js",
                         "~/Scripts/spin.min.js",
                         "~/Scripts/ui-bootstrap-tpls-0.12.1.min.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
-                        "~/vendor/plugins/uigrid/js/ui-grid.js",
-                        "~/vendor/plugins/uigrid/js/csv.js",
-                        "~/vendor/plugins/uigrid/js/pdfmake.js",
-                        "~/vendor/plugins/uigrid/js/vfs_fonts.js",
-                        "~/Scripts/app/app.js",
                         "~/Scripts/filter/filter.js",
                         "~/Scripts/service/restAPI.js",
                         "~/Scripts/directive/scrollableContainer.js",

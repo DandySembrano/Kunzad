@@ -197,55 +197,58 @@ kunzadApp.directive('dirFiltering', function () {
                                 etagKey = key;
                             }
                         }).then(function (data) {
-                            if (eTagId == null) {
-                                eTagId = "dummy"
-                            }
+                            $localForage.getItem("Token").then(function (token) {
+                                if (eTagId == null) {
+                                    eTagId = "dummy"
+                                }
 
-                            $.ajax($scope.url, {
-                                type: "GET",
-                                beforeSend: function (request) {
-                                    request.setRequestHeader("If-None-Match", eTagId);
-                                    $localForage.getItem("Token").then(function (value) {
-                                        request.setRequestHeader("Token", value.toString());
-                                    });
-                                },
-                                data: dataModel1,
-                                success: function (result, status, xhr) {
-                                    if (xhr.readyState == 4) {
-                                        if (status == 'success') { //200
-                                            if (etagKey != null) {
-                                                //remove first existing just in case it is expire on server
-                                                $localForage.removeItem(etagKey);
-                                            }
-                                            var newETagId = xhr.getResponseHeader("ETag");
-                                            $localForage.setItem($scope.url + "+" + newETagId, xhr.responseText);
-                                            $scope.filterdefinition.DataList = angular.copy(xhr.responseJSON)
-                                            $scope.forceScroll();
-                                            $scope.retrieving = false;
-                                            $scope.filterdefinition.ClearData = false;
-                                            $scope.otheractions({ action: 'PostFilterData' })
-                                            spinner.stop();
-                                        } else if (status == 'notmodified') { //304
-                                            $localForage.getItem(etagKey).then(function (data) {
-                                                var objData = undefined;
-                                                objData = JSON.parse(data);
-                                                $scope.filterdefinition.DataList = angular.copy(objData);
+                                $.ajax($scope.url, {
+                                    type: "GET",
+                                    beforeSend: function (request) {
+                                        request.setRequestHeader("If-None-Match", eTagId);
+                                        request.setRequestHeader("Token", token.toString());
+                                        //$localForage.getItem("Token").then(function (value) {
+                                        //    request.setRequestHeader("Token", value.toString());
+                                        //});
+                                    },
+                                    data: dataModel1,
+                                    success: function (result, status, xhr) {
+                                        if (xhr.readyState == 4) {
+                                            if (status == 'success') { //200
+                                                if (etagKey != null) {
+                                                    //remove first existing just in case it is expire on server
+                                                    $localForage.removeItem(etagKey);
+                                                }
+                                                var newETagId = xhr.getResponseHeader("ETag");
+                                                $localForage.setItem($scope.url + "+" + newETagId, xhr.responseText);
+                                                $scope.filterdefinition.DataList = angular.copy(xhr.responseJSON)
                                                 $scope.forceScroll();
                                                 $scope.retrieving = false;
                                                 $scope.filterdefinition.ClearData = false;
                                                 $scope.otheractions({ action: 'PostFilterData' })
                                                 spinner.stop();
-                                            });
+                                            } else if (status == 'notmodified') { //304
+                                                $localForage.getItem(etagKey).then(function (data) {
+                                                    var objData = undefined;
+                                                    objData = JSON.parse(data);
+                                                    $scope.filterdefinition.DataList = angular.copy(objData);
+                                                    $scope.forceScroll();
+                                                    $scope.retrieving = false;
+                                                    $scope.filterdefinition.ClearData = false;
+                                                    $scope.otheractions({ action: 'PostFilterData' })
+                                                    spinner.stop();
+                                                });
+                                            }
+                                            eTagId = null
+                                            etagKey = null
                                         }
-                                        eTagId = null
-                                        etagKey = null
+                                    },
+                                    error: function (xhr) {
+                                        $scope.isErrorFiltering = true;
+                                        $scope.errorMessageFiltering = xhr.status;
+                                        spinner.stop();
                                     }
-                                },
-                                error: function (xhr) {
-                                    $scope.isErrorFiltering = true;
-                                    $scope.errorMessageFiltering = xhr.status;
-                                    spinner.stop();
-                                }
+                                });
                             });
                         });
 

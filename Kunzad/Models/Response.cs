@@ -15,5 +15,7 @@ namespace Kunzad.Models
         public string stringParam2 { get; set; }
         public object objParam1 { get; set; }
         public object objParam2 { get; set; }
+        public object objParam3 { get; set; }
+        public object objParam4 { get; set; }
     }
 }

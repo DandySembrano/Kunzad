@@ -100,6 +100,9 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
         .success(function (data, status) {
             $scope.serviceList = data;
         })
+        .error(function (response, status) {
+            console.log(status);
+        })
         //restAPI.retrieve("/api/Services");
         //var promise = $interval(function () {
         //    if (restAPI.isValid()) {

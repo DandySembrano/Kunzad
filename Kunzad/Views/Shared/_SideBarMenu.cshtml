@@ -5,7 +5,7 @@
         AppMenuModel appMenu = new AppMenuModel();
 
         foreach (MenuGroup m in appMenu.MenuGroups)
-        {
+        { 
                     <!-- sidebar resources -->
             <li class="sidebar-label pt15" ng-show="showGroupMenu(@m.Id)">@m.Name</li>
             foreach (MenuGroupItem gItem in m.MenuGroupItems)

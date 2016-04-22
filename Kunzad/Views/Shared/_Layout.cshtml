@@ -61,23 +61,47 @@
 </head>
 
 <body ng-app="kunzadApp" ng-controller="RootController">
+    <div id="home" class="hide-home-container" ng-show="!isLogged">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-md-offset-4">
+                    <h1 class="text-center login-title"><strong>Kunzad</strong></h1>
+                    <div class="account-wall">
+                        <form class="form-signin">
+                            <input type="text" class="form-control text-uppercase" ng-model="myInformation.LoginName" placeholder="Login Name" required autofocus>
+                            <input type="password" class="form-control text-uppercase" ng-model="myInformation.Password" placeholder="Password" required>
+                            <button class="btn btn-lg btn-primary btn-block" ng-click="onLoginRequest()">Login</button>
+                            <div style="padding-left:10px">
+                                <label class="checkbox pull-left" style="padding-left: 10px;">
+                                    <input type="checkbox" value="remember-me">
+                                    Remember me
+                                </label>
+                                <a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="profile" class="hide-profile-container" ng-show="isLogged">
+        @RenderPage("_ThemePreview.cshtml")
 
-    @RenderPage("_ThemePreview.cshtml")
+        <!-- Start: Main -->
+        <div id="main" class="container-fluid">
 
-    <!-- Start: Main -->
-    <div id="main" class="container-fluid">
+            @RenderPage("_Header.cshtml")
+            @RenderPage("_SideBar.cshtml")
 
-        @RenderPage("_Header.cshtml")
-        @RenderPage("_SideBar.cshtml")
+            <!-- Start: Content-Wrapper -->
+            <section id="content_wrapper">
+                @* @@RenderPage("_TopBar.cshtml") *@
+                @RenderBody()
+            </section>
+            <!-- End: Content-Wrapper -->
+            @* @RenderPage("_SideBarRight.cshtml") *@
 
-        <!-- Start: Content-Wrapper -->
-        <section id="content_wrapper">
-            @* @@RenderPage("_TopBar.cshtml") *@
-            @RenderBody()
-        </section>
-        <!-- End: Content-Wrapper -->
-        @* @RenderPage("_SideBarRight.cshtml") *@
-
+        </div>
     </div>
     <div id="spinnerTarget"></div>
     <!-- End: Main -->
@@ -89,7 +113,7 @@
     <!-- signalR library -->
     <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="signalr/hubs"></script>
-    
+
     <!-- Bootstrap -->
     <script type="text/javascript" src="~/assets/js/bootstrap/bootstrap.min.js"></script>
 
@@ -104,6 +128,7 @@
 
     <!-- Angular-->
     <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/bootstrap-filestyle.js"></script>
     <script src="~/Scripts/angular-animate.js"></script>
     <script src="~/Scripts/angular-route.js"></script>
     <script src="~/Scripts/angular-touch.js"></script>
@@ -164,7 +189,8 @@
     <script type="text/javascript" src="~/Scripts/app/deliveryexception-ctrl.js"></script>
     <script type="text/javascript" src="~/Scripts/app/deliveryexceptionbatching-ctrl.js"></script>
     <script type="text/javascript" src="~/Scripts/app/rates-ctrl.js"></script>
-    
+    <script type="text/javascript" src="~/Scripts/app/user-ctrl.js"></script>
+
 
     <script type="text/javascript">
         jQuery(document).ready(function () {

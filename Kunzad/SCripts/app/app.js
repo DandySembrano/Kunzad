@@ -1,5 +1,5 @@
 ﻿var kunzadApp = angular.module('kunzadApp', ['ngRoute', 'ng-context-menu', 'ui.bootstrap', 'ui.grid', 'ui.grid.autoResize', 'ui.grid.moveColumns', 'ui.grid.resizeColumns', 'ui.grid.selection', 'ui.grid.exporter', 'ui.grid.edit', 'ui.grid.cellNav', 'LocalForageModule']);
-kunzadApp.run(function () {});
+kunzadApp.run(function ($rootScope) {});
 kunzadApp.config(['$routeProvider', function ($routeProvider) {
     //Setup routes to load partial templates from server. TemplateUrl is the location for the server view (Razor .cshtml view)
     $routeProvider
@@ -177,6 +177,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
            controller: 'DeliveryExceptionBatchingController'
        })
 
+        .when('/users', {
+            templateUrl: '/References/Users',
+            controller: 'UsersController'
+        })
+
         .otherwise({
             redirectTo: '/home'
         });
@@ -192,11 +197,13 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
 }])
 
 .controller('RootController', ['$rootScope', '$scope', '$route', '$routeParams', '$location', '$http', '$localForage', '$compile',
-    function ($rootScope, $scope, $route, $routeParams, $location, $http, $localForage, $compile) {
-
-        $rootScope.isLogged = true;
-        $rootScope.flag = false;
-
+    function ($rootScope, $scope, $route, $routeParams, $location, $http, $localForage, $compile, $state) {
+        $scope.donePopulatingMenu = false;
+        $rootScope.isLogged = undefined;
+        $scope.myInformation = {
+            LoginName: null,
+            Password: null
+        }
         $scope.checkAccess = function (e, currentUrl) {
             $localForage.getItem("Token").then(function (value) {
                 if (angular.isUndefined(value)) {
@@ -204,41 +211,73 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                     window.location = document.URL.split("#")[0];
                 }
                 else {
-                    
-                    if ($scope.hasAccess(currentUrl) == false) {
-                        e.preventDefault();
-                        window.location = document.URL.split("#")[0] + "Authentication/Denied";
-                    }
+                    var promise2 = setInterval(function () {
+                        if($scope.donePopulatingMenu)
+                        {
+                            clearInterval(promise2);
+                            if ($scope.hasAccess(currentUrl) == false) {
+                                e.preventDefault();
+                                window.location = document.URL.split("#")[0] + "Authentication/Denied";
+                            }
+                        }
+                    }, 100);
                 }
             });
         }
 
         $scope.$on('$routeChangeStart', function (angularEvent, current, next) {
-            if (angular.isUndefined(current.$$route)) {
-                $rootScope.flag = true;
+            if (!angular.isUndefined($rootScope.isLogged)) {
+
+                //-----This code is for display purposes-------
+                if (current.$$route.originalPath != "/home")
+                    $rootScope.isLogged = true;
+                else
+                    $rootScope.isLogged = false;
+                //------------End------------------------------
+
+                if ($rootScope.isLogged) { //Check if user has logged in
+                    if (current.$$route.originalPath != "/home")
+                        $scope.checkAccess(angularEvent, current.$$route.originalPath);
+                }
+                else //Redirect to login page
+                    window.location = document.URL.split("#")[0];
             }
             else {
-                if ($rootScope.flag)
-                    $rootScope.flag = false;
-                else {
-                    if ($rootScope.isLogged) { //Check if user has logged in
-                        if (current.$$route.originalPath != "/home")
-                            $scope.checkAccess(angularEvent, current.$$route.originalPath);
+                //-----This code is for display purposes-------
+                if (current.$$route.originalPath != "/home")
+                    $rootScope.isLogged = true;
+                else
+                    $rootScope.isLogged = false;
+                //------------End------------------------------
+
+                $localForage.getItem("LoginDetails").then(function (value) {
+                    if (value != undefined) {
+                        if (value.IsLogged != undefined && value.IsLogged == 'Y') {
+                            $rootScope.isLogged = true;
+                            $scope.userMenuAccess = value.UserMenuAccess;
+                            $scope.menu = value.Menu;
+                            $scope.myInformation = value.MyInformation;
+                            $scope.menuAccess = value.MenuAccess;
+                            $scope.imageName = value.ImageName;
+                            $scope.getUserMenu();
+                        }
+                        else
+                            $rootScope.isLogged = false;
                     }
-                    else//Redirect to login page
-                        window.location = document.URL.split("#")[0];
-                }
+                    else
+                        $rootScope.isLogged = false;
+                });
             }
         });
         
         //----------------------------------------SignalR Socketing-----------------------------------------
-        $rootScope.baseUrl = "http://localhost/";
+        $rootScope.baseUrl = document.URL.split("#")[0];
         $rootScope.scanning = null;
         $rootScope.scannedData = null;
         $rootScope.scannerWatcher = false;
 
         $rootScope.scanning = $.connection.scanningHub;
-        $.connection.hub.url = "http://localhost/signalr";
+        $.connection.hub.url = document.URL.split("#")[0] + "signalr";
 
         //remove the connection id
         $rootScope.removeClient = function () {
@@ -278,10 +317,10 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             else
                 console.log("Hub not found.");
         };
-
         //-------------------------------------End of SignalR Socketing-------------------------------------
 
         //-------------------------------------Menu Manipulation--------------------------------------------
+
         $scope.userMenuList = [];
         $scope.groupMenu = [];
         $scope.groupMenuItem = [];
@@ -312,6 +351,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 if($scope.menu[i].ParentId != null && $scope.menu[i].IsParent == "Y")
                     $scope.groupMenuItem.push($scope.menu[i]);
             }
+            $scope.donePopulatingMenu = true;
         };
 
         $scope.hasMenu = function (menuId) {
@@ -333,8 +373,11 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $scope.showGroupMenu = function (menuId) {
             //Show Group Menu if at least one of it's item(Group Menu Item) has child
             for (var i = 0; i < $scope.groupMenuItem.length; i++) {
-                if ($scope.hasChild($scope.groupMenuItem[i].Id))
-                    return true;
+                if ($scope.groupMenuItem[i].ParentId == menuId) {
+                    if ($scope.hasChild($scope.groupMenuItem[i].Id)) {
+                        return true;
+                    }
+                }
             }
             return false;
         };
@@ -391,6 +434,23 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                     "Name": null,
                     "Code": null,
                     "ParentBusinessUnitId": null
+                }]
+            };
+        };
+
+        //Reusable object for filtering user so that other module can directly access
+        $rootScope.userObj = function () {
+            return {
+                "User": [{
+                    "LoginName": null,
+                    "FirstName": null,
+                    "MiddleName": null,
+                    "LastName": null
+                }, {
+                    "LoginName": null,
+                    "FirstName": null,
+                    "MiddleName": null,
+                    "LastName": null
                 }]
             };
         };
@@ -710,7 +770,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $rootScope.token = null;
         // Get List of CityMunicipalities
         var getCityMunicipalitiesFromApi = function () {
-            console.log('xxx');
             $http.defaults.headers.common['Token'] = $rootScope.token.toString();
             $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
                 .success(function (data, status) {
@@ -725,36 +784,98 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             return cityMunicipalities;
         };
 
-        function init() {
-            //Use UserId number 1 temporarily
-            $http.get("/api/users?id=1")
-            .success(function (response, status) {
-                if (response.status == "SUCCESS") {
-                    $scope.menu = response.objParam2;
-                    $scope.userMenuAccess = response.objParam1;
-                    $scope.getUserMenu();
-                    $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
-                    $http.get("/api/authenticate")
-                    .success(function (response, status, headers) {
-                        $localForage.setItem("Token", headers().token);
-                        $rootScope.token = headers().token;
-                        // Temporary - support one country only (Philippines)
-                        $rootScope.country = {
-                            "Id": 1,
-                            "Name": "Philippines",
-                        }
-                        console.log('here');
-                        getCityMunicipalitiesFromApi();
-                    })
-                    .error(function (err) {
-                        console.log("Login failure");
-                    })
-                }
-            })
-            .error(function (err) { })
-        }
+        $scope.onLoginRequest = function () {
+            if ($scope.myInformation.LoginName != null && $scope.myInformation.Password != null) {
+                var spinner = new Spinner(opts).spin(spinnerTarget);
+                //Use UserId number 1 temporarily
+                $http.get("/api/users?loginname=" + $scope.myInformation.LoginName + "&password=" + $scope.myInformation.Password)
+                .success(function (response, status) {
+                    if (response.status == "SUCCESS") {
+                        $scope.userMenuAccess = response.objParam1;
+                        $scope.menu = response.objParam2;
+                        $scope.myInformation = response.objParam3;
+                        $scope.menuAccess = response.objParam4;
+                        $scope.imageName = $scope.myInformation[0].ImageName;
+                        $scope.getUserMenu();
+                        $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
+                        //Issue Token
+                        $http.get("/api/authenticate")
+                        .success(function (response, status, headers) {
+                            $rootScope.isLogged = true;
+                            $localForage.setItem("Token", headers().token);
+                            var holder = {
+                                IsLogged: "Y",
+                                UserMenuAccess: $scope.userMenuAccess,
+                                Menu: $scope.menu,
+                                MyInformation: $scope.myInformation,
+                                MenuAccess: $scope.menuAccess,
+                                ImageName: $scope.imageName
+                            }
+                            $localForage.setItem("LoginDetails", holder);
+                            $rootScope.token = headers().token;
+                            // Temporary - support one country only (Philippines)
+                            $rootScope.country = {
+                                "Id": 1,
+                                "Name": "Philippines",
+                            }
+                            spinner.stop();
+                            getCityMunicipalitiesFromApi();
+                        })
+                        .error(function (err) {
+                            spinner.stop();
+                            console.log("Login failure");
+                        })
+                    }
+                    else {
+                        spinner.stop();
+                        alert(response.message);
+                    }
+                })
+                .error(function (err) {
+                    $rootScope.isLogged = undefined;
+                    spinner.stop();
+                    alert(response.message);
+                })
+            }
+        };
 
-        init();
+        $scope.onLogoutRequest = function () {
+            var spinner = new Spinner(opts).spin(spinnerTarget);
+            $scope.userMenuList = [];
+            $scope.groupMenu = [];
+            $scope.groupMenuItem = [];
+
+            $http.defaults.headers.common['Token'] = undefined;
+            $rootScope.isLogged = undefined;
+            $rootScope.token = undefined;
+            var holder = {
+                IsLogged: 'N',
+                UserMenuAccess: undefined,
+                Menu: undefined,
+                MyInformation: undefined,
+                MenuAccess: undefined,
+                ImageName: undefined
+            }
+            $localForage.setItem("LoginDetails", holder);
+            $localForage.setItem("Token", undefined);
+            $http.delete('/api/users?id=' + $scope.myInformation[0].Id)
+            .success(function () { console.log("Successfull Logout."); spinner.stop(); })
+            .error(function () { console.log("Error during Logout."); spinner.stop(); })
+        };
+
+        $scope.$watch(function () {
+            return $rootScope.isLogged;
+        },
+        function () {
+            if ($rootScope.isLogged == undefined || $rootScope.isLogged == false) {
+                document.getElementById("home").className = "show-home-container";
+                document.getElementById("profile").className = "hide-profile-container";
+            }
+            else {
+                document.getElementById("home").className = "hide-home-container";
+                document.getElementById("profile").className = "show-profile-container";
+            }
+        });
     }]);
 
 
