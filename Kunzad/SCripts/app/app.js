@@ -801,7 +801,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                         //Issue Token
                         $http.get("/api/authenticate")
                         .success(function (response, status, headers) {
-                            $rootScope.isLogged = true;
                             $localForage.setItem("Token", headers().token);
                             var holder = {
                                 IsLogged: "Y",
@@ -819,6 +818,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                                 "Name": "Philippines",
                             }
                             spinner.stop();
+                            $rootScope.isLogged = true;
                             getCityMunicipalitiesFromApi();
                         })
                         .error(function (err) {
@@ -859,8 +859,8 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             $localForage.setItem("LoginDetails", holder);
             $localForage.setItem("Token", undefined);
             $http.delete('/api/users?id=' + $scope.myInformation[0].Id)
-            .success(function () { console.log("Successfull Logout."); spinner.stop(); })
-            .error(function () { console.log("Error during Logout."); spinner.stop(); })
+            .success(function () { console.log("Successfull Logout."); spinner.stop(); $rootScope.isLogged = undefined; })
+            .error(function () { console.log("Error during Logout."); spinner.stop(); $rootScope.isLogged = undefined; })
         };
 
         $scope.$watch(function () {

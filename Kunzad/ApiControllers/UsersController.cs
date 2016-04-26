@@ -262,23 +262,26 @@ namespace Kunzad.ApiControllers
                 skip = param1;
 
             var filteredUsers = (from u in db.Users
-                                         select new
-                                         {
-                                             u.Id,
-                                             u.UserTypeId,
-                                             u.LoginName,
-                                             u.Password,
-                                             u.FirstName,
-                                             u.MiddleName,
-                                             u.LastName,
-                                             u.Email,
-                                             u.BusinessUnitId,
-                                             u.ImageName,
-                                             u.Status,
-                                             UserType = (from ut in db.UserTypes where ut.Id == u.UserTypeId select new { ut.Id, ut.Name }),
-                                             BusinessUnit = (from bu1 in db.BusinessUnits where bu1.Id == u.BusinessUnitId select new { bu1.Id, bu1.Code, bu1.Name }),
-                                             UserMenus = (from um in db.UserMenus where um.UserId == u.Id select um)
-                                         })
+                                 select new
+                                 {
+                                     u.Id,
+                                     u.UserTypeId,
+                                     u.LoginName,
+                                     u.Password,
+                                     u.FirstName,
+                                     u.MiddleName,
+                                     u.LastName,
+                                     u.Email,
+                                     u.BusinessUnitId,
+                                     u.ImageName,
+                                     u.Status,
+                                     u.CreatedByUserId,
+                                     u.CreatedDate,
+                                     u.LastUpdatedByUserId,
+                                     u.LastUpdatedDate,
+                                     UserType = (from ut in db.UserTypes where ut.Id == u.UserTypeId select new { ut.Id, ut.Name }),
+                                     BusinessUnit = (from bu1 in db.BusinessUnits where bu1.Id == u.BusinessUnitId select new { bu1.Id, bu1.Code, bu1.Name }),
+                                 })
                                             .Where(u => user.Id == null || user.Id == 0 ? true : u.Id == user.Id)
                                             .Where(u => user.LoginName == null ? !user.LoginName.Equals("") : (u.LoginName.ToLower().Equals(user.LoginName.ToLower())))
                                             .Where(u => user.FirstName == null ? !user.FirstName.Equals("") : (u.FirstName.ToLower().Equals(user.FirstName.ToLower())))
@@ -286,6 +289,7 @@ namespace Kunzad.ApiControllers
                                             .Where(u => user.LastName == null ? !user.LastName.Equals("") : (u.LastName.ToLower().Equals(user.LastName.ToLower())))
                                             .OrderBy(u => u.Id)
                                             .Skip(skip).Take(AppSettingsGet.PageSize).ToArray();
+            
             users = filteredUsers;
         }
         protected override void Dispose(bool disposing)

@@ -41,6 +41,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $scope.user = {
             Id: null,
             UserTypeId: null,
+            UserType: {},
             LoginName: null,
             Password: null,
             FirstName: null,
@@ -49,11 +50,20 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
             Email: null,
             BusinessUnitId: null,
             BusinessUnitName: null,
+            BusnessUnit: {},
             CreatedByUserId: $scope.myInformation.Id,
             ImageName: null,
             Status: 1
         };
 
+    };
+
+    $scope.setUserType = function (id) {
+        for (var i = 0; i < $scope.userTypeList.length; i++) {
+            if ($scope.userTypeList[i].Id == id) {
+                $scope.user.UserType = $scope.userTypeList[i];
+            }
+        }
     };
 
     //Initialize User Type List for DropDown
@@ -72,6 +82,8 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $scope.user.MiddleName = $scope.user.MiddleName.toUpperCase();
         $scope.user.LastName = $scope.user.LastName.toUpperCase();
         $scope.submitdefinition = $scope.user;
+        $scope.submitdefinition.UserType = null;
+        $scope.submitdefinition.BusinessUnit = null;
         $scope.submitdefinition.Id = 1;
         $scope.submitdefinition.UserMenus = [];
         for (var i = 0; i < $scope.thisUserMenuAccessList.length; i++)
@@ -146,7 +158,10 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $scope.user.FirstName = $scope.user.FirstName.toUpperCase();
         $scope.user.MiddleName = $scope.user.MiddleName.toUpperCase();
         $scope.user.LastName = $scope.user.LastName.toUpperCase();
+
         $scope.submitdefinition = $scope.user;
+        $scope.submitdefinition.UserType = $scope.user.UserType[0];
+        $scope.submitdefinition.BusinessUnit = $scope.user.BusinessUnit[0];
         $scope.submitdefinition.UserMenus = [];
 
         for (var i = 0; i < $scope.thisUserMenuAccessList.length; i++) {
@@ -163,7 +178,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                 else {
                     $scope.UserMenu.MenuId = $scope.thisUserMenuAccessList[i].MenuId;
                     $scope.UserMenu.MenuAccessId = $scope.thisUserMenuAccessList[i].MenuAccessId;
-                    $scope.submitdefinition.UserMenus.push($scope.thisUserMenuAccessList[i]);
+                    $scope.submitdefinition.UserMenus.push($scope.UserMenu);
                 }
             }
             else {
@@ -216,32 +231,6 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                 window.scrollTo(0, 0);
                 spinner.stop();
             })
-    };
-
-    //Send http delete request
-    $scope.apiDelete = function (id) {
-        var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.delete($scope.submitdefinition.APIUrl + "/" + id, $scope.submitdefinition.DataItem)
-            .success(function (response, status) {
-                if (response.status == "SUCCESS") {
-                    $scope.submitdefinition.Index = $scope.selectedIndex;
-                    $scope.submitdefinition.DataItem = angular.copy(response.objParam1);
-                    spinner.stop();
-                    $scope.otheractions({ action: 'PostDelete' });
-                    return true;
-                }
-                else {
-                    $scope.userIsError = true;
-                    $scope.userErrorMessage = response.message;
-                    spinner.stop();
-                }
-            })
-            .error(function (response, status) {
-                $scope.userIsError = true;
-                $scope.userErrorMessage = response.message;
-                spinner.stop();
-            })
-        return false;
     };
 
     //Function that check required fields
@@ -917,6 +906,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                 case 'PostEditAction':
                     $scope.user.BusinessUnitId = $scope.businessUnitDataDefinition.DataItem.Id;
                     $scope.user.BusinessUnitName = $scope.businessUnitDataDefinition.DataItem.Name;
+                    $scope.user.BusinessUnit = $scope.businessUnitDataDefinition.DataItem;
                     $scope.closeModal();
                     return true;
                 default: return true;
@@ -1084,27 +1074,39 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                     $scope.closeModal();
                     $scope.thisUserMenuList = [];
                     $scope.thisUserMenuAccessList = [];
-                   
-                    for (var i = 0; i < $scope.userDataDefinition.DataItem.UserMenus.length; i++) {
-                        for (var j = 0; j < $scope.menu.length; j++) {
-                            if ($scope.userDataDefinition.DataItem.UserMenus[i].MenuId == $scope.menu[j].Id) {
-                                if (!$scope.menuExist($scope.menu[j].Id)) {
-                                    //Add user menu
-                                    $scope.thisUserMenuList.push($scope.menu[j]);
-                                    break;
+                    var spinner = new Spinner(opts).spin(spinnerTarget);
+                    $http.get("/api/UserMenus?userid=" + $scope.user.Id)
+                    .success(function (data, status) {
+                        $scope.userDataDefinition.DataItem.UserMenus = data;
+                        for (var i = 0; i < $scope.userDataDefinition.DataItem.UserMenus.length; i++) {
+                            for (var j = 0; j < $scope.menu.length; j++) {
+                                if ($scope.userDataDefinition.DataItem.UserMenus[i].MenuId == $scope.menu[j].Id) {
+                                    if (!$scope.menuExist($scope.menu[j].Id)) {
+                                        //Add user menu
+                                        $scope.thisUserMenuList.push($scope.menu[j]);
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    for (var i = 0; i < $scope.thisUserMenuList.length; i++) {
-                        var menuAccess = $scope.getMenuAccess($scope.thisUserMenuList[i].Id);
-                        $scope.addThisUserMenuAccess1(menuAccess, $scope.userDataDefinition.DataItem.UserMenus);
-                    }
+                        for (var i = 0; i < $scope.thisUserMenuList.length; i++) {
+                            var menuAccess = $scope.getMenuAccess($scope.thisUserMenuList[i].Id);
+                            $scope.addThisUserMenuAccess1(menuAccess, $scope.userDataDefinition.DataItem.UserMenus);
+                        }
 
-                    $scope.viewOnly = true;
-                    $scope.saveImage = true;
-                    return true;
+                        $scope.viewOnly = true;
+                        $scope.saveImage = true;
+                        spinner.stop();
+                        return true;
+                    })
+                    .error(function (error, status) {
+                        $scope.userIsError = true;
+                        $scope.userErrorMessage = error;
+                        window.scrollTo(0, 0);
+                        spinner.stop();
+                        return true;
+                    })
                 default: return true;
             }
         };

@@ -73,6 +73,7 @@
                                     placeholder=""
                                     ng-disabled="viewOnly"
                                     ng-model="user.UserTypeId"
+                                    ng-click="setUserType(user.UserTypeId)"
                                     ng-options="item.Id as item.Name for item in userTypeList"></select>
                         </div>
                     </div>
@@ -189,6 +190,7 @@
                                             <label>
                                                 <input type="checkbox"
                                                        ng-model="b.HasAccess"
+                                                       ng-disabled="viewOnly"
                                                        ng-true-value="'Y'"
                                                        ng-false-value="'N'">{{ b.Access }}
                                             </label>
