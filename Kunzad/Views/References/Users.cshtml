@@ -222,7 +222,7 @@
             <a style="{{viewOnly == false ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="userOtheractions(viewOnly == false ? 'Save': '')">Save</a>
         </li>
         <li>
-            <a style="{{user.Id != null && viewOnly == false ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="userOtheractions(user.Id != null && viewOnly == false ? 'Edit': '')">Edit</a>
+            <a style="{{user.Id != null && viewOnly == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="userOtheractions(user.Id != null && viewOnly == true ? 'Edit': '')">Edit</a>
         </li>
         <li>
             <a style="{{saveImage == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="userOtheractions(saveImage == true ? 'Upload': '')">Upload Image</a>

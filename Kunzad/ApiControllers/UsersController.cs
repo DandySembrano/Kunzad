@@ -83,35 +83,90 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutUser(int id, User user)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad Request.";
+                return Ok(response);
             }
 
             if (id != user.Id)
             {
-                return BadRequest();
+                response.message = "User not found";
+                return Ok(response);
             }
-
-            db.Entry(user).State = EntityState.Modified;
 
             try
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
+                dbTransaction = db.Database.BeginTransaction();
+                var currentUserMenu = db.UserMenus.Where(um => um.UserId == id);
+
+                if (user.Status == 0)
+                    db.UserMenus.RemoveRange(currentUserMenu);
                 else
                 {
-                    throw;
+                    bool flag;
+
+                    foreach (UserMenu cum in currentUserMenu)
+                    {
+                        flag = false;
+                        //check if current truck exist in truck list
+                        foreach (UserMenu um in user.UserMenus)
+                        {
+                            if (cum.Id == um.Id)
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (!flag)
+                        {
+                            //remove deleted truck(s)
+                            db.UserMenus.Remove(cum);
+                        }
+                    }
+
+                    foreach (UserMenu um in user.UserMenus)
+                    {
+                        flag = false;
+                        foreach (UserMenu cum in currentUserMenu)
+                        {
+                            if (um.Id == cum.Id)
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        //add truck
+                        if (!flag)
+                        {
+                            db.UserMenus.Add(um);
+                        }
+                    }
                 }
+                //Update User Information
+                var userRecord = db.Users.Find(id);
+                db.Entry(userRecord).CurrentValues.SetValues(user);
+                db.Entry(userRecord).State = EntityState.Modified;
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch (Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            if (response.status != "FAILURE")
+            {
+                dbTransaction.Commit();
+                response.objParam1 = user;
+                response.objParam2 = db.UserMenus.Where(um => um.UserId == user.Id).ToArray();
+            }
+            else
+                dbTransaction.Rollback();
+            dbTransaction.Dispose();
+
+            return Ok(response);
         }
 
         // POST: api/Users

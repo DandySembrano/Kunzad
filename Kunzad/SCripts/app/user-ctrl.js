@@ -34,6 +34,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $scope.submitType = "Create";
         $scope.url = document.URL.split("#")[0] + "api/Users";
         $scope.saveImage = false;
+        $("#employeeImage").get(0).files = null;
         
         $scope.userStatus = [{ Id: 1, Name: "Active" }, { Id: 0, Name: "Inactive" }];
 
@@ -92,10 +93,34 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $http.post($scope.url, $scope.submitdefinition)
             .success(function (response, status) {
                 if (response.status == "SUCCESS") {
-                    //Initialize Ids
                     $scope.viewOnly = true;
                     $scope.saveImage = true;
-                    $scope.user.Id = response.objParam1.Id;
+                    var businessUnitName = $scope.user.BusinessUnitName;
+                    $scope.user = response.objParam1;
+                    $scope.user.BusinessUnitName = businessUnitName;
+
+                    $scope.thisUserMenuList = [];
+                    $scope.thisUserMenuAccessList = [];
+
+                    //Re initialize user-menu
+                    for (var i = 0; i < response.objParam2.length; i++) {
+                        for (var j = 0; j < $scope.menu.length; j++) {
+                            if (response.objParam2[i].MenuId == $scope.menu[j].Id) {
+                                if (!$scope.menuExist($scope.menu[j].Id)) {
+                                    //Add user menu
+                                    $scope.thisUserMenuList.push($scope.menu[j]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    //Re initialize User Menu Access
+                    for (var i = 0; i < $scope.thisUserMenuList.length; i++) {
+                        var menuAccess = $scope.getMenuAccess($scope.thisUserMenuList[i].Id);
+                        $scope.addThisUserMenuAccess1(menuAccess, response.objParam2);
+                    }
+
                     spinner.stop();
                     alert("Successfully Saved.");
                 }
@@ -117,27 +142,80 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
     //Send http put request
     $scope.apiUpdate = function (id) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.put($scope.submitdefinition.APIUrl + "/" + id, $scope.submitdefinition.DataItem)
+        $scope.user.LoginName = $scope.user.LoginName.toUpperCase();
+        $scope.user.FirstName = $scope.user.FirstName.toUpperCase();
+        $scope.user.MiddleName = $scope.user.MiddleName.toUpperCase();
+        $scope.user.LastName = $scope.user.LastName.toUpperCase();
+        $scope.submitdefinition = $scope.user;
+        $scope.submitdefinition.UserMenus = [];
+
+        for (var i = 0; i < $scope.thisUserMenuAccessList.length; i++) {
+            $scope.UserMenu = {
+                Id: -1,
+                UserId: $scope.user.Id,
+                MenuId: null,
+                MenuAccessId: null
+            }
+
+            if ($scope.thisUserMenuAccessList[i].HasAccess == "Y") {
+                if ($scope.thisUserMenuAccessList[i].Id != null)
+                    $scope.submitdefinition.UserMenus.push($scope.thisUserMenuAccessList[i]);
+                else {
+                    $scope.UserMenu.MenuId = $scope.thisUserMenuAccessList[i].MenuId;
+                    $scope.UserMenu.MenuAccessId = $scope.thisUserMenuAccessList[i].MenuAccessId;
+                    $scope.submitdefinition.UserMenus.push($scope.thisUserMenuAccessList[i]);
+                }
+            }
+            else {
+                $scope.thisUserMenuAccessList.splice(i, 1);
+                i = i - 1;
+            }
+        }
+
+        $http.put($scope.url + "/" + id, $scope.submitdefinition)
             .success(function (response, status) {
                 if (response.status == "SUCCESS") {
-                    $scope.submitdefinition.DataItem = angular.copy(response.objParam1);
-                    $scope.submitdefinition.Index = $scope.selectedIndex;
+                    $scope.viewOnly = true;
+                    $scope.saveImage = true;
+
+                    $scope.thisUserMenuList = [];
+                    $scope.thisUserMenuAccessList = [];
+
+                    //Re initialize user-menu
+                    for (var i = 0; i < response.objParam2.length; i++) {
+                        for (var j = 0; j < $scope.menu.length; j++) {
+                            if (response.objParam2[i].MenuId == $scope.menu[j].Id) {
+                                if (!$scope.menuExist($scope.menu[j].Id)) {
+                                    //Add user menu
+                                    $scope.thisUserMenuList.push($scope.menu[j]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    //Re initialize User Menu Access
+                    for (var i = 0; i < $scope.thisUserMenuList.length; i++) {
+                        var menuAccess = $scope.getMenuAccess($scope.thisUserMenuList[i].Id);
+                        $scope.addThisUserMenuAccess1(menuAccess, response.objParam2);
+                    }
+
                     spinner.stop();
-                    $scope.otheractions({ action: 'PostUpdate' });
-                    return true;
+                    alert("Successfully Saved.");
                 }
                 else {
                     $scope.userIsError = true;
                     $scope.userErrorMessage = response.message;
+                    window.scrollTo(0, 0);
                     spinner.stop();
                 }
             })
             .error(function (response, status) {
                 $scope.userIsError = true;
                 $scope.userErrorMessage = response.message;
+                window.scrollTo(0, 0);
                 spinner.stop();
             })
-        return false;
     };
 
     //Send http delete request
@@ -255,6 +333,8 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
     }
 
     $scope.submit = function () {
+        $scope.userIsError = false;
+        $scope.userErrorMessage = "";
         if ($scope.user.Status == null || $scope.user.Status == false)
             $scope.user.Status = 0;
         else
@@ -264,7 +344,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                 $scope.apiCreate();
                 break;
             case 'Update':
-                $scope.apiUpdate();
+                $scope.apiUpdate($scope.user.Id);
                 break;
             case 'Delete':
                 $scope.apiDelete();
@@ -476,39 +556,60 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         }
     };
 
-    $scope.addThisUserMenuAccess1 = function (menuId, UserMenuAccessId, UserId, MenuAccessId) {
+    $scope.getUserMenuAccess = function (menuAccessId, userMenus) {
+        var userMenuAccess = null;
+        for (var i = 0; i < userMenus.length; i++) {
+            if (userMenus[i].MenuAccessId == menuAccessId) {
+                userMenuAccess = userMenus[i]
+                break;
+            }
+        }
+        return userMenuAccess;
+    };
+
+    $scope.addThisUserMenuAccess1 = function (menuAccess, userMenus) {
         var index = 0;
-        for (var j = 0; j < $scope.menuAccess.length; j++) {
-            if ($scope.menuAccess[j].MenuId == menuId && $scope.menuAccess[j].Id == MenuAccessId) {
+        for (var i = 0; i < menuAccess.length; i++) {
+            var holderUserMenuAccess = $scope.getUserMenuAccess(menuAccess[i].Id, userMenus);
+            if (holderUserMenuAccess != null) {
                 $scope.holderMenuAccess = {
-                    Id: UserMenuAccessId,
-                    UserId: UserId,
-                    MenuId: menuId,
-                    MenuAccessId: $scope.menuAccess[j].Id,
-                    Access: $scope.menuAccess[j].Access,
+                    Id: holderUserMenuAccess.Id,
+                    UserId: holderUserMenuAccess.UserId,
+                    MenuId: holderUserMenuAccess.MenuId,
+                    MenuAccessId: holderUserMenuAccess.MenuAccessId,
+                    Access: $scope.menuAccess[i].Access,
                     HasAccess: "Y",
                     Sort: 0
                 };
-
-                $scope.thisUserMenuAccessList.push($scope.holderMenuAccess);
-                index = $scope.thisUserMenuAccessList.length - 1;
-                switch ($scope.thisUserMenuAccessList[index].Access) {
-                    case "VIEW":
-                        $scope.thisUserMenuAccessList[index].Sort = 1;
-                        break;
-                    case "CREATE":
-                        $scope.thisUserMenuAccessList[index].Sort = 2;
-                        break;
-                    case "EDIT":
-                        $scope.thisUserMenuAccessList[index].Sort = 3;
-                        break;
-                    case "DELETE":
-                        $scope.thisUserMenuAccessList[index].Sort = 4;
-                        break;
-                    default:
-                        $scope.thisUserMenuAccessList[index].Sort = 5;
-                }
-                break;
+            }
+            else {
+                $scope.holderMenuAccess = {
+                    Id: null,
+                    UserId: $scope.user.Id,
+                    MenuId: menuAccess[i].MenuId,
+                    MenuAccessId: menuAccess[i].Id,
+                    Access: menuAccess[i].Access,
+                    HasAccess: "N",
+                    Sort: 0
+                };
+            }
+            $scope.thisUserMenuAccessList.push($scope.holderMenuAccess);
+            index = $scope.thisUserMenuAccessList.length - 1;
+            switch ($scope.thisUserMenuAccessList[index].Access) {
+                case "VIEW":
+                    $scope.thisUserMenuAccessList[index].Sort = 1;
+                    break;
+                case "CREATE":
+                    $scope.thisUserMenuAccessList[index].Sort = 2;
+                    break;
+                case "EDIT":
+                    $scope.thisUserMenuAccessList[index].Sort = 3;
+                    break;
+                case "DELETE":
+                    $scope.thisUserMenuAccessList[index].Sort = 4;
+                    break;
+                default:
+                    $scope.thisUserMenuAccessList[index].Sort = 5;
             }
         }
     };
@@ -661,6 +762,16 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
             }
         }
         return false;
+    };
+
+    $scope.getMenuAccess = function (menuId) {
+        var menuAccess = [];
+        for (var i = 0; i < $scope.menuAccess.length; i++) {
+            if ($scope.menuAccess[i].MenuId == menuId) {
+                menuAccess.push($scope.menuAccess[i]);
+            }
+        }
+        return menuAccess;
     };
     //==================================END OF USER MENU MANIPULATION===============================
 
@@ -967,17 +1078,9 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         $scope.userOtherActions = function (action) {
             switch (action) {
                 case 'PostEditAction':
-                    $scope.user.Id = $scope.userDataDefinition.DataItem.Id;
-                    $scope.user.LoginName = $scope.userDataDefinition.DataItem.LoginName;
-                    $scope.user.FirstName = $scope.userDataDefinition.DataItem.FirstName;
-                    $scope.user.MiddleName = $scope.userDataDefinition.DataItem.MiddleName;
-                    $scope.user.LastName = $scope.userDataDefinition.DataItem.LastName;
-                    $scope.user.Email = $scope.userDataDefinition.DataItem.Email;
-                    $scope.user.UserTypeId = $scope.userDataDefinition.DataItem.UserTypeId;
-                    $scope.user.BusinessUnitId = $scope.userDataDefinition.DataItem.BusinessUnitId;
+                    $scope.user = $scope.userDataDefinition.DataItem;
                     $scope.user.BusinessUnitName = $scope.userDataDefinition.DataItem.BusinessUnit[0].Name;
-                    $scope.user.ImageName = $scope.userDataDefinition.DataItem.ImageName;
-                    $scope.user.Status = $scope.userDataDefinition.DataItem.Status;
+                    $scope.user.UserMenus = [];
                     $scope.closeModal();
                     $scope.thisUserMenuList = [];
                     $scope.thisUserMenuAccessList = [];
@@ -994,13 +1097,9 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
                         }
                     }
 
-                    for (var i = 0; i < $scope.userDataDefinition.DataItem.UserMenus.length; i++) {
-                        for (var j = 0; j < $scope.menu.length; j++) {
-                            if ($scope.userDataDefinition.DataItem.UserMenus[i].MenuId == $scope.menu[j].Id) {
-                                //Add Menu Access
-                                $scope.addThisUserMenuAccess1($scope.menu[j].Id, $scope.userDataDefinition.DataItem.UserMenus[i].Id, $scope.userDataDefinition.DataItem.UserMenus[i].UserId, $scope.userDataDefinition.DataItem.UserMenus[i].MenuAccessId);
-                            }
-                        }
+                    for (var i = 0; i < $scope.thisUserMenuList.length; i++) {
+                        var menuAccess = $scope.getMenuAccess($scope.thisUserMenuList[i].Id);
+                        $scope.addThisUserMenuAccess1(menuAccess, $scope.userDataDefinition.DataItem.UserMenus);
                     }
 
                     $scope.viewOnly = true;

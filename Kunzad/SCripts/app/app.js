@@ -207,7 +207,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $scope.checkAccess = function (e, currentUrl) {
             $localForage.getItem("Token").then(function (value) {
                 if (angular.isUndefined(value)) {
-                    alert("Session Expired. Please re-login(Temporarily redirected to " + document.URL.split("#")[0] + ")")
+                    alert("Session Expired. Please re-login");
                     window.location = document.URL.split("#")[0];
                 }
                 else {

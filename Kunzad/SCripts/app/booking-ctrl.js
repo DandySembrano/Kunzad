@@ -19,7 +19,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.shipmentTypeList = [];
     $scope.shipmentToggle = false;
     $scope.withDirective = true;
-
+    $scope.sessionExpired = false;
     //function that will be called during submit
     $scope.submit = function () {
         $scope.shipmentIsError = false;
@@ -101,16 +101,10 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.serviceList = data;
         })
         .error(function (response, status) {
-            console.log(status);
+            if (status == 401) {
+                $scope.sessionExpired = true;
+            }
         })
-        //restAPI.retrieve("/api/Services");
-        //var promise = $interval(function () {
-        //    if (restAPI.isValid()) {
-        //        $interval.cancel(promise);
-        //        promise = undefined;
-        //        $scope.serviceList = restAPI.getObjData();
-        //    }
-        //}, 100);
     };
 
     //Initialize Shipment Type List for DropDown
@@ -120,14 +114,11 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.shipmentTypeList = [];
             $scope.shipmentTypeList = data;
         })
-        //restAPI.retrieve("/api/ShipmentTypes");
-        //var promise = $interval(function () {
-        //    if (restAPI.isValid()) {
-        //        $interval.cancel(promise);
-        //        promise = undefined;
-        //        $scope.shipmentTypeList = restAPI.getObjData();
-        //    }
-        //}, 100);
+        .error(function (response, status) {
+            if (status == 401) {
+                $scope.sessionExpired = true;
+            }
+        })
     };
 
     //function that will be invoked when user click tab
@@ -1764,11 +1755,21 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     //    }
     //});
 
-    //var deregisterScannerWatcher = function () {
-    //    scannerWatcher();
-    //}
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        console.log(oldVal);
+        console.log(newVal);
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
 
-    //$scope.$on('$destroy', function () {
-    //    deregisterScannerWatcher();
-    //});
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterWatchers();
+    });
 };
