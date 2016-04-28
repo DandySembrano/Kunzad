@@ -274,10 +274,12 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             }
             else {
                 //-----This code is for display purposes-------
-                if (current.$$route.originalPath != "/login")
-                    $rootScope.isLogged = true;
-                else
-                    $rootScope.isLogged = false;
+                if (angular.isDefined(current.$$route)) {
+                    if (current.$$route.originalPath != "/login")
+                        $rootScope.isLogged = true;
+                    else
+                        $rootScope.isLogged = false;
+                }
                 //------------End------------------------------
 
                 $localForage.getItem("LoginDetails").then(function (value) {
@@ -854,8 +856,8 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                                 "Name": "Philippines",
                             }
                             spinner.stop();
-                            $rootScope.isLogged = true;
                             window.location = document.URL.split("#")[0] + "#/profile";
+                            $rootScope.isLogged = true;
                             getCityMunicipalitiesFromApi();
                         })
                         .error(function (err) {
@@ -883,7 +885,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             $scope.groupMenuItem = [];
 
             $http.defaults.headers.common['Token'] = undefined;
-            $rootScope.isLogged = undefined;
             $rootScope.token = undefined;
             var holder = {
                 IsLogged: 'N',
@@ -896,8 +897,16 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             $localForage.setItem("LoginDetails", holder);
             $localForage.setItem("Token", undefined);
             $http.delete('/api/users?id=' + $scope.myInformation[0].Id)
-            .success(function () { console.log("Successfull Logout."); spinner.stop(); $rootScope.isLogged = undefined; window.location = document.URL.split("#")[0] + "#/login"; })
-            .error(function () { console.log("Error during Logout."); spinner.stop(); $rootScope.isLogged = undefined; window.location = document.URL.split("#")[0] + "#/login"; })
+            .success(function () {
+                console.log("Successfull Logout."); spinner.stop();
+                window.location = document.URL.split("#")[0] + "#/login";
+                $rootScope.isLogged = undefined;
+            })
+            .error(function () {
+                console.log("Error during Logout."); spinner.stop();
+                window.location = document.URL.split("#")[0] + "#/login";
+                $rootScope.isLogged = undefined;
+            })
         };
 
         $scope.$watch(function () {
