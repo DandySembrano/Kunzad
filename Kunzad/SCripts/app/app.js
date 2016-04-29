@@ -205,10 +205,31 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $scope.donePopulatingMenu = false;
         $rootScope.isLogged = undefined;
 
-        $scope.myInformation = {
+        $scope.myInformation = [{
             LoginName: null,
             Password: null
-        }
+        }]
+
+        $scope.RememberedInformation = {
+            IsRemember: "N",
+            LoginName: undefined,
+            Password: undefined
+        };
+
+        $localForage.getItem("RememberedInformation").then(function (value) {
+            if (value != undefined) {
+                if (value.IsRemember == "Y") {
+                    $scope.myInformation[0].LoginName   = value.LoginName;
+                    $scope.myInformation[0].Password = value.Password;
+                    $scope.RememberedInformation.IsRemember = "Y";
+                }
+            }
+            else {
+                $scope.myInformation[0].LoginName = null;
+                $scope.myInformation[0].Password = null;
+                $scope.RememberedInformation.IsRemember = null;
+            }
+        });
 
         $scope.redirect = function (current) {
             $localForage.getItem("LoginDetails").then(function (value) {
@@ -823,10 +844,10 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         };
 
         $scope.onLoginRequest = function () {
-            if ($scope.myInformation.LoginName != null && $scope.myInformation.Password != null) {
+            if ($scope.myInformation[0].LoginName != null && $scope.myInformation[0].Password != null) {
                 var spinner = new Spinner(opts).spin(spinnerTarget);
                 //Use UserId number 1 temporarily
-                $http.get("/api/users?loginname=" + $scope.myInformation.LoginName + "&password=" + $scope.myInformation.Password)
+                $http.get("/api/users?loginname=" + $scope.myInformation[0].LoginName + "&password=" + $scope.myInformation[0].Password)
                 .success(function (response, status) {
                     if (response.status == "SUCCESS") {
                         $scope.userMenuAccess = response.objParam1;
@@ -848,13 +869,32 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                                 MenuAccess: $scope.menuAccess,
                                 ImageName: $scope.imageName
                             }
+
+                            if ($scope.RememberedInformation.IsRemember == "Y") {
+                                $scope.RememberedInformation = {
+                                    IsRemember: "Y",
+                                    LoginName: $scope.myInformation[0].LoginName,
+                                    Password: $scope.myInformation[0].Password
+                                };
+                            }
+                            else {
+                                $scope.RememberedInformation = {
+                                    IsRemember: "N",
+                                    LoginName: undefined,
+                                    Password: undefined
+                                };
+                            }
+
                             $localForage.setItem("LoginDetails", holder);
+                            $localForage.setItem("RememberedInformation", $scope.RememberedInformation);
                             $rootScope.token = headers().token;
+
                             // Temporary - support one country only (Philippines)
                             $rootScope.country = {
                                 "Id": 1,
                                 "Name": "Philippines",
                             }
+
                             spinner.stop();
                             window.location = document.URL.split("#")[0] + "#/profile";
                             $rootScope.isLogged = true;
@@ -896,6 +936,25 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
             }
             $localForage.setItem("LoginDetails", holder);
             $localForage.setItem("Token", undefined);
+            $localForage.getItem("RememberedInformation").then(function (value) {
+                if (value != undefined) {
+                    if (value.IsRemember == "Y") {
+                        $scope.myInformation[0].LoginName = value.LoginName;
+                        $scope.myInformation[0].Password = value.Password;
+                        $scope.RememberedInformation.IsRemember = "Y";
+                    }
+                    else {
+                        $scope.myInformation[0].LoginName = null;
+                        $scope.myInformation[0].Password = null;
+                        $scope.RememberedInformation.IsRemember = "N";
+                    }
+                }
+                else {
+                    $scope.myInformation[0].LoginName = null;
+                    $scope.myInformation[0].Password = null;
+                    $scope.RememberedInformation.IsRemember = "N";
+                }
+            });
             $http.delete('/api/users?id=' + $scope.myInformation[0].Id)
             .success(function () {
                 console.log("Successfull Logout."); spinner.stop();

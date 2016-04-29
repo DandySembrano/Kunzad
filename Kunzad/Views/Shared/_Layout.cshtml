@@ -68,12 +68,12 @@
                     <h1 class="text-center login-title"><strong>Kunzad</strong></h1>
                     <div class="account-wall">
                         <form class="form-signin">
-                            <input type="text" class="form-control text-uppercase" ng-model="myInformation.LoginName" placeholder="Login Name" required autofocus>
-                            <input type="password" class="form-control text-uppercase" ng-model="myInformation.Password" placeholder="Password" required>
+                            <input type="text" class="form-control text-uppercase" ng-model="myInformation[0].LoginName" placeholder="Login Name" required autofocus>
+                            <input type="password" class="form-control text-uppercase" ng-model="myInformation[0].Password" placeholder="Password" required>
                             <button class="btn btn-lg btn-primary btn-block" ng-click="onLoginRequest()">Login</button>
                             <div style="padding-left:10px">
                                 <label class="checkbox pull-left" style="padding-left: 10px;">
-                                    <input type="checkbox" value="remember-me">
+                                    <input type="checkbox" value="remember-me" ng-model="RememberedInformation.IsRemember" ng-true-value="'Y'" ng-false-value="'N'">
                                     Remember me
                                 </label>
                                 <a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
