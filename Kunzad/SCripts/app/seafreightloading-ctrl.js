@@ -1,4 +1,4 @@
-﻿kunzadApp.controller("SeaFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage) {
+﻿kunzadApp.controller("SeaFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage, restAPIWDToken) {
     $scope.modelName = "Sea Freight Loading";
     $scope.modelhref = "#/seafreightloading";
     $scope.withDirective = true;
@@ -56,11 +56,25 @@
 
     //Initialize Payment Mode List for DropDown
     $scope.initCheckInTypeList = function () {
-        $http.get("/api/CheckInTypes")
-        .success(function (data, status) {
-            $scope.checkInTypeList = data;
-        })
+        restAPIWDToken.data("/api/CheckInTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.checkInTypeList = data.value;
+                }
+            }
+        });
     };
+
+    //$scope.initCheckInTypeList = function () {
+    //    $http.get("/api/CheckInTypes")
+    //    .success(function (data, status) {
+    //        $scope.checkInTypeList = data;
+    //    })
+    //};
 
     $scope.initPaymentModeList = function () {
         $scope.paymentModeList = $rootScope.getPaymentModeList();
@@ -68,21 +82,81 @@
 
     //Initialize Service List for DropDown
     $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
+        restAPIWDToken.data("/api/Services", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
+            }
+        });
     };
+    //$scope.initServiceList = function () {
+    //    $http.get("/api/Services")
+    //    .success(function (data, status) {
+    //        $scope.serviceList = data;
+    //    })
+    //};
 
     //Initialize Shipment Type List for DropDown
-    $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
+
+    $scope.initServiceList = function () {
+        restAPIWDToken.data("/api/Services", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
+            }
+        });
     };
 
+    //$scope.initShipmentTypeList = function () {
+    //    $http.get("/api/ShipmentTypes")
+    //    .success(function (data, status) {
+    //        $scope.shipmentTypeList = [];
+    //        $scope.shipmentTypeList = data;
+    //    })
+    //};
+
+   
+    $scope.fetchShipment = function () {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
+        $http.get('/api/SeaFreightShipments?blno=' + $scope.checkInItem.BLNo)
+        restAPIWDToken.data('/api/SeaFreightShipments?blno=' + $scope.checkInItem.BLNo, function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.checkInIsError = true;
+                    $scope.checkInErrorMessage = data.message;
+                    spinner.stop();
+                }
+                else {
+                    $scope.checkInItem.CheckInSourceId = data.intParam1;
+                    for (var i = 0; i < data.objParam1.length; i++) {
+                        //Initialize Pickup Address
+                        data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
+                        //Initalize Consignee Address
+                        data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
+                        $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
+                        $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                        $scope.checkInShipmentsDataDefinition.DataList[i].Id = $scope.checkInShipmentsDataDefinition.DataList.length + 1;
+                    }
+                    $scope.checkInIsError = false;
+                    $scope.checkInErrorMessage = "";
+                    spinner.stop();
+                }
+            }
+        });
+    }
+
+    /*
     //get sea freight shipments
     $scope.fetchShipment = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
@@ -115,6 +189,7 @@
             spinner.stop();
         })
     };
+    */
 
     //Initialize Address fields
     $scope.initializeAddressField = function (addressItem) {
@@ -128,7 +203,39 @@
         $scope.checkInShipmentsDataDefinition.DataList = [];
     };
 
+
     //Function that will retrieve of a courier transaction details
+    $scope.getCheckInShipments = function (id) {
+        var spinner = new Spinner(opts).spin(spinnerTarget);
+        restAPIWDToken.data('/api/CheckInShipments?length=' + $scope.checkInShipmentsDataDefinition.DataList.length + '&masterId=' + id, function (data) {
+            if (data != undefined)
+            {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.courierDeliveryIsError = true;
+                    $scope.courierDeliveryErrorMessage = data.message;
+                    $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.checkInItem.BLNo = data.stringParam1;
+                    for (var i = 0; i < data.objParam1.length; i++) {
+                        //Initialize Pickup Address
+                        data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
+                        //Initalize Consignee Address
+                        data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
+                        $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
+                        $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                    }
+                }
+            }
+            $scope.flagOnRetrieveDetails = true;
+            $scope.courierDeliveryIsError = true;
+            $scope.courierDeliveryErrorMessage = status;
+            spinner.stop();
+        })
+        }
+       
+    /*
     $scope.getCheckInShipments = function (id) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         $http.get('/api/CheckInShipments?length=' + $scope.checkInShipmentsDataDefinition.DataList.length + '&masterId=' + id)
@@ -159,6 +266,7 @@
                 spinner.stop();
             })
     };
+    */
 
     //Disable typing
     $('#checkindate,#checkintime,#shipmentId').keypress(function (key) {
