@@ -114,16 +114,19 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //Initialize Shipment Type List for DropDown
     $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
-        .error(function (response, status) {
-            if (status == 401) {
-                $scope.sessionExpired = true;
+        restAPIWDToken.data("/api/ShipmentTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    //$scope.serviceList = data.value;
+                    $scope.shipmentTypeList = [];
+                    $scope.shipmentTypeList = data.value;   
+                }
             }
-        })
+        });
     };
 
     //function that will be invoked when user click tab
@@ -1651,12 +1654,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     // Initialization routines
     var init = function () {
         $scope.initServiceList();
-        //$localForage.getItem("Token").then(function (value) {
-        //    $http.defaults.headers.common['Token'] = value;
-        //    $scope.initPaymentModeList();
-        //    $scope.initServiceList();
-        //    $scope.initShipmentTypeList();
-        //});
+        $scope.initPaymentModeList();
+        $scope.initShipmentTypeList();
         
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
@@ -1709,7 +1708,7 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
             $scope.modalStyle = "height:450px; max-height:100%";
         }
     }, 100);
-
+  
     //var scannerWatcher = $scope.$watch(function () {
     //        return $rootScope.scannerWatcher;
     //}, function () {
