@@ -194,7 +194,8 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile, 
 
                     return true;
                 case "PreUpdate":
-                    $scope.validateShipment();
+                    if (!$scope.validateShipment())
+                        return false;
                     $scope.shipmentSubmitDefinition.DataItem = angular.copy($scope.shipmentItem);
                     //$scope.shipmentSubmitDefinition.DataItem.CheckIn = angular.copy($scope.CheckIn);
                     $scope.shipmentDataDefinition.DataItem = $scope.shipmentSubmitDefinition.DataItem;
@@ -386,7 +387,7 @@ function PODController($scope, $http, $interval, $filter, $rootScope, $compile, 
                             set DoPagination to true
                       if scroll, initialize shipmentDataDefinition DataList by pushing each value of filterDefinition DataList*/
                     //Required
-                    $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                    $scope.shipmentFilteringDefinition.DataList = $scope.shipmentFilteringDefinition.DataList; // $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
