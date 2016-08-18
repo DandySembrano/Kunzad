@@ -838,6 +838,12 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 });
         }
 
+        // Temporary - support one country only (Philippines)
+        $rootScope.country = {
+            "Id": 1,
+            "Name": "Philippines",
+        }
+
         var cityMunicipalities = [];
         $rootScope.getCityMunicipalities = function () {
             return cityMunicipalities;
@@ -888,12 +894,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                             $localForage.setItem("LoginDetails", holder);
                             $localForage.setItem("RememberedInformation", $scope.RememberedInformation);
                             $rootScope.token = headers().token;
-
-                            // Temporary - support one country only (Philippines)
-                            $rootScope.country = {
-                                "Id": 1,
-                                "Name": "Philippines",
-                            }
 
                             spinner.stop();
                             window.location = document.URL.split("#")[0] + "#/profile";
