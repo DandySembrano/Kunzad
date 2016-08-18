@@ -1,4 +1,4 @@
-﻿kunzadApp.controller("AirFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage) {
+﻿kunzadApp.controller("AirFreightLoadingController", function ($rootScope, $scope, $http, $interval, $compile, $filter,restAPIWDToken, $localForage) {
     $scope.modelName = "Air Freight Loading";
     $scope.modelhref = "#/airfreightloading";
     $scope.withDirective = true;
@@ -18,6 +18,7 @@
     $scope.flagOnRetrieveDetails = false;
     $scope.enableSave = true;
     $scope.modalWatcher = "";
+    $scope.sessionExpired = false;
 
     //function that will be invoked when user click tab
     $scope.setSelectedTab = function (tab) {
@@ -877,13 +878,13 @@
 
     // Initialization routines
     var init = function () {
-        $localForage.getItem("Token").then(function (value) {
-            $http.defaults.headers.common['Token'] = value;
-            $scope.initCheckInTypeList();
-            $scope.initPaymentModeList();
-            $scope.initServiceList();
-            $scope.initShipmentTypeList();
-        });
+        //$localForage.getItem("Token").then(function (value) {
+        //    $http.defaults.headers.common['Token'] = value;
+        //    $scope.initCheckInTypeList();
+        //    $scope.initPaymentModeList();
+        //    $scope.initServiceList();
+        //    $scope.initShipmentTypeList();
+        //});
         
         $scope.loadCheckInDataGrid();
         $scope.loadCheckInFiltering();
@@ -914,10 +915,28 @@
         listener = undefined;
     };
 
-    $scope.$on('$destroy', function () {
-        $scope.listener();
-    });
+    //$scope.$on('$destroy', function () {
+    //    $scope.listener();
+    //});
 
     //Initialize needed functions during page load
     init();
+
+
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterWatchers();
+        $scope.listener();
+    });
 });
