@@ -158,13 +158,13 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
                     spinner.stop();
                 }
                 else {
-                    for (var i = 0; i < data.length; i++) {
-                        data[i].Shipment[0] = data[i].Shipment;
+                    for (var i = 0; i < data.value.length; i++) {
+                        data.value[i].Shipment[0] = data.value[i].Shipment;
                         //Initialize Pickup Address
-                        data[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data[i].Shipment[0].Address1);
+                        data.value[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data.value[i].Shipment[0].Address1);
                         //Initalize Consignee Address
-                        data[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data[i].Shipment[0].Address);
-                        $scope.courierDeliveryDetailsDataDefinition.DataList.push(data[i]);
+                        data.value[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data.value[i].Shipment[0].Address);
+                        $scope.courierDeliveryDetailsDataDefinition.DataList.push(data.value[i]);
                     }
 
                     $scope.flagOnRetrieveDetails = true;
