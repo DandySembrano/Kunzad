@@ -1,4 +1,4 @@
-﻿kunzadApp.controller("SeaFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage) {
+﻿kunzadApp.controller("SeaFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage,restAPIWDToken) {
     $scope.modelName = "Sea Freight Arrival";
     $scope.modelhref = "#/seafreightarrival";
     $scope.withDirective = true;
@@ -69,11 +69,19 @@
     };
 
     //Initialize Payment Mode List for DropDown
+
     $scope.initCheckInTypeList = function () {
-        $http.get("/api/CheckInTypes")
-        .success(function (data, status) {
-            $scope.checkInTypeList = data;
-        })
+        restAPIWDToken.data("/api/CheckInTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.checkInTypeList = data.value;
+                }
+            }
+        });
     };
 
     $scope.initPaymentModeList = function () {
@@ -82,56 +90,68 @@
 
     //Initialize Service List for DropDown
     $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
+        restAPIWDToken.data("/api/Services", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
+            }
+        });
     };
 
     //Initialize Shipment Type List for DropDown
     $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
-    };
+        restAPIWDToken.data("/api/ShipmentTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.shipmentTypeList = [];
+                    $scope.shipmentTypeList = data;
+                }
+            }
+        });
+    }
 
     //get sea freight shipments
     $scope.fetchShipment = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('/api/SeaFreightShipments?vesselVoyageId=' + $scope.voyageId)
-        .success(function (data, status) {
-            if (data.status == "SUCCESS") {
-                for (var i = 0; i < data.objParam1.length; i++) {
-                    //Initialize Pickup Address
-                    data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
-                    //Initalize Consignee Address
-                    data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
-                    $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
-                    $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
-                    $scope.checkInShipmentsDataDefinition.DataList[i].Id = $scope.checkInShipmentsDataDefinition.DataList.length + 1;
+        restAPIWDToken.data('/api/SeaFreightShipments?vesselVoyageId=' + $scope.voyageId, function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.checkInIsError = true;
+                    $scope.checkInErrorMessage = data.message;
+                    spinner.stop();
+                    $scope.closeModal();
                 }
-                $scope.checkInIsError = false;
-                $scope.checkInErrorMessage = "";
-                spinner.stop();
-                //Boundary in index to determine if user delete a shipment that is one of the rertrieved shipments based on the selected voyage
-                $scope.deleteBoundaryIndex = $scope.checkInShipmentsDataDefinition.DataList.length - 1;
-            }
-            else {
-                $scope.checkInIsError = true;
-                $scope.checkInErrorMessage = data.message;
-                spinner.stop();
-                $scope.closeModal();
+                else {
+                    data = data.value;
+                    for (var i = 0; i < data.objParam1.length; i++) {
+                        //Initialize Pickup Address
+                        data.objParam1[i].Shipment.OriginAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address1);
+                        //Initalize Consignee Address
+                        data.objParam1[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.objParam1[i].Shipment.Address);
+                        $scope.checkInShipmentsDataDefinition.DataList.push($scope.checkInShipmentsItem);
+                        $scope.checkInShipmentsDataDefinition.DataList[i] = angular.copy(data.objParam1[i]);
+                        $scope.checkInShipmentsDataDefinition.DataList[i].Id = $scope.checkInShipmentsDataDefinition.DataList.length + 1;
+                    }
+                    $scope.checkInIsError = false;
+                    $scope.checkInErrorMessage = "";
+                    spinner.stop();
+                    //Boundary in index to determine if user delete a shipment that is one of the rertrieved shipments based on the selected voyage
+                    $scope.deleteBoundaryIndex = $scope.checkInShipmentsDataDefinition.DataList.length - 1;
+                }
             }
         })
-        .error(function (error, status) {
-            $scope.checkInIsError = true;
-            $scope.checkInErrorMessage = error;
-            spinner.stop();
-            $scope.closeModal();
-        })
-    };
+    }
+
 
     //Initialize Address fields
     $scope.initializeAddressField = function (addressItem) {
