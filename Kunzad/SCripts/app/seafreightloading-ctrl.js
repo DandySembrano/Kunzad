@@ -124,6 +124,20 @@
     //        $scope.shipmentTypeList = data;
     //    })
     //};
+    $scope.initShipmentTypeList = function () {
+        restAPIWDToken.data("/api/ShipmentTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.shipmentTypeList = [];
+                    $scope.shipmentTypeList = data;
+                }
+            }
+        });
+    }
 
    
     $scope.fetchShipment = function () {
@@ -138,6 +152,7 @@
                     spinner.stop();
                 }
                 else {
+                    data = data.value;
                     $scope.checkInItem.CheckInSourceId = data.intParam1;
                     for (var i = 0; i < data.objParam1.length; i++) {
                         //Initialize Pickup Address
