@@ -3,7 +3,7 @@
 // Description: Controller for Courier Delivery module
 // Author: Kenneth Ybañez
 //---------------------------------------------------------------------------------//
-kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
+kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $interval, $filter, $rootScope, $compile, $localForage, restAPIWDToken) {
     $scope.modelName = "Courier Delivery";
     $scope.modelhref = "#/courierdelivery";
     $scope.withDirective = true;
@@ -25,6 +25,7 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     $scope.flagOnRetrieveDetails = false;
     $scope.enableSave = true;
     $scope.modalWatcher = "";
+    $scope.sessionExpired = false;
 
     //function that will be invoked when user click tab
     $scope.setSelectedTab = function (tab) {
@@ -75,19 +76,32 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     //Initialize Service List for DropDown
     $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
+        restAPIWDToken.data("/api/Services", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
+            }
+        });
     };
 
     //Initialize Shipment Type List for DropDown
     $scope.initShipmentTypeList = function () {
-        $http.get("/api/ShipmentTypes")
-        .success(function (data, status) {
-            $scope.shipmentTypeList = [];
-            $scope.shipmentTypeList = data;
-        })
+        restAPIWDToken.data("/api/ShipmentTypes", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
+            }
+        });
     };
 
     //Initialize Address fields
@@ -132,26 +146,32 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
     //Function that will retrieve of a courier transaction details
     $scope.getCourierTransactionDetails = function (id) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('api/CourierTransactionDetails?length=' + $scope.courierDeliveryDetailsDataDefinition.DataList.length + '&masterId=' + id)
-            .success(function (data, status) {
-                for (var i = 0; i < data.length; i++) {
-                    data[i].Shipment[0] = data[i].Shipment;
-                    //Initialize Pickup Address
-                    data[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data[i].Shipment[0].Address1);
-                    //Initalize Consignee Address
-                    data[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data[i].Shipment[0].Address);
-                    $scope.courierDeliveryDetailsDataDefinition.DataList.push(data[i]);
-                }
+        restAPIWDToken.data('api/CourierTransactionDetails?length=' + $scope.courierDeliveryDetailsDataDefinition.DataList.length + '&masterId=' + id, function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
 
-                $scope.flagOnRetrieveDetails = true;
-                spinner.stop();
-            })
-            .error(function (error, status) {
-                $scope.flagOnRetrieveDetails = true;
-                $scope.courierDeliveryIsError = true;
-                $scope.courierDeliveryErrorMessage = status;
-                spinner.stop();
-            })
+                    $scope.flagOnRetrieveDetails = true;
+                    $scope.courierDeliveryIsError = true;
+                    $scope.courierDeliveryErrorMessage = data.value;
+                    spinner.stop();
+                }
+                else {
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].Shipment[0] = data[i].Shipment;
+                        //Initialize Pickup Address
+                        data[i].Shipment[0].OriginAddress = $scope.initializeAddressField(data[i].Shipment[0].Address1);
+                        //Initalize Consignee Address
+                        data[i].Shipment[0].DeliveryAddress = $scope.initializeAddressField(data[i].Shipment[0].Address);
+                        $scope.courierDeliveryDetailsDataDefinition.DataList.push(data[i]);
+                    }
+
+                    $scope.flagOnRetrieveDetails = true;
+                    spinner.stop();
+                }
+            }
+        });
     };
 
     //Disable typing
@@ -1372,13 +1392,9 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
 
     // Initialization routines
     var init = function () {
-        $localForage.getItem("Token").then(function (value) {
-            $http.defaults.headers.common['Token'] = value;
-            $scope.initPaymentModeList();
-            $scope.initServiceList();
-            $scope.initShipmentTypeList();
-        });
-        
+        $scope.initPaymentModeList();
+        $scope.initServiceList();
+        $scope.initShipmentTypeList();
         $scope.loadCourierDeliveryDataGrid();
         $scope.loadCourierDeliveryFiltering();
         $scope.loadCourierDeliveryDetailsDataGrid();
@@ -1409,7 +1425,20 @@ kunzadApp.controller("CourierDeliveryController", function ($scope, $http, $inte
         listener = undefined;
     };
 
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
     $scope.$on('$destroy', function () {
+        deregisterWatchers();
         $scope.listener();
     });
 
