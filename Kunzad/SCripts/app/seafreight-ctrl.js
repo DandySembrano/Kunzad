@@ -1700,7 +1700,8 @@ function SeaFreightController($scope, $http, $interval, $filter, $rootScope, $co
                                 set DoPagination to true
                           if scroll, initialize businessUnitDataDefinition DataList by pushing each value of filterDefinition DataList*/
                         //Required
-                        $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                       // $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                        $scope.shipmentFilteringDefinition.DataList = $scope.shipmentFilteringDefinition.DataList;
                         if ($scope.shipmentDataDefinition.EnableScroll == true) {
                             for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                                 $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
