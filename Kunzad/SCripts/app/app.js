@@ -829,20 +829,18 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
         $rootScope.token = null;
         // Get List of CityMunicipalities
         var getCityMunicipalitiesFromApi = function () {
-            $http.defaults.headers.common['Token'] = $rootScope.token.toString();
-            $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
-                .success(function (data, status) {
-                    cityMunicipalities = data;
-                })
-                .error(function (data, status) {
-                });
-        }
-
-        // Temporary - support one country only (Philippines)
-        $rootScope.country = {
-            "Id": 1,
-            "Name": "Philippines",
-        }
+            $localForage.getItem("Token").then(function (value) {
+                if (value != null || value != undefined) {
+                    $http.defaults.headers.common['Token'] = value.toString();
+                    $http.get("api/CityMunicipalities?countryId=" + $rootScope.country.Id)
+                    .success(function (data, status) {
+                        cityMunicipalities = data;
+                    })
+                    .error(function (data, status) {
+                    });
+                }
+            });
+        };
 
         var cityMunicipalities = [];
         $rootScope.getCityMunicipalities = function () {
@@ -898,7 +896,6 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                             spinner.stop();
                             window.location = document.URL.split("#")[0] + "#/profile";
                             $rootScope.isLogged = true;
-                            getCityMunicipalitiesFromApi();
                         })
                         .error(function (err) {
                             spinner.stop();
@@ -981,6 +978,13 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                 document.getElementById("profile").className = "show-profile-container";
             }
         });
+
+        getCityMunicipalitiesFromApi();
+        // Temporary - support one country only (Philippines)
+        $rootScope.country = {
+            "Id": 1,
+            "Name": "Philippines",
+        }
     }]);
 
 
