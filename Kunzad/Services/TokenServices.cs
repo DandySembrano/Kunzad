@@ -36,12 +36,8 @@ namespace Kunzad.Services
 
         public Token GenerateToken(string loginName)
         {
-
-            //byte[] byteToken = Encoding.UTF8.GetBytes(loginName + ":" + Guid.NewGuid().ToString() + String.Concat("tsaf"));
-
-            //string token = Convert.ToBase64String(byteToken).ToString(); //basis on checking generated token if it is fastcargo
-
-            string token = tokenGenerator.Encrypt(loginName);
+            //Generate unique token
+            string token = tokenGenerator.Encrypt(loginName) + Guid.NewGuid().ToString() + String.Concat("tsaf");
 
             DateTime issuedOn = DateTime.Now;
             DateTime expiredOn = DateTime.Now.AddSeconds(Convert.ToDouble(ConfigurationManager.AppSettings["AuthTokenExpiry"]));
@@ -73,6 +69,7 @@ namespace Kunzad.Services
         /// <returns></returns>
         public bool ValidateToken(string authToken)
         {
+            //string fAuthToken = authToken + Guid.NewGuid().ToString() + String.Concat("tsaf");
             try
             {
                 var token = _kunzadEntity.Tokens.Where(t => t.AuthToken == authToken && t.ExpiresOn > DateTime.Now).FirstOrDefault();

@@ -18,22 +18,31 @@ namespace Kunzad.Models
         {
             this.User1 = new HashSet<User>();
             this.User11 = new HashSet<User>();
+            this.UserMenus = new HashSet<UserMenu>();
         }
     
         public int Id { get; set; }
+        public Nullable<int> UserTypeId { get; set; }
         public string LoginName { get; set; }
+        public string Password { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
-        public int CreatedByUserId { get; set; }
+        public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
+        public int BusinessUnitId { get; set; }
+        public Nullable<int> Status { get; set; }
+        public string ImageName { get; set; }
     
         public virtual ICollection<User> User1 { get; set; }
         public virtual User User2 { get; set; }
         public virtual ICollection<User> User11 { get; set; }
         public virtual User User3 { get; set; }
+        public virtual UserType UserType { get; set; }
+        public virtual ICollection<UserMenu> UserMenus { get; set; }
+        public virtual BusinessUnit BusinessUnit { get; set; }
     }
 }

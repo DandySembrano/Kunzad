@@ -19,11 +19,15 @@ namespace Kunzad.Models
             this.AirFreights = new HashSet<AirFreight>();
             this.AirFreights1 = new HashSet<AirFreight>();
             this.BusinessUnitContacts = new HashSet<BusinessUnitContact>();
+            this.CheckIns = new HashSet<CheckIn>();
             this.CourierTransactions = new HashSet<CourierTransaction>();
             this.SeaFreights = new HashSet<SeaFreight>();
             this.SeaFreights1 = new HashSet<SeaFreight>();
             this.Shipments = new HashSet<Shipment>();
             this.Shipments1 = new HashSet<Shipment>();
+            this.VesselVoyages = new HashSet<VesselVoyage>();
+            this.VesselVoyages1 = new HashSet<VesselVoyage>();
+            this.Users = new HashSet<User>();
         }
     
         public int Id { get; set; }
@@ -31,6 +35,7 @@ namespace Kunzad.Models
         public string Name { get; set; }
         public int BusinessUnitTypeId { get; set; }
         public Nullable<int> ParentBusinessUnitId { get; set; }
+        public Nullable<int> AddressId { get; set; }
         public bool isOperatingSite { get; set; }
         public bool hasAirPort { get; set; }
         public bool hasSeaPort { get; set; }
@@ -39,14 +44,19 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
+        public virtual Address Address { get; set; }
         public virtual ICollection<AirFreight> AirFreights { get; set; }
         public virtual ICollection<AirFreight> AirFreights1 { get; set; }
         public virtual BusinessUnitType BusinessUnitType { get; set; }
         public virtual ICollection<BusinessUnitContact> BusinessUnitContacts { get; set; }
+        public virtual ICollection<CheckIn> CheckIns { get; set; }
         public virtual ICollection<CourierTransaction> CourierTransactions { get; set; }
         public virtual ICollection<SeaFreight> SeaFreights { get; set; }
         public virtual ICollection<SeaFreight> SeaFreights1 { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
         public virtual ICollection<Shipment> Shipments1 { get; set; }
+        public virtual ICollection<VesselVoyage> VesselVoyages { get; set; }
+        public virtual ICollection<VesselVoyage> VesselVoyages1 { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

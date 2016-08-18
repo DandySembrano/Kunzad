@@ -854,7 +854,7 @@ kunzadApp.config(['$routeProvider', function ($routeProvider) {
                         $scope.menu = response.objParam2;
                         $scope.myInformation = response.objParam3;
                         $scope.menuAccess = response.objParam4;
-                        $scope.imageName = $scope.myInformation[0].ImageName;
+                        $scope.imageName = $scope.myInformation[0].ImageName == null ? 'default-user-img.png' : $scope.myInformation[0].ImageName;
                         $scope.getUserMenu();
                         $http.defaults.headers.common.Authorization = 'Basic ' + response.stringParam1;
                         //Issue Token

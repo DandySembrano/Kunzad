@@ -1,0 +1,102 @@
+﻿<!-- Begin: Content -->
+<section id="content" class="animated fadeIn">
+
+    <!-- Begin: section content for table -->
+    <div class="row" ng-show="!showForm">
+        <div class="col-lg-12">
+            <div class="panel panel-visible">
+                <!-- Panel Heading -->
+                <div class="panel-heading">
+                    <div class="panel-title hidden-xs">
+                        <span class="glyphicon glyphicon-tasks"></span>{{modelName}}
+                    </div>
+                </div>
+                <!-- Panel Body -->
+                <div class="panel-body pn">
+                    @RenderSection("tableContent")
+                </div>
+                <!-- Panel Footer -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6" align="left">
+                            <button class="btn btn-sm btn-primary" type="button" ng-click="actionForm('Create')">Create</button>
+                        </div>
+                        <div class="col-md-6" align="right">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-primary" type="button" ng-click="loadData(currentPage - 1)" ng-disabled="!isPrevPage">Previous</button>
+                                <button class="btn btn-default" type="button" ng-disabled="true">{{ currentPage }}</button>
+                                <button class="btn btn-primary" type="button" ng-click="loadData(currentPage + 1)" ng-disabled="!isNextPage">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end: .tray-center -->
+    <!-- Begin: section content for Form -->
+    <div class="row" ng-show="showForm">
+        <div class="col-lg-6">
+            <!-- begin: .panel -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{actionMode + " " + modelName}}</span>
+                </div>
+                <!-- end .panel-heading section -->
+                <!-- Panel Body -->
+                <div class="panel-body">
+                    <div class="alert alert-danger alert-sm" ng-show="isError">
+                        <i class="fa fa-remove pr10"></i>
+                        <strong>ERROR!</strong>    {{errorMessage}}
+                    </div>
+                    @RenderSection("formContent")
+                </div>
+                <!-- Panel Footer -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6" align="left">
+                            <button class="btn btn-sm btn-primary" type="submit" ng-click="closeForm()">Back</button>
+                        </div>
+                        <div class="col-md-6" align="right">
+                            <button class="btn btn-sm btn-primary" type="submit" ng-click="submit()"
+                                    ng-show="actionMode != 'View'">
+                                {{submitButtonText}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end: .panel -->
+        </div>
+    </div>
+
+</section>
+
+
+
+<!-- Context Menu Content -->
+<div class="dropdown position-fixed" id="DataTableMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="loadData(currentPage)">Reload </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="actionForm('Create')">Create </a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="2" ng-click="actionForm('Edit')">Edit </a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="3" ng-click="actionForm('Delete')">Delete</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="4" ng-click="actionForm('View')">View </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="5" ng-click="actionForm('Export')">Export </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,65 @@
+﻿<!-- Begin: Content -->
+<section id="content" class="table-layout animated fadeIn">
+    <!-- begin: .tray-center -->
+    <div class=" tray tray-center p20 va-t posr">
+        <div class="panel panel-visible">
+            <!-- Panel Heading -->
+            <div class="panel-heading">
+                <div class="panel-title hidden-xs">
+                    <span class="glyphicon glyphicon-tasks"></span>{{modelName}}
+                </div>
+            </div>
+            <!-- Panel Body -->
+            <div class="panel-body pn">
+                @RenderSection("tableContent")
+            </div>
+            <!-- Panel Footer -->
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-6" align="left">
+                        <button class="btn btn-sm btn-primary" type="button" ng-click="actionForm('Create')">Create</button>
+                    </div>
+                    @*<div class="col-md-6" align="right">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" type="button" ng-click="loadData(currentPage - 1)" ng-disabled="!isPrevPage">Previous</button>
+                            <button class="btn btn-default" type="button" ng-disabled="true">{{ currentPage }}</button>
+                            <button class="btn btn-primary" type="button" ng-click="loadData(currentPage + 1)" ng-disabled="!isNextPage">Next</button>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end: .tray-center -->
+</section>
+
+
+<!-- End: Content -->
+<!-- Admin Form Popup -->
+<div id="modal-panel" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{actionMode + " " + modelName}}</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isError">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessage}}
+            </div>
+            @RenderSection("formContent")
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit" ng-click="submit()">{{submitButtonText}}</button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+
+<!-- Context Menu Content -->
+@*@RenderPage("~/Views/Shared/_ContextMenu1.cshtml")*@

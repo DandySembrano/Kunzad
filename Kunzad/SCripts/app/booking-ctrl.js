@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("BookingController", BookingController);
-function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage) {
+function BookingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, restAPIWDToken, $localForage) {
     $scope.modelName = "Booking";
     $scope.modelhref = "#/booking";
     $scope.modalStyle = "";
@@ -20,6 +20,8 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     $scope.shipmentToggle = false;
     $scope.withDirective = true;
     $scope.sessionExpired = false;
+
+    API = restAPI;
     //function that will be called during submit
     $scope.submit = function () {
         $scope.shipmentIsError = false;
@@ -96,15 +98,18 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     //Initialize Service List for DropDown
     $scope.initServiceList = function () {
-        $http.get("/api/Services")
-        .success(function (data, status) {
-            $scope.serviceList = data;
-        })
-        .error(function (response, status) {
-            if (status == 401) {
-                $scope.sessionExpired = true;
+        restAPIWDToken.data("/api/Services", function (data) {
+            if (data != undefined)
+            {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                }
+                else {
+                    $scope.serviceList = data.value;
+                }
             }
-        })
+        });
     };
 
     //Initialize Shipment Type List for DropDown
@@ -1645,12 +1650,13 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
 
     // Initialization routines
     var init = function () {
-        $localForage.getItem("Token").then(function (value) {
-            $http.defaults.headers.common['Token'] = value;
-            $scope.initPaymentModeList();
-            $scope.initServiceList();
-            $scope.initShipmentTypeList();
-        });
+        $scope.initServiceList();
+        //$localForage.getItem("Token").then(function (value) {
+        //    $http.defaults.headers.common['Token'] = value;
+        //    $scope.initPaymentModeList();
+        //    $scope.initServiceList();
+        //    $scope.initShipmentTypeList();
+        //});
         
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
@@ -1756,8 +1762,6 @@ function BookingController($scope, $http, $interval, $filter, $rootScope, $compi
     //});
 
     var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
-        console.log(oldVal);
-        console.log(newVal);
         if (newVal == true) {
             alert("Session Expired, please relogin");
             $scope.onLogoutRequest();

@@ -21,6 +21,17 @@
                                    ng-disabled="viewOnly">
                         </div>
                     </div>
+                    @*Password*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Password</label>
+                        <div class="col-md-4">
+                            <input type="{{loggedUser.UserTypeId == 1 ? text : password}}"
+                                   class="form-control"
+                                   placeholder="System Generated"
+                                   ng-model="user.Password"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
                     @*First Name*@
                     <div class="form-group form-group-sm">
                         <label class="col-md-3 control-label small">First Name</label>

@@ -9,9 +9,12 @@
 
 namespace Kunzad.Models
 {
+    using fastlogisticsApi.Models;
     using System;
+    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Text;
     
     public partial class KunzadDbEntities : DbContext
     {
@@ -25,16 +28,72 @@ namespace Kunzad.Models
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
+        public override int SaveChanges()
+        {
+            AuditTrailFactory auditFactory;
+            var auditList = new List<dynamic>();
+            var list = new List<dynamic>();
+            auditList.Clear();
+            list.Clear();
+            //Initialize current context as AuditTrail Factory Context
+            auditFactory = new AuditTrailFactory(this);
+            var entityList = this.ChangeTracker.Entries();
+
+            //Initialize log details
+            foreach (var entity in entityList)
+            {
+                AuditTrail auditTrail = auditFactory.GetAudit(entity);
+                auditList.Add(auditTrail);
+                list.Add(entity);
+            }
+
+            //Save current context data
+            var retval = base.SaveChanges();
+
+            //Initialize NewData if Action is Insert
+            if (auditList.Count > 0)
+            {
+                int i = 0;
+                foreach (var log in auditList)
+                {
+                    if (log.Actions == AuditActions.I.ToString())
+                    {
+                        var newValues = new StringBuilder();
+                        log.TableId = auditFactory.GetKeyValue(list[i]);
+                        auditFactory.SetAddedProperties(list[i], newValues);
+                        log.NewData = newValues.ToString();
+                        this.AuditTrails.Add(log);
+                    }
+                    else if (log.Actions == AuditActions.U.ToString())
+                    {
+                        if (!log.NewData.Equals("") || log.NewData == null)
+                            this.AuditTrails.Add(log);
+                    }
+                    else
+                        this.AuditTrails.Add(log);
+                    i++;
+                }
+
+                base.SaveChanges();
+            }
+            return retval;
+        }
+
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<AirFreight> AirFreights { get; set; }
         public virtual DbSet<AirFreightShipment> AirFreightShipments { get; set; }
         public virtual DbSet<AirLine> AirLines { get; set; }
+        public virtual DbSet<AuditTrail> AuditTrails { get; set; }
         public virtual DbSet<BusinessUnit> BusinessUnits { get; set; }
         public virtual DbSet<BusinessUnitContact> BusinessUnitContacts { get; set; }
         public virtual DbSet<BusinessUnitType> BusinessUnitTypes { get; set; }
         public virtual DbSet<Charge> Charges { get; set; }
+        public virtual DbSet<CheckIn> CheckIns { get; set; }
+        public virtual DbSet<CheckInShipment> CheckInShipments { get; set; }
+        public virtual DbSet<CheckInType> CheckInTypes { get; set; }
         public virtual DbSet<CityMunicipality> CityMunicipalities { get; set; }
+        public virtual DbSet<Consolidation> Consolidations { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<ContactNumberType> ContactNumberTypes { get; set; }
         public virtual DbSet<ContactPhone> ContactPhones { get; set; }
@@ -46,8 +105,14 @@ namespace Kunzad.Models
         public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public virtual DbSet<CustomerContact> CustomerContacts { get; set; }
         public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
+        public virtual DbSet<DeliveryException> DeliveryExceptions { get; set; }
+        public virtual DbSet<DeliveryExceptionType> DeliveryExceptionTypes { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
         public virtual DbSet<Industry> Industries { get; set; }
+        public virtual DbSet<Menu> Menus { get; set; }
+        public virtual DbSet<MenuAccess> MenuAccesses { get; set; }
+        public virtual DbSet<RatesDetail> RatesDetails { get; set; }
+        public virtual DbSet<RatesMaster> RatesMasters { get; set; }
         public virtual DbSet<SeaFreight> SeaFreights { get; set; }
         public virtual DbSet<SeaFreightShipment> SeaFreightShipments { get; set; }
         public virtual DbSet<Service> Services { get; set; }
@@ -60,12 +125,15 @@ namespace Kunzad.Models
         public virtual DbSet<ShipmentType> ShipmentTypes { get; set; }
         public virtual DbSet<ShippingLine> ShippingLines { get; set; }
         public virtual DbSet<StateProvince> StateProvinces { get; set; }
+        public virtual DbSet<Token> Tokens { get; set; }
         public virtual DbSet<Truck> Trucks { get; set; }
         public virtual DbSet<Trucker> Truckers { get; set; }
         public virtual DbSet<Trucking> Truckings { get; set; }
         public virtual DbSet<TruckingDelivery> TruckingDeliveries { get; set; }
         public virtual DbSet<TruckType> TruckTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserMenu> UserMenus { get; set; }
+        public virtual DbSet<UserType> UserTypes { get; set; }
         public virtual DbSet<Vessel> Vessels { get; set; }
         public virtual DbSet<VesselVoyage> VesselVoyages { get; set; }
     }

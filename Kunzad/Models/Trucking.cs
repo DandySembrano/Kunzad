@@ -33,6 +33,7 @@ namespace Kunzad.Models
         public Nullable<System.TimeSpan> TruckCallTime { get; set; }
         public Nullable<System.DateTime> DispatchDate { get; set; }
         public Nullable<System.TimeSpan> DispatchTime { get; set; }
+        public Nullable<decimal> InternalRevenue { get; set; }
         public Nullable<System.DateTime> CompletedDate { get; set; }
         public Nullable<System.TimeSpan> CompletedTime { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }

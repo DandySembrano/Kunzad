@@ -20,6 +20,8 @@ namespace Kunzad.ApiControllers
         private Response response = new Response();
         private TokenGenerator tokenGenerator = new TokenGenerator();
         private DbContextTransaction dbTransaction;
+        private static Random random = new Random();
+
         // GET: api/Users
         public IQueryable<User> GetUsers()
         {
@@ -187,7 +189,10 @@ namespace Kunzad.ApiControllers
                     response.status = "SUCCESS";
                     user.CreatedDate = DateTime.Now;
                     db.Users.Add(user);
-                    user.Password = user.LoginName;
+                    //user.Password = user.LoginName;
+                    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+                    user.Password = new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
+
                     db.SaveChanges();
                     foreach (UserMenu userMenu in user.UserMenus)
                     {

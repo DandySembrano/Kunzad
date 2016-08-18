@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+
+
+<!-- General -->
+@section tab1Content{
+    <div context-menu="formContextMenu()" data-target="FormMenu" class="row">
+        <!--Master-->
+        @*<div class="alert alert-danger alert-sm" ng-show="dexIsError">
+            <i class="fa fa-remove pr10" ng-click="dexIsError=false;dexErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + dexErrorMessage}}
+        </div>*@
+        @*Column 1*@
+
+        <form class="form-horizontal" role="form">
+            <div class="col-md-6">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Dex Date</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id="dexDate"
+                                   class="form-control"
+                                   ng-disabled="viewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Dex Time</label>
+                    <div class="col-md-4">
+                        <div class='input-group date'>
+                            <input type='text'
+                                   id="dexTime"
+                                   class="form-control"
+                                   ng-disabled="viewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Type</label>
+                    <div class="col-md-10">
+                        <select class="form-control"
+                                placeholder=""
+                                ng-disabled="viewOnly"
+                                ng-model="DeliveryExceptionItem.DexTypeId"
+                                ng-options="item.Id as item.Name for item in dexTypeList"></select>
+                    </div>
+                </div>
+       
+                <div class="form-group form-group-sm">
+                    <label class="col-md-2 control-label small">Remarks</label>
+                    <div class="col-md-10">
+                        <textarea rows="3" style="height:auto;"
+                                  id="dexRemarks"
+                                  ng-model="DeliveryExceptionItem.DexRemarks"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-disabled="false"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">&nbsp;</div>
+        </form>
+    </div>
+
+    <!--End of Master-->
+    <!--Detail-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="dexShipmentsContainer"></div>
+        </div>
+    </div>
+    <!--End of Detail-->
+}
+<!-- List -->
+@section tab2Content{
+    @*<div style="padding:0 10px">
+        <div class="text-right toggle-hide" ng-click="hideDexToggle()" ng-show="dexToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
+        <div id="dexToggle">
+            <div id="dexFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="dexContainer"></div>
+    </div>*@
+}
+<!--End of List-->
+
+<!-- Shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Shipment List Modal -->
+
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="dexShipmentsOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+    </ul>
+</div>

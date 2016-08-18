@@ -16,6 +16,7 @@ namespace Kunzad.Models
     {
         public Address()
         {
+            this.BusinessUnits = new HashSet<BusinessUnit>();
             this.Shipments = new HashSet<Shipment>();
             this.Shipments1 = new HashSet<Shipment>();
             this.TruckingDeliveries = new HashSet<TruckingDelivery>();
@@ -32,6 +33,7 @@ namespace Kunzad.Models
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
         public virtual CityMunicipality CityMunicipality { get; set; }
+        public virtual ICollection<BusinessUnit> BusinessUnits { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
         public virtual ICollection<Shipment> Shipments1 { get; set; }
         public virtual ICollection<TruckingDelivery> TruckingDeliveries { get; set; }

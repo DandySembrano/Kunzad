@@ -1,0 +1,40 @@
+﻿@using Kunzad.Models;
+<!-- sidebar menu -->
+ <ul class="nav sidebar-menu">
+    @{
+        AppMenuModel appMenu = new AppMenuModel();
+
+        foreach (MenuGroup m in appMenu.MenuGroups)
+        { 
+                    <!-- sidebar resources -->
+            <li class="sidebar-label pt15" ng-show="showGroupMenu(@m.Id)">@m.Name</li>
+            foreach (MenuGroupItem gItem in m.MenuGroupItems)
+            {
+                <li ng-show="hasChild(@gItem.Id)">
+                    <a class="accordion-toggle" href="@gItem.Link">
+                        <span class="@gItem.Icon"></span>
+                        <span class="sidebar-title">@gItem.Name</span>
+                        @{
+                            if (@gItem.IsParent == "Y")
+                            {
+                                <span class="caret"></span>
+                            }
+                        }
+                    </a>
+                    <ul class="nav sub-nav">
+                        @{
+                            foreach (MenuItem item in gItem.MenuItems)
+                            {
+                                <li ng-show="hasMenu(@item.Id)">
+                                    <a href="@item.Link">
+                                        <span class="@item.Icon"></span> @item.Name
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+        }
+    }
+</ul>

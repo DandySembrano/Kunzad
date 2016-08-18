@@ -17,7 +17,9 @@ namespace Kunzad.Models
         public Shipment()
         {
             this.AirFreightShipments = new HashSet<AirFreightShipment>();
+            this.CheckInShipments = new HashSet<CheckInShipment>();
             this.CourierTransactionDetails = new HashSet<CourierTransactionDetail>();
+            this.DeliveryExceptions = new HashSet<DeliveryException>();
             this.SeaFreightShipments = new HashSet<SeaFreightShipment>();
             this.ShipmentCharges = new HashSet<ShipmentCharge>();
             this.ShipmentDimensions = new HashSet<ShipmentDimension>();
@@ -27,17 +29,17 @@ namespace Kunzad.Models
         public int Id { get; set; }
         public int BusinessUnitId { get; set; }
         public int ServiceId { get; set; }
+        public Nullable<int> ShipmentTypeId { get; set; }
         public string DocumentNo { get; set; }
         public Nullable<System.DateTime> DocumentDate { get; set; }
-        public int ShipmentTypeId { get; set; }
         public string PaymentMode { get; set; }
         public int CustomerId { get; set; }
-        public Nullable<int> CustomerAddressId { get; set; }
+        public int CustomerAddressId { get; set; }
         public int CustomerContactId { get; set; }
-        public Nullable<int> CustomerContactPhoneId { get; set; }
-        public int BillToCustomerId { get; set; }
+        public int CustomerContactPhoneId { get; set; }
+        public Nullable<int> BillToCustomerId { get; set; }
         public Nullable<int> BillToCustomerAddressId { get; set; }
-        public int BillToCustomerContactId { get; set; }
+        public Nullable<int> BillToCustomerContactId { get; set; }
         public Nullable<int> BillToCustomerContactPhoneId { get; set; }
         public short Quantity { get; set; }
         public decimal TotalCBM { get; set; }
@@ -53,16 +55,21 @@ namespace Kunzad.Models
         public Nullable<System.DateTime> DeliveryDate { get; set; }
         public Nullable<System.TimeSpan> DeliveryTime { get; set; }
         public string ReceivedByName { get; set; }
-        public int PickUpBussinessUnitId { get; set; }
+        public Nullable<int> PickUpBussinessUnitId { get; set; }
         public Nullable<System.DateTime> PickupDate { get; set; }
         public Nullable<System.TimeSpan> PickupTime { get; set; }
         public string DeliverToContactNo { get; set; }
         public Nullable<int> OriginAddressId { get; set; }
         public int ParentShipmentId { get; set; }
+        public Nullable<int> ConsolidationNo1 { get; set; }
+        public Nullable<int> ConsolidationNo2 { get; set; }
         public bool IsConsolidation { get; set; }
         public bool IsMultipleDelivery { get; set; }
-        public int TransportStatusId { get; set; }
+        public Nullable<int> TransportStatusId { get; set; }
         public string TransportStatusRemarks { get; set; }
+        public int LoadingStatusId { get; set; }
+        public Nullable<int> LastCheckInId { get; set; }
+        public string QRCode { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
@@ -73,8 +80,10 @@ namespace Kunzad.Models
         public virtual ICollection<AirFreightShipment> AirFreightShipments { get; set; }
         public virtual BusinessUnit BusinessUnit { get; set; }
         public virtual BusinessUnit BusinessUnit1 { get; set; }
+        public virtual ICollection<CheckInShipment> CheckInShipments { get; set; }
         public virtual ICollection<CourierTransactionDetail> CourierTransactionDetails { get; set; }
         public virtual Customer Customer { get; set; }
+        public virtual ICollection<DeliveryException> DeliveryExceptions { get; set; }
         public virtual ICollection<SeaFreightShipment> SeaFreightShipments { get; set; }
         public virtual Service Service { get; set; }
         public virtual ShipmentType ShipmentType { get; set; }

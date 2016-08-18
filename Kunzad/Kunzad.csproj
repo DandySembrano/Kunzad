@@ -97,6 +97,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -136,6 +137,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -438,7 +440,9 @@
     <Content Include="Scripts\app\consolidation-ctrl.js" />
     <Content Include="Scripts\app\deliveryexception-ctrl.js" />
     <Content Include="Scripts\app\deliveryexceptionbatching-ctrl.js" />
+    <Content Include="Scripts\app\landingpage-ctrl.js" />
     <Content Include="Scripts\app\pod-ctrl.js" />
+    <Content Include="Scripts\app\rates-ctrl.js" />
     <Content Include="Scripts\app\seafreightarrival-ctrl.js" />
     <Content Include="Scripts\app\contactnotype-ctrl.js" />
     <Content Include="Scripts\app\country-ctrl.js" />
@@ -460,6 +464,8 @@
     <Content Include="Scripts\app\trucking-ctrl.js" />
     <Content Include="Scripts\app\truckingwb-ctrl.js" />
     <Content Include="Scripts\app\trucktype-ctrl.js" />
+    <Content Include="Scripts\app\user-ctrl.js" />
+    <Content Include="Scripts\bootstrap-filestyle.js" />
     <Content Include="Scripts\directive\addressModal.js" />
     <Content Include="Scripts\directive\dataFiltering.js" />
     <Content Include="Scripts\directive\dataGrid1.js" />
@@ -1230,6 +1236,7 @@
       <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
     </Content>
     <None Include="Properties\PublishProfiles\Kunzad.pubxml" />
+    <None Include="Properties\PublishProfiles\KunzadLocal.pubxml" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
@@ -1238,6 +1245,7 @@
     <Content Include="Scripts\localforage.min.js" />
     <Content Include="Scripts\ng-context-menu.js" />
     <Content Include="Scripts\service\restAPI.js" />
+    <Content Include="Scripts\service\retrieveDataWDToken.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
     <Content Include="Scripts\ui-bootstrap-tpls-0.12.1.min.js" />
@@ -2499,6 +2507,7 @@
     <Compile Include="ApiControllers\DeliveryExceptionTypesController.cs" />
     <Compile Include="ApiControllers\DocumentationController.cs" />
     <Compile Include="ApiControllers\DriversController.cs" />
+    <Compile Include="ApiControllers\FileUploadController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
     <Compile Include="ApiControllers\PODController.cs" />
     <Compile Include="ApiControllers\SeaFreightsController.cs" />
@@ -2516,15 +2525,20 @@
     <Compile Include="ApiControllers\TruckingsWBController.cs" />
     <Compile Include="ApiControllers\TrucksController.cs" />
     <Compile Include="ApiControllers\TruckTypesController.cs" />
+    <Compile Include="ApiControllers\UserMenusController.cs" />
     <Compile Include="ApiControllers\UsersController.cs" />
+    <Compile Include="ApiControllers\UserTypesController.cs" />
     <Compile Include="ApiControllers\VesselsController.cs" />
     <Compile Include="ApiControllers\VesselVoyagesController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ApiControllers\CityMunicipalitiesController.cs" />
+    <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\DirectivesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LandingPageController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ReferencesController.cs" />
     <Compile Include="Filters\ApiAuthenticationFilter.cs" />
     <Compile Include="Filters\BasicAuthenticationIdentity.cs" />
@@ -2546,6 +2560,9 @@
     </Compile>
     <Compile Include="Models\AppMenuModel.cs" />
     <Compile Include="Models\AppSettingsGet.cs" />
+    <Compile Include="Models\AuditTrail.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AuditTrailFactory.cs" />
     <Compile Include="Models\BusinessUnit.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
@@ -2619,7 +2636,10 @@
     <Compile Include="Models\Industry.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Log.cs">
+    <Compile Include="Models\Menu.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MenuAccess.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelKunzadDb.Context.cs">
@@ -2637,7 +2657,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\QRHandling.cs" />
+    <Compile Include="Models\MyStreamProvider.cs" />
+    <Compile Include="Models\RatesDetail.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RatesMaster.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Response.cs" />
     <Compile Include="Models\ScanningDetails.cs" />
     <Compile Include="Models\ScanningHub.cs" />
@@ -2699,6 +2725,12 @@
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserMenu.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserType.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Vessel.cs">
@@ -3175,6 +3207,13 @@
     <Content Include="Views\Shared\_DocumentationLayout.cshtml" />
     <Content Include="Views\References\ShipmentDetails.cshtml" />
     <Content Include="Views\Shared\_PopupLayout.cshtml" />
+    <Content Include="Views\Authentication\Denied.cshtml" />
+    <Content Include="Views\LandingPage\Index.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
+    <Content Include="Views\Main\Home.cshtml" />
+    <Content Include="Views\References\Rates.cshtml" />
+    <Content Include="Views\References\Users.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3184,11 +3223,41 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="EmployeeImages\" />
     <Folder Include="vendor\plugins\datatables\extensions\Editor\examples\simple\echo\" />
     <Folder Include="vendor\plugins\uigrid\extras\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

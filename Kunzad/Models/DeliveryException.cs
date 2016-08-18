@@ -18,7 +18,7 @@ namespace Kunzad.Models
         public int ShipmentId { get; set; }
         public Nullable<System.DateTime> DexDate { get; set; }
         public Nullable<System.TimeSpan> DexTime { get; set; }
-        public int DexType { get; set; }
+        public int DexTypeId { get; set; }
         public string DexRemarks { get; set; }
         public Nullable<bool> Status { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }

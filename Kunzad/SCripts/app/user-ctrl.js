@@ -38,6 +38,8 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         
         $scope.userStatus = [{ Id: 1, Name: "Active" }, { Id: 0, Name: "Inactive" }];
 
+        $scope.loggedUser = $scope.myInformation;
+
         $scope.user = {
             Id: null,
             UserTypeId: null,
@@ -52,7 +54,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
             BusinessUnitName: null,
             BusnessUnit: {},
             CreatedByUserId: $scope.myInformation.Id,
-            ImageName: null,
+            ImageName: 'default-user-img.png',
             Status: 1
         };
 

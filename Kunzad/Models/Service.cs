@@ -16,8 +16,10 @@ namespace Kunzad.Models
     {
         public Service()
         {
+            this.RatesMasters = new HashSet<RatesMaster>();
             this.ServiceCharges = new HashSet<ServiceCharge>();
             this.Shipments = new HashSet<Shipment>();
+            this.ShipmentTypes = new HashSet<ShipmentType>();
         }
     
         public int Id { get; set; }
@@ -35,8 +37,10 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
+        public virtual ICollection<RatesMaster> RatesMasters { get; set; }
         public virtual ServiceCategory ServiceCategory { get; set; }
         public virtual ICollection<ServiceCharge> ServiceCharges { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
+        public virtual ICollection<ShipmentType> ShipmentTypes { get; set; }
     }
 }

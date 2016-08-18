@@ -1,5 +1,5 @@
 ﻿
-var restAPI = function ($rootScope, $http, $localForage) {
+var restAPI = function ($rootScope, $http, $localForage, $interval) {
     var service = this;
     var objData = undefined;
 
@@ -55,6 +55,37 @@ var restAPI = function ($rootScope, $http, $localForage) {
         });
 
     }
+
+    service.retrieveWDToken = function (url) {
+        $localForage.getItem("Token").then(function (value) {
+            $http.defaults.headers.common['Token'] = value;
+            $http.get(url)
+            .success(function (data, status) {
+                //$scope.serviceList = data;
+                var promise = $interval(function () {
+                    console.log("service");
+                    console.log(data);
+                    if (data != undefined) {
+                        $interval.cancel(promise);
+                        promise = undefined;
+                        return { status: "SUCCESS", value: data };
+                        //if (data.status == "FAILURE") {
+                        //    if (data.value == 401)
+                        //        $scope.sessionExpired = true;
+                        //}
+                        //else {
+                        //    $scope.serviceList = data.value;
+                        //}
+                    }
+                }, 500);
+            })
+            .error(function (response, status) {
+                return { status: "FAILURE", value: status };
+            })
+            //return $http.get(url);
+        });
+    };
+
     service.edit = function (url) {
     };
 

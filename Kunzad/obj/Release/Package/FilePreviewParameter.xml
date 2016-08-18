@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="Default Web Site" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^D:\\APPLICATION\\Kunzad\\Kunzad\\Kunzad\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^D:\\APPLICATION\\Kunzad\\Kunzad\\Kunzad\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="KunzadDbEntities-Web.config Connection String" description="" value="metadata=res://*/Models.ModelKunzadDb.csdl|res://*/Models.ModelKunzadDb.ssdl|res://*/Models.ModelKunzadDb.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=150.200.19.209;Initial Catalog=KunzadDB;User ID=iefastrakuser;Password=maldito;MultipleActiveResultSets=True;Application Name=EntityFramework&quot;" tags="">
+    <parameterEntry kind="XmlFile" scope="D:\\APPLICATION\\Kunzad\\Kunzad\\Kunzad\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='KunzadDbEntities']/@connectionString" />
+  </parameter>
+</parameters>

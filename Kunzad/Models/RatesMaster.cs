@@ -31,14 +31,12 @@ namespace Kunzad.Models
         public Nullable<bool> AllowExpiration { get; set; }
         public Nullable<System.DateTime> DateExpired { get; set; }
         public Nullable<System.DateTime> EffictivityDate { get; set; }
-        public Nullable<int> Status { get; set; }
+        public Nullable<bool> Status { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdateDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> ModifiedByUserId { get; set; }
     
-        public virtual Address Address { get; set; }
-        public virtual Address Address1 { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<RatesDetail> RatesDetails { get; set; }
         public virtual RatesMaster RatesMaster1 { get; set; }

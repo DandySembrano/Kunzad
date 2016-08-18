@@ -117,7 +117,7 @@ namespace Kunzad.ApiControllers
         }
 
         [HttpGet]
-        //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
+        // [CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
         // [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, int param1, [FromUri]List<Shipment> shipment)
         {
@@ -131,7 +131,7 @@ namespace Kunzad.ApiControllers
         }
 
         [HttpGet]
-        //   [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
+        // [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IHttpActionResult GetShipment(string type, string source, int param1, [FromUri]List<Shipment> shipment)
         {
             /*

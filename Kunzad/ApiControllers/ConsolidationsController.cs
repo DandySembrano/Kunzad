@@ -22,8 +22,7 @@ namespace Kunzad.ApiControllers
         private Response response = new Response();
         private int pageSize = AppSettingsGet.PageSize;
         private int serviceCategoryId = 0;
-        private int x = 0;
-        private int?[] shipmentType = { 1, 2, 3 }; //changeable; containerized type
+        private Nullable<int>[] shipmentType = { 1, 2, 3 }; //changeable; containerized type
         private Boolean isConsolidated = false;
         private Boolean parent = true;
         private Boolean vanstuff = false;

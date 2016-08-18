@@ -1,0 +1,121 @@
+﻿//---------------------------------------------------------------------------------//
+// Filename: courier-ctrl.js
+// Description: Controller for Courier
+// Author: Kenneth Ybañez
+//---------------------------------------------------------------------------------//
+
+kunzadApp.controller("CourierController", function ($rootScope, $scope, $http, $localForage) {
+    $localForage.getItem("Token").then(function (value) {
+        $http.defaults.headers.common['Token'] = value;
+    });
+    $scope.modelName = "Courier";
+    $scope.modelhref = "#/courier";
+
+    //-------------------------dirDataGrid1 Paramaters-------------------------
+    $scope.submitButtonText = "";
+    $scope.submitButtonListener = false;
+    $scope.isError = false;
+    $scope.errorMessage = "";
+    $scope.actionCreate = false; //default to false
+    $scope.actionMode = "Create";//default to Create
+    $scope.dataDefinition = {
+        "Header": ['Name', 'TIN', 'Street Address 1', 'Street Address 2', 'City/Municipality', 'Province/State', 'Postal Code', 'Country', 'No.'],
+        "Keys": ['Name', 'TIN', 'Line1', 'Line2', 'CityMunicipality.Name', 'CityMunicipality.StateProvince.Name', 'PostalCode', 'CityMunicipality.StateProvince.Country.Name'],
+        "Type": ['Default', 'String', 'String', 'String', 'String', 'String', 'String', 'String'],
+        "RequiredFields": ['Name-Name', 'Line1-Street Address Line 1', 'CityMunicipalityName-City/Municipality'],
+        "DataList": [],
+        "APIUrl": ['/api/Couriers?page=',//get
+                    '/api/Couriers', //post, put, delete
+        ],
+        "DataItem": {},
+        "DataTarget": "DataTableMenu",
+        "ViewOnly": false,
+        "ContextMenu": [],
+        "ContextMenuLabel": []
+    };
+    $scope.closeModalForm = function () {
+        jQuery.magnificPopup.close();
+    };
+    $scope.openModalForm = function () {
+        $scope.isError = false;
+        openModalPanel("#modal-panel");
+    };
+    $scope.otherActions = function (action) {
+        switch (action) {
+            case 'PreSave':
+                delete $scope.dataDefinition.DataItem.Id;
+                delete $scope.dataDefinition.DataItem.CityMunicipality;
+                return true;
+            case 'PreAction':
+                $scope.country = $rootScope.country;
+                $scope.cityMunicipalities = $rootScope.getCityMunicipalities();
+                return true;
+            //case 'PostLoadAction':
+            //    for (var i = 0; i < $scope.dataDefinition.DataList.length; i++)
+            //    {
+            //        $scope.dataDefinition.DataList[i].CityMunicipalityName = $scope.dataDefinition.DataList[i].CityMunicipality.Name;
+            //        $scope.dataDefinition.DataList[i].StateProvinceName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Name;
+            //        $scope.dataDefinition.DataList[i].CountryName = $scope.dataDefinition.DataList[i].CityMunicipality.StateProvince.Country.Name;
+            //    }
+            //    return true;
+            default:
+                return true;
+        }
+    };
+    $scope.resetDataItem = function () {
+        $scope.dataDefinition.DataItem = {
+            "Id": null,
+            "Name": null,
+            "TIN": null,
+            "Line1": null,
+            "Line2": null,
+            "CityMunicipalityId": null,
+            "PostalCode": null,
+            "CityMunicipality": {
+                "Id": null,
+                "Name": null,
+                "StateProvinceId": null,
+                "StateProvince": {
+                    "Id": null,
+                    "Name": null,
+                    "CountryId": null,
+                    "Country": {
+                        "Id": null,
+                        "Name": null
+                    }
+                }
+            },
+            "CityMunicipalityName": null,
+            "StateProvinceName": null,
+            "CountryName": null
+        }
+    };
+    $scope.showFormError = function (message) {
+        $scope.isError = true;
+        $scope.errorMessage = message;
+    };
+    //-------------------------End of dirDataGrid1 Parameters-------------------
+
+    $scope.submit = function () {
+            $scope.submitButtonListener = true;
+    };
+    $scope.actionForm = function (action) {
+        $scope.actionCreate = true;
+    };
+
+    //---------------------------Code if using typeahead in city/municipality-------------------
+    $scope.onSelectCity = function ($item, $model, $label) {
+        $scope.dataDefinition.DataItem.CityMunicipalityId = $item.Id;
+        $scope.dataDefinition.DataItem.CityMunicipality.Name = $item.Name;
+        $scope.dataDefinition.DataItem.CityMunicipality.StateProvince.Name = $item.StateProvinceName;
+        $scope.dataDefinition.DataItem.CityMunicipality.StateProvince.Country.Name = $scope.country.Name;
+    };
+    //---------------------------End of typeahead-----------------------------------------------
+
+    $scope.formatTIN = function () {
+        if ($scope.dataDefinition.DataItem.TIN.length == 3)
+            $scope.dataDefinition.DataItem.TIN = $scope.dataDefinition.DataItem.TIN + "-";
+        if ($scope.dataDefinition.DataItem.TIN.length == 7)
+            $scope.dataDefinition.DataItem.TIN = $scope.dataDefinition.DataItem.TIN + "-";
+    };
+});

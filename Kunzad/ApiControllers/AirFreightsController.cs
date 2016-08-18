@@ -10,7 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
 using Kunzad.ActionFilters;
-
+using System.Data.Linq.SqlClient;
 namespace Kunzad.ApiControllers
 {
     [AuthorizationRequired]
@@ -19,7 +19,6 @@ namespace Kunzad.ApiControllers
         private KunzadDbEntities db = new KunzadDbEntities();
         private Response response = new Response();
         private int pageSize = AppSettingsGet.PageSize;
-
         // GET: api/AirFreights
         public IQueryable<AirFreight> GetAirFreights()
         {
@@ -33,7 +32,7 @@ namespace Kunzad.ApiControllers
         [HttpGet]
         //[CacheOutput(ClientTimeSpan = 6, ServerTimeSpan = 6)]
         public IHttpActionResult GetAirFreight(string type, int param1, [FromUri]List<AirFreight> airFreight)
-        {
+        { 
             Object[] getAirFreights = new Object[AppSettingsGet.PageSize];
             this.filterRecord(param1, type, airFreight.ElementAt(0), airFreight.ElementAt(1), ref getAirFreights);
 
