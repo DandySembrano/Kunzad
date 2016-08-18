@@ -1,4 +1,4 @@
-﻿kunzadApp.controller("AirFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter, $localForage) {
+﻿kunzadApp.controller("AirFreightArrivalController", function ($rootScope, $scope, $http, $interval, $compile, $filter,restAPIWDToken, $localForage) {
     $scope.modelName = "Air Freight Arrival";
     $scope.modelhref = "#/airfreightarrival";
     $scope.withDirective = true;
@@ -18,6 +18,7 @@
     $scope.flagOnRetrieveDetails = false;
     $scope.enableSave = true;
     $scope.modalWatcher = "";
+    $scope.sessionExpired = false;
 
     //function that will be invoked when user click tab
     $scope.setSelectedTab = function (tab) {
@@ -1386,10 +1387,27 @@
         listener = undefined;
     };
 
-    $scope.$on('$destroy', function () {
-        $scope.listener();
-    });
+    //$scope.$on('$destroy', function () {
+    //    $scope.listener();
+    //});
 
     //Initialize needed functions during page load
     init();
+
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterWatchers();
+        $scope.listener();
+    });
 });

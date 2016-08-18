@@ -1,5 +1,5 @@
 ﻿kunzadApp.controller("AirFreightsController", AirFreightsController);
-function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $compile, $localForage) {
+function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $compile, restAPIWDToken, $localForage) {
     $scope.modelName = "Air Freight";
     $scope.modelhref = "#/airfreight";
     $scope.isPrevPage = false;
@@ -22,6 +22,7 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     var pageSize = 20;
     $scope.selectedShipmentDtlRow = 0;
     $scope.enableSave = true;
+    $scope.sessionExpired = false;
 
     $('#estimateDepartureDate,#estimateArrivalDate,#departureDate,#arrivalDate,#deliverydate,#airWaybillDate').datetimepicker({
         format: 'MM-DD-YYYY',
@@ -54,17 +55,31 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     $scope.getAirFreightDetail = function (airFreightId) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
         var i = 0;
-        $http.get("/api/AirFreightShipments?airFreightId=" + airFreightId + "&page=1")
-            .success(function (data, status) {
-                //initialize seafreight shipments
-                $scope.AirFreightShipmentGridOptions.data = data;
+        restAPIWDToken.data("/api/AirFreightShipments?airFreightId=" + airFreightId + "&page=1", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                        spinner.stop();
+                }
+                else {
+                    $scope.AirFreightShipmentGridOptions.data = data.value;
+                    $scope.focusOnTop();
+                    spinner.stop();
+                }
+            }
+        });
+        //$http.get("/api/AirFreightShipments?airFreightId=" + airFreightId + "&page=1")
+        //    .success(function (data, status) {
+        //        //initialize seafreight shipments
+        //        $scope.AirFreightShipmentGridOptions.data = data;
 
-                $scope.focusOnTop();
-                spinner.stop();
-            })
-            .error(function (data, status) {
-                spinner.stop();
-            });
+        //        $scope.focusOnTop();
+        //        spinner.stop();
+        //    })
+        //    .error(function (data, status) {
+        //        spinner.stop();
+        //    });
     };
 
     $scope.showModal = function (panel) {
@@ -72,17 +87,45 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     };
 
     $scope.initBusinessUnits = function () {
-        $http.get("/api/BusinessUnits")
-        .success(function (data, status) {
-            $scope.businessUnitList = data;
+        restAPIWDToken.data("/api/BusinessUnits", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                    spinner.stop();
+                }
+                else {
+                    $scope.businessUnitList = data.value;
+                    $scope.focusOnTop();
+                    spinner.stop();
+                }
+            }
         });
+        //$http.get("/api/BusinessUnits")
+        //.success(function (data, status) {
+        //    $scope.businessUnitList = data;
+        //});
     };
 
     $scope.initAirlines = function () {
-        $http.get("/api/AirLines")
-        .success(function (data, status) {
-            $scope.airLineList = data;
+        restAPIWDToken.data("/api/AirLines", function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
+                    spinner.stop();
+                }
+                else {
+                    $scope.airLineList = data.value;
+                    $scope.focusOnTop();
+                    spinner.stop();
+                }
+            }
         });
+        //$http.get("/api/AirLines")
+        //.success(function (data, status) {
+        //    $scope.airLineList = data;
+        //});
     };
 
     //function that will be invoked when user click tab
@@ -1022,11 +1065,15 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
     // Initialization routines
     var init = function () {
         $scope.focusOnTop();
-        $localForage.getItem("Token").then(function (value) {
-            $http.defaults.headers.common['Token'] = value.toString();
-            $scope.initAirlines();
-            $scope.initBusinessUnits();
-        });
+
+        $scope.initAirlines();
+        $scope.initBusinessUnits();
+
+        //$localForage.getItem("Token").then(function (value) {
+        //    $http.defaults.headers.common['Token'] = value.toString();
+        //    $scope.initAirlines();
+        //    $scope.initBusinessUnits();
+        //});
         // SHIPMENTS
         $scope.loadShipmentDataGrid();
         $scope.loadShipmentFiltering();
@@ -1059,4 +1106,20 @@ function AirFreightsController($scope, $http, $interval, $filter, $rootScope, $c
             $scope.modalStyle = "height:450px; max-height:100%";
         }
     }, 100);
+
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterWatchers();
+    });
 }

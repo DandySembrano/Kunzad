@@ -1,6 +1,6 @@
 ﻿
 kunzadApp.controller("TruckingController", TruckingController);
-function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage) {
+function TruckingController($scope, $http, $interval, $filter, $rootScope, $compile, restAPI, $localForage, restAPIWDToken) {
     $scope.modelName = "Dispatching";
     $scope.modelhref = "#/trucking";
     $scope.withDirective = true;
@@ -19,6 +19,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
     $scope.truckingToggle = false;
     $scope.enableSave = true;
     $scope.modalWatcher = "";
+    $scope.sessionExpired = false;
 
     //Disable typing
     $('#plateNo,#driverName,#origin,#destination,#shipmentNo,#dispatchdate,#truckcalldate,#dispatchtime,#truckcalltime').keypress(function (key) {
@@ -29,7 +30,7 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
     $scope.initializeAddressField = function (addressItem) {
         $scope.formattedAddress = addressItem.Line1 + (addressItem.Line2 == "" || addressItem.Line2 == null ? " " : ", " + addressItem.Line2) + "\n";
         $scope.formattedAddress += addressItem.CityMunicipality.Name + ", " + (addressItem.CityMunicipality.StateProvince == null ? "" : addressItem.CityMunicipality.StateProvince.Name + "\n");
-        $scope.formattedAddress += $scope.country.Name + ", " + addressItem.PostalCode;
+        $scope.formattedAddress += $rootScope.country.Name + ", " + addressItem.PostalCode;
         return $scope.formattedAddress;
     };
 
@@ -50,18 +51,6 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
     };
 
     $scope.getTruckTypes = function () {
-        //$http.get("api/TruckTypes")
-        //.success(function (data, status) {
-        //    //For filtering only
-            
-        //    for (var i = 0; i < data.length; i++)
-        //    {
-        //        var truckTypeItem = { "Id": null, "Name": null };
-        //        truckTypeItem.Id = data[i].Id;
-        //        truckTypeItem.Name = data[i].Type;
-        //        $scope.truckTypeList.push(truckTypeItem);
-        //    }
-        //})
         restAPI.retrieve("/api/TruckTypes");
         var promise = $interval(function () {
             if (restAPI.isValid()) {
@@ -253,26 +242,32 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
     //Function that will retrieve of a courier transaction details
     $scope.getTruckingDeliveries = function (id) {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('api/TruckingDeliveries?length=' + $scope.trkgDeliveryList.length + '&masterId=' + id)
-            .success(function (data, status) {
-                for (var i = 0; i < data.length; i++) {
-                    data[i].ShipmentId = $rootScope.formatControlNo('', 8, data[i].Shipment.Id);
-                    //Initialize Pickup Address
-                    data[i].Shipment.OriginAddress = $scope.initializeAddressField(data[i].Shipment.Address1);
-                    //Initalize Consignee Address
-                    data[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data[i].Shipment.Address);
-                    $scope.trkgDeliveryList.push(data[i]);
-                }
+        restAPIWDToken.data('api/TruckingDeliveries?length=' + $scope.trkgDeliveryList.length + '&masterId=' + id, function (data) {
+            if (data != undefined) {
+                if (data.status == "FAILURE") {
+                    if (data.value == 401)
+                        $scope.sessionExpired = true;
 
-                $scope.flagOnRetrieveDetails = true;
-                spinner.stop();
-            })
-            .error(function (error, status) {
-                $scope.flagOnRetrieveDetails = true;
-                $scope.truckingIsError = true;
-                $scope.truckingErrorMessage = status;
-                spinner.stop();
-            })
+                    $scope.flagOnRetrieveDetails = true;
+                    $scope.truckingIsError = true;
+                    $scope.truckingErrorMessage = status;
+                    spinner.stop();
+                }
+                else {
+                    for (var i = 0; i < data.value.length; i++) {
+                        data.value[i].ShipmentId = $rootScope.formatControlNo('', 8, data.value[i].Shipment.Id);
+                        //Initialize Pickup Address
+                        data.value[i].Shipment.OriginAddress = $scope.initializeAddressField(data.value[i].Shipment.Address1);
+                        //Initalize Consignee Address
+                        data.value[i].Shipment.DeliveryAddress = $scope.initializeAddressField(data.value[i].Shipment.Address);
+                        $scope.trkgDeliveryList.push(data.value[i]);
+                    }
+
+                    $scope.flagOnRetrieveDetails = true;
+                    spinner.stop();
+                }
+            }
+        });
     };
 
     //====================================TRUCKING FILTERING AND DATAGRID===========================
@@ -1538,21 +1533,15 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
 
     // Initialization routines
     var init = function () {
-        $localForage.getItem("Token").then(function (value) {
-            $http.defaults.headers.common['Token'] = value;
-            $scope.getTruckTypes();
-            //init trucking type
-            $scope.truckingTypeList = $rootScope.getTruckingTypeList();
-        });
+        $scope.getTruckTypes();
+        //init trucking type
+        $scope.truckingTypeList = $rootScope.getTruckingTypeList();
         $scope.loadTruckingDataGrid();
         $scope.loadTruckingFiltering();
         $scope.addNewBooking();
         $rootScope.manipulateDOM();
-
         //Initialize Trucking DataItem
         $scope.truckingResetData();
-
-        
 
         if ($scope.truckingFilteringDefinition.AutoLoad == true)
             $scope.truckingDataDefinition.Retrieve = true;
@@ -1574,8 +1563,20 @@ function TruckingController($scope, $http, $interval, $filter, $rootScope, $comp
         listener = undefined;
     };
 
-    $scope.$on('$destroy', function () {
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        sessionWatcher();
         $scope.listener();
+    }
+
+    $scope.$on('$destroy', function () {
+        deregisterWatchers();
     });
 
     //Initialize needed functions during page load
