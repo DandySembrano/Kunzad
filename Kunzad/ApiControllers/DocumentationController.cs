@@ -17,7 +17,7 @@ namespace Kunzad.ApiControllers
     public class DocumentationController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        private Response response = new Response();
         // GET: api/Documentation
         [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Shipment> GetShipments()
@@ -60,42 +60,45 @@ namespace Kunzad.ApiControllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutShipment(int id, Shipment shipment)
         {
-            if (id != shipment.Id)
+            response.status = "FAILURE";
+            if (!ModelState.IsValid || id != shipment.Id)
             {
-                return BadRequest();
+                response.message = "Bad request.";
+                return Ok(response);
             }
-
-            //set revenue to TRUE if revenue amount is inputted
-            if (shipment.Revenue > 0)
-            {
-                shipment.IsRevenue = true;
-            }
-
-            //set tax inclusive to TRUE if tax amount is inputted
-            if (shipment.TaxAmount > 0)
-            {
-                shipment.IsTaxInclusive = true;
-            }
-
-            db.Entry(shipment).State = EntityState.Modified;
 
             try
             {
+                //set revenue to TRUE if revenue amount is inputted
+                if (shipment.Revenue > 0)
+                {
+                    shipment.IsRevenue = true;
+                }
+
+                //set tax inclusive to TRUE if tax amount is inputted
+                if (shipment.TaxAmount > 0)
+                {
+                    shipment.IsTaxInclusive = true;
+                }
+
+                db.Entry(shipment).State = EntityState.Modified;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = shipment;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!ShipmentExists(id))
                 {
-                    return NotFound();
+                    response.message = "Shipment doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/Documentation

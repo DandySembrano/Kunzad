@@ -245,11 +245,9 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                     $scope.viewOnly = true;
                     $scope.submitButtonText = "Submit";
                     $scope.shipmentSubmitDefinition.Type = "Edit";
-                    alert("Successfully Updated.");
-
                     return true;
                 case "PostUpdate":
-                    
+                    alert("Successfully Updated.");
                     return true;
                 case "Find":
                     $scope.selectedTab = $scope.tabPages[1];
@@ -518,7 +516,7 @@ function DocumentationController($scope, $http, $interval, $filter, $rootScope, 
                             set DoPagination to true
                       if scroll, initialize shipmentDataDefinition DataList by pushing each value of filterDefinition DataList*/
                     //Required
-                    $scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
+                    //$scope.shipmentFilteringDefinition.DataList = $rootScope.formatShipment($scope.shipmentFilteringDefinition.DataList);
                     if ($scope.shipmentDataDefinition.EnableScroll == true) {
                         for (var j = 0; j < $scope.shipmentFilteringDefinition.DataList.length; j++)
                             $scope.shipmentDataDefinition.DataList.push($scope.shipmentFilteringDefinition.DataList[j]);
