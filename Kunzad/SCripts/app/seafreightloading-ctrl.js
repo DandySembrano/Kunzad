@@ -69,13 +69,6 @@
         });
     };
 
-    //$scope.initCheckInTypeList = function () {
-    //    $http.get("/api/CheckInTypes")
-    //    .success(function (data, status) {
-    //        $scope.checkInTypeList = data;
-    //    })
-    //};
-
     $scope.initPaymentModeList = function () {
         $scope.paymentModeList = $rootScope.getPaymentModeList();
     };
@@ -94,12 +87,6 @@
             }
         });
     };
-    //$scope.initServiceList = function () {
-    //    $http.get("/api/Services")
-    //    .success(function (data, status) {
-    //        $scope.serviceList = data;
-    //    })
-    //};
 
     //Initialize Shipment Type List for DropDown
 
@@ -117,13 +104,7 @@
         });
     };
 
-    //$scope.initShipmentTypeList = function () {
-    //    $http.get("/api/ShipmentTypes")
-    //    .success(function (data, status) {
-    //        $scope.shipmentTypeList = [];
-    //        $scope.shipmentTypeList = data;
-    //    })
-    //};
+ 
     $scope.initShipmentTypeList = function () {
         restAPIWDToken.data("/api/ShipmentTypes", function (data) {
             if (data != undefined) {
@@ -142,7 +123,6 @@
    
     $scope.fetchShipment = function () {
         var spinner = new Spinner(opts).spin(spinnerTarget);
-        $http.get('/api/SeaFreightShipments?blno=' + $scope.checkInItem.BLNo)
         restAPIWDToken.data('/api/SeaFreightShipments?blno=' + $scope.checkInItem.BLNo, function (data) {
             if (data != undefined) {
                 if (data.status == "FAILURE") {
