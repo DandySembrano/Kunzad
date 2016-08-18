@@ -11,7 +11,7 @@
                 callback(returnValue);
             })
             .error(function (response, status) {
-                returnValue = { status: "FAILURE", value: data };
+                returnValue = { status: "FAILURE", value: status };
                 callback(returnValue);
             })
         });
