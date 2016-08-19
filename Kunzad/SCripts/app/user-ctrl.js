@@ -5,6 +5,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
     });
     $scope.modelName = "Booking";
     $scope.modelhref = "#/users";
+    $scope.sessionExpired = false;
 
     var watchChanges = $interval(function () {
         $scope.clientWidth = document.getElementsByClassName("navbar-branding dark")[0].clientWidth;
@@ -38,7 +39,7 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
         
         $scope.userStatus = [{ Id: 1, Name: "Active" }, { Id: 0, Name: "Inactive" }];
 
-        $scope.loggedUser = $scope.myInformation;
+        $scope.loggedUser = $scope.myInformation[0];
 
         $scope.user = {
             Id: null,
@@ -1134,7 +1135,25 @@ function UsersController($scope, $localForage, $http, $compile, $rootScope, $int
     };
     $scope.init();
 
+    //$scope.$on('$destroy', function () {
+    //    $interval.cancel(watchChanges);
+    //    watchChanges = undefined;
+    //});
+
+    var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+        if (newVal == true) {
+            alert("Session Expired, please relogin");
+            $scope.onLogoutRequest();
+        }
+    });
+
+    var deregisterWatchers = function () {
+        //scannerWatcher();
+        sessionWatcher();
+    }
+
     $scope.$on('$destroy', function () {
+        deregisterWatchers();
         $interval.cancel(watchChanges);
         watchChanges = undefined;
     });

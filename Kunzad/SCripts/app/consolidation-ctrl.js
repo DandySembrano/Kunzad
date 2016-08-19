@@ -4,7 +4,7 @@
 // Author: John Crismund Elumbaring
 //---------------------------------------------------------------------------------//
 kunzadApp.controller("ConsolidationController", ConsolidationController);
-function ConsolidationController($scope, $http, $interval, $filter, $rootScope, $compile, $location, $localForage) {
+function ConsolidationController($scope, $http, $interval, $filter, $rootScope, $compile, $location,restAPIWDToken, $localForage) {
     $scope.currentUrl = $location.path();
 
     if ($scope.currentUrl == '/consolidation/vanstuff') {
@@ -39,6 +39,7 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
     $scope.controlNoHolder = 0;
     $scope.modalType = null;
     var pageSize = 20;
+    $scope.sessionExpired = false;
 
         $scope.showModal = function (panel, type) {
             switch (type) {
@@ -1582,10 +1583,10 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
 
         // Initialization routines
         var init = function () {
-            $localForage.getItem("Token").then(function (value) {
-                $http.defaults.headers.common['Token'] = value;
-                $scope.initShipmentTypeList();
-            });
+            //$localForage.getItem("Token").then(function (value) {
+            //    $http.defaults.headers.common['Token'] = value;
+            //    $scope.initShipmentTypeList();
+            //});
             // Call function to load data during content load
             $scope.focusOnTop();
             $scope.loadconsolidationDataGrid();
@@ -1610,4 +1611,21 @@ function ConsolidationController($scope, $http, $interval, $filter, $rootScope, 
                 $scope.modalStyle = "height:450px; max-height:100%";
             }
         }, 100);
+        
+        var sessionWatcher = $scope.$watch(function () { return $scope.sessionExpired; }, function (newVal, oldVal) {
+            if (newVal == true) {
+                alert("Session Expired, please relogin");
+                $scope.onLogoutRequest();
+            }
+        });
+
+        var deregisterWatchers = function () {
+            //scannerWatcher();
+            sessionWatcher();
+        }
+
+        $scope.$on('$destroy', function () {
+            deregisterWatchers();
+        });
+
     };
