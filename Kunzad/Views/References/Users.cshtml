@@ -1,0 +1,282 @@
+﻿@using Kunzad.Models; 
+<section id="content" class="animated fadeIn">
+    <div class="alert alert-danger alert-sm" ng-show="userIsError">
+        <i class="fa fa-remove pr10" ng-click="userIsError=false;userErrorMessage=''"></i>
+        <strong>ERROR!</strong>{{" " + userErrorMessage}}
+    </div>
+    <!--User Information-->
+    <div class="row" context-menu="" data-target="UserFormMenu">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border">User Information</legend>
+            <form class="form-horizontal" role="form">
+                <!--col1-->
+                <div class="col-lg-6">
+                    @*Login Name*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Login Name</label>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control text-uppercase"
+                                   ng-model="user.LoginName"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                    @*Password*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Password</label>
+                        <div class="col-md-4">
+                            <input type="{{loggedUser.UserTypeId != 1 ? 'password' : 'text'}}"
+                                   class="form-control"
+                                   placeholder="System Generated"
+                                   ng-model="user.Password"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                    @*First Name*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">First Name</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control text-uppercase"
+                                   placeholder=""
+                                   ng-model="user.FirstName"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                    @*Middle Name*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Middle Name</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control text-uppercase"
+                                   placeholder=""
+                                   ng-model="user.MiddleName"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                    @*Last Name*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Last Name</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control text-uppercase"
+                                   placeholder=""
+                                   ng-model="user.LastName"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                    @*Email*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Email</label>
+                        <div class="col-md-8">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="user.Email"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                    @*User Type*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">User Type</label>
+                        <div class="col-md-4">
+                            <select class="form-control"
+                                    placeholder=""
+                                    ng-disabled="viewOnly"
+                                    ng-model="user.UserTypeId"
+                                    ng-click="setUserType(user.UserTypeId)"
+                                    ng-options="item.Id as item.Name for item in userTypeList"></select>
+                        </div>
+                    </div>
+                    @*Business Units*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Business Unit</label>
+                        <div class="col-md-4">
+                            <div class="input-group date">
+                                <input id="BusinessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="user.BusinessUnitName"
+                                       ng-disabled="viewOnly">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Business Unit" ng-click="showBusinessUnit()">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*User Type*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Status</label>
+                        <div class="col-md-4">
+                            <select class="form-control"
+                                    placeholder=""
+                                    ng-disabled="viewOnly"
+                                    ng-model="user.Status"
+                                    ng-options="item.Id as item.Name for item in userStatus"></select>
+                        </div>
+                    </div>
+                </div>
+                <!--col2-->
+                <div class="col-lg-6">
+                    <div class="user-image">
+                        <img ng-src="~/EmployeeImages/{{ user.ImageName }}" width="200" height="200"/>
+                    </div>
+                    <span><strong>Select Picture :</strong></span>
+                    <input id="employeeImage" name="employeeImage" type="file" @*multiple="multiple"*@ ng-disabled="!saveImage"/>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+    <!--User Menu and Access-->
+    <div class="row" context-menu="" data-target="menuForm">
+        <fieldset id="fieldset" class="scheduler-border">
+            <legend class="scheduler-border noselect">Menu Access</legend>
+            <div class="menu-container" ng-mousemove="onMouseMove()">
+                <div id="draggable" class="noselect" ng-mousemove="onMouseMove()"></div>
+                <div id="dragarea" class="my-menus" ng-mouseover="onMouseOver(false)" ng-mouseup="onMouseUp(false)">
+                    <div class="text-uppercase noselect" style="text-decoration: underline; color:black;">
+                        <strong>{{ (myInformation[0].FirstName != null ?  myInformation[0].FirstName : "") + " " + (myInformation[0].MiddleName != null ? myInformation[0].MiddleName : "") + " " + (myInformation[0].LastName != null ? myInformation[0].LastName : "")}}</strong>
+                    </div>
+                    @{
+                        AppMenuModel appMenu = new AppMenuModel();
+
+                        foreach (MenuGroup m in appMenu.MenuGroups)
+                        {
+                            var labelMenuName = '"' + @m.Name + '"';
+                            <div id="@m.Id" class="menu-label noselect" ng-show="showGroupMenu(@m.Id)" ng-mousedown="onMouseDown(@m.Id, @labelMenuName, false)">@m.Name</div>
+                            foreach (MenuGroupItem gItem in m.MenuGroupItems)
+                            {
+                                var parentMenuName = '"' + @gItem.Name + '"';
+                                var caretId = '"' + "caret-" + @gItem.Name + '"';
+                                <div class="parent-menu">
+                                    <div id="@gItem.Id" class="parent-menu-label noselect" ng-mousedown="onMouseDown(@gItem.Id, @parentMenuName, false)" ng-show="hasChild(@gItem.Id)">@gItem.Name</div>
+                                    <div id="@caretId"
+                                         class="parent-menu-caret-close"
+                                         ng-click="caretClicked(@caretId, @gItem.Id)"
+                                         ng-show="hasChild(@gItem.Id)"
+                                         ng-mouseover="onMouseOver(@gItem.Id)"
+                                         ng-mouseleave="onMouseLeave(@gItem.Id)"></div>
+                                </div>
+                                foreach (MenuItem item in gItem.MenuItems)
+                                {
+                                    var childMenuName = '"' + @item.Name + '"';
+                                    <div id="@item.Id" class="child-menu-label noselect" ng-mousedown="onMouseDown(@item.Id, @childMenuName, false)" ng-show="hasMenu(@item.Id) && showMe(@item.ParentId)">@item.Name</div>
+                                }
+                            }
+                        }
+                    }
+                </div>
+                <div id="droppable" class="user-menus noselect">
+                    <div id="droparea" class="droparea noselect" ng-mouseup="onMouseUp(true)"></div>
+                    <div class="text-uppercase noselect" style="text-decoration: underline;color:black;">
+                        <strong>{{ (user.FirstName != null ?  user.FirstName : "") + " " + (user.MiddleName != null ? user.MiddleName : "") + " " + (user.LastName != null ? user.LastName : "")}}</strong>
+                    </div>
+                    @{
+                        AppMenuModel appMenu1 = new AppMenuModel();
+
+                        foreach (MenuGroup m in appMenu.MenuGroups)
+                        {
+                            var labelMenuName = '"' + @m.Name + '"';
+                            <div id="@m.Id" class="menu-label noselect" ng-show="showGroupMenu1(@m.Id)" ng-mousedown="onMouseDown(@m.Id, @labelMenuName, true)">@m.Name</div>
+                            foreach (MenuGroupItem gItem in m.MenuGroupItems)
+                            {
+                                var parentMenuName = '"' + @gItem.Name + '"';
+                                var caretId = '"' + "caret-child" + @gItem.Name + '"';
+                                <div class="parent-menu">
+                                    <div id="@gItem.Id" class="parent-menu-label noselect" ng-mousedown="onMouseDown(@gItem.Id, @parentMenuName, true)" ng-show="hasChild1(@gItem.Id)">@gItem.Name</div>
+                                    <div id="@caretId" class="parent-menu-caret-close" ng-click="caretClicked1(@caretId, @gItem.Id)" ng-show="hasChild1(@gItem.Id)"></div>
+                                </div>
+
+                                foreach (MenuItem item in gItem.MenuItems)
+                                {
+                                    var childMenuName = '"' + @item.Name + '"';
+                                    var caretId1 = '"' + @gItem.Name + item.Name + '"';
+                                    <div>
+                                        <div id="@item.Id" class="this-child-menu-label noselect" ng-mousedown="onMouseDown(@item.Id, @childMenuName, true)" ng-show="hasMenu1(@item.Id) && showMe1(@item.ParentId)">@item.Name</div>
+                                        <div id="@caretId1" class="menu-access-caret-close" ng-click="caretClicked2(@caretId1, @item.Id)" ng-show="hasMenu1(@item.Id) && showMe1(@item.ParentId)"></div>
+                                        <div ng-repeat="b in thisGetAccess(@item.Id) | orderBy : ['Sort', 'Id']"
+                                             class=" menu-access-label checkbox"
+                                             ng-show="hasMenu1(@item.Id) && showMe1(@item.ParentId) && showMe3(@item.Id)">
+                                            <label>
+                                                <input type="checkbox"
+                                                       ng-model="b.HasAccess"
+                                                       ng-disabled="viewOnly"
+                                                       ng-true-value="'Y'"
+                                                       ng-false-value="'N'">{{ b.Access }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</section>
+<div class="dropdown position-fixed" id="menuForm">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="userOtheractions('All Access')">Check All Default Modular Access</a>
+        </li>
+    </ul>
+</div>
+<div class="dropdown position-fixed" id="UserFormMenu">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="userOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="userOtheractions('Create')">Create</a>
+        </li>
+        <li>
+            <a style="{{viewOnly == false ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="userOtheractions(viewOnly == false ? 'Save': '')">Save</a>
+        </li>
+        <li>
+            <a style="{{user.Id != null && viewOnly == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="userOtheractions(user.Id != null && viewOnly == true ? 'Edit': '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{saveImage == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="userOtheractions(saveImage == true ? 'Upload': '')">Upload Image</a>
+        </li>
+    </ul>
+</div>
+<!-- Business Unit List Modal -->
+<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Business Unit List Modal -->
+<!-- Business Unit List Modal -->
+<div id="user-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>User List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="userFilterContainter" style="padding-left:10px;"></div>
+            <div id="userContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Business Unit List Modal -->

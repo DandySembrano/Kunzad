@@ -1,0 +1,296 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout3.cshtml";
+}
+
+<!-- Truckers List/DataTable -->
+@section tableContent{
+    <div class="row">
+        <div class="col-lg-12">
+            <div ui-grid="truckerGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+        </div>
+    </div>
+}
+
+<!-- Trucker Form -->
+@section tab1Content{
+    <div class="row" ng-show="selectedTab === tabPages[0]">
+        <div class="alert alert-danger alert-sm" ng-show="isError">
+            <i class="fa fa-remove pr10"></i>
+            <strong>ERROR!</strong>    {{errorMessage}}
+        </div>
+        <div class="col-lg-6">
+            <form class="form-horizontal"
+                  role="form">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Name</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckerGridOptions.dataItem.Name"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}"
+                               ng-change="initializeHeaderName()">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">TIN</label>
+                    <div class="col-md-4">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckerGridOptions.dataItem.TIN"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,50}"
+                               ng-change="formatTIN()"
+                               maxlength="11">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Street Address</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Street address line 1"
+                               ng-model="truckerGridOptions.dataItem.Line1"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small"></label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Street address line 2"
+                               ng-model="truckerGridOptions.dataItem.Line2"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">City/Municipality</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control"
+                               placeholder=""
+                               ng-disabled="viewOnly"
+                               ng-model="truckerGridOptions.dataItem.CityMunicipality.Name"
+                               typeahead-editable="false"
+                               typeahead-on-select="onSelectCity($item, $model, $label)"
+                               typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
+                               typeahead-template-url="customTemplate.html">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Province/State</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckerGridOptions.dataItem.CityMunicipality.StateProvince.Name"
+                               ng-disabled="true">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Postal Code</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="truckerGridOptions.dataItem.PostalCode"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,20}">
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Country</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               placeholder=""
+                               ng-model="country.Name"
+                               ng-disabled="true">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+}
+
+<!-- Truck Form-->
+@section tab2Content{
+    <div class="row" ng-show="selectedTab === tabPages[1]">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="padding-right-30">
+                    <button class="btn btn-sm pull-right"
+                            ng-click="openTruckForm('Create')">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div><br />
+            <div ui-grid="truckGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+         
+            <!--Pagination Buttons-->
+            <div class="myTableContainter" ng-show="paginatedTrucks.length > 0">
+                <div class="myTableContent">
+                    <div class="myTableRow-no-border text-right">
+                        <div class="btn-group btn-group-sm">
+                            <div class="myTableCell-no-padding text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage - 1), '')"
+                                        ng-disabled="!previousPageTrucks">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding text-right small">
+                                <button class="btn btn-default btn-sm"
+                                        type="button"
+                                        ng-disabled="true">
+                                    {{ truckCurrentPage }}
+                                </button>
+                            </div>
+                            <div class="myTableCell-no-padding text-right small">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        ng-click="processTruckPagination(truckCurrentPage = (truckCurrentPage + 1), '')"
+                                        ng-disabled="!nextPageTrucks">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Truck Context Menu Content -->
+@RenderPage("~/Views/Shared/_ContextMenuTruck.cshtml")
+
+<!-- This is the template use for City/Municpality Typeahead -->
+<script type="text/ng-template" id="customTemplate.html">
+    <a>
+        <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+        <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
+    </a>
+</script>
+
+<!-- Modal for truck -->
+<div id="modal-panel-truck" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <!-- begin: .panel -->
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>{{TruckAction}} Truck</span>
+        </div>
+        <!-- end .panel-heading section -->
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorTruck">
+                <i class="fa fa-remove pr10"></i>
+                <strong>ERROR!</strong>    {{errorMessageTruck}}
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <form class="form-horizontal"
+                          role="form">
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Plate No</label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control"
+                                       ng-model="Truck.PlateNo"
+                                       ng-disabled="viewOnly"
+                                       pattern=".{0,50}"
+                                       style="text-transform:uppercase">
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Truck Type</label>
+                            <div class="col-md-8">
+                                <select class="form-control"
+                                        placeholder=""
+                                        ng-disabled="viewOnly"
+                                        ng-change="selectTruckType(Truck.TruckTypeId)"
+                                        ng-model="Truck.TruckTypeId"
+                                        ng-options="item.Id as item.Type for item in truckTypes"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Capacity In</label>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Weight</label>
+                            <div class="col-md-3">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-disabled="viewOnly"
+                                       ng-model="Truck.TruckType.WeightCapacity">
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label class="col-md-3 control-label small">Volume</label>
+                            <div class="col-md-3">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-disabled="viewOnly"
+                                       ng-model="Truck.TruckType.VolumeCapacity">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="saveTruck(TruckAction)">
+                {{TruckAction === 'Delete' ? 'Delete' : TruckAction === 'Create' ? 'Create' : TruckAction === 'Edit' ? 'Edit' : 'Close'}}
+            </button>
+        </div>
+    </div>
+    <!-- end: .panel -->
+</div>
+<!-- end: .admin-form -->
+
+<!--Deletion Confirmation modal-->
+<div id="modal-panel-confirmation" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Delete Trucker {{truckerGridOptions.dataItem.Name}}</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-12 control-label text-dark">Are you sure you want to delete this record together with its ({{truckGridOptions.data.length}}) trucks?</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit" ng-click="apiDelete(truckerGridOptions.dataItem.Id); closeModalForm()">Delete</button>
+            <button class="btn" type="submit" ng-click="closeModalForm()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--end of modal-->

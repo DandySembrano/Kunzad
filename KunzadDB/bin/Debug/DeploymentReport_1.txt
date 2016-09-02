@@ -1,0 +1,48 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       [dbo].[Shipment]
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Drop
+       on [dbo].[Shipment].[Quantity] (Default Constraint)
+       on [dbo].[Shipment].[TotalCBM] (Default Constraint)
+       on [dbo].[Shipment].[IsRevenue] (Default Constraint)
+       on [dbo].[Shipment].[Revenue] (Default Constraint)
+       on [dbo].[Shipment].[IsTaxInclusive] (Default Constraint)
+       on [dbo].[Shipment].[TaxAmount] (Default Constraint)
+       on [dbo].[Shipment].[TaxPercentage] (Default Constraint)
+       on [dbo].[Shipment].[ParentShipmentId] (Default Constraint)
+       on [dbo].[Shipment].[IsConsolidation] (Default Constraint)
+       on [dbo].[Shipment].[IsMultipleDelivery] (Default Constraint)
+     Table rebuild
+       [dbo].[Shipment] (Table)
+
+** Supporting actions
+     Drop
+       [dbo].[FK_CourierTransactionDetails_Shipment] (Foreign Key)
+       [dbo].[FK_SeaFreightShipment_Shipment] (Foreign Key)
+       [dbo].[FK_Shipment_BusinessUnit] (Foreign Key)
+       [dbo].[FK_Shipment_Service] (Foreign Key)
+       [dbo].[FK_Shipment_ShipmentType] (Foreign Key)
+       [dbo].[FK_Shipment_Customer] (Foreign Key)
+       [dbo].[FK_ShipmentCharges_Shipment] (Foreign Key)
+       [dbo].[FK_ShipmentDimension_Shipment] (Foreign Key)
+       [dbo].[FK_AirFreightShipment_Shipment] (Foreign Key)
+       [dbo].[FK_TruckingDelivery_Shipment] (Foreign Key)
+     Create
+       [dbo].[FK_CourierTransactionDetails_Shipment] (Foreign Key)
+       [dbo].[FK_SeaFreightShipment_Shipment] (Foreign Key)
+       [dbo].[FK_Shipment_BusinessUnit] (Foreign Key)
+       [dbo].[FK_Shipment_Service] (Foreign Key)
+       [dbo].[FK_Shipment_ShipmentType] (Foreign Key)
+       [dbo].[FK_Shipment_Customer] (Foreign Key)
+       [dbo].[FK_ShipmentCharges_Shipment] (Foreign Key)
+       [dbo].[FK_ShipmentDimension_Shipment] (Foreign Key)
+       [dbo].[FK_AirFreightShipment_Shipment] (Foreign Key)
+       [dbo].[FK_TruckingDelivery_Shipment] (Foreign Key)

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kunzad", "Kunzad\Kunzad.csproj", "{FB485BAD-53F8-4540-97BB-CA99F9AD28BB}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "KunzadDb", "KunzadDb\KunzadDb.sqlproj", "{D9C7EFFA-EA2F-461A-8D62-B25225B6BBAD}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "KunzadDb", "KunzadDB\KunzadDb.sqlproj", "{D9C7EFFA-EA2F-461A-8D62-B25225B6BBAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

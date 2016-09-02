@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <title>Kunzad - Transport Management System</title>
+    <meta name="description" content="Kunzad - Transport Management System">
+    <meta name="author" content="Dandy Sembrano">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Font CSS (Via CDN)
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800'>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,300">  -->
+    <!-- Font CSS (Via local) -->
+    <link rel="stylesheet" type="text/css" href="~/Content/fonts.css" />
+
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/datatables/media/css/dataTables.bootstrap.css">
+
+    <!-- Datatables Editor CSS -->
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/datatables/extensions/Editor/css/dataTables.editor.css">
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/magnific/magnific-popup.css">
+
+    <!-- Required Plugin CSS
+    <link rel="stylesheet" type="text/css" href="~/assets/js/utility/highlight/styles/googlecode.css"> -->
+    <!-- Required Plugin CSS -->
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/daterange/daterangepicker.css">
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/colorpicker/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" type="text/css" href="~/vendor/plugins/tagmanager/tagmanager.css">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="~/assets/skin/default_skin/css/theme.css">
+
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="~/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Admin Modals CSS -->
+    <link rel="stylesheet" type="text/css" href="~/assets/admin-tools/admin-plugins/admin-modal/adminmodal.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+    <!-- ui-grId css-->
+    <link href="~/vendor/plugins/uigrid/css/ui-grid.css" rel="stylesheet" />
+
+    <!-- Site CSS / Overrides -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css" />
+
+    <!-- Customize Table -->
+    <link rel="stylesheet" type="text/css" href="~/Content/customize-table.css" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body ng-app="kunzadApp">
+
+    <!-- Start: Main -->
+    <div id="main" class="container-fluid">
+
+        <!-- Start: Content-Wrapper -->
+        <section id="content_wrapper">
+            @* @@RenderPage("_TopBar.cshtml") *@
+            @RenderBody()
+        </section>
+        <!-- End: Content-Wrapper -->
+
+    </div>
+    <div id="spinnerTarget"></div>
+    <!-- End: Main -->
+    <!-- BEGIN: PAGE SCRIPTS -->
+    <!-- jQuery -->
+    <script type="text/javascript" src="~/vendor/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="~/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
+    
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="~/assets/js/bootstrap/bootstrap.min.js"></script>
+
+    <!-- Admin UI-->
+    <script src="~/assets/js/utility/utility.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/demo.js"></script>
+    <script src="~/vendor/plugins/moment/moment.js"></script>
+    <script src="~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendor/plugins/priceFormat/price_format.js"></script>
+
+    <!-- Angular-->
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/localforage.min.js"></script>
+    <script src="~/Scripts/angular-localForage.js"></script>
+    <!--Controller-->
+    <script type="text/javascript" src="~/Scripts/app/shipmentdetails-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/filter/filter.js"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+
+            "use strict";
+
+            // Init Theme Core
+            Core.init();
+
+            // Init Theme Core
+            Demo.init();
+        });
+    </script>
+    <!-- END: PAGE SCRIPTS -->
+
+</body>
+
+</html>

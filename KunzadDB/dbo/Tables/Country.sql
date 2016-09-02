@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Country]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Code] VARCHAR(10) NOT NULL, 
     [Name] VARCHAR(150) NOT NULL,
 	[CreatedDate] DATETIME NULL, 

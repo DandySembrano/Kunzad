@@ -1,163 +1,122 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
 
 namespace Kunzad.Models
 {
     public class AppMenuModel
     {
+        public int UserId = 0;
         public List<MenuGroup> MenuGroups = new List<MenuGroup>();
+        public KunzadDbEntities db = new KunzadDbEntities();
 
         public AppMenuModel()
         {
             MenuGroup menuGroup;
-            MenuGroupItem m;
+            MenuGroupItem menuGroupItem;
+            var getMenuGroups = db.Menus.Where(menu => menu.ParentId == null).OrderBy(menu => menu.Sequence);
+            foreach (Menu mg in getMenuGroups)
+            {
+                menuGroup = new MenuGroup();
+                menuGroup.Id = mg.Id;
+                menuGroup.Name = mg.Name;
+                menuGroup.Sequence = mg.Sequence;
+                menuGroup.ParentId = mg.ParentId;
+                menuGroup.Description = mg.Description;
+                menuGroup.Link = mg.Link == null ? "#" : mg.Link;
+                menuGroup.Icon = mg.IconClass;
+                menuGroup.IsParent = mg.IsParent;
+                menuGroup.Status = mg.Status;
 
-            // Transport Menu Group ////////////////////////////////////////////////////////////////////////
-            menuGroup = new MenuGroup();
-            menuGroup.Name = "TMS";
-            menuGroup.MenuGroupItems = new List<MenuGroupItem>();
+                var getMenuGroupItems = db.Menus.Where(menu => menu.ParentId == mg.Id).OrderBy(menu => menu.Sequence);
+                menuGroup.MenuGroupItems = new List<MenuGroupItem>();
 
-            // Shipment
-            m = new MenuGroupItem();
-            m.Name = "Shipment";
-            m.Icon = "glyphicons glyphicons-cargo";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Create New", "glyphicons glyphicons-circle_plus", "#"));
-            m.MenuItems.Add(new MenuItem("Outbound", "glyphicons glyphicons-inbox_out", "#"));
-            m.MenuItems.Add(new MenuItem("Inbound", "glyphicons glyphicons-inbox_in", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            // Transport
-            m = new MenuGroupItem();
-            m.Name = "Transport";
-            m.Icon = "glyphicons glyphicons-move";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Trucking", "glyphicons glyphicons-truck", "#"));
-            m.MenuItems.Add(new MenuItem("Sea Freight", "glyphicons glyphicons-boat", "#"));
-            m.MenuItems.Add(new MenuItem("Air Freight", "glyphicons glyphicons-airplane", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            // Consolidate
-            m = new MenuGroupItem();
-            m.Name = "Consolidate";
-            m.Icon = "glyphicons glyphicons-globe";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Batching", "fa fa-th", "#"));
-            m.MenuItems.Add(new MenuItem("Van Stuffing", "fa fa-th", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            MenuGroups.Add(menuGroup);
-
-
-            // References Menu Group ////////////////////////////////////////////////////////////////////////
-            menuGroup = new MenuGroup();
-            menuGroup.Name = "References";
-            menuGroup.MenuGroupItems = new List<MenuGroupItem>();
-
-            // Customer
-            m = new MenuGroupItem();
-            m.Name = "Customer";
-            m.Icon = "glyphicons fa fa-male";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Customer", "glyphicons glyphicons-file", "#/customers"));
-            m.MenuItems.Add(new MenuItem("Customer Group", "glyphicons glyphicons-file", "#/customergroups"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            // Network
-            m = new MenuGroupItem();
-            m.Name = "Network";
-            m.Icon = "glyphicons glyphicons-global";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Business Unit", "fa fa-sitemap", "#"));
-            m.MenuItems.Add(new MenuItem("Delivery Area", "fa fa-location-arrow", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            // Partners
-            m = new MenuGroupItem();
-            m.Name = "Partners";
-            m.Icon = "glyphicons glyphicons-group";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Trucker", "glyphicons glyphicons-truck", "#"));
-            m.MenuItems.Add(new MenuItem("Shipping Lines", "glyphicons glyphicons-boat", "#"));
-            m.MenuItems.Add(new MenuItem("Airlines", "glyphicons glyphicons-airplane", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            MenuGroups.Add(menuGroup);
-
-            // Admin Menu Group ////////////////////////////////////////////////////////////////////////
-            menuGroup = new MenuGroup();
-            menuGroup.Name = "Admin";
-            menuGroup.MenuGroupItems = new List<MenuGroupItem>();
-
-            // Configure
-            m = new MenuGroupItem();
-            m.Name = "Configure";
-            m.Icon = "glyphicons glyphicons-settings";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Business Unit Type", "glyphicons glyphicons-file", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            // Security
-            m = new MenuGroupItem();
-            m.Name = "Security";
-            m.Icon = "glyphicons glyphicons-security_camera";
-            m.IsSubMenu = true;
-            m.Link = "#";
-            m.MenuItems = new List<MenuItem>();
-            m.MenuItems.Add(new MenuItem("Users", "glyphicons glyphicons-user", "#"));
-            m.MenuItems.Add(new MenuItem("Roles", "glyphicons glyphicons-file", "#"));
-            menuGroup.MenuGroupItems.Add(m);
-
-            MenuGroups.Add(menuGroup);
-
+                foreach (Menu mgi in getMenuGroupItems) {
+                    menuGroupItem = new MenuGroupItem();
+                    menuGroupItem.Id = mgi.Id;
+                    menuGroupItem.Name = mgi.Name;
+                    menuGroupItem.Sequence = mgi.Sequence;
+                    menuGroupItem.ParentId = mgi.ParentId;
+                    menuGroupItem.Description = mgi.Description;
+                    menuGroupItem.Link = mgi.Link == null ? "#" : mgi.Link;
+                    menuGroupItem.Icon = mgi.IconClass;
+                    menuGroupItem.IsParent = mgi.IsParent;
+                    menuGroupItem.Status = mgi.Status;
+                    menuGroupItem.MenuItems = new List<MenuItem>();
+                    var getMenuItems = db.Menus.Where(menu => menu.ParentId == mgi.Id).OrderBy(menu => menu.Sequence);
+                    foreach (Menu mi in getMenuItems)
+                        menuGroupItem.MenuItems.Add(new MenuItem(mi.Id, mi.Sequence, mi.ParentId, mi.Name, mi.Description, mi.Link, mi.IconClass, mi.IsParent, mi.Status));
+                    menuGroup.MenuGroupItems.Add(menuGroupItem);
+                }
+                MenuGroups.Add(menuGroup);
+            }
+        }
+        public void setUserId(int userId)
+        {
+            this.UserId = userId;
         }
 
+        public int getUserId()
+        {
+            return this.UserId;
+        }
     }
 
     public class MenuGroup
     {
+        public int Id { get; set; }
+        public Nullable<int> Sequence { get; set; }
+        public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public string Link { get; set; }
+        public string Icon { get; set; }
+        public string IsParent { get; set; }
+        public Nullable<int> Status { get; set; }
         public List<MenuGroupItem> MenuGroupItems { get; set; }
     }
 
     public class MenuGroupItem
     {
+        public int Id { get; set; }
+        public Nullable<int> Sequence { get; set; }
+        public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
-        public string Icon { get; set; }
+        public string Description { get; set; }
         public string Link { get; set; }
-        public bool IsSubMenu { get; set; }
+        public string Icon { get; set; }
+        public string IsParent { get; set; }
+        public Nullable<int> Status { get; set; }
         public List<MenuItem> MenuItems { get; set; }
     }
 
     public class MenuItem
     {
+        public int Id { get; set; }
+        public Nullable<int> Sequence { get; set; }
+        public Nullable<int> ParentId { get; set; }
         public string Name { get; set; }
-        public string Icon {get; set; }
-        public string Link {get; set; }
+        public string Description { get; set; }
+        public string Link { get; set; }
+        public string Icon { get; set; }
+        public string IsParent { get; set; }
+        public Nullable<int> Status { get; set; }
 
-        public MenuItem(string name, string icon, string link)
+        public MenuItem(int Id, int? Sequence, int? ParentId, string Name, string Description, string Link, string IconClass, string IsParent, int? Status)
         {
-            this.Name = name;
-            this.Icon = icon;
-            this.Link = link;
-            
+            this.Id = Id;
+            this.Name = Name;
+            this.Sequence = Sequence;
+            this.ParentId = ParentId;
+            this.Description = Description;
+            this.Link = Link == null ? "#" : Link;
+            this.Icon = IconClass;
+            this.IsParent = IsParent;
+            this.Status = Status;
         }
     }
+
 
 }

@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,35 +43,110 @@
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MessagingToolkit.QRCode, Version=1.0.3541.23206, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MessagingToolkit.QRCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Cors, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Cors.3.0.1\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.2.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.2.0.2\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.3\lib\net45\System.Web.Http.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.2\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebAPI.OutputCache, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\WebAPI.OutputCache.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
     </Reference>
@@ -96,18 +172,6 @@
     </Reference>
     <Reference Include="System.Web.Mvc">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.2\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.2\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.2\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +399,8 @@
     <Content Include="assets\js\utility\waypoints\jquery.waypoints.min.js" />
     <Content Include="assets\skin\default_skin\css\theme.css" />
     <Content Include="assets\skin\default_skin\css\updates.css" />
+    <Content Include="audio\notification.mp3" />
+    <Content Include="Content\customize-table.css" />
     <Content Include="Content\fonts.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
@@ -347,6 +413,7 @@
     <Content Include="Scripts\angular-csp.css" />
     <Content Include="Scripts\angular-loader.js" />
     <Content Include="Scripts\angular-loader.min.js" />
+    <Content Include="Scripts\angular-localForage.js" />
     <Content Include="Scripts\angular-messages.js" />
     <Content Include="Scripts\angular-messages.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
@@ -359,11 +426,55 @@
     <Content Include="Scripts\angular-scenario.js" />
     <Content Include="Scripts\angular-touch.js" />
     <Content Include="Scripts\angular-touch.min.js" />
+    <Content Include="Scripts\angular-ui-router.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\airfreight-ctrl.js" />
+    <Content Include="Scripts\app\airfreightarrival-ctrl.js" />
+    <Content Include="Scripts\app\airfreightloading-ctrl.js" />
+    <Content Include="Scripts\app\airline-ctrl.js" />
     <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\booking-ctrl.js" />
+    <Content Include="Scripts\app\businessunit-ctrl.js" />
+    <Content Include="Scripts\app\businessunittype-ctrl.js" />
+    <Content Include="Scripts\app\consolidation-ctrl.js" />
+    <Content Include="Scripts\app\deliveryexception-ctrl.js" />
+    <Content Include="Scripts\app\deliveryexceptionbatching-ctrl.js" />
+    <Content Include="Scripts\app\landingpage-ctrl.js" />
+    <Content Include="Scripts\app\pod-ctrl.js" />
+    <Content Include="Scripts\app\rates-ctrl.js" />
+    <Content Include="Scripts\app\seafreightarrival-ctrl.js" />
+    <Content Include="Scripts\app\contactnotype-ctrl.js" />
+    <Content Include="Scripts\app\country-ctrl.js" />
+    <Content Include="Scripts\app\courier-ctrl.js" />
+    <Content Include="Scripts\app\courierdelivery-ctrl.js" />
     <Content Include="Scripts\app\customer-ctrl.js" />
     <Content Include="Scripts\app\customergroup-ctrl.js" />
+    <Content Include="Scripts\app\documentation-ctrl.js" />
+    <Content Include="Scripts\app\driver-ctrl.js" />
+    <Content Include="Scripts\app\industry-ctrl.js" />
+    <Content Include="Scripts\app\seafreight-ctrl.js" />
+    <Content Include="Scripts\app\seafreightloading-ctrl.js" />
+    <Content Include="Scripts\app\serviceablearea-ctrl.js" />
+    <Content Include="Scripts\app\servicecategory-ctrl.js" />
+    <Content Include="Scripts\app\shipmentdetails-ctrl.js" />
+    <Content Include="Scripts\app\shipmenttype-ctrl.js" />
+    <Content Include="Scripts\app\shippinglines-ctrl.js" />
+    <Content Include="Scripts\app\trucker-ctrl.js" />
+    <Content Include="Scripts\app\trucking-ctrl.js" />
+    <Content Include="Scripts\app\truckingwb-ctrl.js" />
+    <Content Include="Scripts\app\trucktype-ctrl.js" />
+    <Content Include="Scripts\app\user-ctrl.js" />
+    <Content Include="Scripts\bootstrap-filestyle.js" />
+    <Content Include="Scripts\directive\addressModal.js" />
+    <Content Include="Scripts\directive\dataFiltering.js" />
+    <Content Include="Scripts\directive\dataGrid1.js" />
+    <Content Include="Scripts\directive\dataGrid2.js" />
+    <Content Include="Scripts\directive\dataGrid3.js" />
+    <Content Include="Scripts\directive\ngEnter.js" />
+    <Content Include="Scripts\directive\scrollableContainer.js" />
+    <Content Include="Scripts\directive\vesselVoyageModal.js" />
+    <Content Include="Scripts\filter\filter.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1107,7 +1218,34 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <EntityDeploy Include="Models\ModelKunzadDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\ModelKunzadDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <LastGenOutput>ModelKunzadDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.edmx.diagram">
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\ModelKunzadDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
+      <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
+    </Content>
+    <None Include="Properties\PublishProfiles\Kunzad.pubxml" />
+    <None Include="Properties\PublishProfiles\KunzadLocal.pubxml" />
+    <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.6.4.js" />
+    <Content Include="Scripts\jquery-1.6.4.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Scripts\localforage.min.js" />
     <Content Include="Scripts\ng-context-menu.js" />
+    <Content Include="Scripts\service\restAPI.js" />
+    <Content Include="Scripts\service\retrieveDataWDToken.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
     <Content Include="Scripts\ui-bootstrap-tpls-0.12.1.min.js" />
@@ -1936,6 +2074,7 @@
     <Content Include="vendor\plugins\datatables\media\js\dataTables.bootstrap.js" />
     <Content Include="vendor\plugins\datatables\media\js\jquery.dataTables.js" />
     <Content Include="vendor\plugins\datepicker\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="vendor\plugins\datepicker\js\bootstrap-datetimepicker.js" />
     <Content Include="vendor\plugins\datepicker\js\bootstrap-datetimepicker.min.js" />
     <Content Include="vendor\plugins\daterange\daterangepicker.css" />
     <Content Include="vendor\plugins\daterange\daterangepicker.js" />
@@ -2273,6 +2412,7 @@
     <Content Include="vendor\plugins\nestable\jquery.nestable.js" />
     <Content Include="vendor\plugins\nestable\nestable.css" />
     <Content Include="vendor\plugins\pnotify\pnotify.js" />
+    <Content Include="vendor\plugins\priceFormat\price_format.js" />
     <Content Include="vendor\plugins\raphael\raphael.js" />
     <Content Include="vendor\plugins\scrollto\demo\css\style.css" />
     <Content Include="vendor\plugins\scrollto\demo\css\style.old.css" />
@@ -2316,6 +2456,13 @@
     <Content Include="vendor\plugins\tagmanager\tagmanager.js" />
     <Content Include="vendor\plugins\tagsinput\tagsinput.css" />
     <Content Include="vendor\plugins\tagsinput\tagsinput.min.js" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.css" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.svg" />
+    <Content Include="vendor\plugins\uigrid\js\csv.js" />
+    <Content Include="vendor\plugins\uigrid\js\pdfmake.js" />
+    <Content Include="vendor\plugins\uigrid\js\ui-grid-stable.js" />
+    <Content Include="vendor\plugins\uigrid\js\ui-grid.js" />
+    <Content Include="vendor\plugins\uigrid\js\vfs_fonts.js" />
     <Content Include="vendor\plugins\validate\additional-methods.js" />
     <Content Include="vendor\plugins\validate\additional-methods.min.js" />
     <Content Include="vendor\plugins\validate\jquery.form.js" />
@@ -2326,20 +2473,76 @@
     <Content Include="vendor\plugins\zeroclipboard\ZeroClipboard.js" />
     <Content Include="vendor\plugins\zeroclipboard\ZeroClipboard.min.js" />
     <Content Include="vendor\plugins\zeroclipboard\ZeroClipboard.swf" />
+    <Content Include="Views\Shared\_Layout.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionFilters\AuthorizationRequiredAttribute.cs" />
+    <Compile Include="ApiControllers\AirFreightsController.cs" />
+    <Compile Include="ApiControllers\AirFreightShipmentsController.cs" />
+    <Compile Include="ApiControllers\AirLinesController.cs" />
+    <Compile Include="ApiControllers\AuthenticateController.cs" />
+    <Compile Include="ApiControllers\BusinessUnitsController.cs" />
+    <Compile Include="ApiControllers\BusinessUnitTypesController.cs" />
+    <Compile Include="ApiControllers\CheckInsController.cs" />
+    <Compile Include="ApiControllers\CheckInShipmentsController.cs" />
+    <Compile Include="ApiControllers\CheckInTypesController.cs" />
+    <Compile Include="ApiControllers\ConsolidationsController.cs" />
+    <Compile Include="ApiControllers\ContactNumberTypesController.cs" />
+    <Compile Include="ApiControllers\ContactPhonesController.cs" />
+    <Compile Include="ApiControllers\CountriesController.cs" />
+    <Compile Include="ApiControllers\CouriersController.cs" />
+    <Compile Include="ApiControllers\CourierTransactionDetailsController.cs" />
+    <Compile Include="ApiControllers\CourierTransactionsController.cs" />
+    <Compile Include="ApiControllers\CustomerAddressesController.cs" />
+    <Compile Include="ApiControllers\CustomerContactsController.cs" />
     <Compile Include="ApiControllers\CustomerGroupsController.cs" />
     <Compile Include="ApiControllers\CustomersController.cs" />
+    <Compile Include="ApiControllers\DeliveryExceptionsBatchingController.cs" />
+    <Compile Include="ApiControllers\DeliveryExceptionsController.cs" />
+    <Compile Include="ApiControllers\DeliveryExceptionTypesController.cs" />
+    <Compile Include="ApiControllers\DocumentationController.cs" />
+    <Compile Include="ApiControllers\DriversController.cs" />
+    <Compile Include="ApiControllers\FileUploadController.cs" />
     <Compile Include="ApiControllers\IndustriesController.cs" />
+    <Compile Include="ApiControllers\PODController.cs" />
+    <Compile Include="ApiControllers\SeaFreightsController.cs" />
+    <Compile Include="ApiControllers\SeaFreightShipmentsController.cs" />
+    <Compile Include="ApiControllers\ServiceableAreasController.cs" />
+    <Compile Include="ApiControllers\ServiceCategoriesController.cs" />
+    <Compile Include="ApiControllers\ServicesController.cs" />
+    <Compile Include="ApiControllers\ShipmentsController.cs" />
+    <Compile Include="ApiControllers\ShipmentTypesController.cs" />
+    <Compile Include="ApiControllers\ShippingLinesController.cs" />
+    <Compile Include="ApiControllers\StateProvincesController.cs" />
+    <Compile Include="ApiControllers\TruckersController.cs" />
+    <Compile Include="ApiControllers\TruckingDeliveriesController.cs" />
+    <Compile Include="ApiControllers\TruckingsController.cs" />
+    <Compile Include="ApiControllers\TruckingsWBController.cs" />
+    <Compile Include="ApiControllers\TrucksController.cs" />
+    <Compile Include="ApiControllers\TruckTypesController.cs" />
+    <Compile Include="ApiControllers\UserMenusController.cs" />
+    <Compile Include="ApiControllers\UsersController.cs" />
+    <Compile Include="ApiControllers\UserTypesController.cs" />
+    <Compile Include="ApiControllers\VesselsController.cs" />
+    <Compile Include="ApiControllers\VesselVoyagesController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ApiControllers\CityMunicipalitiesController.cs" />
+    <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\DirectivesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LandingPageController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ReferencesController.cs" />
+    <Compile Include="Filters\ApiAuthenticationFilter.cs" />
+    <Compile Include="Filters\BasicAuthenticationIdentity.cs" />
+    <Compile Include="Filters\GenericAuthenticationFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -2356,6 +2559,11 @@
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AppMenuModel.cs" />
+    <Compile Include="Models\AppSettingsGet.cs" />
+    <Compile Include="Models\AuditTrail.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AuditTrailFactory.cs" />
     <Compile Include="Models\BusinessUnit.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2368,7 +2576,19 @@
     <Compile Include="Models\Charge.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CheckIn.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CheckInShipment.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CheckInType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CityMunicipality.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Consolidation.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Contact.cs">
@@ -2404,10 +2624,22 @@
     <Compile Include="Models\CustomerGroup.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DeliveryException.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DeliveryExceptionType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Driver.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Industry.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Menu.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MenuAccess.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelKunzadDb.Context.cs">
@@ -2425,6 +2657,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\MyStreamProvider.cs" />
+    <Compile Include="Models\RatesDetail.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RatesMaster.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Response.cs" />
+    <Compile Include="Models\ScanningDetails.cs" />
+    <Compile Include="Models\ScanningHub.cs" />
     <Compile Include="Models\SeaFreight.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2458,9 +2700,15 @@
     <Compile Include="Models\ShippingLine.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Startup.cs" />
     <Compile Include="Models\StateProvince.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Token.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TokenGenerator.cs" />
+    <Compile Include="Models\TransportStatus.cs" />
     <Compile Include="Models\Truck.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2479,6 +2727,12 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserMenu.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserType.cs">
+      <DependentUpon>ModelKunzadDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Vessel.cs">
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
@@ -2486,6 +2740,10 @@
       <DependentUpon>ModelKunzadDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ITokenServices.cs" />
+    <Compile Include="Services\IUserServices.cs" />
+    <Compile Include="Services\TokenServices.cs" />
+    <Compile Include="Services\UserServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config">
@@ -2872,7 +3130,6 @@
     <Content Include="vendor\plugins\globalize\src\.dist-jshintrc" />
     <Content Include="vendor\plugins\globalize\src\.jshintrc" />
     <Content Include="vendor\plugins\jqueryflot\API.md" />
-    <Content Include="vendor\plugins\jqueryflot\build.log" />
     <Content Include="vendor\plugins\jqueryflot\CONTRIBUTING.md" />
     <Content Include="vendor\plugins\jqueryflot\FAQ.md" />
     <Content Include="vendor\plugins\jqueryflot\Makefile" />
@@ -2886,37 +3143,77 @@
     <Content Include="vendor\plugins\slick\fonts\slick.ttf" />
     <Content Include="vendor\plugins\slick\fonts\slick.woff" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_ThemePreview.cshtml" />
     <Content Include="Views\Shared\_SideBar.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Views\Shared\_TopBar.cshtml" />
     <Content Include="Views\Shared\_SideBarRight.cshtml" />
     <Content Include="Views\Shared\_SideBarMenu.cshtml" />
-    <EntityDeploy Include="Models\ModelKunzadDb.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ModelKunzadDb.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\ModelKunzadDb.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-      <LastGenOutput>ModelKunzadDb.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ModelKunzadDb.edmx.diagram">
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\ModelKunzadDb.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ModelKunzadDb.edmx</DependentUpon>
-      <LastGenOutput>ModelKunzadDb.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\References\CustomerGroups.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout1.cshtml" />
     <Content Include="Views\Home\Main.cshtml" />
-    <Content Include="Views\References\Customers.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout2.cshtml" />
     <Content Include="Views\Shared\_DataTableLayout3.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuCustomer.cshtml" />
+    <Content Include="Views\Shared\_DataTableCustomer.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTruck.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuVessel.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuVoyage.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuStateProvince.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuCityMunicipality.cshtml" />
+    <Content Include="Views\Directives\DataGrid1.cshtml" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.eot" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.ttf" />
+    <Content Include="vendor\plugins\uigrid\css\ui-grid.woff" />
+    <Content Include="Views\References\Booking.cshtml" />
+    <Content Include="Views\Shared\_TransactionLayout.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuShipmentDtl.cshtml" />
+    <Content Include="Views\Shared\_ContextMenuTransactional1.cshtml" />
+    <Content Include="Views\Directives\DataFiltering.cshtml" />
+    <Content Include="Views\Directives\DataGrid2.cshtml" />
+    <Content Include="Views\Directives\AddressModal.cshtml" />
+    <Content Include="Views\Directives\DataGrid3.cshtml" />
+    <Content Include="Views\References\AirFreight.cshtml" />
+    <Content Include="Views\References\AirFreightArrival.cshtml" />
+    <Content Include="Views\References\AirFreightLoading.cshtml" />
+    <Content Include="Views\References\Airlines.cshtml" />
+    <Content Include="Views\References\BusinessUnit.cshtml" />
+    <Content Include="Views\References\BusinessUnitType.cshtml" />
+    <Content Include="Views\References\Consolidation.cshtml" />
+    <Content Include="Views\References\ContactnoType.cshtml" />
+    <Content Include="Views\References\Country.cshtml" />
+    <Content Include="Views\References\Courier.cshtml" />
+    <Content Include="Views\References\CourierDelivery.cshtml" />
+    <Content Include="Views\References\CustomerGroups.cshtml" />
+    <Content Include="Views\References\Customers.cshtml" />
+    <Content Include="Views\References\DeliveryException.cshtml" />
+    <Content Include="Views\References\DeliveryExceptionBatching.cshtml" />
+    <Content Include="Views\References\Documentation.cshtml" />
+    <Content Include="Views\References\Driver.cshtml" />
+    <Content Include="Views\References\Industry.cshtml" />
+    <Content Include="Views\References\POD.cshtml" />
+    <Content Include="Views\References\SeaFreight.cshtml" />
+    <Content Include="Views\References\SeaFreightArrival.cshtml" />
+    <Content Include="Views\References\SeaFreightLoading.cshtml" />
+    <Content Include="Views\References\ServiceableArea.cshtml" />
+    <Content Include="Views\References\ServiceCategory.cshtml" />
+    <Content Include="Views\References\ShipmentType.cshtml" />
+    <Content Include="Views\References\ShippingLines.cshtml" />
+    <Content Include="Views\References\Truckers.cshtml" />
+    <Content Include="Views\References\Trucking.cshtml" />
+    <Content Include="Views\References\TruckingWB.cshtml" />
+    <Content Include="Views\References\TruckType.cshtml" />
+    <Content Include="Views\Directives\VesselVoyageModal.cshtml" />
     <Content Include="Views\Shared\_ContextMenu1.cshtml" />
+    <Content Include="Views\Shared\_DocumentationLayout.cshtml" />
+    <Content Include="Views\References\ShipmentDetails.cshtml" />
+    <Content Include="Views\Shared\_PopupLayout.cshtml" />
+    <Content Include="Views\Authentication\Denied.cshtml" />
+    <Content Include="Views\LandingPage\Index.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
+    <Content Include="Views\Main\Home.cshtml" />
+    <Content Include="Views\References\Rates.cshtml" />
+    <Content Include="Views\References\Users.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2926,10 +3223,41 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="EmployeeImages\" />
     <Folder Include="vendor\plugins\datatables\extensions\Editor\examples\simple\echo\" />
+    <Folder Include="vendor\plugins\uigrid\extras\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -14,6 +14,16 @@ namespace Kunzad.Controllers
             return View();
         }
 
+        public ActionResult Booking()
+        {
+            return View();
+        }
+
+        public ActionResult SeaFreight()
+        {
+            return View();
+        }
+
         public ActionResult Customers()
         {
             return View();
@@ -29,6 +39,132 @@ namespace Kunzad.Controllers
             return View();
         }
 
+        public ActionResult Truckers()
+        {
+            return View();
+        }
 
+        public ActionResult TruckType()
+        {
+            return View();
+        }
+        public ActionResult Courier()
+        {
+            return View();
+        }
+        public ActionResult Industry()
+        {
+            return View();
+        }
+        public ActionResult BusinessUnitType()
+        {
+            return View();
+        }
+        public ActionResult ShipmentType()
+        {
+            return View();
+        }
+        public ActionResult ServiceCategory()
+        {
+            return View();
+        }
+        public ActionResult ContactnoType()
+        {
+            return View();
+        }
+        public ActionResult Driver()
+        {
+            return View();
+        }
+        public ActionResult Country()
+        {
+            return View();
+        }
+        public ActionResult ShippingLines()
+        {
+            return View();
+        }
+        public ActionResult BusinessUnit()
+        {
+            return View();
+        }
+        public ActionResult ServiceableArea()
+        {
+            return View();
+        }
+        public ActionResult Trucking()
+        {
+            return View();
+        }
+        public ActionResult TruckingWB()
+        {
+            return View();
+        }
+        public ActionResult AirFreight()
+        {
+            return View();
+        }
+        public ActionResult CourierDelivery()
+        {
+            return View();
+        }
+
+        public ActionResult Consolidation()
+        {
+            return View();
+        }
+
+        public ActionResult Documentation()
+        {
+            return View();
+        }
+
+        public ActionResult SeaFreightLoading()
+        {
+            return View();
+        }
+
+        public ActionResult SeaFreightArrival()
+        {
+            return View();
+        }
+
+        public ActionResult AirFreightLoading()
+        {
+            return View();
+        }
+
+        public ActionResult AirFreightArrival()
+        {
+            return View();
+        }
+        
+        public ActionResult POD()
+        {
+            return View();
+        }
+
+        public ActionResult DeliveryException() {
+            return View();
+        }
+
+        public ActionResult DeliveryExceptionBatching()
+        {
+            return View();
+        }
+
+        public ActionResult ShipmentDetails()
+        {
+            return View();
+        }
+
+        public ActionResult Rates()
+        {
+            return View();
+        }
+        public ActionResult Users()
+        {
+            return View();
+        }
     }
 }

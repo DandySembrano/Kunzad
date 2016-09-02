@@ -1,0 +1,115 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout1.cshtml";
+}
+<!-- Driver List/DataTable -->
+@section tableContent{
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
+@*<div class="myTableContainter">
+    <div class="myTableContent">
+        <!--Header-->
+        <div class="myTableRow-header text-dark small">
+            <div class="myTableCell cell-seqno small text-center"><strong>No.</strong></div>
+            <div class="myTableCell cell-6 small" ng-click="processDriverSorting('Name')">
+                <strong>Name</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LastName' || driverCriteria === '-LastName' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LastName' || driverCriteria === '-LastName' ? driverOrderByAsc: false"></span>
+            </div>
+            <div class="myTableCell cell-3 small" ng-click="processDriverSorting('LicenseNo')">
+                <strong>License Number</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LicenseNo' || driverCriteria === '-LicenseNo' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LicenseNo' || driverCriteria === '-LicenseNo' ? driverOrderByAsc: false"></span>
+            </div>
+            <div class="myTableCell cell-3 small" ng-click="processDriverSorting('LicenseExpiry')">
+                <strong>License Expiry</strong>
+                <span class="glyphicon glyphicon-chevron-down"
+                      ng-show="driverCriteria === 'LicenseExpiry' || driverCriteria === '-LicenseExpiry' ? driverOrderByDesc: false"></span>
+                <span class="glyphicon glyphicon-chevron-up"
+                      ng-show="driverCriteria === 'LicenseExpiry' || driverCriteria === '-LicenseExpiry' ? driverOrderByAsc: false"></span>
+            </div>
+        </div>
+        <!--Details-->
+        <div class="myTableRow"
+             ng-repeat="d in data | orderBy:driverCriteria"
+             ng-click="setSelected($index, d.Id)"
+             ng-dblclick="actionForm('Update')"
+             context-menu="setSelected($index, d.Id)"
+             data-target="DataTableMenu">
+            <div class="myTableCell cell-seqno small text-center">{{currentPage == 1 ? ($index + 1) : (($index + 1) + ((currentPage - 1) * pageSize))}}</div>
+            <div class="myTableCell cell-6 small">{{d.LastName + ", " + d.FirstName + " " + d.MiddleName}}</div>
+            <div class="myTableCell cell-3 small">{{d.LicenseNo}}</div>
+            <div class="myTableCell cell-3 small">{{d.LicenseExpiry | date : "MM/dd/yyyy"}}</div>
+        </div>
+    </div>
+</div>*@
+}
+
+@section formContent{
+    <form class="form-horizontal" role="form">
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">First Name</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control small" placeholder=""
+                       ng-model="dataDefinition.DataItem.FirstName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Middle Name</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control small" placeholder=""
+                       ng-model="dataDefinition.DataItem.MiddleName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Last Name</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control small" placeholder=""
+                       ng-model="dataDefinition.DataItem.LastName" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,150}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">License No.</label>
+            <div class="col-md-5">
+                <input type="text" class="form-control small" placeholder=""
+                       ng-model="dataDefinition.DataItem.LicenseNo" ng-disabled="dataDefinition.ViewOnly" pattern=".{0,50}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">License Expiry</label>
+            <div class="col-md-5">
+                <div class='input-group date' >
+                    <input type='text' id='led' class="form-control" ng-model="dataDefinition.DataItem.LicenseExpiry" ng-disabled="dataDefinition.ViewOnly" />
+                    <span class="input-group-addon" title="Close" style="padding:2px 0px 2px 10px;">
+                        <span class=" glyphicon glyphicon-remove-circle"></span>
+                    </span>
+                </div>
+            </div>
+            </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#led').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    minDate: moment(),
+                    autoClose: true
+                })
+            });
+        </script>
+    </form>
+}

@@ -1,0 +1,896 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="KunzadDBModelStoreContainer" CdmEntityContainer="KunzadDbEntities">
+    <EntitySetMapping Name="Addresses">
+      <EntityTypeMapping TypeName="KunzadDBModel.Address">
+        <MappingFragment StoreEntitySet="Address">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AirFreights">
+      <EntityTypeMapping TypeName="KunzadDBModel.AirFreight">
+        <MappingFragment StoreEntitySet="AirFreight">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ArrivalTime" ColumnName="ArrivalTime" />
+          <ScalarProperty Name="ArrivalDate" ColumnName="ArrivalDate" />
+          <ScalarProperty Name="DepartureTime" ColumnName="DepartureTime" />
+          <ScalarProperty Name="DepartureDate" ColumnName="DepartureDate" />
+          <ScalarProperty Name="DestinationBusinessUnitId" ColumnName="DestinationBusinessUnitId" />
+          <ScalarProperty Name="OriginBusinessUnitId" ColumnName="OriginBusinessUnitId" />
+          <ScalarProperty Name="EstimatedArrivalTime" ColumnName="EstimatedArrivalTime" />
+          <ScalarProperty Name="EstimatedArrivalDate" ColumnName="EstimatedArrivalDate" />
+          <ScalarProperty Name="EstimatedDepartureTime" ColumnName="EstimatedDepartureTime" />
+          <ScalarProperty Name="EstimatedDepartureDate" ColumnName="EstimatedDepartureDate" />
+          <ScalarProperty Name="AirWaybillDate" ColumnName="AirWaybillDate" />
+          <ScalarProperty Name="AirWaybillNumber" ColumnName="AirWaybillNumber" />
+          <ScalarProperty Name="AirLineId" ColumnName="AirLineId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AirFreightShipments">
+      <EntityTypeMapping TypeName="KunzadDBModel.AirFreightShipment">
+        <MappingFragment StoreEntitySet="AirFreightShipment">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CostAllocation" ColumnName="CostAllocation" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="AirFreightId" ColumnName="AirFreightId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AirLines">
+      <EntityTypeMapping TypeName="KunzadDBModel.AirLine">
+        <MappingFragment StoreEntitySet="AirLine">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AuditTrails">
+      <EntityTypeMapping TypeName="KunzadDBModel.AuditTrail">
+        <MappingFragment StoreEntitySet="AuditTrail">
+          <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="NewData" ColumnName="NewData" />
+          <ScalarProperty Name="OldData" ColumnName="OldData" />
+          <ScalarProperty Name="Actions" ColumnName="Actions" />
+          <ScalarProperty Name="TableId" ColumnName="TableId" />
+          <ScalarProperty Name="TableName" ColumnName="TableName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BusinessUnits">
+      <EntityTypeMapping TypeName="KunzadDBModel.BusinessUnit">
+        <MappingFragment StoreEntitySet="BusinessUnit">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="hasSeaPort" ColumnName="hasSeaPort" />
+          <ScalarProperty Name="hasAirPort" ColumnName="hasAirPort" />
+          <ScalarProperty Name="isOperatingSite" ColumnName="isOperatingSite" />
+          <ScalarProperty Name="AddressId" ColumnName="AddressId" />
+          <ScalarProperty Name="ParentBusinessUnitId" ColumnName="ParentBusinessUnitId" />
+          <ScalarProperty Name="BusinessUnitTypeId" ColumnName="BusinessUnitTypeId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BusinessUnitContacts">
+      <EntityTypeMapping TypeName="KunzadDBModel.BusinessUnitContact">
+        <MappingFragment StoreEntitySet="BusinessUnitContact">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+          <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BusinessUnitTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.BusinessUnitType">
+        <MappingFragment StoreEntitySet="BusinessUnitType">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="hasLocation" ColumnName="hasLocation" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Charges">
+      <EntityTypeMapping TypeName="KunzadDBModel.Charge">
+        <MappingFragment StoreEntitySet="Charge">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CheckIns">
+      <EntityTypeMapping TypeName="KunzadDBModel.CheckIn">
+        <MappingFragment StoreEntitySet="CheckIn">
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="CheckInSourceId" ColumnName="CheckInSourceId" />
+          <ScalarProperty Name="CheckInBusinessUnitId" ColumnName="CheckInBusinessUnitId" />
+          <ScalarProperty Name="CheckInTime" ColumnName="CheckInTime" />
+          <ScalarProperty Name="CheckInDate" ColumnName="CheckInDate" />
+          <ScalarProperty Name="CheckInTypeId" ColumnName="CheckInTypeId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CheckInShipments">
+      <EntityTypeMapping TypeName="KunzadDBModel.CheckInShipment">
+        <MappingFragment StoreEntitySet="CheckInShipment">
+          <ScalarProperty Name="IsDisplay" ColumnName="IsDisplay" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="CheckInId" ColumnName="CheckInId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CheckInTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.CheckInType">
+        <MappingFragment StoreEntitySet="CheckInType">
+          <ScalarProperty Name="ReferenceTable" ColumnName="ReferenceTable" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CityMunicipalities">
+      <EntityTypeMapping TypeName="KunzadDBModel.CityMunicipality">
+        <MappingFragment StoreEntitySet="CityMunicipality">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="StateProvinceId" ColumnName="StateProvinceId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Consolidations">
+      <EntityTypeMapping TypeName="KunzadDBModel.Consolidation">
+        <MappingFragment StoreEntitySet="Consolidation">
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="ConsolidationTypeId" ColumnName="ConsolidationTypeId" />
+          <ScalarProperty Name="ParentShipmentId" ColumnName="ParentShipmentId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contacts">
+      <EntityTypeMapping TypeName="KunzadDBModel.Contact">
+        <MappingFragment StoreEntitySet="Contact">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="AlternateEmail" ColumnName="AlternateEmail" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContactNumberTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.ContactNumberType">
+        <MappingFragment StoreEntitySet="ContactNumberType">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContactPhones">
+      <EntityTypeMapping TypeName="KunzadDBModel.ContactPhone">
+        <MappingFragment StoreEntitySet="ContactPhone">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ContactNumberTypeId" ColumnName="ContactNumberTypeId" />
+          <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+          <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Countries">
+      <EntityTypeMapping TypeName="KunzadDBModel.Country">
+        <MappingFragment StoreEntitySet="Country">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Couriers">
+      <EntityTypeMapping TypeName="KunzadDBModel.Courier">
+        <MappingFragment StoreEntitySet="Courier">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="TIN" ColumnName="TIN" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CourierTransactions">
+      <EntityTypeMapping TypeName="KunzadDBModel.CourierTransaction">
+        <MappingFragment StoreEntitySet="CourierTransaction">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CompletedTime" ColumnName="CompletedTime" />
+          <ScalarProperty Name="CompletedDate" ColumnName="CompletedDate" />
+          <ScalarProperty Name="CallTime" ColumnName="CallTime" />
+          <ScalarProperty Name="CallDate" ColumnName="CallDate" />
+          <ScalarProperty Name="CourierCost" ColumnName="CourierCost" />
+          <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+          <ScalarProperty Name="CourierId" ColumnName="CourierId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CourierTransactionDetails">
+      <EntityTypeMapping TypeName="KunzadDBModel.CourierTransactionDetail">
+        <MappingFragment StoreEntitySet="CourierTransactionDetails">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CostAllocation" ColumnName="CostAllocation" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="CourierTransactionId" ColumnName="CourierTransactionId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Customers">
+      <EntityTypeMapping TypeName="KunzadDBModel.Customer">
+        <MappingFragment StoreEntitySet="Customer">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IndustryId" ColumnName="IndustryId" />
+          <ScalarProperty Name="TIN" ColumnName="TIN" />
+          <ScalarProperty Name="CustomerGroupId" ColumnName="CustomerGroupId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CustomerAddresses">
+      <EntityTypeMapping TypeName="KunzadDBModel.CustomerAddress">
+        <MappingFragment StoreEntitySet="CustomerAddress">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsPickupAddress" ColumnName="IsPickupAddress" />
+          <ScalarProperty Name="IsDeliveryAddress" ColumnName="IsDeliveryAddress" />
+          <ScalarProperty Name="IsBillingAddress" ColumnName="IsBillingAddress" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CustomerContacts">
+      <EntityTypeMapping TypeName="KunzadDBModel.CustomerContact">
+        <MappingFragment StoreEntitySet="CustomerContact">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CustomerGroups">
+      <EntityTypeMapping TypeName="KunzadDBModel.CustomerGroup">
+        <MappingFragment StoreEntitySet="CustomerGroup">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DeliveryExceptions">
+      <EntityTypeMapping TypeName="KunzadDBModel.DeliveryException">
+        <MappingFragment StoreEntitySet="DeliveryException">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="DexRemarks" ColumnName="DexRemarks" />
+          <ScalarProperty Name="DexTypeId" ColumnName="DexTypeId" />
+          <ScalarProperty Name="DexTime" ColumnName="DexTime" />
+          <ScalarProperty Name="DexDate" ColumnName="DexDate" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DeliveryExceptionTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.DeliveryExceptionType">
+        <MappingFragment StoreEntitySet="DeliveryExceptionType">
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Drivers">
+      <EntityTypeMapping TypeName="KunzadDBModel.Driver">
+        <MappingFragment StoreEntitySet="Driver">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="LicenseExpiry" ColumnName="LicenseExpiry" />
+          <ScalarProperty Name="LicenseNo" ColumnName="LicenseNo" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Industries">
+      <EntityTypeMapping TypeName="KunzadDBModel.Industry">
+        <MappingFragment StoreEntitySet="Industry">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Menus">
+      <EntityTypeMapping TypeName="KunzadDBModel.Menu">
+        <MappingFragment StoreEntitySet="Menu">
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="IsParent" ColumnName="IsParent" />
+          <ScalarProperty Name="IconClass" ColumnName="IconClass" />
+          <ScalarProperty Name="Link" ColumnName="Link" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MenuAccesses">
+      <EntityTypeMapping TypeName="KunzadDBModel.MenuAccess">
+        <MappingFragment StoreEntitySet="MenuAccess">
+          <ScalarProperty Name="Access" ColumnName="Access" />
+          <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RatesDetails">
+      <EntityTypeMapping TypeName="KunzadDBModel.RatesDetail">
+        <MappingFragment StoreEntitySet="RatesDetail">
+          <ScalarProperty Name="ModifiedByUserId" ColumnName="ModifiedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdateDate" ColumnName="LastUpdateDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ExcessOf" ColumnName="ExcessOf" />
+          <ScalarProperty Name="Multiplier" ColumnName="Multiplier" />
+          <ScalarProperty Name="Computation" ColumnName="Computation" />
+          <ScalarProperty Name="Minimum" ColumnName="Minimum" />
+          <ScalarProperty Name="ChargeId" ColumnName="ChargeId" />
+          <ScalarProperty Name="RateMasterId" ColumnName="RateMasterId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RatesMasters">
+      <EntityTypeMapping TypeName="KunzadDBModel.RatesMaster">
+        <MappingFragment StoreEntitySet="RatesMaster">
+          <ScalarProperty Name="ModifiedByUserId" ColumnName="ModifiedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdateDate" ColumnName="LastUpdateDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="EffictivityDate" ColumnName="EffictivityDate" />
+          <ScalarProperty Name="DateExpired" ColumnName="DateExpired" />
+          <ScalarProperty Name="AllowExpiration" ColumnName="AllowExpiration" />
+          <ScalarProperty Name="ValuationPercentage" ColumnName="ValuationPercentage" />
+          <ScalarProperty Name="InExcessOf" ColumnName="InExcessOf" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="DestinationId" ColumnName="DestinationId" />
+          <ScalarProperty Name="OriginId" ColumnName="OriginId" />
+          <ScalarProperty Name="ShipmentTypeId" ColumnName="ShipmentTypeId" />
+          <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SeaFreights">
+      <EntityTypeMapping TypeName="KunzadDBModel.SeaFreight">
+        <MappingFragment StoreEntitySet="SeaFreight">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="FreightCost" ColumnName="FreightCost" />
+          <ScalarProperty Name="DestinationBusinessUnitId" ColumnName="DestinationBusinessUnitId" />
+          <ScalarProperty Name="OriginBusinessUnitId" ColumnName="OriginBusinessUnitId" />
+          <ScalarProperty Name="VesselVoyageId" ColumnName="VesselVoyageId" />
+          <ScalarProperty Name="BLDate" ColumnName="BLDate" />
+          <ScalarProperty Name="BLNumber" ColumnName="BLNumber" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SeaFreightShipments">
+      <EntityTypeMapping TypeName="KunzadDBModel.SeaFreightShipment">
+        <MappingFragment StoreEntitySet="SeaFreightShipment">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CostAllocation" ColumnName="CostAllocation" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="SeaFreightId" ColumnName="SeaFreightId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Services">
+      <EntityTypeMapping TypeName="KunzadDBModel.Service">
+        <MappingFragment StoreEntitySet="Service">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="DeliveryWorkingDays" ColumnName="DeliveryWorkingDays" />
+          <ScalarProperty Name="MaxWeight" ColumnName="MaxWeight" />
+          <ScalarProperty Name="Height" ColumnName="Height" />
+          <ScalarProperty Name="Width" ColumnName="Width" />
+          <ScalarProperty Name="Length" ColumnName="Length" />
+          <ScalarProperty Name="IsMultimodal" ColumnName="IsMultimodal" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ServiceCategoryId" ColumnName="ServiceCategoryId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ServiceableAreas">
+      <EntityTypeMapping TypeName="KunzadDBModel.ServiceableArea">
+        <MappingFragment StoreEntitySet="ServiceableArea">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+          <ScalarProperty Name="IsServiceable" ColumnName="IsServiceable" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ServiceCategories">
+      <EntityTypeMapping TypeName="KunzadDBModel.ServiceCategory">
+        <MappingFragment StoreEntitySet="ServiceCategory">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsRevenueStream" ColumnName="IsRevenueStream" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ServiceCharges">
+      <EntityTypeMapping TypeName="KunzadDBModel.ServiceCharge">
+        <MappingFragment StoreEntitySet="ServiceCharge">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="TaxPercentage" ColumnName="TaxPercentage" />
+          <ScalarProperty Name="IsTaxInclusive" ColumnName="IsTaxInclusive" />
+          <ScalarProperty Name="ChargeName" ColumnName="ChargeName" />
+          <ScalarProperty Name="ChargeId" ColumnName="ChargeId" />
+          <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Shipments">
+      <EntityTypeMapping TypeName="KunzadDBModel.Shipment">
+        <MappingFragment StoreEntitySet="Shipment">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="QRCode" ColumnName="QRCode" />
+          <ScalarProperty Name="LastCheckInId" ColumnName="LastCheckInId" />
+          <ScalarProperty Name="LoadingStatusId" ColumnName="LoadingStatusId" />
+          <ScalarProperty Name="TransportStatusRemarks" ColumnName="TransportStatusRemarks" />
+          <ScalarProperty Name="TransportStatusId" ColumnName="TransportStatusId" />
+          <ScalarProperty Name="IsMultipleDelivery" ColumnName="IsMultipleDelivery" />
+          <ScalarProperty Name="IsConsolidation" ColumnName="IsConsolidation" />
+          <ScalarProperty Name="ConsolidationNo2" ColumnName="ConsolidationNo2" />
+          <ScalarProperty Name="ConsolidationNo1" ColumnName="ConsolidationNo1" />
+          <ScalarProperty Name="ParentShipmentId" ColumnName="ParentShipmentId" />
+          <ScalarProperty Name="OriginAddressId" ColumnName="OriginAddressId" />
+          <ScalarProperty Name="DeliverToContactNo" ColumnName="DeliverToContactNo" />
+          <ScalarProperty Name="PickupTime" ColumnName="PickupTime" />
+          <ScalarProperty Name="PickupDate" ColumnName="PickupDate" />
+          <ScalarProperty Name="PickUpBussinessUnitId" ColumnName="PickUpBussinessUnitId" />
+          <ScalarProperty Name="ReceivedByName" ColumnName="ReceivedByName" />
+          <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
+          <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+          <ScalarProperty Name="DeliveryAddressId" ColumnName="DeliveryAddressId" />
+          <ScalarProperty Name="DeliverTo" ColumnName="DeliverTo" />
+          <ScalarProperty Name="BookingRemarks" ColumnName="BookingRemarks" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="TaxPercentage" ColumnName="TaxPercentage" />
+          <ScalarProperty Name="TaxAmount" ColumnName="TaxAmount" />
+          <ScalarProperty Name="IsTaxInclusive" ColumnName="IsTaxInclusive" />
+          <ScalarProperty Name="Revenue" ColumnName="Revenue" />
+          <ScalarProperty Name="IsRevenue" ColumnName="IsRevenue" />
+          <ScalarProperty Name="TotalCBM" ColumnName="TotalCBM" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="BillToCustomerContactPhoneId" ColumnName="BillToCustomerContactPhoneId" />
+          <ScalarProperty Name="BillToCustomerContactId" ColumnName="BillToCustomerContactId" />
+          <ScalarProperty Name="BillToCustomerAddressId" ColumnName="BillToCustomerAddressId" />
+          <ScalarProperty Name="BillToCustomerId" ColumnName="BillToCustomerId" />
+          <ScalarProperty Name="CustomerContactPhoneId" ColumnName="CustomerContactPhoneId" />
+          <ScalarProperty Name="CustomerContactId" ColumnName="CustomerContactId" />
+          <ScalarProperty Name="CustomerAddressId" ColumnName="CustomerAddressId" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="PaymentMode" ColumnName="PaymentMode" />
+          <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
+          <ScalarProperty Name="DocumentNo" ColumnName="DocumentNo" />
+          <ScalarProperty Name="ShipmentTypeId" ColumnName="ShipmentTypeId" />
+          <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+          <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShipmentCharges">
+      <EntityTypeMapping TypeName="KunzadDBModel.ShipmentCharge">
+        <MappingFragment StoreEntitySet="ShipmentCharges">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="TaxPercentage" ColumnName="TaxPercentage" />
+          <ScalarProperty Name="TaxAmount" ColumnName="TaxAmount" />
+          <ScalarProperty Name="IsTaxInclusive" ColumnName="IsTaxInclusive" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="ServiceChargeName" ColumnName="ServiceChargeName" />
+          <ScalarProperty Name="ServiceChargeId" ColumnName="ServiceChargeId" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShipmentDimensions">
+      <EntityTypeMapping TypeName="KunzadDBModel.ShipmentDimension">
+        <MappingFragment StoreEntitySet="ShipmentDimension">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="TotalCBM" ColumnName="TotalCBM" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="VolumetricWeight" ColumnName="VolumetricWeight" />
+          <ScalarProperty Name="Height" ColumnName="Height" />
+          <ScalarProperty Name="Width" ColumnName="Width" />
+          <ScalarProperty Name="Length" ColumnName="Length" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShipmentTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.ShipmentType">
+        <MappingFragment StoreEntitySet="ShipmentType">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsFCL" ColumnName="IsFCL" />
+          <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ShippingLines">
+      <EntityTypeMapping TypeName="KunzadDBModel.ShippingLine">
+        <MappingFragment StoreEntitySet="ShippingLine">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StateProvinces">
+      <EntityTypeMapping TypeName="KunzadDBModel.StateProvince">
+        <MappingFragment StoreEntitySet="StateProvince">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tokens">
+      <EntityTypeMapping TypeName="KunzadDBModel.Token">
+        <MappingFragment StoreEntitySet="Tokens">
+          <ScalarProperty Name="ExpiresOn" ColumnName="ExpiresOn" />
+          <ScalarProperty Name="IssuedOn" ColumnName="IssuedOn" />
+          <ScalarProperty Name="AuthToken" ColumnName="AuthToken" />
+          <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+          <ScalarProperty Name="TokenId" ColumnName="TokenId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Trucks">
+      <EntityTypeMapping TypeName="KunzadDBModel.Truck">
+        <MappingFragment StoreEntitySet="Truck">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="VolumeCapacity" ColumnName="VolumeCapacity" />
+          <ScalarProperty Name="WeightCapacity" ColumnName="WeightCapacity" />
+          <ScalarProperty Name="TruckerId" ColumnName="TruckerId" />
+          <ScalarProperty Name="TruckTypeId" ColumnName="TruckTypeId" />
+          <ScalarProperty Name="PlateNo" ColumnName="PlateNo" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Truckers">
+      <EntityTypeMapping TypeName="KunzadDBModel.Trucker">
+        <MappingFragment StoreEntitySet="Trucker">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="CityMunicipalityId" ColumnName="CityMunicipalityId" />
+          <ScalarProperty Name="Line2" ColumnName="Line2" />
+          <ScalarProperty Name="Line1" ColumnName="Line1" />
+          <ScalarProperty Name="TIN" ColumnName="TIN" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Truckings">
+      <EntityTypeMapping TypeName="KunzadDBModel.Trucking">
+        <MappingFragment StoreEntitySet="Trucking">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CompletedTime" ColumnName="CompletedTime" />
+          <ScalarProperty Name="CompletedDate" ColumnName="CompletedDate" />
+          <ScalarProperty Name="InternalRevenue" ColumnName="InternalRevenue" />
+          <ScalarProperty Name="DispatchTime" ColumnName="DispatchTime" />
+          <ScalarProperty Name="DispatchDate" ColumnName="DispatchDate" />
+          <ScalarProperty Name="TruckCallTime" ColumnName="TruckCallTime" />
+          <ScalarProperty Name="TruckCallDate" ColumnName="TruckCallDate" />
+          <ScalarProperty Name="TruckingStatusId" ColumnName="TruckingStatusId" />
+          <ScalarProperty Name="TruckerCost" ColumnName="TruckerCost" />
+          <ScalarProperty Name="DestinationServiceableAreaId" ColumnName="DestinationServiceableAreaId" />
+          <ScalarProperty Name="OriginServiceableAreaId" ColumnName="OriginServiceableAreaId" />
+          <ScalarProperty Name="TruckingTypeId" ColumnName="TruckingTypeId" />
+          <ScalarProperty Name="DriverId" ColumnName="DriverId" />
+          <ScalarProperty Name="TruckId" ColumnName="TruckId" />
+          <ScalarProperty Name="TruckerId" ColumnName="TruckerId" />
+          <ScalarProperty Name="DocumentNo" ColumnName="DocumentNo" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TruckingDeliveries">
+      <EntityTypeMapping TypeName="KunzadDBModel.TruckingDelivery">
+        <MappingFragment StoreEntitySet="TruckingDelivery">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CostAllocation" ColumnName="CostAllocation" />
+          <ScalarProperty Name="DeliveryTime" ColumnName="DeliveryTime" />
+          <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+          <ScalarProperty Name="DeliveryAddressId" ColumnName="DeliveryAddressId" />
+          <ScalarProperty Name="DeliverTo" ColumnName="DeliverTo" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="CBM" ColumnName="CBM" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="CustomerDocumentNo" ColumnName="CustomerDocumentNo" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+          <ScalarProperty Name="TruckingId" ColumnName="TruckingId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TruckTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.TruckType">
+        <MappingFragment StoreEntitySet="TruckType">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="VolumeCapacity" ColumnName="VolumeCapacity" />
+          <ScalarProperty Name="WeightCapacity" ColumnName="WeightCapacity" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="KunzadDBModel.User">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="ImageName" ColumnName="ImageName" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+          <ScalarProperty Name="UserTypeId" ColumnName="UserTypeId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserMenus">
+      <EntityTypeMapping TypeName="KunzadDBModel.UserMenu">
+        <MappingFragment StoreEntitySet="UserMenu">
+          <ScalarProperty Name="MenuAccessId" ColumnName="MenuAccessId" />
+          <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserTypes">
+      <EntityTypeMapping TypeName="KunzadDBModel.UserType">
+        <MappingFragment StoreEntitySet="UserType">
+          <ScalarProperty Name="ByPassAPIRequest" ColumnName="ByPassAPIRequest" />
+          <ScalarProperty Name="ByPassMenuAccess" ColumnName="ByPassMenuAccess" />
+          <ScalarProperty Name="ByPassMenu" ColumnName="ByPassMenu" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Vessels">
+      <EntityTypeMapping TypeName="KunzadDBModel.Vessel">
+        <MappingFragment StoreEntitySet="Vessel">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ShippingLineId" ColumnName="ShippingLineId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VesselVoyages">
+      <EntityTypeMapping TypeName="KunzadDBModel.VesselVoyage">
+        <MappingFragment StoreEntitySet="VesselVoyage">
+          <ScalarProperty Name="LastUpdatedByUserId" ColumnName="LastUpdatedByUserId" />
+          <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+          <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ArrivalTime" ColumnName="ArrivalTime" />
+          <ScalarProperty Name="ArrivalDate" ColumnName="ArrivalDate" />
+          <ScalarProperty Name="DepartureTime" ColumnName="DepartureTime" />
+          <ScalarProperty Name="DepartureDate" ColumnName="DepartureDate" />
+          <ScalarProperty Name="DestinationBusinessUnitId" ColumnName="DestinationBusinessUnitId" />
+          <ScalarProperty Name="OriginBusinessUnitId" ColumnName="OriginBusinessUnitId" />
+          <ScalarProperty Name="EstimatedArrivalTime" ColumnName="EstimatedArrivalTime" />
+          <ScalarProperty Name="EstimatedArrivalDate" ColumnName="EstimatedArrivalDate" />
+          <ScalarProperty Name="EstimatedDepartureTime" ColumnName="EstimatedDepartureTime" />
+          <ScalarProperty Name="EstimatedDepartureDate" ColumnName="EstimatedDepartureDate" />
+          <ScalarProperty Name="VoyageNo" ColumnName="VoyageNo" />
+          <ScalarProperty Name="VesselId" ColumnName="VesselId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

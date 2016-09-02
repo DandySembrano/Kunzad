@@ -32,6 +32,7 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
+        public virtual Address Address { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual Shipment Shipment { get; set; }
         public virtual Trucking Trucking { get; set; }

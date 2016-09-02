@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout1.cshtml";
+}
+<!-- Courier List/DataTable -->
+@section tableContent{
+    <dir-data-grid1 actioncreate="actionCreate"
+                    actionmode="actionMode"
+                    datadefinition="dataDefinition"
+                    submitbuttontext="submitButtonText"
+                    submitbuttonlistener="submitButtonListener"
+                    closecontainer="closeModalForm()"
+                    opencontainer="openModalForm()"
+                    otheractions="otherActions(action)"
+                    resetdata="resetDataItem()"
+                    showformerror="showFormError(error)">
+    </dir-data-grid1>
+}
+@section formContent{
+    <!-- This is the template use for City/Municpality Typeahead -->
+    <script type="text/ng-template" id="customTemplate.html">
+        <a>
+            <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+            <span>, {{match.model.StateProvinceName + ", " + match.model.CountryName}}</span>
+        </a>
+    </script>
+    <form class="form-horizontal" role="form">
+        <div class="form-group form-group-sm">
+            <label for="name" 
+                   class="col-md-3 control-label small">Name</label>
+            <div class="col-md-8">
+                <input type="text"
+                       id="name"
+                       class="form-control small"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.Name"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,150}">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label for="name" class="col-md-3 control-label small">TIN</label>
+            <div class="col-md-8">
+                <input type="text"
+                       id="TIN"
+                       class="form-control small"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.TIN"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       ng-change="formatTIN()"
+                       maxlength="11">
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Street Address</label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Street address line 1"
+                       ng-model="dataDefinition.DataItem.Line1"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,150}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small"></label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Street address line 2"
+                       ng-model="dataDefinition.DataItem.Line2"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,150}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">City/Municipality</label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control"
+                       placeholder=""
+                       ng-disabled="dataDefinition.ViewOnly"
+                       ng-model="dataDefinition.DataItem.CityMunicipality.Name"
+                       typeahead-editable="false"
+                       typeahead-on-select="onSelectCity($item, $model, $label)"
+                       typeahead="city.Name for city in cityMunicipalities | filter:$viewValue | limitTo:12"
+                       typeahead-template-url="customTemplate.html">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Province/State</label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control" placeholder=""
+                       ng-model="dataDefinition.DataItem.CityMunicipality.StateProvince.Name"
+                       ng-disabled="true">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Postal Code</label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.PostalCode"
+                       ng-disabled="dataDefinition.ViewOnly"
+                       pattern=".{0,20}">
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm">
+            <label class="col-md-3 control-label small">Country</label>
+            <div class="col-md-8">
+                <input type="text"
+                       class="form-control"
+                       placeholder=""
+                       ng-model="dataDefinition.DataItem.CityMunicipality.StateProvince.Country.Name"
+                       ng-disabled="true">
+            </div>
+        </div>
+    </form>
+}

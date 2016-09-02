@@ -24,14 +24,16 @@ namespace Kunzad.Models
         public int TruckerId { get; set; }
         public int TruckId { get; set; }
         public int DriverId { get; set; }
+        public Nullable<int> TruckingTypeId { get; set; }
         public int OriginServiceableAreaId { get; set; }
         public int DestinationServiceableAreaId { get; set; }
         public decimal TruckerCost { get; set; }
-        public bool TruckingStatusId { get; set; }
+        public int TruckingStatusId { get; set; }
         public Nullable<System.DateTime> TruckCallDate { get; set; }
         public Nullable<System.TimeSpan> TruckCallTime { get; set; }
         public Nullable<System.DateTime> DispatchDate { get; set; }
         public Nullable<System.TimeSpan> DispatchTime { get; set; }
+        public Nullable<decimal> InternalRevenue { get; set; }
         public Nullable<System.DateTime> CompletedDate { get; set; }
         public Nullable<System.TimeSpan> CompletedTime { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
@@ -40,6 +42,8 @@ namespace Kunzad.Models
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
         public virtual Driver Driver { get; set; }
+        public virtual ServiceableArea ServiceableArea { get; set; }
+        public virtual ServiceableArea ServiceableArea1 { get; set; }
         public virtual Truck Truck { get; set; }
         public virtual Trucker Trucker { get; set; }
         public virtual ICollection<TruckingDelivery> TruckingDeliveries { get; set; }

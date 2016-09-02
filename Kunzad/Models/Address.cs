@@ -16,14 +16,15 @@ namespace Kunzad.Models
     {
         public Address()
         {
-            this.CustomerAddresses = new HashSet<CustomerAddress>();
-            this.Truckers = new HashSet<Trucker>();
+            this.BusinessUnits = new HashSet<BusinessUnit>();
+            this.Shipments = new HashSet<Shipment>();
+            this.Shipments1 = new HashSet<Shipment>();
+            this.TruckingDeliveries = new HashSet<TruckingDelivery>();
         }
     
         public int Id { get; set; }
         public string Line1 { get; set; }
-        public string LIne2 { get; set; }
-        public string LIne3 { get; set; }
+        public string Line2 { get; set; }
         public int CityMunicipalityId { get; set; }
         public string PostalCode { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
@@ -32,7 +33,9 @@ namespace Kunzad.Models
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
         public virtual CityMunicipality CityMunicipality { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
-        public virtual ICollection<Trucker> Truckers { get; set; }
+        public virtual ICollection<BusinessUnit> BusinessUnits { get; set; }
+        public virtual ICollection<Shipment> Shipments { get; set; }
+        public virtual ICollection<Shipment> Shipments1 { get; set; }
+        public virtual ICollection<TruckingDelivery> TruckingDeliveries { get; set; }
     }
 }

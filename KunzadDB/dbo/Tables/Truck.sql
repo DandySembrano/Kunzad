@@ -11,5 +11,5 @@
     [CreatedByUserId] INT NULL, 
     [LastUpdatedByUserId] INT NULL, 
     CONSTRAINT [FK_Truck_TruckType] FOREIGN KEY ([TruckTypeId]) REFERENCES [TruckType]([Id]), 
-	CONSTRAINT [FK_Truck_Trucker] FOREIGN KEY ([TruckerId]) REFERENCES [Trucker]([Id]), 
+	CONSTRAINT [FK_Truck_Trucker] FOREIGN KEY ([TruckerId]) REFERENCES [Trucker]([Id])
 )

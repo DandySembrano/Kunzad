@@ -1,0 +1,122 @@
+﻿<div id="{{datadefinition.ModalId}}" class="popup-basic bg-none mfp-with-anim mfp-hide">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Update Vessel Voyage</span>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-danger alert-sm" ng-show="isErrorUpdateVessel">
+                <i class="fa fa-remove pr10" ng-click="isErrorUpdateVessel = false; errorMessageUpdateVessel = ''"></i>
+                <strong>ERROR!</strong>    {{errorMessageAddress}}
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small text-right">Number</label>
+                    <div class="col-md-8 text-left">
+                        <input type="text" class="form-control"
+                               ng-model="datadefinition.DataItem.VoyageNo"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Origin</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               ng-model="datadefinition.DataItem.Origin[0].Name"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Destination</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               id="origin"
+                               class="form-control"
+                               ng-model="datadefinition.DataItem.Destination[0].Name"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Departure Date</label>
+                    <div class="col-md-4">
+                        <div class="input-group date">
+                            <input type='text'
+                                   id='voyage_deptDate'
+                                   class="form-control"
+                                   ng-model="datadefinition.DataItem.DepartureDate"
+                                   ng-disabled="ViewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Departure Time</label>
+                    <div class="col-md-4">
+                        <div class="input-group date">
+                            <input type='text'
+                                   id='voyage_deptTime'
+                                   class="form-control"
+                                   ng-model="datadefinition.DataItem.DepartureTime"
+                                   ng-disabled="ViewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Arrival Date</label>
+                    <div class="col-md-4">
+                        <div class="input-group date">
+                            <input type='text'
+                                   id='voyage_arrDate'
+                                   class="form-control"
+                                   ng-model="datadefinition.DataItem.ArrivalDate"
+                                   ng-disabled="ViewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Arrival Time</label>
+                    <div class="col-md-4">
+                        <div class="input-group date">
+                            <input type='text'
+                                   id='voyage_arrTime'
+                                   class="form-control"
+                                   ng-model="datadefinition.DataItem.ArrivalTime"
+                                   ng-disabled="ViewOnly" />
+                            <span class="input-group-addon" title="Close" style="padding:2px 0 2px 10px;">
+                                <span class=" glyphicon glyphicon-remove-circle"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#voyage_deptDate,#voyage_arrDate').datetimepicker({
+                            format: 'MM-DD-YYYY',
+                            sideBySide: false,
+                            pickTime: false,
+                            //minDate: moment()
+                        })
+                        $('#voyage_deptTime,#voyage_arrTime').datetimepicker({
+                            format: 'HH:mm',
+                            sideBySide: false,
+                            pickDate: false
+                        })
+                    });
+                </script>
+            </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button class="btn btn-primary" type="submit"
+                    ng-click="closeVesselVoyageForm(datadefinition.DataItem)">Done
+            </button>
+        </div>
+    </div>
+</div>

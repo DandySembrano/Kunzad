@@ -1,0 +1,192 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+
+}
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown" style="z-index: 1000">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="consolidationOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="consolidationOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Edit'  ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="2" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{consolidationItem.Id != null && consolidationSubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="consolidationOtheractions(consolidationItem.Id != null && consolidationSubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+        </li>
+    </ul>
+</div>
+<!-- General -->
+@section tab1Content{
+    <div context-menu="formContextMenu()" data-target="FormMenu">
+        <!--Master-->
+        <div class="alert alert-danger alert-sm" ng-show="consolidationIsError">
+            <i class="fa fa-remove pr10" ng-click="consolidationIsError=false;consolidationErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + consolidationErrorMessage}}
+        </div>
+        @*Column 1*@
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                @*consolidation No*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Shipment No</label>
+                    <div class="col-md-4">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="System Generated"
+                               ng-model="consolidationItem.Id"
+                               ng-disabled="true">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">{{currentUrl == '/consolidation/vanstuff' ? 'Van Number' : 'Docket Number'}}</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               id="vanNumber"
+                               placeholder=""
+                               ng-disabled="viewOnly"
+                               ng-model="consolidationItem.ConsolidationNo1">
+                    </div>
+                </div>
+                <div class="form-group form-group-sm" ng-hide="{{currentUrl != '/consolidation/vanstuff'}}">
+                    <label class="col-md-3 control-label small">Seal Number</label>
+                    <div class="col-md-8">
+                        <input type="text"
+                               class="form-control"
+                               id="sealNumber"
+                               placeholder=""
+                               ng-disabled="viewOnly"
+                               ng-model="consolidationItem.ConsolidationNo2">
+                    </div>
+                </div>
+                @*Origin*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Origin</label>
+                    <div class="col-md-8">
+                        <div class='input-group date'>
+                            <input type="text"
+                                   id="origin"
+                                   class="form-control"
+                                   placeholder=""
+                                   ng-model="consolidationItem.BusinessUnit.Name"
+                                   ng-disabled="viewOnly">
+                            <span class="input-group-addon" title="Find Origin" style="padding:2px 0 2px 10px; cursor:pointer;" ng-click="showModal('#business-unit-list-modal','origin')">
+                                <span class=" glyphicon glyphicon-search"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                @*Destination*@
+                @*<div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Destination</label>
+                        <div class="col-md-8">
+                            <div class='input-group date'>
+                                <input type="text"
+                                       id="destination"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="consolidationItem.BusinessUnit.Name"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-click="showModal('#business-unit-list-modal','destination')">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>*@
+            </form>
+        </div>
+
+        @*Column 2*@
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                <div class="form-group form-group-sm" ng-hide="{{currentUrl != '/consolidation/vanstuff'}}">
+                    <label class="col-md-3 control-label small">Van Size</label>
+                    <div class="col-md-8">
+                        <select class="form-control"
+                                placeholder=""
+                                ng-disabled="viewOnly"
+                                ng-click="setShipmentType()"
+                                ng-model="consolidationItem.ShipmentTypeId"
+                                ng-options="item.Id as item.Name for item in shipmentTypeList | limitTo : 3 "></select>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label class="col-md-3 control-label small">Remarks</label>
+                    <div class="col-md-8">
+                        <textarea rows="6" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="consolidationItem.Description"
+                                  ng-disabled="viewOnly"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!--End of Master-->
+        <!--Detail-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="consolidationDetailContainer"></div>
+            </div>
+        </div>
+        <!--End of Detail-->
+    </div>
+}
+<!-- List -->
+@section tab2Content{
+    <div style="padding:0px 10px 0px 10px">
+        <div class="text-right toggle-hide" ng-click="hideconsolidationToggle()" ng-show="consolidationToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
+        <div id="consolidationToggle">
+            <div id="consolidationFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="consolidationContainer"></div>
+    </div>
+}
+<!--End of List-->
+<!-- Business Unit List Modal -->
+<div id="business-unit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Business Unit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of Business Unit List Modal -->
+<!-- shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn" type="submit" ng-click="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<!--End of consolidation List Modal -->

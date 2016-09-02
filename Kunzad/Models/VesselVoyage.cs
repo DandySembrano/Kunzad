@@ -37,6 +37,8 @@ namespace Kunzad.Models
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
+        public virtual BusinessUnit BusinessUnit { get; set; }
+        public virtual BusinessUnit BusinessUnit1 { get; set; }
         public virtual ICollection<SeaFreight> SeaFreights { get; set; }
         public virtual Vessel Vessel { get; set; }
     }

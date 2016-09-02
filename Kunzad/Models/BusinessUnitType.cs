@@ -21,6 +21,7 @@ namespace Kunzad.Models
     
         public int Id { get; set; }
         public string Name { get; set; }
+        public bool hasLocation { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }

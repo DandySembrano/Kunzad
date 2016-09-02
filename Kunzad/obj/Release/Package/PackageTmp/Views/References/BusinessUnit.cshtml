@@ -1,0 +1,132 @@
+﻿@{
+    Layout = "~/Views/Shared/_DataTableLayout3.cshtml";
+}
+<!-- Business Unit List/DataTable -->
+@section tableContent{
+    @*<dir-data-grid1 actioncreate="actionCreate"
+                        actionmode="actionMode"
+                        datadefinition="dataDefinition"
+                        submitbuttontext="submitButtonText"
+                        submitbuttonlistener="submitButtonListener"
+                        closecontainer=""
+                        opencontainer=""
+                        otheractions="otherActions(action)"
+                        resetdata="resetDataItem()"
+                        showformerror="showFormError(error)">
+        </dir-data-grid1>*@
+    <div class="row">
+        <div class="col-lg-12">
+            <div ui-grid="businessUnitGridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns ui-grid-exporter></div><br />
+        </div>
+    </div>
+}
+
+@section tab1Content{
+    <div class="row" ng-show="selectedTab === tabPages[0]">
+        <div class="alert alert-danger alert-sm" ng-show="isError">
+            <i class="fa fa-remove pr10" ng-click="isError = false"></i>
+            <strong>ERROR!</strong>    {{errorMessage}}
+        </div>
+        <div class="col-lg-6">
+            <form class="form-horizontal" role="form">
+                @*Code*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Code</label>
+                    <div class="col-md-7">
+                        <input type="text"
+                               class="form-control small"
+                               placeholder=""
+                               ng-model="businessUnitGridOptions.DataItem.Code"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,20}">
+                    </div>
+                </div>
+                @*Name*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Name</label>
+                    <div class="col-md-7">
+                        <input type="text"
+                               class="form-control small"
+                               placeholder=""
+                               ng-model="businessUnitGridOptions.DataItem.Name"
+                               ng-disabled="viewOnly"
+                               pattern=".{0,150}">
+                    </div>
+                </div>
+                @*Main Business Unit*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small text-right">Main Business Unit</label>
+                    <div class="col-md-7">
+                        <select class="form-control"
+                                placeholder=""
+                                ng-disabled="viewOnly"
+                                ng-change="selectBusinessUnit(businessUnitGridOptions.DataItem.ParentBusinessUnitId)"
+                                ng-model="businessUnitGridOptions.DataItem.ParentBusinessUnitId"
+                                ng-options="item.Id as item.Name for item in businessUnitList"></select>
+                    </div>
+                </div>
+                @*Business Unit Type*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small text-right">Business Unit Type</label>
+                    <div class="col-md-7">
+                        <select class="form-control"
+                                placeholder=""
+                                ng-disabled="viewOnly"
+                                ng-change="selectBusinessUnitType(businessUnitGridOptions.DataItem.BusinessUnitTypeId)"
+                                ng-model="businessUnitGridOptions.DataItem.BusinessUnitTypeId"
+                                ng-options="item.Id as item.Name for item in businessUnitTypeList"></select>
+                    </div>
+                </div>
+                @*Business Unit Address*@
+                <div class="form-group form-group-sm">
+                    <label class="col-md-4 control-label small">Address</label>
+                    <div class="col-md-7">
+                        <textarea id="address"
+                                  rows="5" style="height:auto;"
+                                  class="form-control"
+                                  placeholder=""
+                                  ng-model="businessUnitGridOptions.DataItem.BusinessUnitAddress"
+                                  ng-disabled="true"></textarea>
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-sm pull-right" ng-disabled="viewOnly" title="Input address here" ng-click="showAddress = true">
+                            <span class="glyphicon glyphicon-edit" style="color:#4a89dc"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-lg-12" style="padding-left: 130px;">
+                    <div class="col-lg-6">
+                        <div class="checkbox-custom">
+                            <input id="isOperatingSite"
+                                   type="checkbox"
+                                   ng-model="businessUnitGridOptions.DataItem.isOperatingSite"
+                                   ng-disabled="viewOnly">
+                            <label for="isOperatingSite"
+                                   class="small">Is Operating Site?</label>
+                        </div>
+                        <div class="checkbox-custom">
+                            <input id="hasAirPort"
+                                   type="checkbox"
+                                   ng-model="businessUnitGridOptions.DataItem.hasAirPort"
+                                   ng-disabled="viewOnly">
+                            <label for="hasAirPort"
+                                   class="small">Has Airport?</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="checkbox-custom">
+                            <input id="hasSeaPort"
+                                   type="checkbox"
+                                   ng-model="businessUnitGridOptions.DataItem.hasSeaPort"
+                                   ng-disabled="viewOnly">
+                            <label for="hasSeaPort"
+                                   class="small">Has Seaport?</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <dir-address datadefinition="addressDataDefinition" showmodal="showAddress" otheractions="otherActionsAddress(action)"></dir-address>
+}

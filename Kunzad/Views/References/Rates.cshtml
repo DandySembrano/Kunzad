@@ -1,0 +1,208 @@
+﻿@{
+    Layout = "~/Views/Shared/_TransactionLayout.cshtml";
+}
+@*Form Context-Menu*@
+<div class="dropdown position-fixed" id="FormMenu" ng-hide="modalShown" style="z-index: 1000">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="0" ng-click="courierDeliveryOtheractions('Find')">Find</a>
+        </li>
+        <li>
+            <a class="pointer small" role="menuitem" tabindex="1" ng-click="courierDeliveryOtheractions('FormCreate')">Create</a>
+        </li>
+        <li>
+            <a style="{{enableSave == true ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="3" ng-click="enableSave == true ? submit() : ''">Save</a>
+        </li>
+        <li>
+            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="4" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type == 'Edit' ? 'PostEditAction' : '')">Edit</a>
+        </li>
+        <li>
+            <a style="{{courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? '' : 'color:#B8B8B8'}}" class="pointer small" role="menuitem" tabindex="5" ng-click="courierDeliveryOtheractions(courierDeliveryItem.Id != null && courierDeliverySubmitDefinition.Type != 'Delete' ? 'PostDeleteAction' : '')">Cancel</a>
+        </li>
+    </ul>
+</div>
+
+@*General*@
+@section tab1Content{
+    <div context-menu="" data-target="FormMenu">
+        <div class="alert alert-danger alert-sm" ng-show="courierDeliveryIsError">
+            <i class="fa fa-remove pr10" ng-click="courierDeliveryIsError=false;courierDeliveryErrorMessage=''"></i>
+            <strong>ERROR!</strong>{{" " + courierDeliveryErrorMessage}}
+        </div>
+        @*Master*@
+        <div class="row">
+            <form class="form-horizontal" role="form">
+                <div class="col-lg-6">
+                    @*Courier Delivery No*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Delivery No</label>
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="System Generated"
+                                   ng-model="courierDeliveryItem.Id"
+                                   ng-disabled="true">
+                        </div>
+                    </div>
+                    @*Business Unit*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Business Unit</label>
+                        <div class="col-md-8">
+                            <div class="input-group date">
+                                <input id="businessUnit"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="courierDeliveryItem.BusinessUnit[0].Name"
+                                       ng-disabled="viewOnly">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Shipper" ng-click="showBusinessUnit()">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Courier*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Courier</label>
+                        <div class="col-md-8">
+                            <div class="input-group date">
+                                <input id="courier"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder=""
+                                       ng-model="courierDeliveryItem.Courier[0].Name"
+                                       ng-disabled="viewOnly">
+                                <span class="input-group-addon" style="padding:2px 0 2px 10px;" ng-disabled="viewOnly" title="Search Shipper" ng-click="showCourier()">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+
+                    @*Call Date*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Call Date</label>
+                        <div class="col-md-4">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='calldate'
+                                       class="form-control"
+                                       ng-model="courierDeliveryItem.CallDate"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Call Time*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Call Time</label>
+                        <div class="col-md-4">
+                            <div class='input-group date'>
+                                <input type='text'
+                                       id='calltime'
+                                       class="form-control"
+                                       ng-model="courierDeliveryItem.CallTime"
+                                       ng-disabled="viewOnly" />
+                                <span class="input-group-addon" ng-disabled="viewOnly" title="Close" style="padding:2px 0 2px 10px;">
+                                    <span class=" glyphicon glyphicon-remove-circle"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @*Courier Cost*@
+                    <div class="form-group form-group-sm">
+                        <label class="col-md-3 control-label small">Cost</label>
+                        <div class="col-md-4">
+                            <input id="cost"
+                                   type="text"
+                                   class="form-control text-right"
+                                   ng-model="courierDeliveryItem.CourierCost"
+                                   ng-disabled="viewOnly">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @*Details*@
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="courierDeliveryDetailsContainer"></div>
+            </div>
+        </div>
+    </div>
+}
+
+@*List*@
+@section tab2Content{
+    <div style="padding:0 10px 0 10px">
+        <div class="text-right toggle-hide" ng-click="hideCourierDeliveryToggle()" ng-show="courierDeliveryToggle">
+            <span class="fa fa-minus" title="Hide"></span>
+        </div>
+        <div id="courierDeliveryToggle">
+            <div id="courierDeliveryFilterContainter" style="padding-left:10px;"></div>
+        </div><br>
+        <div id="courierDeliveryContainer"></div>
+    </div>
+}
+
+<!-- Courier List Modal -->
+<div id="courier-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Courier List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="courierFilterContainter" style="padding-left:10px;"></div>
+            <div id="courierContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Courier List Modal -->
+<!-- Shipment List Modal -->
+<div id="shipment-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>Shipment List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="shipmentFilterContainter" style="padding-left:10px;"></div>
+            <div id="shipmentContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of Shipment List Modal -->
+<!-- BusinessUnit List Modal -->
+<div id="businessUnit-list-modal" class="popup-basic bg-none mfp-with-anim mfp-hide" style="max-width:80%;">
+    <div class="panel">
+        <!--Modal Header-->
+        <div class="panel-heading">
+            <span class="panel-title"><i class="glyphicon glyphicon-tasks"></i>BusinessUnit List</span>
+        </div>
+        <!--Modal Body-->
+        <div class="panel-body" style="{{modalStyle}}">
+            <div id="businessUnitFilterContainter" style="padding-left:10px;"></div>
+            <div id="businessUnitContainer"></div>
+        </div>
+        <!-- Panel Footer -->
+        <div class="panel-footer text-right">
+            <button class="btn btn-default" type="submit" ng-click="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+<!--End of BusinessUnit List Modal -->

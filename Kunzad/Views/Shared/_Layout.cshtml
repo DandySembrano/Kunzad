@@ -44,8 +44,14 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="/assets/img/favicon.ico">
 
+    <!-- ui-grId css-->
+    <link href="~/vendor/plugins/uigrid/css/ui-grid.css" rel="stylesheet" />
+
     <!-- Site CSS / Overrides -->
     <link rel="stylesheet" type="text/css" href="~/Content/Site.css" />
+
+    <!-- Customize Table -->
+    <link rel="stylesheet" type="text/css" href="~/Content/customize-table.css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -55,48 +61,137 @@
 </head>
 
 <body ng-app="kunzadApp" ng-controller="RootController">
+    <div id="home" class="hide-home-container" ng-show="!isLogged">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-md-offset-4">
+                    <h1 class="text-center login-title"><strong>Kunzad</strong></h1>
+                    <div class="account-wall">
+                        <form class="form-signin">
+                            <input type="text" class="form-control text-uppercase" ng-model="myInformation[0].LoginName" placeholder="Login Name" required autofocus>
+                            <input type="password" class="form-control text-uppercase" ng-model="myInformation[0].Password" placeholder="Password" required>
+                            <button class="btn btn-lg btn-primary btn-block" ng-click="onLoginRequest()">Login</button>
+                            <div style="padding-left:10px">
+                                <label class="checkbox pull-left" style="padding-left: 10px;">
+                                    <input type="checkbox" value="remember-me" ng-model="RememberedInformation.IsRemember" ng-true-value="'Y'" ng-false-value="'N'">
+                                    Remember me
+                                </label>
+                                <a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="profile" class="hide-profile-container" ng-show="isLogged">
+        @RenderPage("_ThemePreview.cshtml")
 
-    @RenderPage("_ThemePreview.cshtml")
+        <!-- Start: Main -->
+        <div id="main" class="container-fluid">
 
-    <!-- Start: Main -->
-    <div id="main" class="container-fluid">
+            @RenderPage("_Header.cshtml")
+            @RenderPage("_SideBar.cshtml")
 
-        @RenderPage("_Header.cshtml")
-        @RenderPage("_SideBar.cshtml")
+            <!-- Start: Content-Wrapper -->
+            <section id="content_wrapper">
+                @* @@RenderPage("_TopBar.cshtml") *@
+                @RenderBody()
+            </section>
+            <!-- End: Content-Wrapper -->
+            @* @RenderPage("_SideBarRight.cshtml") *@
 
-        <!-- Start: Content-Wrapper -->
-        <section id="content_wrapper">
-            @* @@RenderPage("_TopBar.cshtml") *@
-            @RenderBody()
-        </section>
-        <!-- End: Content-Wrapper -->
-        @* @RenderPage("_SideBarRight.cshtml") *@
-
+        </div>
     </div>
     <div id="spinnerTarget"></div>
     <!-- End: Main -->
     <!-- BEGIN: PAGE SCRIPTS -->
     <!-- jQuery -->
-    <script type="text/javascript" src="/vendor/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/vendor/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="~/vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
+
+    <!-- signalR library -->
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalr/hubs"></script>
 
     <!-- Bootstrap -->
-    <script type="text/javascript" src="/assets/js/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/bootstrap/bootstrap.min.js"></script>
 
-    <!-- Admin UI -->
-    @Scripts.Render("~/bundles/admin-ui")
+    <!-- Admin UI-->
+    <script src="~/assets/js/utility/utility.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/demo.js"></script>
+    <script src="~/vendor/plugins/magnific/jquery.magnific-popup.js"></script>
+    <script src="~/vendor/plugins/moment/moment.js"></script>
+    <script src="~/vendor/plugins/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendor/plugins/priceFormat/price_format.js"></script>
 
-    <!-- Angular -->
-    @Scripts.Render("~/bundles/angular")
+    <!-- Angular-->
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/bootstrap-filestyle.js"></script>
+    <script src="~/Scripts/angular-animate.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/angular-touch.js"></script>
+    <script src="~/Scripts/angular-resource.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/localforage.min.js"></script>
+    <script src="~/Scripts/angular-localForage.js"></script>
+    <script src="~/Scripts/ng-context-menu.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/spin.min.js"></script>
+    <script src="~/Scripts/ui-bootstrap-tpls-0.12.1.min.js"></script>
+    <script src="~/vendor/plugins/uigrid/js/ui-grid.js"></script>
+    <script src="~/vendor/plugins/uigrid/js/csv.js"></script>
+    <script src="~/vendor/plugins/uigrid/js/pdfmake.js"></script>
+    <script src="~/vendor/plugins/uigrid/js/vfs_fonts.js"></script>
+    <script src="~/Scripts/app/app.js"></script>
 
-    <!--
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script> -->
+    <!-- Angular Directives, Controllers, etc. -->
+    <script type="text/javascript" src="~/Scripts/filter/filter.js"></script>
+    <script type="text/javascript" src="~/Scripts/service/restAPI.js"></script>
+    <script type="text/javascript" src="~/Scripts/service/retrieveDataWDToken.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/scrollableContainer.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/dataFiltering.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/addressModal.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/vesselVoyageModal.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/dataGrid1.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/dataGrid2.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/dataGrid3.js"></script>
+    <script type="text/javascript" src="~/Scripts/directive/ngEnter.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/booking-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/seafreight-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/customer-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/customergroup-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/courier-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/airline-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/trucker-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/trucking-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/trucktype-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/industry-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/businessunittype-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/shipmenttype-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/servicecategory-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/contactnotype-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/driver-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/country-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/shippinglines-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/businessunit-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/serviceablearea-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/airfreight-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/truckingwb-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/courierdelivery-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/consolidation-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/documentation-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/seafreightloading-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/seafreightarrival-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/airfreightloading-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/airfreightarrival-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/pod-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/deliveryexception-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/deliveryexceptionbatching-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/rates-ctrl.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/user-ctrl.js"></script>
 
-    <!-- App scripts -->
-    @Scripts.Render("~/bundles/app")
-
-    <!-- Utility / 3rd party -->
-    @Scripts.Render("~/bundles/utils")
 
     <script type="text/javascript">
         jQuery(document).ready(function () {
@@ -110,7 +205,6 @@
             Demo.init();
         });
     </script>
-
     <!-- END: PAGE SCRIPTS -->
 
 </body>

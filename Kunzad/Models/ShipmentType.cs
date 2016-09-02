@@ -16,16 +16,21 @@ namespace Kunzad.Models
     {
         public ShipmentType()
         {
+            this.RatesMasters = new HashSet<RatesMaster>();
             this.Shipments = new HashSet<Shipment>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
+        public Nullable<int> ServiceId { get; set; }
+        public Nullable<bool> IsFCL { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> LastUpdatedDate { get; set; }
         public Nullable<int> CreatedByUserId { get; set; }
         public Nullable<int> LastUpdatedByUserId { get; set; }
     
+        public virtual ICollection<RatesMaster> RatesMasters { get; set; }
+        public virtual Service Service { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
     }
 }

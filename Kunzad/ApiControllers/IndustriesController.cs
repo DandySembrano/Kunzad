@@ -9,19 +9,35 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Kunzad.Models;
-
+using WebAPI.OutputCache;
+using Kunzad.ActionFilters;
 namespace Kunzad.ApiControllers
 {
+    [AuthorizationRequired]
+    [AutoInvalidateCacheOutput]
     public class IndustriesController : ApiController
     {
         private KunzadDbEntities db = new KunzadDbEntities();
-
+        Response response = new Response();
         // GET: api/Industries
+        [CacheOutput(ClientTimeSpan = AppSettingsGet.ClientTimeSpan, ServerTimeSpan = AppSettingsGet.ServerTimeSpan)]
         public IQueryable<Industry> GetIndustries()
         {
-            return db.Industries;
+            return db.Industries.AsNoTracking();
         }
 
+        // GET: api/Industries?page=1
+        public IQueryable<Industry> GetIndustries(int page)
+        {
+            if (page > 1)
+            {
+                return db.Industries.AsNoTracking().OrderBy(c => c.Name).Skip((page - 1) * AppSettingsGet.PageSize).Take(AppSettingsGet.PageSize);
+            }
+            else
+            {
+                return db.Industries.AsNoTracking().OrderBy(c => c.Name).Take(AppSettingsGet.PageSize);
+            }
+        }
         // GET: api/Industries/5
         [ResponseType(typeof(Industry))]
         public IHttpActionResult GetIndustry(int id)
@@ -36,69 +52,94 @@ namespace Kunzad.ApiControllers
         }
 
         // PUT: api/Industries/5
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(Industry))]
         public IHttpActionResult PutIndustry(int id, Industry industry)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request";
+                return Ok(response);
             }
 
             if (id != industry.Id)
             {
-                return BadRequest();
+                response.message = "Industry doesn't exist.";
+                return Ok(response);
             }
 
             db.Entry(industry).State = EntityState.Modified;
 
             try
             {
+                industry.LastUpdatedDate = DateTime.Now;
                 db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = industry;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
                 if (!IndustryExists(id))
                 {
-                    return NotFound();
+                    response.message = "Industry doesn't exist.";
                 }
                 else
                 {
-                    throw;
+                    response.message = e.InnerException.InnerException.Message.ToString();
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/Industries
         [ResponseType(typeof(Industry))]
         public IHttpActionResult PostIndustry(Industry industry)
         {
+            response.status = "FAILURE";
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.message = "Bad request.";
+                return Ok(response);
+            }
+            try
+            {
+                industry.CreatedDate = DateTime.Now;
+                db.Industries.Add(industry);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+                response.objParam1 = industry;
+            }
+            catch(Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Industries.Add(industry);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = industry.Id }, industry);
+            return Ok(response);
         }
 
         // DELETE: api/Industries/5
         [ResponseType(typeof(Industry))]
         public IHttpActionResult DeleteIndustry(int id)
         {
+            response.status = "FAILURE";
             Industry industry = db.Industries.Find(id);
             if (industry == null)
             {
-                return NotFound();
+                response.message = "Industry doesn't exist.";
+                return Ok(response);
+            }
+            try
+            {
+                db.Industries.Remove(industry);
+                db.SaveChanges();
+                response.status = "SUCCESS";
+            }
+            catch(Exception e)
+            {
+                response.message = e.InnerException.InnerException.Message.ToString();
             }
 
-            db.Industries.Remove(industry);
-            db.SaveChanges();
-
-            return Ok(industry);
+            return Ok(response);
         }
 
         protected override void Dispose(bool disposing)
